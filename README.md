@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 프로젝트 개요
 
-## Getting Started
+- 프로젝트명: Kanto
 
-First, run the development server:
+## 팀원
+| 이름 | 역할 | GitHub |
+|------|------|--------|
+| 박소유 | 팀장 | @hong |
+| 김도혁 | 팀원 | @DoHyuk-Centric |
+| 이동근 | 팀원 | @lee |
+| 임태형 | 팀원 | @lee |
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 커밋 컨벤션
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+커밋 메시지는 `<type>: <설명>` 형식으로 작성합니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+예시: `feat: 로그인 기능 추가`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 커밋 타입
 
-## Learn More
+| 타입 | 설명 | 예시 |
+|----------|------|------|
+| feat | 새로운 기능 추가 | `feat: 회원가입 화면 구현` |
+| fix | 버그 수정 | `fix: 로그인 시 토큰 만료 오류 수정` |
+| refactor | 기능 변화 없는 코드 구조 개선 | `refactor: API 호출 로직 분리` |
+| chore | 빌드/설정/패키지 등 잡무, 코드 외 작업 | `chore: eslint 설정 추가` |
+| bug | 버그 제보/추적용 (fix와 구분해서 쓸 경우) | `bug: 결제 중복 발생 확인` |
 
-To learn more about Next.js, take a look at the following resources:
+### 작성 규칙
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 제목은 50자 이내로 간결하게
+- 명령형으로 작성 ("추가함" 보다 "추가")
+- 무엇을, 왜 바꿨는지가 드러나게
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 브랜치 네이밍
 
-## Deploy on Vercel
+브랜치는 `<타입>/<작업내용>` 형식으로 만듭니다.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+예시: `feature/login`, `fix/payment-error`, `refactor/api-layer`
