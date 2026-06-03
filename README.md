@@ -9,7 +9,7 @@
 | 박소유 | 팀장 | @soyupark1997   |
 | 김도혁 | 팀원 | @DoHyuk-Centric |
 | 이동근 | 팀원 | @dongkeun99     |
-| 임태형 | 팀원 | @lee            |
+| 임태형 | 팀원 | @THLIMM         |
 
 ## 노션
 
