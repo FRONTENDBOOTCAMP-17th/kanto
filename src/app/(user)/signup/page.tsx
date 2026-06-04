@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/src/lib/supabase";
+import { EyeIcon } from "@/src/app/(user)/signup/_components/EyeIcon";
 
 const TERMS_SECTIONS = [
   {
@@ -106,6 +107,9 @@ export default function SignupPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [agreed, setAgreed] = useState({
     terms: false,
@@ -151,7 +155,7 @@ export default function SignupPage() {
   }, [modalType]);
 
   const nameValid = /^[가-힣a-zA-Z]{2,}$/.test(name);
-  const emailValid = /^[^\s@]+@[^\s@]+\.com$/.test(email);
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const passwordValid = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/.test(password);
   const confirmPasswordValid =
     confirmPassword === password && confirmPassword !== "";
@@ -182,13 +186,10 @@ export default function SignupPage() {
 
   const handleToggleAll = () => {
     if (allChecked) {
-      setAgreed({
-        terms: false,
-        privacy: false,
-        age: false,
-        marketing: false,
-        push: false,
-      });
+      const reset = Object.fromEntries(
+        AGREES.map((a) => [a.id, false]),
+      ) as typeof agreed;
+      setAgreed(reset);
       return;
     }
     setAgreed((prev) => ({ ...prev, marketing: true, push: true }));
@@ -232,25 +233,31 @@ export default function SignupPage() {
     });
     if (!nameValid || !emailValid || !passwordValid || !confirmPasswordValid)
       return;
-    if (!requiredChecked) {
-      console.log("필수 약관에 동의해주세요.");
-      return;
+    if (!requiredChecked) return;
+
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { name } },
+      });
+
+      if (error) {
+        setErrorMessage(error.message);
+        return;
+      }
+
+      if (data.user?.identities?.length === 0) {
+        setErrorMessage("이미 가입된 이메일입니다.");
+        return;
+      }
+
+      setIsSuccess(true);
+    } finally {
+      setIsLoading(false);
     }
-
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { name } },
-    });
-
-    if (error) {
-      console.log("에러:", error.message);
-      return;
-    }
-
-    console.log("성공:", data);
   };
-
   const sections =
     modalType === "terms"
       ? TERMS_SECTIONS
@@ -261,7 +268,7 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen min-w-[390px] bg-linear-to-br from-teal-50 to-teal-100 flex items-center justify-center p-4">
       <div className="w-full max-w-97.5 bg-white rounded-2xl shadow-md p-8 my-8">
-        <Link href="/" className="text-teal-600 font-semibold">
+        <Link href="/" className="text-sm text-teal-600 font-semibold">
           홈으로 가기
         </Link>
         <div className="flex justify-center mb-8">
@@ -270,14 +277,20 @@ export default function SignupPage() {
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">이름</label>
+            <label htmlFor="name" className="text-sm font-medium text-gray-700">
+              이름
+            </label>
             <input
+              id="name"
               ref={nameRef}
               autoFocus
               type="text"
               placeholder="한글 또는 영어 2자 이상 (예: 홍길동)"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                setErrorMessage("");
+              }}
               onBlur={() => {
                 if (name) setTouched((p) => ({ ...p, name: true }));
               }}
@@ -291,13 +304,22 @@ export default function SignupPage() {
             )}
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">이메일</label>
+            <label
+              htmlFor="email"
+              className="text-sm font-medium text-gray-700"
+            >
+              이메일
+            </label>
             <input
+              id="email"
               ref={emailRef}
               type="email"
-              placeholder="example@email.com (@와 .com 필수)"
+              placeholder="example@email.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setErrorMessage("");
+              }}
               onBlur={() => {
                 if (email) setTouched((p) => ({ ...p, email: true }));
               }}
@@ -306,21 +328,28 @@ export default function SignupPage() {
             />
             {touched.email && !emailValid && (
               <p className="text-xs text-red-500">
-                @와 .com을 포함한 올바른 이메일을 입력해주세요.
+                올바른 이메일을 입력해주세요.
               </p>
             )}
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="text-sm font-medium text-gray-700"
+            >
               비밀번호
             </label>
             <div className="relative">
               <input
+                id="password"
                 ref={passwordRef}
                 type={showPassword ? "text" : "password"}
                 placeholder="영문 + 숫자 포함 8자 이상"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setErrorMessage("");
+                }}
                 onBlur={() => {
                   if (password) setTouched((p) => ({ ...p, password: true }));
                 }}
@@ -332,42 +361,7 @@ export default function SignupPage() {
                 onClick={() => setShowPassword((v) => !v)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
-                {showPassword ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-4 h-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-4 h-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                    />
-                  </svg>
-                )}
+                <EyeIcon visible={showPassword} />
               </button>
             </div>
             {touched.password && !passwordValid && (
@@ -377,16 +371,23 @@ export default function SignupPage() {
             )}
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
+            <label
+              htmlFor="confirmPassword"
+              className="text-sm font-medium text-gray-700"
+            >
               비밀번호 확인
             </label>
             <div className="relative">
               <input
+                id="confirmPassword"
                 ref={confirmPasswordRef}
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="비밀번호를 다시 입력하세요"
                 value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  setErrorMessage("");
+                }}
                 onBlur={() => {
                   if (confirmPassword)
                     setTouched((p) => ({ ...p, confirmPassword: true }));
@@ -398,42 +399,7 @@ export default function SignupPage() {
                 onClick={() => setShowConfirmPassword((v) => !v)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
-                {showConfirmPassword ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-4 h-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-4 h-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                    />
-                  </svg>
-                )}
+                <EyeIcon visible={showConfirmPassword} />
               </button>
             </div>
             {touched.confirmPassword && !confirmPasswordValid && (
@@ -514,12 +480,22 @@ export default function SignupPage() {
             </div>
           </div>
 
+          {errorMessage && (
+            <p className="text-sm text-red-500 text-center">{errorMessage}</p>
+          )}
+
+          {isSuccess && (
+            <div className="text-sm text-teal-600 text-center bg-teal-50 rounded-md p-3">
+              가입 완료! 이메일을 확인해 인증을 완료해주세요.
+            </div>
+          )}
+
           <button
             onClick={handleSubmit}
-            disabled={!requiredChecked}
+            disabled={!requiredChecked || isLoading || isSuccess}
             className="w-full bg-teal-500 hover:bg-teal-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-2.5 rounded-md transition-colors"
           >
-            회원가입
+            {isLoading ? "처리 중..." : "회원가입"}
           </button>
         </div>
 
