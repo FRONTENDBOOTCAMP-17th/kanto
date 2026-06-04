@@ -1,5 +1,52 @@
-export function ScrollToTop(){
-    return(
-        <div></div>
-    );
+"use client";
+import { ChevronUp, Plus } from "lucide-react";
+import { useState, useEffect } from "react";
+
+export function ScrollToTop() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsVisible(window.scrollY > 250);
+      // 높이를 얼마부터 동작하게 할것인가?
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handlePlus = () => {
+    // user === ture일 경우에 (로그인이 되어있는 경우에)
+    // 글쓰기 위치로 이동되도록
+  };
+
+  // user 로그인 로그아웃 구현을 위해 만든 상태
+  const [user, setUser] = useState(true);
+
+  if (!isVisible) return null;
+
+  return (
+    <div className="hidden md:flex fixed bottom-6 right-6 z-50 flex-col items-center gap-3">
+      {user && (
+        <button
+          className="cursor-pointer w-12 h-12 bg-gray-100 hover:bg-gray-300 text-black rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"
+          aria-label="더보기"
+          onClick={handlePlus}
+        >
+          <Plus className="w-6 h-6" />
+        </button>
+      )}
+      <button
+        className="cursor-pointer w-12 h-12 bg-teal-500 hover:bg-teal-600 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"
+        aria-label="맨 위로 이동"
+        onClick={handleScrollToTop}
+      >
+        <ChevronUp className="w-6 h-6" />
+      </button>
+    </div>
+  );
 }
