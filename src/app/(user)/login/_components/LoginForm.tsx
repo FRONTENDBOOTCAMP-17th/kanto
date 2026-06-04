@@ -15,6 +15,7 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showEmailForm, setShowEmailForm] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const handleSubmit = async () => {
     const { error } = await supabase.auth.signInWithPassword({
@@ -23,7 +24,7 @@ export default function LoginForm() {
     });
 
     if (error) {
-      alert("로그인 실패: " + error.message);
+      setErrorMsg("로그인에 실패했어요. 다시 시도해주세요.");
       return;
     }
 
@@ -39,7 +40,8 @@ export default function LoginForm() {
     });
 
     if (error) {
-      alert("소셜 로그인 실패: " + error.message);
+      setErrorMsg("로그인에 실패했어요. 다시 시도해주세요.");
+      return;
     }
   };
 
@@ -93,13 +95,13 @@ export default function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+          {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
           <Button
             onClick={handleSubmit}
             className="w-full bg-teal-500 hover:bg-teal-600"
           >
             로그인
           </Button>
-
           <div className="text-center">
             <p className="text-sm text-gray-600">
               계정이 없으신가요?{" "}
