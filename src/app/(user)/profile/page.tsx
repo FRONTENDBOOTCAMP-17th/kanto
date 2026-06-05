@@ -1,6 +1,6 @@
 "use client";
 
-import { ProfileCard } from "@/app/profile/_components/ProfileCard";
+import { ProfileCard } from "@/app/(user)/profile/_components/ProfileCard";
 import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {

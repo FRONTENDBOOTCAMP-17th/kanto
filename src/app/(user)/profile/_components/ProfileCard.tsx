@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ArrowLeft, User, Camera, ShieldCheck } from "lucide-react";
 import type { ProfileCardProps } from "@/type/profile";
-import { ProfileField } from "@/app/profile/_components/ProfileField";
+import { ProfileField } from "@/app/(user)/profile/_components/ProfileField";
 
 export function ProfileCard({ user, onBack, onLogout }: ProfileCardProps) {
   const [name, setName] = useState(user.name);
