@@ -28,7 +28,7 @@ export default function LoginForm() {
       return;
     }
 
-    router.push("/home");
+    router.push("/");
   };
 
   const handleSocialLogin = async (
