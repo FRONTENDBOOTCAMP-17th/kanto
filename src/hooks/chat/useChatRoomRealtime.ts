@@ -11,7 +11,7 @@ interface Props {
 }
 
 /** 채팅 리얼타임 함수 */
-export function useChatRealtime({
+export function useChatRoomRealtime({
   chatId,
   currentUser,
   partner,

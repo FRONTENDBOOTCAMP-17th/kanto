@@ -6,7 +6,7 @@ import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
 import { sendMessageAction } from "../actions";
 import { useSpamPrevention } from "@/hooks/chat/useSpamPrevention";
-import { useChatRealtime } from "@/hooks/chat/useChatRealtime";
+import { useChatRoomRealtime } from "@/hooks/chat/useChatRoomRealtime";
 import { useChatMessages } from "@/hooks/chat/useChatMessages";
 import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList";
@@ -43,7 +43,7 @@ export default function ChatRoomClient({
     scrollContainerRef,
   } = useChatMessages({ initialMessages, currentUser, chatId, partner });
 
-  useChatRealtime({ chatId, currentUser, partner, setMessages });
+  useChatRoomRealtime({ chatId, currentUser, partner, setMessages });
 
   const handleSend = async () => {
     if (!input.trim()) return;

@@ -1,23 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
-import type { Chat, ChatWithUsers } from "@/type/chat/chat";
-import { supabase } from "@/lib/supabase";
-import { formatChatListTime } from "@/utils/formatTime";
-
-const categoryLabel: Record<string, string> = {
-  used_goods: "중고거래",
-  room_rent: "방렌트",
-  job: "구인구직",
-};
-
-const categoryStyle: Record<string, string> = {
-  중고거래: "bg-teal-50 text-teal-600",
-  방렌트: "bg-cyan-50 text-cyan-600",
-  구인구직: "bg-green-50 text-green-600",
-};
+import type { ChatWithUsers } from "@/type/chat/chat";
+import { useChatListRealtime } from "@/hooks/chat/useChatListRealtime";
+import ChatListItem from "./ChatListItem";
 
 interface Props {
   initialData: ChatWithUsers[];
@@ -34,33 +22,7 @@ export default function ChatListClient({ initialData, currentUserId }: Props) {
     return other?.name?.includes(search);
   });
 
-  useEffect(() => {
-    const channel = supabase
-      .channel(`chat-list-${currentUserId}`)
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "chats" },
-        (payload) => {
-          const updated = payload.new as Chat;
-          if (updated.user_id_1 !== currentUserId && updated.user_id_2 !== currentUserId) return;
-
-          setChats((prev) =>
-            prev
-              .map((c) =>
-                c.id === updated.id
-                  ? { ...c, last_message_at: updated.last_message_at, last_message_content: updated.last_message_content }
-                  : c
-              )
-              .sort((a, b) =>
-                (b.last_message_at ?? "").localeCompare(a.last_message_at ?? "")
-              )
-          );
-        }
-      )
-      .subscribe();
-
-    return () => { supabase.removeChannel(channel); };
-  }, [currentUserId]);
+  useChatListRealtime({ currentUserId, setChats });
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8">
@@ -91,56 +53,15 @@ export default function ChatListClient({ initialData, currentUserId }: Props) {
               채팅 내역이 없습니다
             </div>
           ) : (
-            filtered.map((chat, index) => {
-              const otherUser = chat.user_id_1 === currentUserId ? chat.user2 : chat.user1;
-              const lastMessage = chat.last_message_content;
-              const unreadCount = chat.messages?.filter((m) => !m.is_read).length ?? 0;
-              const category = categoryLabel[chat.posts?.post_type ?? ""] ?? chat.posts?.post_type ?? "";
-
-              return (
-                <div
-                  key={chat.id}
-                  onClick={() => router.push(`/chat/${chat.id}`)}
-                  className={`flex items-center gap-3 px-4 py-4 cursor-pointer hover:bg-gray-50 transition-colors ${
-                    index !== filtered.length - 1 ? "border-b border-gray-100" : ""
-                  }`}
-                >
-                  {/* 아바타 */}
-                  <div className="w-12 h-12 rounded-full bg-teal-500 flex items-center justify-center text-white font-semibold text-lg shrink-0">
-                    {otherUser?.name?.[0] ?? "?"}
-                  </div>
-
-                  {/* 내용 */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="font-semibold text-gray-900 text-sm">
-                        {otherUser?.name ?? "알 수 없음"}
-                      </span>
-                      {category && (
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${categoryStyle[category] ?? "bg-gray-100 text-gray-500"}`}>
-                          {category}
-                        </span>
-                      )}
-                    </div>
-                    <p className={`text-sm truncate ${unreadCount > 0 ? "font-medium text-teal-600" : "text-gray-400"}`}>
-                      {lastMessage ?? "메시지가 없습니다"}
-                    </p>
-                  </div>
-
-                  {/* 시간 + 읽지 않은 수 */}
-                  <div className="flex flex-col items-end gap-1.5 shrink-0">
-                    <span className="text-xs text-gray-400">
-                      {formatChatListTime(chat.last_message_at)}
-                    </span>
-                    {unreadCount > 0 && (
-                      <span className="w-5 h-5 rounded-full bg-teal-500 text-white text-xs flex items-center justify-center font-medium">
-                        {unreadCount}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              );
-            })
+            filtered.map((chat, index) => (
+              <ChatListItem
+                key={chat.id}
+                chat={chat}
+                currentUserId={currentUserId}
+                isLast={index === filtered.length - 1}
+                onClick={() => router.push(`/chat/${chat.id}`)}
+              />
+            ))
           )}
         </div>
       </div>
