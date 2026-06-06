@@ -9,6 +9,7 @@ import type { SellerInfo } from "@/type/user";
 import { sendMessageAction, loadMoreMessagesAction } from "../actions";
 import { supabase } from "@/lib/supabase";
 import type { Message } from "@/type/chat/message";
+import { formatMessageTime } from "@/utils/formatTime";
 
 interface Props {
   initialMessages: MessageWithSender[];
@@ -17,15 +18,6 @@ interface Props {
   postId: number;
   partner: SellerInfo;
   postTitle: string;
-}
-
-function formatTime(dateStr: string): string {
-  const date = new Date(dateStr);
-  return date.toLocaleTimeString("ko-KR", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  });
 }
 
 export default function ChatRoomClient({
@@ -348,7 +340,7 @@ export default function ChatRoomClient({
                     <span className="text-xs text-teal-500 font-medium">1</span>
                   )}
                   <span className="text-xs text-gray-400">
-                    {formatTime(msg.created_at)}
+                    {formatMessageTime(msg.created_at)}
                   </span>
                 </div>
               </div>

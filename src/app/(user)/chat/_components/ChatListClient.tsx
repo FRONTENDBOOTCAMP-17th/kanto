@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import type { Chat, ChatWithUsers } from "@/type/chat/chat";
 import { supabase } from "@/lib/supabase";
+import { formatChatListTime } from "@/utils/formatTime";
 
 const categoryLabel: Record<string, string> = {
   used_goods: "중고거래",
@@ -17,22 +18,6 @@ const categoryStyle: Record<string, string> = {
   방렌트: "bg-cyan-50 text-cyan-600",
   구인구직: "bg-green-50 text-green-600",
 };
-
-function formatTime(dateStr: string | null): string {
-  if (!dateStr) return "";
-  const date = new Date(dateStr);
-  const now = new Date();
-  const isToday = date.toDateString() === now.toDateString();
-
-  if (isToday) {
-    return date.toLocaleTimeString("ko-KR", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
-  }
-  return "어제";
-}
 
 interface Props {
   initialData: ChatWithUsers[];
@@ -145,7 +130,7 @@ export default function ChatListClient({ initialData, currentUserId }: Props) {
                   {/* 시간 + 읽지 않은 수 */}
                   <div className="flex flex-col items-end gap-1.5 shrink-0">
                     <span className="text-xs text-gray-400">
-                      {formatTime(chat.last_message_at)}
+                      {formatChatListTime(chat.last_message_at)}
                     </span>
                     {unreadCount > 0 && (
                       <span className="w-5 h-5 rounded-full bg-teal-500 text-white text-xs flex items-center justify-center font-medium">
