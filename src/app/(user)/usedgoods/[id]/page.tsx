@@ -13,9 +13,6 @@ export default async function UsedGoodsDetailPage({
     .eq("id", id)
     .single();
 
-  console.log(data);
-  console.log(data.images);
-  console.log(data.posts.users.avatar_url);
   if (!data) {
     return <div>상품을 찾을 수 없습니다.</div>;
   }

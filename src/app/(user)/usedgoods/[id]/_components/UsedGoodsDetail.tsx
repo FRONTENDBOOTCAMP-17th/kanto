@@ -58,6 +58,8 @@ export default function UsedGoodsDetail({ data }: { data: UsedGoods }) {
   const diff = now.getTime() - postCreated.getTime();
   const time = Math.floor(diff / 1000 / 60);
 
+  const images = data.images ?? [];
+
   function Time(time: number) {
     if (time < 60) {
       return `${time}분 전`;
@@ -79,54 +81,57 @@ export default function UsedGoodsDetail({ data }: { data: UsedGoods }) {
           <MoveLeft />
           목록으로
         </button>
-        <div className="m-2 border-2 border-gray-200 rounded-2xl overflow-hidden">
-          <div className="relative w-full aspect-square">
-            <Image
-              src={data.images[currentIndex]}
-              alt="대표 이미지"
-              fill
-              className="object-cover"
-            />
-            <p className="absolute right-4 top-4 bg-gray-800 text-white text-xs px-3 py-1.5 rounded-xl">
-              {currentIndex + 1} / {data.images.length}
-            </p>
-            <button
-              onClick={() =>
-                setCurrentIndex(
-                  (currentIndex - 1 + data.images.length) % data.images.length,
-                )
-              }
-              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-4xl bg-white p-1.5"
-            >
-              <ChevronLeft />
-            </button>
-            <button
-              onClick={() =>
-                setCurrentIndex((currentIndex + 1) % data.images.length)
-              }
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-4xl bg-white p-1.5"
-            >
-              <ChevronRight />
-            </button>
-          </div>
-          <div className="flex gap-2 border-t-2 border-gray-400 p-2">
-            {data.images.map((image, index) => (
+        {images.length > 0 && (
+          <div className="m-2 border-2 border-gray-200 rounded-2xl overflow-hidden">
+            <div className="relative w-full aspect-square">
               <Image
-                key={index}
-                src={image}
-                alt={`썸네일 ${index + 1}`}
-                width={64}
-                height={64}
-                onClick={() => setCurrentIndex(index)}
-                className={
-                  currentIndex === index
-                    ? "border-3 border-teal-400 rounded-xl overflow-hidden"
-                    : "border-3 rounded-xl overflow-hidden"
-                }
+                src={data.images[currentIndex]}
+                alt="대표 이미지"
+                fill
+                className="object-cover"
               />
-            ))}
+              <p className="absolute right-4 top-4 bg-gray-800 text-white text-xs px-3 py-1.5 rounded-xl">
+                {currentIndex + 1} / {data.images.length}
+              </p>
+              <button
+                onClick={() =>
+                  setCurrentIndex(
+                    (currentIndex - 1 + data.images.length) %
+                      data.images.length,
+                  )
+                }
+                className="absolute left-2 top-1/2 -translate-y-1/2 rounded-4xl bg-white p-1.5"
+              >
+                <ChevronLeft />
+              </button>
+              <button
+                onClick={() =>
+                  setCurrentIndex((currentIndex + 1) % data.images.length)
+                }
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-4xl bg-white p-1.5"
+              >
+                <ChevronRight />
+              </button>
+            </div>
+            <div className="flex gap-2 border-t-2 border-gray-400 p-2">
+              {data.images.map((image, index) => (
+                <Image
+                  key={index}
+                  src={image}
+                  alt={`썸네일 ${index + 1}`}
+                  width={64}
+                  height={64}
+                  onClick={() => setCurrentIndex(index)}
+                  className={
+                    currentIndex === index
+                      ? "border-3 border-teal-400 rounded-xl overflow-hidden"
+                      : "border-3 rounded-xl overflow-hidden"
+                  }
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </section>
       <section className="border-gray-200 border-2 p-2 m-2 rounded-xl">
         <div className="border-b-2 p-2">
