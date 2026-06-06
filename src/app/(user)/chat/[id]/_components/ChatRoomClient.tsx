@@ -6,12 +6,13 @@ import Image from "next/image";
 import { ArrowLeft, MoreVertical, Plus, Send } from "lucide-react";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
-import { sendMessageAction, loadMoreMessagesAction } from "../actions";
+import { sendMessageAction } from "../actions";
 import { supabase } from "@/lib/supabase";
-import type { Message } from "@/type/chat/message";
 import { formatMessageTime } from "@/utils/formatTime";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { useSpamPrevention } from "@/hooks/chat/useSpamPrevention";
+import { useChatRealtime } from "@/hooks/chat/useChatRealtime";
+import { useChatMessages } from "@/hooks/chat/useChatMessages";
 
 interface Props {
   initialMessages: MessageWithSender[];
@@ -31,103 +32,29 @@ export default function ChatRoomClient({
   postTitle,
 }: Props) {
   const router = useRouter();
-  const [messages, setMessages] =
-    useState<MessageWithSender[]>(initialMessages);
   const [input, setInput] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // 이전 메시지 로드
-  const [hasMore, setHasMore] = useState(initialMessages.length === 50);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-
   const { isCooldown, cooldownSeconds, recordSend } = useSpamPrevention();
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const wasLoadingMore = useRef(false);
 
-  useEffect(() => {
-    if (wasLoadingMore.current) {
-      wasLoadingMore.current = false;
-      return;
-    }
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  // 메시지 목록과 관련된 모든 상태, ref, 함수 컴포넌트
+  const {
+    messages,
+    setMessages,
+    hasMore,
+    isLoadingMore,
+    loadMore,
+    messagesEndRef,
+    scrollContainerRef,
+  } = useChatMessages({ initialMessages, currentUser, chatId, partner });
 
   // 바깥 클릭시 닫힘 (모달로 둘수도 있어서 일단 추가했음)
   useClickOutside(menuRef, () => setMenuOpen(false));
 
-  useEffect(() => {
-    const channel = supabase
-      .channel(`chat-room-${chatId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "messages",
-          filter: `chat_id=eq.${chatId}`,
-        },
-        (payload) => {
-          const newMsg = payload.new as Message;
-          const sender =
-            newMsg.sender_id === currentUser.id ? currentUser : partner;
-          const msgWithSender: MessageWithSender = { ...newMsg, sender };
-
-          if (newMsg.sender_id !== currentUser.id) {
-            supabase
-              .from("messages")
-              .update({ is_read: true })
-              .eq("id", newMsg.id)
-              .then();
-          }
-
-          setMessages((prev) => {
-            if (prev.some((m) => m.id === newMsg.id)) return prev;
-
-            if (newMsg.sender_id === currentUser.id) {
-              const idx = prev.findIndex(
-                (m) =>
-                  m.id > 1e12 &&
-                  m.sender_id === currentUser.id &&
-                  m.content === newMsg.content,
-              );
-              if (idx !== -1) {
-                const updated = [...prev];
-                updated[idx] = msgWithSender;
-                return updated;
-              }
-            }
-
-            return [...prev, msgWithSender];
-          });
-        },
-      )
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "messages",
-          filter: `chat_id=eq.${chatId}`,
-        },
-        (payload) => {
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === payload.new.id
-                ? { ...m, is_read: payload.new.is_read }
-                : m,
-            ),
-          );
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [chatId, currentUser, partner]);
+  // Realtime 로직
+  useChatRealtime({ chatId, currentUser, partner, setMessages });
 
   useEffect(() => {
     (async () => {
@@ -139,40 +66,6 @@ export default function ChatRoomClient({
         .eq("is_read", false);
     })();
   }, []);
-
-  const loadMore = async () => {
-    if (!hasMore || isLoadingMore || messages.length === 0) return;
-    setIsLoadingMore(true);
-
-    const oldest = messages[0].created_at;
-    const data = await loadMoreMessagesAction(chatId, oldest);
-
-    if (data.length === 0) {
-      setHasMore(false);
-      setIsLoadingMore(false);
-      return;
-    }
-
-    // sender 정보를 currentUser/partner로 매핑
-    const older: MessageWithSender[] = data.map((msg) => ({
-      ...msg,
-      sender: msg.sender_id === currentUser.id ? currentUser : partner,
-    }));
-
-    const container = scrollContainerRef.current;
-    const prevScrollHeight = container?.scrollHeight ?? 0;
-
-    wasLoadingMore.current = true;
-    setMessages((prev) => [...older, ...prev]);
-    setHasMore(data.length === 50);
-    setIsLoadingMore(false);
-
-    requestAnimationFrame(() => {
-      if (container) {
-        container.scrollTop = container.scrollHeight - prevScrollHeight;
-      }
-    });
-  };
 
   const handleSend = async () => {
     if (!input.trim()) return;
