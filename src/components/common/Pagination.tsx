@@ -1,3 +1,5 @@
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
 interface PaginationProps {
   currentPage: number;
   totalPage: number;
@@ -21,12 +23,12 @@ export const Pagination = ({
   const canGoPrev = currentPage !== 1;
 
   return (
-    <div>
+    <div className="flex space-x-2">
       <button
         disabled={!canGoPrev}
         onClick={() => onPageChange(currentPage - 1)}
       >
-        이전
+        <ChevronLeft />
       </button>
       {getPageNumbers().map((page) => (
         <button
@@ -34,8 +36,8 @@ export const Pagination = ({
           onClick={() => onPageChange(page)}
           className={
             page === currentPage
-              ? "bg-teal-400 text-white"
-              : "bg-white text-black"
+              ? "bg-teal-400 text-white px-2 border-2 border-teal-400 rounded-md"
+              : "bg-white text-black px-2 border-2 border-gray-200 rounded-md"
           }
         >
           {page}
@@ -45,7 +47,7 @@ export const Pagination = ({
         disabled={!canGoNext}
         onClick={() => onPageChange(currentPage + 1)}
       >
-        다음
+        <ChevronRight />
       </button>
     </div>
   );
