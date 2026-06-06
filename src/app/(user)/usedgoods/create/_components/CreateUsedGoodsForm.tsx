@@ -15,35 +15,76 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { supabase } from "@/lib/supabase";
+import {
+  PRODUCT_CATEGORIES,
+  PRODUCT_CONDITIONS,
+  TRADE_LOCATIONS,
+  type ProductCategory,
+  type ProductCondition,
+  type TradeLocation,
+} from "@/type/usedGoods";
 
-const LOCATIONS = [
-  { id: "bgc-taguig", name: "BGC / Taguig" },
-  { id: "makati", name: "Makati" },
-  { id: "pasay-paranaque", name: "Pasay / Paranaque" },
-  { id: "quezon-city", name: "Quezon City" },
-  { id: "mandaluyong-pasig", name: "Mandaluyong / Pasig" },
-  { id: "pampanga", name: "Pampanga" },
-  { id: "others", name: "그 외 지역" },
-];
-
-export function CreateUsedGoodsForm() {
+export function CreateUsedGoodsForm({ userId }: { userId: number }) {
   const router = useRouter();
 
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
-  const [productCategory, setProductCategory] = useState("");
-  const [condition, setCondition] = useState("");
-  const [preferredLocation, setPreferredLocation] = useState("");
+  const [productCategory, setProductCategory] = useState<ProductCategory | "">("");
+  const [condition, setCondition] = useState<ProductCondition | "">("");
+  const [preferredLocation, setPreferredLocation] = useState<TradeLocation | "">("");
   const [preferredLocationDetail, setPreferredLocationDetail] = useState("");
   const [content, setContent] = useState("");
   const [safePayment, setSafePayment] = useState(false);
   const [images, setImages] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Supabase insert — posts 테이블(post_type='used_goods') 및 used_goods 테이블 연동
-    alert("게시글이 작성되었습니다!");
+    if (!productCategory || !condition || !preferredLocation) return;
+    setIsSubmitting(true);
+
+    // Step 1: posts 테이블 insert
+    const { data: post, error: postError } = await supabase
+      .from("posts")
+      .insert({
+        user_id: userId,
+        post_type: "used_goods",
+        title,
+        status: "active",
+        view_count: 0,
+        like_count: 0,
+      })
+      .select("id")
+      .single();
+
+    if (postError || !post) {
+      alert("게시글 등록에 실패했습니다.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Step 2: used_goods 테이블 insert
+    const { error: goodsError } = await supabase.from("used_goods").insert({
+      post_id: post.id,
+      price: Number(price),
+      category: productCategory,
+      condition,
+      safe_payment: safePayment,
+      content,
+      images: null, // TODO: Supabase Storage 업로드 후 URL 배열로 교체
+      location_type: preferredLocation,
+      location_custom:
+        preferredLocation === "그 외 지역" ? preferredLocationDetail : null,
+    });
+
+    if (goodsError) {
+      alert("상품 정보 등록에 실패했습니다.");
+      setIsSubmitting(false);
+      return;
+    }
+
     router.push("/usedgoods");
   };
 
@@ -112,32 +153,38 @@ export function CreateUsedGoodsForm() {
               <Label htmlFor="productCategory">상품 카테고리 *</Label>
               <Select
                 value={productCategory}
-                onValueChange={setProductCategory}
+                onValueChange={(v) => setProductCategory(v as ProductCategory)}
+                required
               >
                 <SelectTrigger>
                   <SelectValue placeholder="카테고리를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="electronics">전자기기</SelectItem>
-                  <SelectItem value="furniture">가구</SelectItem>
-                  <SelectItem value="clothing">의류</SelectItem>
-                  <SelectItem value="accessories">악세사리</SelectItem>
-                  <SelectItem value="baby">유아 용품</SelectItem>
-                  <SelectItem value="others">기타</SelectItem>
+                  {PRODUCT_CATEGORIES.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="condition">상태 *</Label>
-              <Select value={condition} onValueChange={setCondition}>
+              <Select
+                value={condition}
+                onValueChange={(v) => setCondition(v as ProductCondition)}
+                required
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="상태를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="unopened">미개봉 중고</SelectItem>
-                  <SelectItem value="light">가벼운 사용감</SelectItem>
-                  <SelectItem value="used">사용감 있음</SelectItem>
+                  {PRODUCT_CONDITIONS.map((cond) => (
+                    <SelectItem key={cond} value={cond}>
+                      {cond}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -146,20 +193,21 @@ export function CreateUsedGoodsForm() {
               <Label htmlFor="preferredLocation">거래 지역 *</Label>
               <Select
                 value={preferredLocation}
-                onValueChange={setPreferredLocation}
+                onValueChange={(v) => setPreferredLocation(v as TradeLocation)}
+                required
               >
                 <SelectTrigger>
                   <SelectValue placeholder="지역을 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  {LOCATIONS.map((location) => (
-                    <SelectItem key={location.id} value={location.id}>
-                      {location.name}
+                  {TRADE_LOCATIONS.map((loc) => (
+                    <SelectItem key={loc} value={loc}>
+                      {loc}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {preferredLocation === "others" && (
+              {preferredLocation === "그 외 지역" && (
                 <Input
                   placeholder="상세 지역을 입력하세요"
                   value={preferredLocationDetail}
@@ -247,14 +295,16 @@ export function CreateUsedGoodsForm() {
                 variant="outline"
                 onClick={() => router.back()}
                 className="flex-1"
+                disabled={isSubmitting}
               >
                 취소
               </Button>
               <Button
                 type="submit"
                 className="flex-1 bg-teal-500 hover:bg-teal-600"
+                disabled={isSubmitting}
               >
-                작성 완료
+                {isSubmitting ? "등록 중..." : "작성 완료"}
               </Button>
             </div>
           </form>
