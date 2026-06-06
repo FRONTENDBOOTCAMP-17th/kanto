@@ -21,7 +21,6 @@ const pages = [
     category: "채팅",
     items: [
       { label: "채팅 목록", path: "/chat", status: "wip" },
-      { label: "채팅방", path: "/chat/1", status: "todo" },
     ],
   },
 ];
