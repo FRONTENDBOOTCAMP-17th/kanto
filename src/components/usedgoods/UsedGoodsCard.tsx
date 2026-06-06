@@ -5,8 +5,8 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 
-import { useState, useEffect } from "react";
 import { Heart, MapPin, Clock } from "lucide-react";
+import { formatTimeAgo } from "@/utils/formatTime";
 
 interface UsedGoodsCardProps {
   id: number;
@@ -21,15 +21,6 @@ interface UsedGoodsCardProps {
   onLikeToggle: (id: number) => void;
 }
 
-function formatTimeAgo(isoString: string): string {
-  const diff = Date.now() - new Date(isoString).getTime();
-  const minutes = Math.floor(diff / 60000);
-  if (minutes < 60) return `${minutes}분 전`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}시간 전`;
-  const days = Math.floor(hours / 24);
-  return `${days}일 전`;
-}
 
 export function UsedGoodsCard({
   id,
@@ -44,11 +35,7 @@ export function UsedGoodsCard({
   onLikeToggle,
 }: UsedGoodsCardProps) {
   const thumbnail = images?.[0] ?? "/fallback-image.svg";
-  const [relativeTime, setRelativeTime] = useState("");
-
-  useEffect(() => {
-    setRelativeTime(formatTimeAgo(createdAt));
-  }, [createdAt]);
+  const relativeTime = formatTimeAgo(createdAt);
 
   return (
     <div className="relative">

@@ -18,6 +18,7 @@ export default function ChatInput({
   cooldownSeconds,
 }: Props) {
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.nativeEvent.isComposing) return;
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       onSend();

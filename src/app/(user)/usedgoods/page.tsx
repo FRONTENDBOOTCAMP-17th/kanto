@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
 import { getUsedGoodsList } from "@/services/usedGoods";
-import { UsedGoodsContent } from "./_components/UsedGoodsList";
+import { UsedGoodsList } from "@/app/(user)/usedgoods/_components/UsedGoodsList";
 
 import { Header } from "@/components/common/Header";
 import { Footer } from "@/components/common/Footer";
@@ -14,7 +14,7 @@ export default async function UsedGoodsPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <Suspense fallback={<div className="flex-1" />}>
-        <UsedGoodsContent initialPosts={posts} />
+        <UsedGoodsList initialPosts={posts} />
       </Suspense>
       <Footer />
       <ScrollToTop />
