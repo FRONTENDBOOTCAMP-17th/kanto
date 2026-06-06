@@ -1,0 +1,47 @@
+import { redirect } from "next/navigation";
+import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { getChatRoom } from "@/services/chat/chat";
+import { getMessage } from "@/services/chat/message";
+import ChatRoomClient from "./_components/ChatRoomClient";
+
+export default async function ChatRoomPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const supabase = await createSupabaseServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: currentUser } = await supabase
+    .from("users")
+    .select("id, name, avatar_url, created_at")
+    .eq("auth_id", user.id)
+    .single();
+
+  if (!currentUser) redirect("/login");
+
+  const chatId = Number(id);
+  const [chatRoom, messages] = await Promise.all([
+    getChatRoom(chatId, supabase),
+    getMessage(chatId, supabase),
+  ]);
+
+  const partner =
+    chatRoom.user_id_1 === currentUser.id ? chatRoom.user2 : chatRoom.user1;
+
+  return (
+    <ChatRoomClient
+      initialMessages={messages}
+      currentUser={currentUser}
+      chatId={chatId}
+      postId={chatRoom.post_id}
+      partner={partner}
+      postTitle={chatRoom.posts?.title ?? ""}
+    />
+  );
+}
