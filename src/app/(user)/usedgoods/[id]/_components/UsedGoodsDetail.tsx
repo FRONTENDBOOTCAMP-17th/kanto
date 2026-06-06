@@ -149,8 +149,8 @@ export default function UsedGoodsDetail({ data }: { data: UsedGoods }) {
               src={data.posts.users.avatar_url ?? "/default-avatar.png"}
               alt="프로필 이미지"
               width={48}
-              height={40}
-              className="rounded-4xl"
+              height={48}
+              className="rounded-full object-cover w-12 h-12"
             />
             <div className="">
               <p className="font-semibold">{data.posts.users.name}</p>
