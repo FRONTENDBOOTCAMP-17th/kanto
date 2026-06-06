@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   images: {
     remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
       { hostname: "dhvvrtyzurouttlswpbq.supabase.co" },
       {
         protocol: "https",
