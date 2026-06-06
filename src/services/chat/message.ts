@@ -8,18 +8,28 @@ const MESSAGE_SELECT = `*,
 export async function getMessage(
   chatId: number,
   supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
+  before?: string,
 ): Promise<MessageWithSender[]> {
-  const { data, error } = await supabase
+  let query = supabase
     .from("messages")
     .select(MESSAGE_SELECT)
-    .eq("chat_id", chatId)
-    .order("created_at", { ascending: true });
+    .eq("chat_id", chatId);
+
+  if (before) {
+    query = query.lt("created_at", before);
+  }
+
+  // 대화 50개씩 짤라서 가져오기
+  const { data, error } = await query
+    .order("created_at", { ascending: false })
+    .limit(50);
 
   if (error) {
     throw new Error(error.message);
   }
 
-  return data as MessageWithSender[];
+  // 최신대화 순으로 뒤집음
+  return (data as MessageWithSender[]).reverse();
 }
 
 // 메시지 보내기

@@ -1,7 +1,7 @@
 "use server";
 
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
-import { postMessage } from "@/services/chat/message";
+import { getMessage, postMessage } from "@/services/chat/message";
 
 export async function sendMessageAction(params: {
   chatId: number;
@@ -22,4 +22,12 @@ export async function sendMessageAction(params: {
   if (!userData) throw new Error("User not found");
 
   return postMessage({ ...params, senderId: userData.id }, supabase);
+}
+
+// 이전 메시지 페이지네이션 로드
+// before: 현재 화면에서 가장 오래된 메시지의 created_at (커서)
+// before 기준 이전 50개를 오름차순으로 반환
+export async function loadMoreMessagesAction(chatId: number, before: string) {
+  const supabase = await createSupabaseServerClient();
+  return getMessage(chatId, supabase, before);
 }

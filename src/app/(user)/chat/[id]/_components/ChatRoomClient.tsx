@@ -6,7 +6,7 @@ import Image from "next/image";
 import { ArrowLeft, MoreVertical, Plus, Send } from "lucide-react";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
-import { sendMessageAction } from "../actions";
+import { sendMessageAction, loadMoreMessagesAction } from "../actions";
 import { supabase } from "@/lib/supabase";
 import type { Message } from "@/type/chat/message";
 
@@ -46,11 +46,21 @@ export default function ChatRoomClient({
   const [isCooldown, setIsCooldown] = useState(false);
   const [cooldownSeconds, setCooldownSeconds] = useState(10);
 
+  // 이전 메시지 로드
+  const [hasMore, setHasMore] = useState(initialMessages.length === 50);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const sendTimestamps = useRef<number[]>([]);
+  const wasLoadingMore = useRef(false);
 
   useEffect(() => {
+    if (wasLoadingMore.current) {
+      wasLoadingMore.current = false;
+      return;
+    }
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
@@ -76,14 +86,12 @@ export default function ChatRoomClient({
               .from("messages")
               .update({ is_read: true })
               .eq("id", newMsg.id)
-              .then(); // then 없으면 실시간으로 상대가 보고있어도 1이 사라지지 않음
-            // 그 이유는 쿼리가 lazy 방식이라서 then또는 await 없이는 쿼리가 실행되지 않기 때문임...
+              .then();
           }
 
           setMessages((prev) => {
             if (prev.some((m) => m.id === newMsg.id)) return prev;
 
-            // 내가 보낸 메시지면 optimistic 메시지를 실제 메시지로 교체
             if (newMsg.sender_id === currentUser.id) {
               const idx = prev.findIndex(
                 (m) =>
@@ -148,36 +156,63 @@ export default function ChatRoomClient({
     })();
   }, []);
 
+  const loadMore = async () => {
+    if (!hasMore || isLoadingMore || messages.length === 0) return;
+    setIsLoadingMore(true);
+
+    const oldest = messages[0].created_at;
+    const data = await loadMoreMessagesAction(chatId, oldest);
+
+    if (data.length === 0) {
+      setHasMore(false);
+      setIsLoadingMore(false);
+      return;
+    }
+
+    // sender 정보를 currentUser/partner로 매핑
+    const older: MessageWithSender[] = data.map((msg) => ({
+      ...msg,
+      sender: msg.sender_id === currentUser.id ? currentUser : partner,
+    }));
+
+    const container = scrollContainerRef.current;
+    const prevScrollHeight = container?.scrollHeight ?? 0;
+
+    wasLoadingMore.current = true;
+    setMessages((prev) => [...older, ...prev]);
+    setHasMore(data.length === 50);
+    setIsLoadingMore(false);
+
+    requestAnimationFrame(() => {
+      if (container) {
+        container.scrollTop = container.scrollHeight - prevScrollHeight;
+      }
+    });
+  };
+
   const handleSend = async () => {
     if (!input.trim()) return;
 
-    // 현재 시간값 변수 생성
     const now = Date.now();
-
-    // 현재 시각을 도배방지 시간기록 배열에 추가
     sendTimestamps.current.push(now);
-
-    // 1.5초 이전 항목은 제거하고 최근 1.5초이내에 전송만 남김
     sendTimestamps.current = sendTimestamps.current.filter(
       (t) => now - t < 1500,
     );
 
-    // 만약 그렇게 필터한 내용의 채팅 테이블의 숫자가 5이상인 경우 도배처리
     if (sendTimestamps.current.length >= 5) {
       setIsCooldown(true);
-      setInput("")
-      setCooldownSeconds(10)
+      setInput("");
+      setCooldownSeconds(10);
 
-      // 도배 시간 흐르기
       const interval = setInterval(() => {
         setCooldownSeconds((prev) => {
-          if(prev <= 1){
+          if (prev <= 1) {
             clearInterval(interval);
             setIsCooldown(false);
             return 0;
           }
           return prev - 1;
-        })
+        });
       }, 1000);
 
       return;
@@ -270,7 +305,23 @@ export default function ChatRoomClient({
       </div>
 
       {/* 메시지 영역 */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 flex flex-col gap-4">
+      <div
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto px-4 py-6 flex flex-col gap-4"
+      >
+        {/* 이전 메시지 불러오기 버튼 */}
+        {hasMore && (
+          <div className="flex justify-center">
+            <button
+              onClick={loadMore}
+              disabled={isLoadingMore}
+              className="cursor-pointer px-4 py-1.5 text-xs text-teal-600 bg-teal-50 rounded-full border border-teal-200 hover:bg-teal-100 transition-colors disabled:opacity-50"
+            >
+              {isLoadingMore ? "불러오는 중..." : "이전 메시지 보기"}
+            </button>
+          </div>
+        )}
+
         {messages.map((msg) => {
           const isMine = msg.sender_id === currentUser.id;
           return (
@@ -319,7 +370,11 @@ export default function ChatRoomClient({
           disabled={isCooldown}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={isCooldown ? `도배 감지로 ${cooldownSeconds}초간 채팅이 금지되었습니다.` : "메시지를 입력하세요..."}
+          placeholder={
+            isCooldown
+              ? `도배 감지로 ${cooldownSeconds}초간 채팅이 금지되었습니다.`
+              : "메시지를 입력하세요..."
+          }
           className="flex-1 text-sm bg-gray-50 rounded-full px-4 py-2 outline-none border border-gray-200 focus:border-teal-400 transition-colors"
         />
 
