@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
-export const createSupabaseServerClient = async () => {
+export async function createClient() {
   const cookieStore = await cookies();
 
   return createServerClient(
@@ -13,11 +13,15 @@ export const createSupabaseServerClient = async () => {
           return cookieStore.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          );
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options),
+            );
+          } catch {
+            // 서버 컴포넌트에서 호출 시 무시 — middleware가 세션 갱신을 담당
+          }
         },
       },
-    }
+    },
   );
-};
+}

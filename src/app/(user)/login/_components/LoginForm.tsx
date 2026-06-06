@@ -28,7 +28,7 @@ export default function LoginForm() {
       return;
     }
 
-    router.push("/home");
+    router.push("/");
   };
 
   const handleSocialLogin = async (
@@ -36,7 +36,7 @@ export default function LoginForm() {
   ) => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: `${window.location.origin}/` },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
 
     if (error) {
