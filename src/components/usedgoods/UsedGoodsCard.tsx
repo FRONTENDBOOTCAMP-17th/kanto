@@ -38,10 +38,10 @@ export function UsedGoodsCard({
   const relativeTime = formatTimeAgo(createdAt);
 
   return (
-    <div className="relative">
-      <Link href={`/usedgoods/${id}`}>
+    <div className="relative h-full">
+      <Link href={`/usedgoods/${id}`} className="h-full block">
         <Card
-          className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
+          className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group h-full flex flex-col"
         >
           <div className="relative aspect-square overflow-hidden bg-gray-100">
             <ImageWithFallback
@@ -68,7 +68,7 @@ export function UsedGoodsCard({
             </button>
           </div>
 
-          <div className="p-4">
+          <div className="p-2 sm:p-4 flex flex-col flex-1">
             <h3
               className="font-semibold text-gray-900 mb-2 line-clamp-2 text-sm"
             >
@@ -78,7 +78,7 @@ export function UsedGoodsCard({
               ₱{price.toLocaleString()}
             </p>
             {sellerName && (
-              <p className="text-xs text-gray-400 mb-2">{sellerName}</p>
+              <p className="text-xs text-gray-400 mb-2 truncate">{sellerName}</p>
             )}
             <div
               className="flex items-center gap-2 text-xs text-gray-500 mb-1"

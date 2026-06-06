@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 
 import { getUsedGoodsList } from "@/services/usedGoods";
+import { getUserLikedPostIds } from "@/services/likes";
 import { UsedGoodsList } from "@/app/(user)/usedgoods/_components/UsedGoodsList";
 
 import { Header } from "@/components/common/Header";
@@ -8,13 +9,16 @@ import { Footer } from "@/components/common/Footer";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
 
 export default async function UsedGoodsPage() {
-  const posts = await getUsedGoodsList();
+  const [posts, likedIds] = await Promise.all([
+    getUsedGoodsList(),
+    getUserLikedPostIds("used_goods"),
+  ]);
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <Suspense fallback={<div className="flex-1" />}>
-        <UsedGoodsList initialPosts={posts} />
+        <UsedGoodsList initialPosts={posts} initialLikedIds={likedIds} />
       </Suspense>
       <Footer />
       <ScrollToTop />
