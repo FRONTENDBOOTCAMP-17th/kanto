@@ -18,7 +18,7 @@ interface Props {
   initialPosts: UsedGoodsWithPost[];
 }
 
-export function UsedGoodsContent({ initialPosts }: Props) {
+export function UsedGoodsList({ initialPosts }: Props) {
   const router = useRouter();
   const { items, showLoginModal, setShowLoginModal, handleLikeToggle } =
     useLikes(initialPosts);
