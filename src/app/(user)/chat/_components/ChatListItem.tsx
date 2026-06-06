@@ -20,11 +20,20 @@ interface Props {
   onClick: () => void;
 }
 
-export default function ChatListItem({ chat, currentUserId, isLast, onClick }: Props) {
+export default function ChatListItem({
+  chat,
+  currentUserId,
+  isLast,
+  onClick,
+}: Props) {
   const otherUser = chat.user_id_1 === currentUserId ? chat.user2 : chat.user1;
   const lastMessage = chat.last_message_content;
-  const unreadCount = chat.messages?.filter((m) => !m.is_read).length ?? 0;
-  const category = categoryLabel[chat.posts?.post_type ?? ""] ?? chat.posts?.post_type ?? "";
+  const unreadCount =
+    currentUserId === chat.user_id_1
+      ? (chat.user_id_1_unread ?? 0)
+      : (chat.user_id_2_unread ?? 0);
+  const category =
+    categoryLabel[chat.posts?.post_type ?? ""] ?? chat.posts?.post_type ?? "";
 
   return (
     <div
@@ -43,12 +52,16 @@ export default function ChatListItem({ chat, currentUserId, isLast, onClick }: P
             {otherUser?.name ?? "알 수 없음"}
           </span>
           {category && (
-            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${categoryStyle[category] ?? "bg-gray-100 text-gray-500"}`}>
+            <span
+              className={`text-xs px-2 py-0.5 rounded-full font-medium ${categoryStyle[category] ?? "bg-gray-100 text-gray-500"}`}
+            >
               {category}
             </span>
           )}
         </div>
-        <p className={`text-sm truncate ${unreadCount > 0 ? "font-medium text-teal-600" : "text-gray-400"}`}>
+        <p
+          className={`text-sm truncate ${unreadCount > 0 ? "font-medium text-teal-600" : "text-gray-400"}`}
+        >
           {lastMessage ?? "메시지가 없습니다"}
         </p>
       </div>
@@ -58,7 +71,7 @@ export default function ChatListItem({ chat, currentUserId, isLast, onClick }: P
           {formatChatListTime(chat.last_message_at)}
         </span>
         {unreadCount > 0 && (
-          <span className="w-5 h-5 rounded-full bg-teal-500 text-white text-xs flex items-center justify-center font-medium">
+          <span className="w-5 h-5 rounded-full bg-orange-500 text-white text-xs flex items-center justify-center font-medium">
             {unreadCount}
           </span>
         )}

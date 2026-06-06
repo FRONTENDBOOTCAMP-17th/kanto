@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
-import { sendMessageAction } from "../actions";
+import { markChatReadAction, sendMessageAction } from "../actions";
 import { useSpamPrevention } from "@/hooks/chat/useSpamPrevention";
 import { useChatRoomRealtime } from "@/hooks/chat/useChatRoomRealtime";
 import { useChatMessages } from "@/hooks/chat/useChatMessages";
@@ -74,6 +74,10 @@ export default function ChatRoomClient({
       setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
     }
   };
+
+  useEffect(() => {
+    markChatReadAction(chatId);
+  }, [chatId]);
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">

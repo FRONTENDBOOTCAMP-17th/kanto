@@ -10,7 +10,9 @@ export async function sendMessageAction(params: {
 }) {
   const supabase = await createSupabaseServerClient();
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
 
   const { data: userData } = await supabase
@@ -30,4 +32,32 @@ export async function sendMessageAction(params: {
 export async function loadMoreMessagesAction(chatId: number, before: string) {
   const supabase = await createSupabaseServerClient();
   return getMessage(chatId, supabase, before);
+}
+
+export async function markChatReadAction(chatId: number) {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const { data: userData } = await supabase
+    .from("users")
+    .select("id")
+    .eq("auth_id", user.id)
+    .single();
+  if (!userData) return;
+
+  const { data: chat } = await supabase
+    .from("chats")
+    .select("user_id_1")
+    .eq("id", chatId)
+    .single();
+  if (!chat) return;
+
+  const isUser1 = chat.user_id_1 === userData.id;
+  await supabase
+    .from("chats")
+    .update(isUser1 ? { user_id_1_unread: 0 } : { user_id_2_unread: 0 })
+    .eq("id", chatId);
 }
