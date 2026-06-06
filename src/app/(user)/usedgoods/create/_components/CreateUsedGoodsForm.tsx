@@ -36,7 +36,8 @@ export function CreateUsedGoodsForm({ userId }: { userId: number }) {
   const [preferredLocationDetail, setPreferredLocationDetail] = useState("");
   const [content, setContent] = useState("");
   const [safePayment, setSafePayment] = useState(false);
-  const [images, setImages] = useState<string[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -65,7 +66,28 @@ export function CreateUsedGoodsForm({ userId }: { userId: number }) {
       return;
     }
 
-    // Step 2: used_goods 테이블 insert
+    // Step 2: Storage 이미지 업로드
+    const uploadedUrls: string[] = [];
+    for (const file of imageFiles) {
+      const filePath = `${userId}/${post.id}/${Date.now()}_${file.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from("images")
+        .upload(filePath, file);
+
+      if (uploadError) {
+        await supabase.from("posts").delete().eq("id", post.id);
+        alert("이미지 업로드에 실패했습니다.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const { data: urlData } = supabase.storage
+        .from("images")
+        .getPublicUrl(filePath);
+      uploadedUrls.push(urlData.publicUrl);
+    }
+
+    // Step 3: used_goods 테이블 insert
     const { error: goodsError } = await supabase.from("used_goods").insert({
       post_id: post.id,
       price: Number(price),
@@ -73,7 +95,7 @@ export function CreateUsedGoodsForm({ userId }: { userId: number }) {
       condition,
       safe_payment: safePayment,
       content,
-      images: null, // TODO: Supabase Storage 업로드 후 URL 배열로 교체
+      images: uploadedUrls.length > 0 ? uploadedUrls : null,
       location_type: preferredLocation,
       location_custom:
         preferredLocation === "그 외 지역" ? preferredLocationDetail : null,
@@ -94,15 +116,21 @@ export function CreateUsedGoodsForm({ userId }: { userId: number }) {
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
-    const remaining = 10 - images.length;
-    files.slice(0, remaining).forEach((file) => {
-      setImages((prev) => [...prev, URL.createObjectURL(file)]);
-    });
+    const remaining = 10 - imageFiles.length;
+    const allowedFiles = files.slice(0, remaining);
+
+    setImageFiles((prev) => [...prev, ...allowedFiles]);
+    setImagePreviews((prev) => [
+      ...prev,
+      ...allowedFiles.map((file) => URL.createObjectURL(file)),
+    ]);
     e.target.value = "";
   };
 
   const removeImage = (index: number) => {
-    setImages(images.filter((_, i) => i !== index));
+    URL.revokeObjectURL(imagePreviews[index]);
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -240,9 +268,9 @@ export function CreateUsedGoodsForm({ userId }: { userId: number }) {
                 onChange={handleImageSelect}
               />
               <div className="space-y-3">
-                {images.length > 0 && (
+                {imagePreviews.length > 0 && (
                   <div className="grid grid-cols-5 gap-3">
-                    {images.map((img, index) => (
+                    {imagePreviews.map((img, index) => (
                       <div key={index} className="relative aspect-square">
                         <img
                           src={img}
@@ -260,7 +288,7 @@ export function CreateUsedGoodsForm({ userId }: { userId: number }) {
                     ))}
                   </div>
                 )}
-                {images.length < 10 && (
+                {imagePreviews.length < 10 && (
                   <button
                     type="button"
                     onClick={handleImageUpload}
@@ -269,7 +297,7 @@ export function CreateUsedGoodsForm({ userId }: { userId: number }) {
                     <div className="flex flex-col items-center gap-2 text-gray-500">
                       <ImagePlus className="w-8 h-8" />
                       <span className="text-sm">사진 추가하기</span>
-                      <span className="text-xs">({images.length}/10)</span>
+                      <span className="text-xs">({imagePreviews.length}/10)</span>
                     </div>
                   </button>
                 )}
