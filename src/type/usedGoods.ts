@@ -48,7 +48,7 @@ export type UsedGoods = {
 } & UsedGoodsLocation;
 
 export interface UsedGoodsWithPost extends Post {
-  used_goods: UsedGoods;
+  used_goods: UsedGoods[];
   users: SellerInfo;
 }
 
