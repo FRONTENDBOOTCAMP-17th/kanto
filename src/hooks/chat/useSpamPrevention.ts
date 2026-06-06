@@ -11,7 +11,7 @@ export function useSpamPrevention() {
     const now = Date.now();
     sendTimestamps.current.push(now);
     sendTimestamps.current = sendTimestamps.current.filter(
-      (t) => now - t < 1500,
+      (t) => now - t < 3000,
     );
 
     if (sendTimestamps.current.length >= 5) {
