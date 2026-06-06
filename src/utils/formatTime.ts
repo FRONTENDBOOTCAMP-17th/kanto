@@ -33,3 +33,11 @@ export function formatChatListTime(dateStr: string | null): string {
   if (diffMonths < 1) return `${diffWeeks}주 전`;
   return `${diffMonths}달 전`;
 }
+
+export function formatDateDivider(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}

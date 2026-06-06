@@ -1,7 +1,7 @@
-import type { RefObject } from "react";
+import { Fragment, type RefObject } from "react";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
-import { formatMessageTime } from "@/utils/formatTime";
+import { formatDateDivider, formatMessageTime } from "@/utils/formatTime";
 
 interface Props {
   messages: MessageWithSender[];
@@ -39,37 +39,55 @@ export default function MessageList({
         </div>
       )}
 
-      {messages.map((msg) => {
+      {messages.map((msg, index) => {
         const isMine = msg.sender_id === currentUser.id;
+
+        const msgDate = new Date(msg.created_at).toDateString();
+        const prevDate =
+          index > 0
+            ? new Date(messages[index - 1].created_at).toDateString()
+            : null;
+        const showDivider = msgDate !== prevDate;
+
         return (
-          <div
-            key={msg.id}
-            className={`flex flex-col gap-1 ${isMine ? "items-end" : "items-start"}`}
-          >
+          <Fragment key={msg.id}>
+            {showDivider && (
+              <div className="flex items-center gap-3 my-2">
+                <div className="flex-1 h-px bg-gray-200" />
+                <span className="text-xs text-gray-400">
+                  {formatDateDivider(msg.created_at)}
+                </span>
+                <div className="flex-1 h-px bg-gray-200" />
+              </div>
+            )}
             <div
-              className={`flex items-end gap-1 ${isMine ? "flex-row-reverse" : ""}`}
+              className={`flex flex-col gap-1 ${isMine ? "items-end" : "items-start"}`}
             >
               <div
-                className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed break-keep ${
-                  isMine
-                    ? "bg-teal-500 text-white rounded-tr-sm"
-                    : "bg-white text-gray-800 rounded-tl-sm shadow-sm"
-                }`}
+                className={`flex items-end gap-1 ${isMine ? "flex-row-reverse" : ""}`}
               >
-                {msg.content}
-              </div>
-              <div
-                className={`flex flex-col shrink-0 ${isMine ? "items-end" : "items-start"}`}
-              >
-                {isMine && !msg.is_read && (
-                  <span className="text-xs text-teal-500 font-medium">1</span>
-                )}
-                <span className="text-xs text-gray-400">
-                  {formatMessageTime(msg.created_at)}
-                </span>
+                <div
+                  className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed break-keep ${
+                    isMine
+                      ? "bg-teal-500 text-white rounded-tr-sm"
+                      : "bg-white text-gray-800 rounded-tl-sm shadow-sm"
+                  }`}
+                >
+                  {msg.content}
+                </div>
+                <div
+                  className={`flex flex-col shrink-0 ${isMine ? "items-end" : "items-start"}`}
+                >
+                  {isMine && !msg.is_read && (
+                    <span className="text-xs text-teal-500 font-medium">1</span>
+                  )}
+                  <span className="text-xs text-gray-400">
+                    {formatMessageTime(msg.created_at)}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+          </Fragment>
         );
       })}
       <div ref={messagesEndRef} />
