@@ -10,6 +10,8 @@ import { sendMessageAction, loadMoreMessagesAction } from "../actions";
 import { supabase } from "@/lib/supabase";
 import type { Message } from "@/type/chat/message";
 import { formatMessageTime } from "@/utils/formatTime";
+import { useClickOutside } from "@/hooks/useClickOutside";
+import { useSpamPrevention } from "@/hooks/chat/useSpamPrevention";
 
 interface Props {
   initialMessages: MessageWithSender[];
@@ -34,18 +36,15 @@ export default function ChatRoomClient({
   const [input, setInput] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // 도배방지 상태
-  const [isCooldown, setIsCooldown] = useState(false);
-  const [cooldownSeconds, setCooldownSeconds] = useState(10);
-
   // 이전 메시지 로드
   const [hasMore, setHasMore] = useState(initialMessages.length === 50);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
+  const { isCooldown, cooldownSeconds, recordSend } = useSpamPrevention();
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const sendTimestamps = useRef<number[]>([]);
   const wasLoadingMore = useRef(false);
 
   useEffect(() => {
@@ -55,6 +54,9 @@ export default function ChatRoomClient({
     }
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // 바깥 클릭시 닫힘 (모달로 둘수도 있어서 일단 추가했음)
+  useClickOutside(menuRef, () => setMenuOpen(false));
 
   useEffect(() => {
     const channel = supabase
@@ -128,16 +130,6 @@ export default function ChatRoomClient({
   }, [chatId, currentUser, partner]);
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
     (async () => {
       await supabase
         .from("messages")
@@ -185,28 +177,8 @@ export default function ChatRoomClient({
   const handleSend = async () => {
     if (!input.trim()) return;
 
-    const now = Date.now();
-    sendTimestamps.current.push(now);
-    sendTimestamps.current = sendTimestamps.current.filter(
-      (t) => now - t < 1500,
-    );
-
-    if (sendTimestamps.current.length >= 5) {
-      setIsCooldown(true);
+    if (recordSend()) {
       setInput("");
-      setCooldownSeconds(10);
-
-      const interval = setInterval(() => {
-        setCooldownSeconds((prev) => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            setIsCooldown(false);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-
       return;
     }
 
