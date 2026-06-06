@@ -37,21 +37,19 @@ export function formatUsedGoodsItemWithLike(
 }
 
 // 찜 관련 상태와 로직을 관리하는 커스텀 훅. 로그인 세션 확인 및 찜 목록 초기화, 찜 토글 기능 제공.
-export function useLikes(initialPosts: UsedGoodsWithPost[]) {
-  const [items, setItems] = useState<UsedGoodsListItem[]>(() =>
-    initialPosts.map((post) => formatUsedGoodsItemWithLike(post, new Set())),
-  );
+export function useLikes(initialPosts: UsedGoodsWithPost[], initialLikedIds: number[]) {
+  const [items, setItems] = useState<UsedGoodsListItem[]>(() => {
+    const likedSet = new Set(initialLikedIds);
+    return initialPosts.map((post) => formatUsedGoodsItemWithLike(post, likedSet));
+  });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
   useEffect(() => {
-    const initLikes = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+    const initSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       setIsLoggedIn(!!session);
-
       if (!session) return;
 
       const { data: userData } = await supabase
@@ -60,26 +58,11 @@ export function useLikes(initialPosts: UsedGoodsWithPost[]) {
         .eq("auth_id", session.user.id)
         .single();
 
-      if (!userData) return;
-
-      setCurrentUserId(userData.id);
-
-      const { data: likesData } = await supabase
-        .from("common_likes")
-        .select("target_id")
-        .eq("user_id", userData.id)
-        .eq("target_type", "post");
-
-      if (likesData) {
-        const likedIds = new Set(
-          likesData.map((l: { target_id: number }) => l.target_id),
-        );
-        setItems(initialPosts.map((post) => formatUsedGoodsItemWithLike(post, likedIds)));
-      }
+      if (userData) setCurrentUserId(userData.id);
     };
 
-    initLikes();
-  }, [initialPosts]);
+    initSession();
+  }, []);
 
   // 찜 버튼 클릭 시 호출. 비로그인이면 로그인 모달 표시, 로그인 상태면 찜 추가/취소 후 DB 반영.
   const handleLikeToggle = async (id: number) => {

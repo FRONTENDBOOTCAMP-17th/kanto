@@ -16,12 +16,13 @@ import type { UsedGoodsWithPost } from "@/type/usedGoods";
 
 interface Props {
   initialPosts: UsedGoodsWithPost[];
+  initialLikedIds: number[];
 }
 
-export function UsedGoodsList({ initialPosts }: Props) {
+export function UsedGoodsList({ initialPosts, initialLikedIds }: Props) {
   const router = useRouter();
   const { items, showLoginModal, setShowLoginModal, handleLikeToggle } =
-    useLikes(initialPosts);
+    useLikes(initialPosts, initialLikedIds);
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -52,7 +53,7 @@ export function UsedGoodsList({ initialPosts }: Props) {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {pagedItems.map((item) => (
               <UsedGoodsCard
                 key={item.id}
