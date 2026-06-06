@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   images: {
     remotePatterns: [
+      { hostname: "dhvvrtyzurouttlswpbq.supabase.co" },
       {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
