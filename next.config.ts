@@ -6,12 +6,15 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "lh3.googleusercontent.com",
+        hostname: "picsum.photos",
       },
+      { hostname: "dhvvrtyzurouttlswpbq.supabase.co" },
       {
         protocol: "https",
-        hostname: "k.kakaocdn.net",
+        hostname: "lh3.googleusercontent.com",
       },
+      { hostname: "k.kakaocdn.net" },
+      { hostname: "img1.kakaocdn.net" },
       {
         protocol: "https",
         hostname: "*.fbcdn.net",

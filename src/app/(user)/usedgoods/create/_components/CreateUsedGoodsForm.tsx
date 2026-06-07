@@ -15,35 +15,98 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { supabase } from "@/lib/supabase";
+import {
+  PRODUCT_CATEGORIES,
+  PRODUCT_CONDITIONS,
+  TRADE_LOCATIONS,
+  type ProductCategory,
+  type ProductCondition,
+  type TradeLocation,
+} from "@/type/usedGoods";
 
-const LOCATIONS = [
-  { id: "bgc-taguig", name: "BGC / Taguig" },
-  { id: "makati", name: "Makati" },
-  { id: "pasay-paranaque", name: "Pasay / Paranaque" },
-  { id: "quezon-city", name: "Quezon City" },
-  { id: "mandaluyong-pasig", name: "Mandaluyong / Pasig" },
-  { id: "pampanga", name: "Pampanga" },
-  { id: "others", name: "그 외 지역" },
-];
-
-export function CreateUsedGoodsForm() {
+export function CreateUsedGoodsForm({ userId }: { userId: number }) {
   const router = useRouter();
 
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
-  const [productCategory, setProductCategory] = useState("");
-  const [condition, setCondition] = useState("");
-  const [preferredLocation, setPreferredLocation] = useState("");
+  const [productCategory, setProductCategory] = useState<ProductCategory | "">("");
+  const [condition, setCondition] = useState<ProductCondition | "">("");
+  const [preferredLocation, setPreferredLocation] = useState<TradeLocation | "">("");
   const [preferredLocationDetail, setPreferredLocationDetail] = useState("");
   const [content, setContent] = useState("");
   const [safePayment, setSafePayment] = useState(false);
-  const [images, setImages] = useState<string[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Supabase insert — posts 테이블(post_type='used_goods') 및 used_goods 테이블 연동
-    alert("게시글이 작성되었습니다!");
+    if (!productCategory || !condition || !preferredLocation) return;
+    setIsSubmitting(true);
+
+    // Step 1: posts 테이블 insert
+    const { data: post, error: postError } = await supabase
+      .from("posts")
+      .insert({
+        user_id: userId,
+        post_type: "used_goods",
+        title,
+        status: "active",
+        view_count: 0,
+        like_count: 0,
+      })
+      .select("id")
+      .single();
+
+    if (postError || !post) {
+      alert("게시글 등록에 실패했습니다.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Step 2: Storage 이미지 업로드
+    const uploadedUrls: string[] = [];
+    for (const file of imageFiles) {
+      const filePath = `${userId}/${post.id}/${Date.now()}_${file.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from("images")
+        .upload(filePath, file);
+
+      if (uploadError) {
+        await supabase.from("posts").delete().eq("id", post.id);
+        alert("이미지 업로드에 실패했습니다.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const { data: urlData } = supabase.storage
+        .from("images")
+        .getPublicUrl(filePath);
+      uploadedUrls.push(urlData.publicUrl);
+    }
+
+    // Step 3: used_goods 테이블 insert
+    const { error: goodsError } = await supabase.from("used_goods").insert({
+      post_id: post.id,
+      price: Number(price),
+      category: productCategory,
+      condition,
+      safe_payment: safePayment,
+      content,
+      images: uploadedUrls.length > 0 ? uploadedUrls : null,
+      location_type: preferredLocation,
+      location_custom:
+        preferredLocation === "그 외 지역" ? preferredLocationDetail : null,
+    });
+
+    if (goodsError) {
+      alert("상품 정보 등록에 실패했습니다.");
+      setIsSubmitting(false);
+      return;
+    }
+
     router.push("/usedgoods");
   };
 
@@ -53,15 +116,21 @@ export function CreateUsedGoodsForm() {
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
-    const remaining = 10 - images.length;
-    files.slice(0, remaining).forEach((file) => {
-      setImages((prev) => [...prev, URL.createObjectURL(file)]);
-    });
+    const remaining = 10 - imageFiles.length;
+    const allowedFiles = files.slice(0, remaining);
+
+    setImageFiles((prev) => [...prev, ...allowedFiles]);
+    setImagePreviews((prev) => [
+      ...prev,
+      ...allowedFiles.map((file) => URL.createObjectURL(file)),
+    ]);
     e.target.value = "";
   };
 
   const removeImage = (index: number) => {
-    setImages(images.filter((_, i) => i !== index));
+    URL.revokeObjectURL(imagePreviews[index]);
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -112,32 +181,38 @@ export function CreateUsedGoodsForm() {
               <Label htmlFor="productCategory">상품 카테고리 *</Label>
               <Select
                 value={productCategory}
-                onValueChange={setProductCategory}
+                onValueChange={(v) => setProductCategory(v as ProductCategory)}
+                required
               >
                 <SelectTrigger>
                   <SelectValue placeholder="카테고리를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="electronics">전자기기</SelectItem>
-                  <SelectItem value="furniture">가구</SelectItem>
-                  <SelectItem value="clothing">의류</SelectItem>
-                  <SelectItem value="accessories">악세사리</SelectItem>
-                  <SelectItem value="baby">유아 용품</SelectItem>
-                  <SelectItem value="others">기타</SelectItem>
+                  {PRODUCT_CATEGORIES.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="condition">상태 *</Label>
-              <Select value={condition} onValueChange={setCondition}>
+              <Select
+                value={condition}
+                onValueChange={(v) => setCondition(v as ProductCondition)}
+                required
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="상태를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="unopened">미개봉 중고</SelectItem>
-                  <SelectItem value="light">가벼운 사용감</SelectItem>
-                  <SelectItem value="used">사용감 있음</SelectItem>
+                  {PRODUCT_CONDITIONS.map((cond) => (
+                    <SelectItem key={cond} value={cond}>
+                      {cond}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -146,20 +221,21 @@ export function CreateUsedGoodsForm() {
               <Label htmlFor="preferredLocation">거래 지역 *</Label>
               <Select
                 value={preferredLocation}
-                onValueChange={setPreferredLocation}
+                onValueChange={(v) => setPreferredLocation(v as TradeLocation)}
+                required
               >
                 <SelectTrigger>
                   <SelectValue placeholder="지역을 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  {LOCATIONS.map((location) => (
-                    <SelectItem key={location.id} value={location.id}>
-                      {location.name}
+                  {TRADE_LOCATIONS.map((loc) => (
+                    <SelectItem key={loc} value={loc}>
+                      {loc}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {preferredLocation === "others" && (
+              {preferredLocation === "그 외 지역" && (
                 <Input
                   placeholder="상세 지역을 입력하세요"
                   value={preferredLocationDetail}
@@ -192,9 +268,9 @@ export function CreateUsedGoodsForm() {
                 onChange={handleImageSelect}
               />
               <div className="space-y-3">
-                {images.length > 0 && (
+                {imagePreviews.length > 0 && (
                   <div className="grid grid-cols-5 gap-3">
-                    {images.map((img, index) => (
+                    {imagePreviews.map((img, index) => (
                       <div key={index} className="relative aspect-square">
                         <img
                           src={img}
@@ -212,7 +288,7 @@ export function CreateUsedGoodsForm() {
                     ))}
                   </div>
                 )}
-                {images.length < 10 && (
+                {imagePreviews.length < 10 && (
                   <button
                     type="button"
                     onClick={handleImageUpload}
@@ -221,7 +297,7 @@ export function CreateUsedGoodsForm() {
                     <div className="flex flex-col items-center gap-2 text-gray-500">
                       <ImagePlus className="w-8 h-8" />
                       <span className="text-sm">사진 추가하기</span>
-                      <span className="text-xs">({images.length}/10)</span>
+                      <span className="text-xs">({imagePreviews.length}/10)</span>
                     </div>
                   </button>
                 )}
@@ -247,14 +323,16 @@ export function CreateUsedGoodsForm() {
                 variant="outline"
                 onClick={() => router.back()}
                 className="flex-1"
+                disabled={isSubmitting}
               >
                 취소
               </Button>
               <Button
                 type="submit"
                 className="flex-1 bg-teal-500 hover:bg-teal-600"
+                disabled={isSubmitting}
               >
-                작성 완료
+                {isSubmitting ? "등록 중..." : "작성 완료"}
               </Button>
             </div>
           </form>

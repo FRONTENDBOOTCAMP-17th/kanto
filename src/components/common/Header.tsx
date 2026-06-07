@@ -185,7 +185,7 @@ export function Header() {
 
             {/* 알림 — 로그인 시에만 표시 */}
             {user && (
-              <div className="relative hidden sm:flex" ref={notificationRef}>
+              <div className="relative hidden md:flex" ref={notificationRef}>
                 <Button
                   variant="ghost"
                   size="icon"
