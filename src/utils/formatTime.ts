@@ -55,3 +55,11 @@ export function formatDateDivider(dateStr: string): string {
     day: "numeric",
   });
 }
+
+export function formatSellerInfoCreatedAt(date: string | null): string {
+  if (!date) {
+    return `가입일 정보 없음`;
+  }
+  const accession = new Date(date);
+  return `${accession.getFullYear()}년 ${accession.getMonth() + 1}월 가입`;
+}
