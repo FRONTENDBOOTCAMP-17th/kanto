@@ -24,7 +24,7 @@ export async function getUsedGoodsList(): Promise<UsedGoodsWithPost[]> {
 
 // 중고마켓 단건 상세 조회
 export async function getUsedGoodsDetail(
-  postId: number
+  postId: number,
 ): Promise<UsedGoodsWithPost> {
   const supabase = await createSupabaseServerClient();
 
@@ -42,7 +42,7 @@ export async function getUsedGoodsDetail(
 
 // 카테고리별 목록 조회
 export async function getUsedGoodsByCategory(
-  category: string
+  category: string,
 ): Promise<UsedGoodsWithPost[]> {
   const supabase = await createSupabaseServerClient();
 
