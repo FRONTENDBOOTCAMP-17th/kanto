@@ -1,9 +1,9 @@
 import type { Tables } from "@/type/supabase";
-import type { Post } from "./post";
-import type { SellerInfo } from "./user";
+import type { Post } from "@/type/post";
+import type { SellerInfo } from "@/type/user";
 
-export type { TradeLocation } from "./location";
-export { TRADE_LOCATIONS } from "./location";
+export type { TradeLocation } from "@/type/location";
+export { TRADE_LOCATIONS } from "@/type/location";
 
 export const PRODUCT_CATEGORIES = [
   "가구",

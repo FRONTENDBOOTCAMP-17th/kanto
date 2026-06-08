@@ -18,12 +18,12 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/lib/supabase";
 import { TRADE_LOCATIONS, type TradeLocation } from "@/type/location";
-
-const EMPLOYEE_TYPES = ["정규직", "계약직", "파트타임"] as const;
-const SALARY_TYPES = ["시급", "주급", "월급"] as const;
-
-type EmployeeType = (typeof EMPLOYEE_TYPES)[number];
-type SalaryType = (typeof SALARY_TYPES)[number];
+import {
+  EMPLOYEE_TYPES,
+  SALARY_TYPES,
+  type EmployeeType,
+  type SalaryType,
+} from "@/type/job";
 
 export function CreateJobForm({ userId }: { userId: number }) {
   const router = useRouter();
