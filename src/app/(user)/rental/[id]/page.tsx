@@ -1,8 +1,8 @@
 import { getRentalDetail } from "@/services/rental";
 import BackButton from "@/app/(user)/rental/[id]/_components/BackButton";
-import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarrecel";
+import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarresel";
 import AccommondationInfo from "./_components/AccommondationInfo";
-import RentSellorInfo from "./_components/RentSellerInfo";
+import RentSellerInfo from "./_components/RentSellerInfo";
 import PostInfo from "./_components/PostInfo";
 
 export default async function RentalDetail({
@@ -34,7 +34,7 @@ export default async function RentalDetail({
         <div className="border border-gray-200 rounded-2xl p-6 flex flex-col gap-4">
           <AccommondationInfo rental={rental} />
           <hr className="border-gray-200" />
-          <RentSellorInfo rental={rental} />
+          <RentSellerInfo rental={rental} />
         </div>
       </div>
       <PostInfo rental={rental} />

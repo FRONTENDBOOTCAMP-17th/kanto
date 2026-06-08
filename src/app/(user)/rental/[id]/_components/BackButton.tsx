@@ -7,8 +7,8 @@ export default function BackButton() {
   const router = useRouter();
   return (
     <button
-      onClick={() => router.push("/usedgoods")}
-      className="flex mx-2 my-4 gap-2"
+      onClick={() => router.push("/rental")}
+      className="flex mx-2 my-4 gap-2 cursor-pointer"
     >
       <MoveLeft />
       목록으로

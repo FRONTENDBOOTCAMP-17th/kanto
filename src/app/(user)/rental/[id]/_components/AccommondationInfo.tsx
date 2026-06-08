@@ -57,7 +57,7 @@ export default function AccommondationInfo({ rental }: { rental: Rental }) {
         <dd className="text-gray-700">
           · ₱ {rental.deposit?.toLocaleString()}
         </dd>
-        <dt className="text-gray-500 font-medium">월세</dt>
+        <dt className="text-gray-500 font-medium">{rental.rent_type}</dt>
         <dd className="text-orange-500">
           · ₱ {rental.price?.toLocaleString()}
         </dd>

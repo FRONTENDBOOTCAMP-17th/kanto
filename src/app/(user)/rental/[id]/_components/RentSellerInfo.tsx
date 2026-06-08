@@ -2,6 +2,7 @@ import { RentalWithPost } from "@/type/rental/rental";
 import Image from "next/image";
 import { formatSellerInfoCreatedAt } from "@/utils/formatTime";
 import { User } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function RentSellorInfo({ rental }: { rental: RentalWithPost }) {
   return (
@@ -29,9 +30,9 @@ export default function RentSellorInfo({ rental }: { rental: RentalWithPost }) {
         </div>
       </div>
 
-      <button className="w-full bg-teal-500 hover:bg-teal-600 text-white py-3 rounded-xl font-medium cursor-pointer transition-colors">
+      <Button className="bg-teal-500 hover:bg-teal-600 cursor-pointer">
         문의하기
-      </button>
+      </Button>
     </>
   );
 }
