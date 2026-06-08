@@ -5,7 +5,7 @@ import { RentalWithPost } from "@/type/rental/rental";
 
 export default function PostInfo({ rental }: { rental: RentalWithPost }) {
   return (
-    <div className="mt-6">
+    <div className="mt-2 md:mt-4 border border-gray-200 rounded-2xl p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">{rental.posts.title}</h1>
         <div className="flex gap-2">
@@ -34,7 +34,7 @@ export default function PostInfo({ rental }: { rental: RentalWithPost }) {
       </p>
 
       <div className="text-gray-400 text-sm flex gap-4 mt-3">
-        <span className="flex items-center gap-1">
+        <span className="flex items-center leading-none gap-1">
           <Clock className="w-4 h-4" />
           {formatChatListTime(rental.created_at)}
         </span>

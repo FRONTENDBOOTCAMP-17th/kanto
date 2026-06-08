@@ -26,9 +26,9 @@ export default async function RentalDetail({
   const images = (rental.images as string[]) ?? [];
 
   return (
-    <div>
+    <>
       <BackButton />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4 mt-4">
         <ImageCarousel images={images} />
 
         <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4">
@@ -38,6 +38,6 @@ export default async function RentalDetail({
         </div>
       </div>
       <PostInfo rental={rental} />
-    </div>
+    </>
   );
 }

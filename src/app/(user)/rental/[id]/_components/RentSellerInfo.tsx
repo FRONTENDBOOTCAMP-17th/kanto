@@ -23,7 +23,7 @@ export default function RentSellorInfo({ rental }: { rental: RentalWithPost }) {
           </div>
         )}
         <div>
-          <p className="">{rental.posts.users.name}</p>
+          <p>{rental.posts.users.name}</p>
           <p className="text-sm text-gray-500">
             {formatSellerInfoCreatedAt(rental.posts.users.created_at)}
           </p>
