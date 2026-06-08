@@ -365,12 +365,14 @@ export type Database = {
           company_year: number | null
           contact: string | null
           created_at: string
-          deadline: string | null
+          deadline: string
           employee_count: number | null
-          employee_type: string | null
+          employee_type: string
           id: number
           images: Json | null
           industry: string | null
+          location_custom: string | null
+          location_type: Database["public"]["Enums"]["trade_location"]
           main_task: string
           manager_email: string | null
           manager_name: string | null
@@ -378,11 +380,9 @@ export type Database = {
           manager_title: string | null
           post_id: number
           preferred: string | null
-          region: Database["public"]["Enums"]["trade_location"]
-          region_detail: string | null
-          salary: number | null
+          salary: number
           salary_type: string | null
-          work_hours: string | null
+          work_hours: string
         }
         Insert: {
           applicant_count?: string | null
@@ -393,12 +393,14 @@ export type Database = {
           company_year?: number | null
           contact?: string | null
           created_at?: string
-          deadline?: string | null
+          deadline: string
           employee_count?: number | null
-          employee_type?: string | null
+          employee_type: string
           id?: number
           images?: Json | null
           industry?: string | null
+          location_custom?: string | null
+          location_type: Database["public"]["Enums"]["trade_location"]
           main_task: string
           manager_email?: string | null
           manager_name?: string | null
@@ -406,11 +408,9 @@ export type Database = {
           manager_title?: string | null
           post_id: number
           preferred?: string | null
-          region: Database["public"]["Enums"]["trade_location"]
-          region_detail?: string | null
-          salary?: number | null
+          salary: number
           salary_type?: string | null
-          work_hours?: string | null
+          work_hours: string
         }
         Update: {
           applicant_count?: string | null
@@ -421,12 +421,14 @@ export type Database = {
           company_year?: number | null
           contact?: string | null
           created_at?: string
-          deadline?: string | null
+          deadline?: string
           employee_count?: number | null
-          employee_type?: string | null
+          employee_type?: string
           id?: number
           images?: Json | null
           industry?: string | null
+          location_custom?: string | null
+          location_type?: Database["public"]["Enums"]["trade_location"]
           main_task?: string
           manager_email?: string | null
           manager_name?: string | null
@@ -434,11 +436,9 @@ export type Database = {
           manager_title?: string | null
           post_id?: number
           preferred?: string | null
-          region?: Database["public"]["Enums"]["trade_location"]
-          region_detail?: string | null
-          salary?: number | null
+          salary?: number
           salary_type?: string | null
-          work_hours?: string | null
+          work_hours?: string
         }
         Relationships: [
           {
