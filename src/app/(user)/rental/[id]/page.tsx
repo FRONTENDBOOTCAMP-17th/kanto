@@ -1,5 +1,4 @@
-import { supabase } from "@/lib/supabase";
-import { RentalWithPost } from "@/type/rental/rental";
+import { getRentalDetail } from "@/services/rental";
 import BackButton from "@/app/(user)/rental/[id]/_components/BackButton";
 import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarrecel";
 import AccommondationInfo from "./_components/AccommondationInfo";
@@ -13,21 +12,17 @@ export default async function RentalDetail({
 }) {
   const { id } = await params;
 
-  const { data, error } = await supabase
-    .from("rentals")
-    .select("*, posts(*, users(*))")
-    .eq("post_id", id)
-    .single();
-
-  if (!data)
+  let rental;
+  try {
+    rental = await getRentalDetail(id);
+  } catch {
     return (
       <div className="p-8 text-center text-gray-500">
         게시글을 찾을 수 없습니다.
       </div>
     );
-  if (error) throw new Error(error.message);
+  }
 
-  const rental = data as RentalWithPost;
   const images = (rental.images as string[]) ?? [];
 
   return (
