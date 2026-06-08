@@ -1,4 +1,4 @@
-import { formatChatListTime } from "@/utils/formatTime";
+import { formatTimeAgo } from "@/utils/formatTime";
 import { Siren, Heart, Share2, Clock, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RentalWithPost } from "@/type/rental/rental";
@@ -36,7 +36,7 @@ export default function PostInfo({ rental }: { rental: RentalWithPost }) {
       <div className="text-gray-400 text-sm flex gap-4 mt-3">
         <span className="flex items-center leading-none gap-1">
           <Clock className="w-4 h-4" />
-          {formatChatListTime(rental.created_at)}
+          {formatTimeAgo(rental.created_at)}
         </span>
         <span className="flex items-center gap-1">
           <Eye className="w-4 h-4" />

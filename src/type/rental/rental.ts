@@ -1,4 +1,5 @@
 import type { Database } from "@/type/supabase";
+import type { Post } from "@/type/post";
 
 export const RENT_TYPES = ["월세", "매매"] as const;
 export const ROOM_TYPES = ["아파트", "스튜디오", "투룸"] as const;
@@ -28,7 +29,7 @@ export type RentSellerInfo = Pick<
 >;
 
 export type RentalWithPost = Rental & {
-  posts: Database["public"]["Tables"]["posts"]["Row"] & {
+  posts: Post & {
     users: RentSellerInfo;
   };
 };
