@@ -31,7 +31,7 @@ export default async function RentalDetail({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
         <ImageCarousel images={images} />
 
-        <div className="border border-gray-200 rounded-2xl p-6 flex flex-col gap-4">
+        <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4">
           <AccommondationInfo rental={rental} />
           <hr className="border-gray-200" />
           <RentSellerInfo rental={rental} />
