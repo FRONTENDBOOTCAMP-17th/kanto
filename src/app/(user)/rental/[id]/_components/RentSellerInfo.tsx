@@ -6,7 +6,7 @@ import { User } from "lucide-react";
 export default function RentSellorInfo({ rental }: { rental: RentalWithPost }) {
   return (
     <>
-      <h2 className="text-xl font-semibold">집주인 정보</h2>
+      <h2 className="text-xl font-medium">집주인 정보</h2>
       <div className="flex items-center gap-3">
         {rental.posts.users.avatar_url ? (
           <Image
@@ -22,7 +22,7 @@ export default function RentSellorInfo({ rental }: { rental: RentalWithPost }) {
           </div>
         )}
         <div>
-          <p className="font-semibold">{rental.posts.users.name}</p>
+          <p className="">{rental.posts.users.name}</p>
           <p className="text-sm text-gray-500">
             {formatSellerInfoCreatedAt(rental.posts.users.created_at)}
           </p>

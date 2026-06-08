@@ -34,17 +34,17 @@ export default function AccommondationInfo({ rental }: { rental: Rental }) {
 
   return (
     <>
-      <h2 className="text-xl font-semibold">숙소 정보</h2>
+      <h2 className="text-xl font-medium">숙소 정보</h2>
 
       {amenities.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {amenities.map((amenity) => (
             <span
               key={amenity}
-              className="flex items-center gap-1 border border-teal-400 text-teal-600 rounded-full px-3 py-1 text-sm"
+              className="flex items-center gap-1 bg-teal-50 text-teal-500 rounded-full px-3 py-1 text-sm"
             >
               {AMENITY_ICONS[amenity]}
-              {amenity}
+              <span className="text-gray-700">{amenity}</span>
             </span>
           ))}
         </div>
@@ -54,19 +54,19 @@ export default function AccommondationInfo({ rental }: { rental: Rental }) {
 
       <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
         <dt className="text-gray-500 font-medium">보증금</dt>
-        <dd className="text-teal-600 font-semibold">
-          · ₱{rental.deposit?.toLocaleString()}
+        <dd className="text-gray-700">
+          · ₱ {rental.deposit?.toLocaleString()}
         </dd>
         <dt className="text-gray-500 font-medium">월세</dt>
-        <dd className="text-orange-500 font-semibold">
-          · ₱{rental.price?.toLocaleString()}
+        <dd className="text-orange-500">
+          · ₱ {rental.price?.toLocaleString()}
         </dd>
         <dt className="text-gray-500 font-medium">방 타입</dt>
         <dd>· {rental.room_type}</dd>
         <dt className="text-gray-500 font-medium">최대 인원</dt>
         <dd>· {rental.max_occupants}명</dd>
         <dt className="text-gray-500 font-medium">위치</dt>
-        <dd className="text-teal-600">· {rental.location}</dd>
+        <dd>· {rental.location}</dd>
       </dl>
     </>
   );
