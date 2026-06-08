@@ -147,7 +147,7 @@ export function Header() {
           {/* 로고  */}
           <Link
             href="/home"
-            className="flex items-center hover:opacity-80 transition-opacity flex-shrink-0"
+            className="flex items-center hover:opacity-80 transition-opacity shrink-0"
           >
             {/* 모바일 로고 */}
             <Image
@@ -170,13 +170,14 @@ export function Header() {
           <div className="flex-1" />
 
           {/* 우측 액션 버튼 */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center shrink-0">
             {/* 글쓰기 — 로그인 + 특정 페이지에서만 표시 */}
             {/* TODO: [Auth] user — Zustand useAuthStore 연결 필요 */}
             {user && (
               <Button
                 variant="ghost"
                 size="icon"
+                className="w-12 h-12"
                 onClick={() => router.push("/create")}
               >
                 <Pencil className="w-5 h-5 text-gray-700" />
@@ -189,15 +190,15 @@ export function Header() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="relative"
+                  className="relative w-12 h-12"
                   onClick={() => {
                     setIsNotificationOpen((v) => !v);
                     setIsProfileOpen(false);
                   }}
                 >
-                  <Bell className="w-5 h-5 text-gray-700" />
+                  <Bell className="w-16 h-16 text-gray-700" />
                   {unreadCount > 0 && (
-                    <span className="absolute top-1 right-1 min-w-[16px] h-4 bg-red-500 rounded-full flex items-center justify-center text-[10px] text-white font-bold px-0.5">
+                    <span className="absolute top-1 right-1/7 min-w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[10px] text-white font-bold px-0.5">
                       {unreadCount}
                     </span>
                   )}
@@ -278,13 +279,14 @@ export function Header() {
                 <Button
                   variant="ghost"
                   size="icon"
+                  className="w-12 h-12"
                   onClick={() => {
                     setIsProfileOpen((v) => !v);
                     setIsNotificationOpen(false);
                   }}
                 >
                   {/*user 연결 후 실제 프로필 이미지(user.avatar_url) 로 교체 */}
-                  <div className="w-9 h-9 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center shadow-md">
+                  <div className="w-9 h-9 bg-linear-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center shadow-md">
                     <User className="w-5 h-5 text-white" />
                   </div>
                 </Button>
@@ -338,12 +340,12 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="md:hidden relative"
+                className="md:hidden relative w-12 h-12"
                 onClick={() => router.push("/notifications")}
               >
                 <Bell className="w-5 h-5 text-gray-700" />
                 {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 min-w-[16px] h-4 bg-red-500 rounded-full flex items-center justify-center text-[10px] text-white font-bold px-0.5">
+                  <span className="absolute top-1 right-1/7 min-w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[10px] text-white font-bold px-0.5">
                     {unreadCount}
                   </span>
                 )}
@@ -354,7 +356,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden"
+              className="md:hidden w-12 h-12"
               onClick={() => setIsMobileOpen((v) => !v)}
             >
               {isMobileOpen ? (
