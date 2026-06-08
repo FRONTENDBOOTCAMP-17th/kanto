@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import type { Json } from "@/type/supabase";
 import type { UsedGoodsWithPost } from "@/type/usedGoods";
 
 export interface UsedGoodsListItem {
@@ -7,7 +8,7 @@ export interface UsedGoodsListItem {
   title: string;
   price: number;
   locationText: string;
-  images: string[] | null;
+  images: Json | null;
   createdAt: string;
   likeCount: number;
   isLiked: boolean;
@@ -26,21 +27,26 @@ export function formatUsedGoodsItemWithLike(
     price: goods?.price ?? 0,
     locationText:
       goods?.location_type === "그 외 지역"
-        ? goods.location_custom
+        ? (goods.location_custom ?? "")
         : (goods?.location_type ?? ""),
     images: goods?.images ?? null,
     createdAt: item.created_at,
-    likeCount: item.like_count,
+    likeCount: item.like_count ?? 0,
     isLiked: likedIds.has(item.id),
     sellerName: item.users?.name ?? "",
   };
 }
 
 // 찜 관련 상태와 로직을 관리하는 커스텀 훅. 로그인 세션 확인 및 찜 목록 초기화, 찜 토글 기능 제공.
-export function useLikes(initialPosts: UsedGoodsWithPost[], initialLikedIds: number[]) {
+export function useLikes(
+  initialPosts: UsedGoodsWithPost[],
+  initialLikedIds: number[],
+) {
   const [items, setItems] = useState<UsedGoodsListItem[]>(() => {
     const likedSet = new Set(initialLikedIds);
-    return initialPosts.map((post) => formatUsedGoodsItemWithLike(post, likedSet));
+    return initialPosts.map((post) =>
+      formatUsedGoodsItemWithLike(post, likedSet),
+    );
   });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -48,7 +54,9 @@ export function useLikes(initialPosts: UsedGoodsWithPost[], initialLikedIds: num
 
   useEffect(() => {
     const initSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       setIsLoggedIn(!!session);
       if (!session) return;
 

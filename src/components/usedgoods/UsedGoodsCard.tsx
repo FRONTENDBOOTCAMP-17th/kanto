@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { Json } from "@/type/supabase";
 
 import { Card } from "@/components/ui/card";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
@@ -13,7 +14,7 @@ interface UsedGoodsCardProps {
   title: string;
   price: number;
   locationText: string;
-  images: string[] | null;
+  images: Json | null;
   createdAt: string;
   likeCount: number;
   isLiked: boolean;
@@ -34,7 +35,7 @@ export function UsedGoodsCard({
   sellerName,
   onLikeToggle,
 }: UsedGoodsCardProps) {
-  const thumbnail = images?.[0] ?? "/fallback-image.svg";
+  const thumbnail = Array.isArray(images) ? (images[0] as string) ?? "/fallback-image.svg" : "/fallback-image.svg";
   const relativeTime = formatTimeAgo(createdAt);
 
   return (
