@@ -82,29 +82,43 @@ export function useLikes(
     const target = items.find((item) => item.id === id);
     if (!target) return;
 
+    const wasLiked = target.isLiked;
+
     setItems((prev) =>
       prev.map((item) =>
         item.id === id
           ? {
               ...item,
-              isLiked: !item.isLiked,
-              likeCount: item.likeCount + (item.isLiked ? -1 : 1),
+              isLiked: !wasLiked,
+              likeCount: item.likeCount + (wasLiked ? -1 : 1),
             }
           : item,
       ),
     );
 
-    if (target.isLiked) {
-      await supabase
-        .from("common_likes")
-        .delete()
-        .eq("user_id", currentUserId)
-        .eq("target_type", "post")
-        .eq("target_id", id);
-    } else {
-      await supabase
-        .from("common_likes")
-        .insert({ user_id: currentUserId, target_type: "post", target_id: id });
+    const { error } = wasLiked
+      ? await supabase
+          .from("common_likes")
+          .delete()
+          .eq("user_id", currentUserId)
+          .eq("target_type", "post")
+          .eq("target_id", id)
+      : await supabase
+          .from("common_likes")
+          .insert({ user_id: currentUserId, target_type: "post", target_id: id });
+
+    if (error) {
+      setItems((prev) =>
+        prev.map((item) =>
+          item.id === id
+            ? {
+                ...item,
+                isLiked: wasLiked,
+                likeCount: item.likeCount + (wasLiked ? 1 : -1),
+              }
+            : item,
+        ),
+      );
     }
   };
 
