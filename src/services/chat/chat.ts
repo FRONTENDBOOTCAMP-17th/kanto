@@ -26,7 +26,7 @@ export async function getChatList(
   return data as ChatWithUsers[];
 }
 
-export async function getChatRoom(
+export async function getChatDetail(
   chatId: number,
   supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
 ): Promise<ChatWithUsers> {

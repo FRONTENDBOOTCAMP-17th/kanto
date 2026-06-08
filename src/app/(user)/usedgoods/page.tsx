@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
-import { getUsedGoodsList } from "@/services/usedGoods";
-import { getUserLikedPostIds } from "@/services/likes";
+import { getUsedGoodsList } from "@/services/usedGoods/usedGoods";
+import { getLikeList } from "@/services/likes";
 import { UsedGoodsList } from "@/app/(user)/usedgoods/_components/UsedGoodsList";
 
 import { Header } from "@/components/common/Header";
@@ -11,7 +11,7 @@ import { ScrollToTop } from "@/components/common/ScrollToTop";
 export default async function UsedGoodsPage() {
   const [posts, likedIds] = await Promise.all([
     getUsedGoodsList(),
-    getUserLikedPostIds("used_goods"),
+    getLikeList("used_goods"),
   ]);
 
   return (

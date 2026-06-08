@@ -1,4 +1,4 @@
-import { getRentalDetail } from "@/services/rental";
+import { getRentalDetail } from "@/services/rental/rental";
 import BackButton from "@/app/(user)/rental/[id]/_components/BackButton";
 import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarresel";
 import AccommondationInfo from "./_components/AccommondationInfo";

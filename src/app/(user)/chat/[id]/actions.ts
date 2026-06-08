@@ -1,7 +1,7 @@
 "use server";
 
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
-import { getMessage, postMessage } from "@/services/chat/message";
+import { getMessageList, postMessage } from "@/services/chat/message";
 
 export async function sendMessageAction(params: {
   chatId: number;
@@ -31,7 +31,7 @@ export async function sendMessageAction(params: {
 // before 기준 이전 50개를 오름차순으로 반환
 export async function loadMoreMessagesAction(chatId: number, before: string) {
   const supabase = await createSupabaseServerClient();
-  return getMessage(chatId, supabase, before);
+  return getMessageList(chatId, supabase, before);
 }
 
 export async function markChatReadAction(chatId: number) {
