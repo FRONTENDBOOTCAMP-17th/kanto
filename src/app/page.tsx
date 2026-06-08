@@ -116,10 +116,14 @@ export default function DevPage() {
                   className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-gray-800">{label}</span>
+                    <span className="text-sm font-medium text-gray-800">
+                      {label}
+                    </span>
                     <span className="text-xs text-gray-400">{description}</span>
                   </div>
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${badgeStyle}`}>
+                  <span
+                    className={`text-xs font-medium px-2 py-0.5 rounded-full ${badgeStyle}`}
+                  >
                     {badge}
                   </span>
                 </Link>
