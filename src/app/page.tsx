@@ -26,11 +26,11 @@ const pages = [
     items: [{ label: "채팅 목록", path: "/chat", status: "wip" }],
   },
   {
-    category: "구인구직",
+    category: "방렌트",
     items: [
-      { label: "목록", path: "/job", status: "wip" },
-      { label: "상세", path: "/job/1", status: "wip" },
-      { label: "글쓰기", path: "/job/create", status: "wip" },
+      { label: "목록", path: "/rental", status: "wip" },
+      { label: "상세", path: "/rental/1", status: "wip" },
+      { label: "글쓰기", path: "/rental/create", status: "wip" },
     ],
   },
 ];
