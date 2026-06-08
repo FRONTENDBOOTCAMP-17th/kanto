@@ -10,7 +10,7 @@ export default async function UsedGoodsDetailPage({
   const { data } = await supabase
     .from("used_goods")
     .select(`*, posts (*, users (*))`)
-    .eq("post_id", id)
+    .eq("post_id", Number(id))
     .single();
 
   if (!data) {

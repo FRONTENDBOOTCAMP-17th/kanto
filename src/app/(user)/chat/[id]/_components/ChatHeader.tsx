@@ -31,7 +31,7 @@ export default function ChatHeader({ partner, postTitle, onBack }: Props) {
         {partner.avatar_url ? (
           <Image
             src={partner.avatar_url}
-            alt={partner.name}
+            alt={partner.name ?? ""}
             width={40}
             height={40}
             className="w-full h-full rounded-full object-cover"
