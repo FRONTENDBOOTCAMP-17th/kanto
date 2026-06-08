@@ -2,7 +2,7 @@ import { Rental } from "@/type/rental/rental";
 import {
   Wifi,
   Wind,
-  Car,
+  SquareParking,
   UtensilsCrossed,
   Tv,
   Dumbbell,
@@ -10,7 +10,7 @@ import {
   PawPrint,
   WashingMachine,
   Refrigerator,
-  Shield,
+  Vault,
 } from "lucide-react";
 import { ReactNode } from "react";
 
@@ -18,7 +18,7 @@ const AMENITY_ICONS: Record<string, ReactNode> = {
   와이파이: <Wifi className="w-4 h-4" />,
   인터넷: <Wifi className="w-4 h-4" />,
   에어컨: <Wind className="w-4 h-4" />,
-  주차: <Car className="w-4 h-4" />,
+  주차: <SquareParking className="w-4 h-4" />,
   주방: <UtensilsCrossed className="w-4 h-4" />,
   TV: <Tv className="w-4 h-4" />,
   헬스장: <Dumbbell className="w-4 h-4" />,
@@ -26,7 +26,7 @@ const AMENITY_ICONS: Record<string, ReactNode> = {
   "반려동물 허용": <PawPrint className="w-4 h-4" />,
   세탁기: <WashingMachine className="w-4 h-4" />,
   냉장고: <Refrigerator className="w-4 h-4" />,
-  금고: <Shield className="w-4 h-4" />,
+  금고: <Vault className="w-4 h-4" />,
 };
 
 export default function AccommondationInfo({ rental }: { rental: Rental }) {
