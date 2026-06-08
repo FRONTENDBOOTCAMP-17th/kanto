@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
-import { getRentalList } from "@/services/rentals";
-import { getUserLikedPostIds } from "@/services/likes";
+import { getRentalList } from "@/services/rental/rental";
+import { getLikeList } from "@/services/likes";
 import { RentalList } from "./_components/RentalList";
 
 import { Header } from "@/components/common/Header";
@@ -11,7 +11,7 @@ import { ScrollToTop } from "@/components/common/ScrollToTop";
 export default async function RentalPage() {
   const [posts, likedIds] = await Promise.all([
     getRentalList(),
-    getUserLikedPostIds("rental"),
+    getLikeList("rental"),
   ]);
 
   return (

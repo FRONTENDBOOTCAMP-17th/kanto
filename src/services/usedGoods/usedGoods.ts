@@ -7,7 +7,6 @@ const USED_GOODS_SELECT = `
   users(id, name, avatar_url, created_at)
 ` as const;
 
-// 중고마켓 목록 조회
 export async function getUsedGoodsList(): Promise<UsedGoodsWithPost[]> {
   const supabase = await createSupabaseServerClient();
 
@@ -22,7 +21,6 @@ export async function getUsedGoodsList(): Promise<UsedGoodsWithPost[]> {
   return data as UsedGoodsWithPost[];
 }
 
-// 중고마켓 단건 상세 조회
 export async function getUsedGoodsDetail(
   postId: number
 ): Promise<UsedGoodsWithPost> {
@@ -40,7 +38,6 @@ export async function getUsedGoodsDetail(
   return data as UsedGoodsWithPost;
 }
 
-// 카테고리별 목록 조회
 export async function getUsedGoodsByCategory(
   category: string
 ): Promise<UsedGoodsWithPost[]> {

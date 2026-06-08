@@ -1,6 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
 // 찜목록에서 카테고리별로 나누기로해서 선택적으로 받는걸로함
-export async function getUserLikedPostIds(
+export async function getLikeList(
   postType?: string,
 ): Promise<number[]> {
   const supabase = await createSupabaseServerClient();
@@ -43,7 +43,7 @@ export async function getUserLikedPostIds(
 
  common_likes 테이블에 (userId, post, postId) 레코드를 삽입한다.
  */
-export async function addLike(postId: number, userId: number): Promise<void> {
+export async function postLike(postId: number, userId: number): Promise<void> {
   const supabase = await createSupabaseServerClient();
 
   const { error } = await supabase
@@ -56,7 +56,7 @@ export async function addLike(postId: number, userId: number): Promise<void> {
 /* 
  common_likes 테이블에서 (userId, "post", postId)에 해당하는 레코드를 삭제한다.
  */
-export async function removeLike(
+export async function deleteLike(
   postId: number,
   userId: number,
 ): Promise<void> {
