@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import type { FormEvent, ChangeEvent } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -133,11 +134,6 @@ export function CreateJobForm({ userId }: { userId: number }) {
     router.push("/jobs");
   };
 
-  const formatSalaryInput = (e: ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value.replace(/,/g, "");
-    if (raw === "" || /^\d+$/.test(raw)) setSalary(raw);
-  };
-
   // 숨겨진 파일 input 클릭 트리거 (사진 추가 버튼 누를 때)
   const handleImageUpload = () => {
     fileInputRef.current?.click();
@@ -219,7 +215,7 @@ export function CreateJobForm({ userId }: { userId: number }) {
                       inputMode="numeric"
                       placeholder="0"
                       value={salary ? Number(salary).toLocaleString() : ""}
-                      onChange={formatSalaryInput}
+                      onChange={(e) => setSalary(e.target.value.replace(/,/g, ""))}
                       className="pr-12"
                       required
                     />
@@ -345,10 +341,12 @@ export function CreateJobForm({ userId }: { userId: number }) {
                   <div className="grid grid-cols-5 gap-3">
                     {imagePreviews.map((img, index) => (
                       <div key={index} className="relative aspect-square">
-                        <img
+                        <Image
                           src={img}
                           alt={`Upload ${index + 1}`}
-                          className="w-full h-full object-cover rounded-lg"
+                          fill
+                          unoptimized
+                          className="object-cover rounded-lg"
                         />
                         <button
                           type="button"
