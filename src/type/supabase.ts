@@ -640,40 +640,40 @@ export type Database = {
       }
       used_goods: {
         Row: {
-          category: string | null
-          condition: string | null
-          content: string | null
+          category: string
+          condition: Database["public"]["Enums"]["product_condition"]
+          content: string
           id: number
           images: Json | null
           location_custom: string | null
-          location_type: Database["public"]["Enums"]["trade_location"] | null
+          location_type: Database["public"]["Enums"]["trade_location"]
           post_id: number
-          price: number | null
-          safe_payment: boolean | null
+          price: number
+          safe_payment: boolean
         }
         Insert: {
-          category?: string | null
-          condition?: string | null
-          content?: string | null
+          category: string
+          condition: Database["public"]["Enums"]["product_condition"]
+          content: string
           id?: number
           images?: Json | null
           location_custom?: string | null
-          location_type?: Database["public"]["Enums"]["trade_location"] | null
+          location_type: Database["public"]["Enums"]["trade_location"]
           post_id: number
-          price?: number | null
-          safe_payment?: boolean | null
+          price: number
+          safe_payment?: boolean
         }
         Update: {
-          category?: string | null
-          condition?: string | null
-          content?: string | null
+          category?: string
+          condition?: Database["public"]["Enums"]["product_condition"]
+          content?: string
           id?: number
           images?: Json | null
           location_custom?: string | null
-          location_type?: Database["public"]["Enums"]["trade_location"] | null
+          location_type?: Database["public"]["Enums"]["trade_location"]
           post_id?: number
-          price?: number | null
-          safe_payment?: boolean | null
+          price?: number
+          safe_payment?: boolean
         }
         Relationships: [
           {
@@ -737,6 +737,7 @@ export type Database = {
       my_user_id: { Args: never; Returns: number }
     }
     Enums: {
+      product_condition: "미개봉" | "가벼운 사용감" | "사용감 있음"
       trade_location:
         | "BGC / Taguig"
         | "Makati"

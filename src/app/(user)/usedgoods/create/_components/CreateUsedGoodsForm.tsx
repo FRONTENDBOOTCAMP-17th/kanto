@@ -188,9 +188,9 @@ export function CreateUsedGoodsForm({ userId }: { userId: number }) {
                   <SelectValue placeholder="카테고리를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  {PRODUCT_CATEGORIES.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
+                  {PRODUCT_CATEGORIES.filter((c) => c.id !== "all").map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {cat.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -209,8 +209,8 @@ export function CreateUsedGoodsForm({ userId }: { userId: number }) {
                 </SelectTrigger>
                 <SelectContent>
                   {PRODUCT_CONDITIONS.map((cond) => (
-                    <SelectItem key={cond} value={cond}>
-                      {cond}
+                    <SelectItem key={cond.id} value={cond.id}>
+                      {cond.label}
                     </SelectItem>
                   ))}
                 </SelectContent>

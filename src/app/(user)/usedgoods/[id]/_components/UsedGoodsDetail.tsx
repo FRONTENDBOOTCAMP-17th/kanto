@@ -16,14 +16,15 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Header } from "@/components/common/Header";
 import { Footer } from "@/components/common/Footer";
+import type { Json } from "@/type/supabase";
 
 interface UsedGoods {
   id: number;
   content: string;
   category: string;
-  images: [];
-  condition: "미개봉 중고" | "가벼운 사용감" | "사용감 있음";
-  location_custom: string;
+  images: Json | null;
+  condition: "미개봉" | "가벼운 사용감" | "사용감 있음";
+  location_custom: string | null;
   location_type: string;
   post_id: number;
   price: number;
@@ -58,7 +59,7 @@ export default function UsedGoodsDetail({ data }: { data: UsedGoods }) {
   const diff = now.getTime() - postCreated.getTime();
   const time = Math.floor(diff / 1000 / 60);
 
-  const images = data.images ?? [];
+  const images = (data.images as string[] | null) ?? [];
 
   function Time(time: number) {
     if (time < 60) {
@@ -85,19 +86,18 @@ export default function UsedGoodsDetail({ data }: { data: UsedGoods }) {
           <div className="m-2 border-2 border-gray-200 rounded-2xl overflow-hidden">
             <div className="relative w-full aspect-square">
               <Image
-                src={data.images[currentIndex]}
+                src={images[currentIndex]}
                 alt="대표 이미지"
                 fill
                 className="object-cover"
               />
               <p className="absolute right-4 top-4 bg-gray-800 text-white text-xs px-3 py-1.5 rounded-xl">
-                {currentIndex + 1} / {data.images.length}
+                {currentIndex + 1} / {images.length}
               </p>
               <button
                 onClick={() =>
                   setCurrentIndex(
-                    (currentIndex - 1 + data.images.length) %
-                      data.images.length,
+                    (currentIndex - 1 + images.length) % images.length,
                   )
                 }
                 className="absolute left-2 top-1/2 -translate-y-1/2 rounded-4xl bg-white p-1.5"
@@ -106,7 +106,7 @@ export default function UsedGoodsDetail({ data }: { data: UsedGoods }) {
               </button>
               <button
                 onClick={() =>
-                  setCurrentIndex((currentIndex + 1) % data.images.length)
+                  setCurrentIndex((currentIndex + 1) % images.length)
                 }
                 className="absolute right-2 top-1/2 -translate-y-1/2 rounded-4xl bg-white p-1.5"
               >
@@ -114,7 +114,7 @@ export default function UsedGoodsDetail({ data }: { data: UsedGoods }) {
               </button>
             </div>
             <div className="flex gap-2 border-t-2 border-gray-400 p-2">
-              {data.images.map((image, index) => (
+              {images.map((image, index) => (
                 <Image
                   key={index}
                   src={image}

@@ -8,6 +8,7 @@ export interface UsedGoodsListItem {
   title: string;
   price: number;
   locationText: string;
+  category: string;
   images: Json | null;
   createdAt: string;
   likeCount: number;
@@ -29,6 +30,7 @@ export function formatUsedGoodsItemWithLike(
       goods?.location_type === "그 외 지역"
         ? (goods.location_custom ?? "")
         : (goods?.location_type ?? ""),
+    category: goods?.category ?? "",
     images: goods?.images ?? null,
     createdAt: item.created_at,
     likeCount: item.like_count ?? 0,
