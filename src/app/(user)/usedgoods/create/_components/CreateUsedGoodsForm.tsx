@@ -25,19 +25,51 @@ import {
   type TradeLocation,
 } from "@/type/usedGoods";
 
-export function CreateUsedGoodsForm({ userId }: { userId: number }) {
+interface InitialData {
+  post_id: number | undefined;
+  title: string | null;
+  price: number | null;
+  category: string | null;
+  condition: string | null;
+  location_type: string | null;
+  location_custom: string | null;
+  content: string | null;
+  safe_payment: boolean | null;
+  images: string[] | null;
+}
+
+export function CreateUsedGoodsForm({
+  userId,
+  initialData,
+}: {
+  userId: number;
+  initialData?: InitialData;
+}) {
   const router = useRouter();
 
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState("");
-  const [productCategory, setProductCategory] = useState<ProductCategory | "">("");
-  const [condition, setCondition] = useState<ProductCondition | "">("");
-  const [preferredLocation, setPreferredLocation] = useState<TradeLocation | "">("");
-  const [preferredLocationDetail, setPreferredLocationDetail] = useState("");
-  const [content, setContent] = useState("");
-  const [safePayment, setSafePayment] = useState(false);
+  const postId = initialData?.post_id;
+  const [title, setTitle] = useState(initialData?.title ?? "");
+  const [price, setPrice] = useState(initialData?.price?.toString() ?? "");
+  const [productCategory, setProductCategory] = useState<ProductCategory | "">(
+    (initialData?.category as ProductCategory) ?? "",
+  );
+  const [condition, setCondition] = useState<ProductCondition | "">(
+    (initialData?.condition as ProductCondition) ?? "",
+  );
+  const [preferredLocation, setPreferredLocation] = useState<
+    TradeLocation | ""
+  >((initialData?.location_type as TradeLocation) ?? "");
+  const [preferredLocationDetail, setPreferredLocationDetail] = useState(
+    initialData?.location_custom ?? "",
+  );
+  const [content, setContent] = useState(initialData?.content ?? "");
+  const [safePayment, setSafePayment] = useState(
+    initialData?.safe_payment ?? false,
+  );
   const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>(
+    initialData?.images ?? [],
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -46,68 +78,109 @@ export function CreateUsedGoodsForm({ userId }: { userId: number }) {
     if (!productCategory || !condition || !preferredLocation) return;
     setIsSubmitting(true);
 
-    // Step 1: posts 테이블 insert
-    const { data: post, error: postError } = await supabase
-      .from("posts")
-      .insert({
-        user_id: userId,
-        post_type: "used_goods",
-        title,
-        status: "active",
-        view_count: 0,
-        like_count: 0,
-      })
-      .select("id")
-      .single();
+    if (initialData) {
+      if (!postId) return;
 
-    if (postError || !post) {
-      alert("게시글 등록에 실패했습니다.");
-      setIsSubmitting(false);
-      return;
-    }
+      const uploadedUrls: string[] = [];
+      for (const file of imageFiles) {
+        const safeFileName = `${Date.now()}.${file.name.split(".").pop()}`;
+        const filePath = `${userId}/${postId}/${safeFileName}`;
+        const { error: uploadError } = await supabase.storage
+          .from("images")
+          .upload(filePath, file, { upsert: true });
 
-    // Step 2: Storage 이미지 업로드
-    const uploadedUrls: string[] = [];
-    for (const file of imageFiles) {
-      const filePath = `${userId}/${post.id}/${Date.now()}_${file.name}`;
-      const { error: uploadError } = await supabase.storage
-        .from("images")
-        .upload(filePath, file);
+        if (!uploadError) {
+          const { data: urlData } = supabase.storage
+            .from("images")
+            .getPublicUrl(filePath);
+          uploadedUrls.push(urlData.publicUrl);
+        }
+      }
 
-      if (uploadError) {
-        await supabase.from("posts").delete().eq("id", post.id);
-        alert("이미지 업로드에 실패했습니다.");
+      const existingUrls = imagePreviews.filter(
+        (url) => !url.startsWith("blob:"),
+      );
+      const finalImages = [...existingUrls, ...uploadedUrls];
+
+      await supabase.from("posts").update({ title }).eq("id", postId);
+
+      await supabase
+        .from("used_goods")
+        .update({
+          price: Number(price),
+          category: productCategory,
+          condition,
+          location_type: preferredLocation,
+          location_custom: preferredLocationDetail,
+          content,
+          safe_payment: safePayment,
+          images: finalImages,
+        })
+        .eq("post_id", postId);
+      router.push("/usedgoods");
+    } else {
+      // Step 1: posts 테이블 insert
+      const { data: post, error: postError } = await supabase
+        .from("posts")
+        .insert({
+          user_id: userId,
+          post_type: "used_goods",
+          title,
+          status: "active",
+          view_count: 0,
+          like_count: 0,
+        })
+        .select("id")
+        .single();
+
+      if (postError || !post) {
+        alert("게시글 등록에 실패했습니다.");
         setIsSubmitting(false);
         return;
       }
 
-      const { data: urlData } = supabase.storage
-        .from("images")
-        .getPublicUrl(filePath);
-      uploadedUrls.push(urlData.publicUrl);
+      // Step 2: Storage 이미지 업로드
+      const uploadedUrls: string[] = [];
+      for (const file of imageFiles) {
+        const filePath = `${userId}/${post.id}/${Date.now()}_${file.name}`;
+        const { error: uploadError } = await supabase.storage
+          .from("images")
+          .upload(filePath, file);
+
+        if (uploadError) {
+          await supabase.from("posts").delete().eq("id", post.id);
+          alert("이미지 업로드에 실패했습니다.");
+          setIsSubmitting(false);
+          return;
+        }
+
+        const { data: urlData } = supabase.storage
+          .from("images")
+          .getPublicUrl(filePath);
+        uploadedUrls.push(urlData.publicUrl);
+      }
+
+      // Step 3: used_goods 테이블 insert
+      const { error: goodsError } = await supabase.from("used_goods").insert({
+        post_id: post.id,
+        price: Number(price),
+        category: productCategory,
+        condition,
+        safe_payment: safePayment,
+        content,
+        images: uploadedUrls.length > 0 ? uploadedUrls : null,
+        location_type: preferredLocation,
+        location_custom:
+          preferredLocation === "그 외 지역" ? preferredLocationDetail : null,
+      });
+
+      if (goodsError) {
+        alert("상품 정보 등록에 실패했습니다.");
+        setIsSubmitting(false);
+        return;
+      }
+      router.push("/usedgoods");
     }
-
-    // Step 3: used_goods 테이블 insert
-    const { error: goodsError } = await supabase.from("used_goods").insert({
-      post_id: post.id,
-      price: Number(price),
-      category: productCategory,
-      condition,
-      safe_payment: safePayment,
-      content,
-      images: uploadedUrls.length > 0 ? uploadedUrls : null,
-      location_type: preferredLocation,
-      location_custom:
-        preferredLocation === "그 외 지역" ? preferredLocationDetail : null,
-    });
-
-    if (goodsError) {
-      alert("상품 정보 등록에 실패했습니다.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    router.push("/usedgoods");
   };
 
   const handleImageUpload = () => {
@@ -128,7 +201,10 @@ export function CreateUsedGoodsForm({ userId }: { userId: number }) {
   };
 
   const removeImage = (index: number) => {
-    URL.revokeObjectURL(imagePreviews[index]);
+    const preview = imagePreviews[index];
+    if (preview.startsWith("blob:")) {
+      URL.revokeObjectURL(preview);
+    }
     setImageFiles((prev) => prev.filter((_, i) => i !== index));
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
@@ -143,7 +219,7 @@ export function CreateUsedGoodsForm({ userId }: { userId: number }) {
 
         <Card className="p-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            중고거래 글쓰기
+            {initialData ? "중고거래 수정" : "중고거래 글쓰기"}
           </h1>
           <p className="text-gray-600 mb-8">필요한 정보를 입력해주세요</p>
 
@@ -297,7 +373,9 @@ export function CreateUsedGoodsForm({ userId }: { userId: number }) {
                     <div className="flex flex-col items-center gap-2 text-gray-500">
                       <ImagePlus className="w-8 h-8" />
                       <span className="text-sm">사진 추가하기</span>
-                      <span className="text-xs">({imagePreviews.length}/10)</span>
+                      <span className="text-xs">
+                        ({imagePreviews.length}/10)
+                      </span>
                     </div>
                   </button>
                 )}

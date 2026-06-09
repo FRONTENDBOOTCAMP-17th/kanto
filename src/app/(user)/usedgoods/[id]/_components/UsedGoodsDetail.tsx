@@ -63,7 +63,7 @@ export default function UsedGoodsDetail({
           </button>
           {isOwner && (
             <div className="flex gap-2 mr-2">
-              <EditButton id={data.id} />
+              <EditButton id={data.post_id} />
               <DeleteButton postId={data.post_id} />
             </div>
           )}
@@ -128,7 +128,7 @@ export default function UsedGoodsDetail({
             <p className="font-medium text-gray-500">상태</p>{" "}
             <p>· {data.condition}</p>
             <p className="font-medium text-gray-500">가격</p>{" "}
-            <p>· {`${data.price?.toLocaleString()}`}원</p>
+            <p>· {`₱${data.price?.toLocaleString()}`}</p>
             <p className="font-medium text-gray-500">거래 장소</p>{" "}
             <p>· {data.location_type}</p>
           </div>
@@ -232,7 +232,7 @@ export default function UsedGoodsDetail({
                   <p className="text-lg font-medium line-clamp-1">
                     {item.posts?.title}
                   </p>
-                  <p>{`${item.price?.toLocaleString()}원`}</p>
+                  <p>{`₱${item.price?.toLocaleString()}`}</p>
                 </div>
               );
             })}
