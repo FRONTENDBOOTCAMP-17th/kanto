@@ -18,8 +18,8 @@ import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import { SearchBar } from "@/components/common/SearchBar";
 import { FilterDropdown } from "@/components/common/FilterDropdown";
 import { supabase } from "@/lib/supabase";
-import { RENTAL_ROOM_TYPES } from "@/type/rental";
-import type { RentalWithPost } from "@/type/rental";
+import { RENTAL_ROOM_TYPES } from "@/type/rental/rentalList";
+import type { RentalWithPost } from "@/type/rental/rentalList";
 
 const AMENITY_ICONS: Record<
   string,
@@ -201,12 +201,18 @@ export function RentalList({ initialPosts, initialLikedIds }: Props) {
           onSearchChange={setSearchInput}
           onSearchSubmit={handleSearch}
           locationFilter={locationFilter}
-          onLocationChange={(v) => { setLocationFilter(v); setCurrentPage(1); }}
+          onLocationChange={(v) => {
+            setLocationFilter(v);
+            setCurrentPage(1);
+          }}
         >
           <FilterDropdown
             options={RENTAL_ROOM_TYPES}
             value={roomTypeFilter}
-            onChange={(v) => { setRoomTypeFilter(v); setCurrentPage(1); }}
+            onChange={(v) => {
+              setRoomTypeFilter(v);
+              setCurrentPage(1);
+            }}
           />
         </SearchBar>
 

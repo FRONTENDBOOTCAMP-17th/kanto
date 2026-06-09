@@ -1,7 +1,7 @@
 import { formatTimeAgo } from "@/utils/formatTime";
 import { Siren, Heart, Share2, Clock, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { RentalWithPost } from "@/type/rental/rental";
+import { RentalWithPost } from "@/type/rental/rentalDetail";
 
 export default function PostInfo({ rental }: { rental: RentalWithPost }) {
   return (
