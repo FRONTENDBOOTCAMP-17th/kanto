@@ -14,8 +14,6 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Header } from "@/components/common/Header";
-import { Footer } from "@/components/common/Footer";
 
 interface UsedGoods {
   id: number;
@@ -73,7 +71,6 @@ export default function UsedGoodsDetail({ data }: { data: UsedGoods }) {
   return (
     <div>
       <section>
-        <Header />
         <button
           onClick={() => router.push("/usedgoods")}
           className="flex mx-2 my-4 gap-2"
@@ -221,7 +218,6 @@ export default function UsedGoodsDetail({ data }: { data: UsedGoods }) {
           <p className="mt-4">{data.content}</p>
         </div>
       </section>
-      <Footer />
     </div>
   );
 }
