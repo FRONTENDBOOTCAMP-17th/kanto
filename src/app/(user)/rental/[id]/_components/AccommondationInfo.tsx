@@ -1,4 +1,4 @@
-import type { Rental } from "@/type/rental";
+import type { Rental } from "@/type/rental/rentalList";
 import {
   Wifi,
   Wind,

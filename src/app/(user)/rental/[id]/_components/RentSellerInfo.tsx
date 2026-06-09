@@ -1,4 +1,4 @@
-import { RentalWithPost } from "@/type/rental/rental";
+import { RentalWithPost } from "@/type/rental/rentalDetail";
 import Image from "next/image";
 import { formatSellerInfoCreatedAt } from "@/utils/formatTime";
 import { User } from "lucide-react";
