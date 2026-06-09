@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 
 import { useLikes } from "@/hooks/useLikes";
@@ -9,9 +9,12 @@ import { Button } from "@/components/ui/button";
 import { UsedGoodsCard } from "@/components/usedgoods/UsedGoodsCard";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import { Pagination } from "@/components/common/Pagination";
+import { SearchBar } from "@/components/common/SearchBar";
+import { FilterDropdown } from "@/components/common/FilterDropdown";
 
 import { Plus } from "lucide-react";
 
+import { PRODUCT_CATEGORIES } from "@/type/usedGoods";
 import type { UsedGoodsWithPost } from "@/type/usedGoods";
 
 interface Props {
@@ -24,11 +27,34 @@ export function UsedGoodsList({ initialPosts, initialLikedIds }: Props) {
   const { items, showLoginModal, setShowLoginModal, handleLikeToggle } =
     useLikes(initialPosts, initialLikedIds);
 
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [locationFilter, setLocationFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSearchQuery(searchInput);
+    setCurrentPage(1);
+  };
+
+  const filteredItems = useMemo(() => {
+    return items.filter((item) => {
+      const matchSearch =
+        !searchQuery ||
+        item.title.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchCategory =
+        categoryFilter === "all" || item.category === categoryFilter;
+      const matchLocation =
+        locationFilter === "all" || item.locationText === locationFilter;
+      return matchSearch && matchCategory && matchLocation;
+    });
+  }, [items, searchQuery, categoryFilter, locationFilter]);
+
   const ITEMS_PER_PAGE = 12;
-  const totalPage = Math.ceil(items.length / ITEMS_PER_PAGE);
-  const pagedItems = items.slice(
+  const totalPage = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+  const pagedItems = filteredItems.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE,
   );
@@ -45,6 +71,20 @@ export function UsedGoodsList({ initialPosts, initialLikedIds }: Props) {
           글쓰기
         </Button>
       </div>
+
+      <SearchBar
+        searchInput={searchInput}
+        onSearchChange={setSearchInput}
+        onSearchSubmit={handleSearch}
+        locationFilter={locationFilter}
+        onLocationChange={(v) => { setLocationFilter(v); setCurrentPage(1); }}
+      >
+        <FilterDropdown
+          options={PRODUCT_CATEGORIES}
+          value={categoryFilter}
+          onChange={(v) => { setCategoryFilter(v); setCurrentPage(1); }}
+        />
+      </SearchBar>
 
       {items.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-gray-400 gap-2">

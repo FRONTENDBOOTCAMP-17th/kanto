@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
-import type { RentalWithPost } from "@/type/rental/rental";
+import type { RentalWithPost } from "@/type/rental";
+import type { RentalWithPost as RentalDetail } from "@/type/rental/rental";
 
 const RENTAL_DETAIL_SELECT = `*, posts(*, users(*))` as const;
 const RENTAL_LIST_SELECT = `
@@ -8,7 +9,7 @@ const RENTAL_LIST_SELECT = `
   users(id, name, avatar_url, created_at)
 ` as const;
 
-export async function getRentalDetail(postId: number): Promise<RentalWithPost> {
+export async function getRentalDetail(postId: number): Promise<RentalDetail> {
   const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase
@@ -19,7 +20,7 @@ export async function getRentalDetail(postId: number): Promise<RentalWithPost> {
 
   if (error) throw new Error(error.message);
 
-  return data as RentalWithPost;
+  return data as unknown as RentalDetail;
 }
 
 export async function getRentalList(): Promise<RentalWithPost[]> {
@@ -33,5 +34,5 @@ export async function getRentalList(): Promise<RentalWithPost[]> {
 
   if (error) throw new Error(error.message);
 
-  return data as RentalWithPost[];
+  return data as unknown as RentalWithPost[];
 }
