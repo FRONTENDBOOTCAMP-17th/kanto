@@ -23,16 +23,36 @@ export async function getRentalDetail(postId: number): Promise<RentalDetail> {
   return data as unknown as RentalDetail;
 }
 
-export async function getRentalList(): Promise<RentalWithPost[]> {
+interface RentalListFilter {
+  search?: string;
+  roomType?: string;
+  location?: string;
+}
+
+export async function getRentalList(filter?: RentalListFilter): Promise<RentalWithPost[]> {
   const supabase = await createSupabaseServerClient();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("posts")
     .select(RENTAL_LIST_SELECT)
     .eq("post_type", "rental")
     .order("created_at", { ascending: false });
 
+  if (filter?.search) {
+    query = query.ilike("title", `%${filter.search}%`);
+  }
+
+  const { data, error } = await query;
   if (error) throw new Error(error.message);
 
-  return data as unknown as RentalWithPost[];
+  let result = data as unknown as RentalWithPost[];
+
+  if (filter?.roomType) {
+    result = result.filter((p) => p.rentals?.[0]?.room_type === filter.roomType);
+  }
+  if (filter?.location) {
+    result = result.filter((p) => p.rentals?.[0]?.location === filter.location);
+  }
+
+  return result;
 }
