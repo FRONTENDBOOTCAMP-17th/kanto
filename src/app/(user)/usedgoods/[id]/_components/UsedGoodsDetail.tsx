@@ -13,7 +13,7 @@ import {
   MoveLeft,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/common/Header";
 import { Footer } from "@/components/common/Footer";
 import { Tables } from "@/type/supabase";
@@ -22,6 +22,7 @@ import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import { User } from "@supabase/supabase-js";
 import EditButton from "@/components/common/EditButton";
 import DeleteButton from "@/components/common/DeleteButton";
+import { supabase } from "@/lib/supabase";
 
 type UsedGoods = Tables<"used_goods"> & {
   posts: Tables<"posts"> & {
@@ -33,13 +34,19 @@ export default function UsedGoodsDetail({
   data,
   relatedData,
   user,
+  initialLiked,
+  userId,
 }: {
   data: UsedGoods;
   relatedData: UsedGoods[] | null;
   user: User | null;
+  initialLiked: boolean;
+  userId: number | undefined;
 }) {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLiked, setIsLiked] = useState(initialLiked);
+  const [likeCount, setLikeCount] = useState(data.posts.like_count);
 
   const accession = data.posts.users.created_at
     ? new Date(data.posts.users.created_at)
@@ -48,6 +55,62 @@ export default function UsedGoodsDetail({
   const images = (data.images as string[]) ?? [];
 
   const isOwner = user?.id === data.posts.users?.auth_id;
+
+  const handleLike = async () => {
+    if (!userId) return;
+
+    if (isLiked) {
+      await supabase
+        .from("common_likes")
+        .delete()
+        .eq("target_id", data.post_id)
+        .eq("target_type", "post")
+        .eq("user_id", userId);
+
+      await supabase
+        .from("posts")
+        .update({ like_count: likeCount - 1 })
+        .eq("id", data.post_id);
+
+      setLikeCount(likeCount - 1);
+    } else {
+      await supabase.from("common_likes").insert({
+        target_id: data.post_id,
+        target_type: "post",
+        user_id: userId,
+      });
+
+      await supabase
+        .from("posts")
+        .update({ like_count: likeCount + 1 })
+        .eq("id", data.post_id);
+
+      setLikeCount(likeCount + 1);
+    }
+    setIsLiked(!isLiked);
+  };
+
+  useEffect(() => {
+    const channel = supabase
+      .channel("like_count")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "posts",
+          filter: `id=eq.${data.post_id}`,
+        },
+        (payload) => {
+          setLikeCount(payload.new.like_count);
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   return (
     <div>
@@ -128,7 +191,7 @@ export default function UsedGoodsDetail({
             <p className="font-medium text-gray-500">상태</p>{" "}
             <p>· {data.condition}</p>
             <p className="font-medium text-gray-500">가격</p>{" "}
-            <p>· {`₱${data.price?.toLocaleString()}`}</p>
+            <p>· {`₱ ${data.price?.toLocaleString()}`}</p>
             <p className="font-medium text-gray-500">거래 장소</p>{" "}
             <p>· {data.location_type}</p>
           </div>
@@ -182,8 +245,10 @@ export default function UsedGoodsDetail({
             </p>
           </div>
           <div className="my-4 space-x-2">
-            <button className="border-2 p-1.5 rounded-lg">
-              <Heart className="w-4 h-4 text-pink-400" />
+            <button onClick={handleLike} className="border-2 p-1.5 rounded-lg">
+              <Heart
+                className={`w-4 h-4 ${isLiked ? "fill-red-400 text-red-400" : "text-gray-400"}`}
+              />
             </button>
             <button className="border-2 p-1.5 rounded-lg">
               <Share2 className="w-4 h-4" />
@@ -201,7 +266,7 @@ export default function UsedGoodsDetail({
               <Eye className="w-4 h-4 self-center" /> {data.posts.view_count}
             </p>
             <p className="flex gap-2">
-              <Heart className="w-4 h-4 self-center" /> {data.posts.like_count}
+              <Heart className="w-4 h-4 self-center" /> {likeCount}
             </p>
           </div>
           <h1 className="text-2xl py-4 font-medium">상품 설명</h1>
@@ -232,7 +297,7 @@ export default function UsedGoodsDetail({
                   <p className="text-lg font-medium line-clamp-1">
                     {item.posts?.title}
                   </p>
-                  <p>{`₱${item.price?.toLocaleString()}`}</p>
+                  <p>{`₱ ${item.price?.toLocaleString()}`}</p>
                 </div>
               );
             })}

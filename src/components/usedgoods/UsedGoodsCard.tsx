@@ -73,7 +73,7 @@ export function UsedGoodsCard({
               {title}
             </h3>
             <p className="text-lg font-bold text-gray-900 mb-1">
-              ₱{price.toLocaleString()}
+              ₱ {price.toLocaleString()}
             </p>
             {sellerName && (
               <p className="text-xs text-gray-400 mb-2 truncate">
