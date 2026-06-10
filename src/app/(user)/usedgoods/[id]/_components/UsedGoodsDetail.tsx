@@ -23,6 +23,7 @@ import { User } from "@supabase/supabase-js";
 import EditButton from "@/components/common/EditButton";
 import DeleteButton from "@/components/common/DeleteButton";
 import { supabase } from "@/lib/supabase";
+import Toast from "@/components/common/Toast";
 
 type UsedGoods = Tables<"used_goods"> & {
   posts: Tables<"posts"> & {
@@ -47,6 +48,8 @@ export default function UsedGoodsDetail({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(initialLiked);
   const [likeCount, setLikeCount] = useState(data.posts.like_count);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   const accession = data.posts.users.created_at
     ? new Date(data.posts.users.created_at)
@@ -78,6 +81,14 @@ export default function UsedGoodsDetail({
       setLikeCount(likeCount + 1);
     }
     setIsLiked(!isLiked);
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    await navigator.clipboard.writeText(url);
+    setToastMessage(`URL이 복사되었습니다.\n${url}`);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
   };
 
   useEffect(() => {
@@ -240,9 +251,13 @@ export default function UsedGoodsDetail({
                 className={`w-4 h-4 ${isLiked ? "fill-red-400 text-red-400" : "text-gray-400"}`}
               />
             </button>
-            <button className="border-2 p-1.5 rounded-lg">
+            <button
+              onClick={handleShare}
+              className="border-2 p-1.5 rounded-lg text-gray-400"
+            >
               <Share2 className="w-4 h-4" />
             </button>
+            <Toast message={toastMessage} showMessage={showToast} />
             <button className="border-2 p-1.5 rounded-lg">
               <Siren className="w-4 h-4 text-red-400" />
             </button>
