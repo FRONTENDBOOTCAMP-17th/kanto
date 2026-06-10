@@ -199,8 +199,8 @@ export function CreateJobForm({ userId }: { userId: number }) {
                   </SelectTrigger>
                   <SelectContent>
                     {EMPLOYEE_TYPES.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
+                      <SelectItem key={type.id} value={type.id}>
+                        {type.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
