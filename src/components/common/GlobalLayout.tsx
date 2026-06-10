@@ -14,8 +14,8 @@ export function GlobalLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       {!isTerms && !isLogin && !isSignup && <Header />}
-      {children}
       {!isTerms && !isLogin && !isSignup && <ScrollToTop />}
+      {children}
       {!isTerms && !isLogin && !isSignup && <Footer />}
     </>
   );
