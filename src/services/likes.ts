@@ -1,5 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
-// 찜목록에서 카테고리별로 나누기로해서 선택적으로 받는걸로함
+
+// 찜목록 조회
+
 export async function getLikeList(
   postType?: string,
 ): Promise<number[]> {
@@ -37,37 +39,4 @@ export async function getLikeList(
 
   if (error) throw new Error(error.message);
   return data.map((l) => l.target_id);
-}
-
-/*
-
- common_likes 테이블에 (userId, post, postId) 레코드를 삽입한다.
- */
-export async function postLike(postId: number, userId: number): Promise<void> {
-  const supabase = await createSupabaseServerClient();
-
-  const { error } = await supabase
-    .from("common_likes")
-    .insert({ user_id: userId, target_type: "post", target_id: postId });
-
-  if (error) throw new Error(error.message);
-}
-
-/* 
- common_likes 테이블에서 (userId, "post", postId)에 해당하는 레코드를 삭제한다.
- */
-export async function deleteLike(
-  postId: number,
-  userId: number,
-): Promise<void> {
-  const supabase = await createSupabaseServerClient();
-
-  const { error } = await supabase
-    .from("common_likes")
-    .delete()
-    .eq("user_id", userId)
-    .eq("target_type", "post")
-    .eq("target_id", postId);
-
-  if (error) throw new Error(error.message);
 }

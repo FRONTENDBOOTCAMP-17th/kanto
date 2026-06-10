@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Pagination } from "@/components/common/Pagination";
 
 interface Props {
@@ -11,10 +11,9 @@ interface Props {
 export function PaginationUrl({ currentPage, totalPage }: Props) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   const handlePageChange = (page: number) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(window.location.search);
     if (page === 1) params.delete("page");
     else params.set("page", String(page));
     router.push(`${pathname}?${params.toString()}`);

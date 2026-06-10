@@ -3,24 +3,30 @@
 import { useState } from "react";
 import { SearchBar } from "@/components/common/SearchBar";
 import { FilterDropdown } from "@/components/common/FilterDropdown";
-import { RENTAL_ROOM_TYPES } from "@/type/rental";
+import { RENTAL_ROOM_TYPES } from "@/type/rental/rentalList";
 import { useUrlParams } from "@/hooks/useUrlParams";
 
-export function RentalFilters() {
-  const { updateParams, searchParams } = useUrlParams();
-  const [searchInput, setSearchInput] = useState(searchParams.get("search") ?? "");
+interface Props {
+  defaultSearch: string;
+  defaultRoomType: string;
+  defaultLocation: string;
+}
+
+export function RentalFilters({ defaultSearch, defaultRoomType, defaultLocation }: Props) {
+  const { updateParams } = useUrlParams();
+  const [searchInput, setSearchInput] = useState(defaultSearch);
 
   return (
     <SearchBar
       searchInput={searchInput}
       onSearchChange={setSearchInput}
       onSearchSubmit={(e) => { e.preventDefault(); updateParams({ search: searchInput }); }}
-      locationFilter={searchParams.get("location") ?? "all"}
+      locationFilter={defaultLocation}
       onLocationChange={(v) => updateParams({ location: v })}
     >
       <FilterDropdown
         options={RENTAL_ROOM_TYPES}
-        value={searchParams.get("roomType") ?? "all"}
+        value={defaultRoomType}
         onChange={(v) => updateParams({ roomType: v })}
       />
     </SearchBar>

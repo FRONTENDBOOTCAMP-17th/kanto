@@ -5,8 +5,8 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { MapPin, Clock, Wifi, AirVent, Car, Utensils, Heart } from "lucide-react";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
-import { supabase } from "@/lib/supabase";
 import { formatTimeAgo } from "@/utils/formatTime";
+import { toggleLike } from "@/services/likeToggle";
 
 const AMENITY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   wifi: Wifi,
@@ -62,16 +62,7 @@ export function RentalCard({
     setIsLiked(!wasLiked);
     setLikeCount((c) => c + (wasLiked ? -1 : 1));
 
-    const { error } = wasLiked
-      ? await supabase
-          .from("common_likes")
-          .delete()
-          .eq("user_id", currentUserId)
-          .eq("target_type", "post")
-          .eq("target_id", id)
-      : await supabase
-          .from("common_likes")
-          .insert({ user_id: currentUserId, target_type: "post", target_id: id });
+    const { error } = await toggleLike(id, currentUserId, wasLiked);
 
     if (error) {
       setIsLiked(wasLiked);
