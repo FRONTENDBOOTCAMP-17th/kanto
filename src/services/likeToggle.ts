@@ -1,5 +1,7 @@
 import { supabase } from "@/lib/supabase";
 
+// 찜목록 추가 및 삭제
+
 export async function toggleLike(
   postId: number,
   userId: number,

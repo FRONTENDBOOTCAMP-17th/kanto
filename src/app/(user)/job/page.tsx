@@ -3,8 +3,8 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getJobList } from "@/services/job/useJob";
 import { getLikeList } from "@/services/likes";
-import { JobFilters } from "./_components/JobFilters";
-import { JobList } from "./_components/JobList";
+import { JobFilters } from "@/app/(user)/job/_components/JobFilters";
+import { JobList } from "@/app/(user)/job/_components/JobList";
 import { PaginationUrl } from "@/components/common/PaginationUrl";
 
 const ITEMS_PER_PAGE = 10;
