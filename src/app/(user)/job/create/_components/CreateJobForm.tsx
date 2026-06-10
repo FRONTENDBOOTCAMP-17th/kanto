@@ -83,7 +83,8 @@ export function CreateJobForm({ userId }: { userId: number }) {
     //  이미지 파일을 Storage에 업로드하고
     const uploadedUrls: string[] = [];
     for (const file of imageFiles) {
-      const filePath = `${userId}/${post.id}/${Date.now()}_${file.name}`;
+      const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+      const filePath = `${userId}/${post.id}/${Date.now()}.${ext}`;
       const { error: uploadError } = await supabase.storage
         .from("images")
         .upload(filePath, file);
