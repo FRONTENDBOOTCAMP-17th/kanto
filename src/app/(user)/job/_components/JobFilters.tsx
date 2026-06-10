@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { SearchBar } from "@/components/common/SearchBar";
 import { FilterDropdown } from "@/components/common/FilterDropdown";
-import { EMPLOYEE_TYPES } from "@/type/job";
+import { EMPLOYEE_TYPES } from "@/type/job/jobCreate";
 import { useUrlParams } from "@/hooks/useUrlParams";
 
 export function JobFilters() {
