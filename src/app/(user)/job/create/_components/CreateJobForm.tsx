@@ -189,15 +189,43 @@ export function CreateJobForm({ userId }: { userId: number }) {
             </span>
           </div>
 
-          {/* 1단계: 채용 정보 */}
-          {step === 1 && (
-            <div className="space-y-6">
-              <div>
-                <p className="text-gray-500 mb-6">채용 공고의 기본 정보를 입력해주세요</p>
-                <h2 className="font-semibold text-gray-900 mb-4">채용 정보</h2>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="title">공고 제목 *</Label>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* 채용 정보 */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-gray-900">채용 정보</h3>
+              <div className="space-y-2">
+                <Label htmlFor="title">공고 제목 *</Label>
+                <Input
+                  id="title"
+                  placeholder="예: 한식당 홀 서빙 직원 구합니다"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="employeeType">고용 형태 *</Label>
+                <Select
+                  value={employeeType}
+                  onValueChange={(v) => setEmployeeType(v as EmployeeType)}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="고용 형태를 선택하세요" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {EMPLOYEE_TYPES.map((type) => (
+                      <SelectItem key={type.id} value={type.id}>
+                        {type.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>급여 *</Label>
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
                     <Input
                       id="title"
                       placeholder="예: 한식당 홀 서빙 직원 구합니다"
