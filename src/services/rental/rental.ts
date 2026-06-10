@@ -1,6 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
-import type { RentalWithPost } from "@/type/rental";
-import type { RentalWithPost as RentalDetail } from "@/type/rental/rental";
+import type { RentalWithPost } from "@/type/rental/rentalList";
+import type { RentalWithPost as RentalDetail } from "@/type/rental/rentalDetail";
 
 const RENTAL_DETAIL_SELECT = `*, posts(*, users(*))` as const;
 const RENTAL_LIST_SELECT = `

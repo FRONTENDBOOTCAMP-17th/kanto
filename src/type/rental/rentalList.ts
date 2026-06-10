@@ -1,6 +1,6 @@
 import type { Tables } from "@/type/supabase";
-import type { Post } from "./post";
-import type { SellerInfo } from "./user";
+import type { Post } from "../post";
+import type { SellerInfo } from "../user";
 
 export const RENTAL_ROOM_TYPES = [
   { id: "all", label: "전체" },
