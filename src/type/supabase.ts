@@ -363,7 +363,6 @@ export type Database = {
           company_name: string
           company_website: string | null
           company_year: number | null
-          contact: string | null
           created_at: string
           deadline: string
           employee_count: number | null
@@ -391,7 +390,6 @@ export type Database = {
           company_name: string
           company_website?: string | null
           company_year?: number | null
-          contact?: string | null
           created_at?: string
           deadline: string
           employee_count?: number | null
@@ -419,7 +417,6 @@ export type Database = {
           company_name?: string
           company_website?: string | null
           company_year?: number | null
-          contact?: string | null
           created_at?: string
           deadline?: string
           employee_count?: number | null
@@ -873,6 +870,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      product_condition: ["미개봉", "가벼운 사용감", "사용감 있음"],
       trade_location: [
         "BGC / Taguig",
         "Makati",
