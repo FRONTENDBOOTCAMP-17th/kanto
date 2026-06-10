@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Heart, MapPin, CheckCircle2 } from "lucide-react";
-import { toggleLike } from "@/services/likeToggle";
+import { useJobLike } from "@/hooks/job/useJobLike";
 
 interface JobCardProps {
   id: number;
@@ -12,7 +11,6 @@ interface JobCardProps {
   salary: number;
   salaryType: string | null;
   locationText: string;
-  likeCount: number;
   initialIsLiked: boolean;
   currentUserId: number | null;
   onLoginRequired: () => void;
@@ -25,31 +23,12 @@ export function JobCard({
   salary,
   salaryType,
   locationText,
-  likeCount: initialLikeCount,
   initialIsLiked,
   currentUserId,
   onLoginRequired,
 }: JobCardProps) {
   const router = useRouter();
-  const [isLiked, setIsLiked] = useState(initialIsLiked);
-  const [likeCount, setLikeCount] = useState(initialLikeCount);
-
-  const handleLike = async () => {
-    if (currentUserId === null) {
-      onLoginRequired();
-      return;
-    }
-    const wasLiked = isLiked;
-    setIsLiked(!wasLiked);
-    setLikeCount((c) => c + (wasLiked ? -1 : 1));
-
-    const { error } = await toggleLike(id, currentUserId, wasLiked);
-
-    if (error) {
-      setIsLiked(wasLiked);
-      setLikeCount((c) => c + (wasLiked ? 1 : -1));
-    }
-  };
+  const { isLiked, handleLike } = useJobLike({ id, currentUserId, initialIsLiked, onLoginRequired });
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl px-5 py-4 flex items-center justify-between hover:shadow-md transition-shadow">

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { useState } from "react";
+import { useCurrentUserId } from "@/hooks/useCurrentUserId";
 import { JobCard } from "./JobCard";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import type { JobWithPost } from "@/type/job/jobList";
@@ -12,23 +12,9 @@ interface Props {
 }
 
 export function JobList({ posts, likedIds }: Props) {
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const currentUserId = useCurrentUserId();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const likedSet = new Set(likedIds);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) return;
-      supabase
-        .from("users")
-        .select("id")
-        .eq("auth_id", session.user.id)
-        .single()
-        .then(({ data }) => {
-          if (data) setCurrentUserId(data.id);
-        });
-    });
-  }, []);
 
   if (posts.length === 0) {
     return (
@@ -54,7 +40,6 @@ export function JobList({ posts, likedIds }: Props) {
               salary={job.salary}
               salaryType={job.salary_type}
               locationText={job.location_custom ?? job.location_type}
-              likeCount={post.like_count ?? 0}
               initialIsLiked={likedSet.has(post.id)}
               currentUserId={currentUserId}
               onLoginRequired={() => setShowLoginModal(true)}

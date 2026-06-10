@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { useState } from "react";
+import { useCurrentUserId } from "@/hooks/useCurrentUserId";
 import { RentalCard } from "./RentalCard";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import type { RentalWithPost } from "@/type/rental/rentalList";
@@ -12,23 +12,9 @@ interface Props {
 }
 
 export function RentalList({ initialPosts, initialLikedIds }: Props) {
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const currentUserId = useCurrentUserId();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const likedSet = new Set(initialLikedIds);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) return;
-      supabase
-        .from("users")
-        .select("id")
-        .eq("auth_id", session.user.id)
-        .single()
-        .then(({ data }) => {
-          if (data) setCurrentUserId(data.id);
-        });
-    });
-  }, []);
 
   if (initialPosts.length === 0) {
     return (
