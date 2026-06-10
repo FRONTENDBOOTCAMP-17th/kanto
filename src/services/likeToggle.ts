@@ -8,7 +8,7 @@ export async function toggleLike(
   isCurrentlyLiked: boolean,
 ) {
   if (isCurrentlyLiked) {
-    deleteLike(userId, postId);
+    return deleteLike(userId, postId);
   }
   return postLike(userId, postId);
 }
