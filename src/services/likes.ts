@@ -2,22 +2,27 @@ import { createSupabaseServerClient } from "@/lib/supabaseServer";
 
 // 찜목록 조회
 
+interface LikeListResult {
+  likedIds: number[];
+  currentUserId: number | null;
+}
+
 export async function getLikeList(
   postType?: string,
-): Promise<number[]> {
+): Promise<LikeListResult> {
   const supabase = await createSupabaseServerClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return [];
+  if (!user) return { likedIds: [], currentUserId: null };
 
   const { data: userData } = await supabase
     .from("users")
     .select("id")
     .eq("auth_id", user.id)
     .single();
-  if (!userData) return [];
+  if (!userData) return { likedIds: [], currentUserId: null };
 
   if (postType) {
     const { data, error } = await supabase
@@ -28,7 +33,10 @@ export async function getLikeList(
       .eq("posts.post_type", postType);
 
     if (error) throw new Error(error.message);
-    return data.map((l) => l.target_id);
+    return {
+      likedIds: data.map((l) => l.target_id),
+      currentUserId: userData.id,
+    };
   }
 
   const { data, error } = await supabase
@@ -38,5 +46,8 @@ export async function getLikeList(
     .eq("target_type", "post");
 
   if (error) throw new Error(error.message);
-  return data.map((l) => l.target_id);
+  return {
+    likedIds: data.map((l) => l.target_id),
+    currentUserId: userData.id,
+  };
 }
