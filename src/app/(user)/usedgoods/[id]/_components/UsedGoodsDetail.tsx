@@ -67,11 +67,6 @@ export default function UsedGoodsDetail({
         .eq("target_type", "post")
         .eq("user_id", userId);
 
-      await supabase
-        .from("posts")
-        .update({ like_count: likeCount - 1 })
-        .eq("id", data.post_id);
-
       setLikeCount(likeCount - 1);
     } else {
       await supabase.from("common_likes").insert({
@@ -79,11 +74,6 @@ export default function UsedGoodsDetail({
         target_type: "post",
         user_id: userId,
       });
-
-      await supabase
-        .from("posts")
-        .update({ like_count: likeCount + 1 })
-        .eq("id", data.post_id);
 
       setLikeCount(likeCount + 1);
     }
