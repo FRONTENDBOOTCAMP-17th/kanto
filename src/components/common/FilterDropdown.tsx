@@ -55,7 +55,7 @@ export function FilterDropdown({
 
       {open && (
         <div
-          className="fixed w-40 bg-white rounded-2xl shadow-xl border border-gray-200 py-2 z-[100]"
+          className="fixed w-40 bg-white rounded-2xl shadow-xl border border-gray-200 py-2 z-100"
           style={{ top: pos.top, left: pos.left }}
         >
           {options.map((option) => (

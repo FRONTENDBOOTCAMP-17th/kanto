@@ -377,6 +377,7 @@ export type Database = {
           manager_name: string | null
           manager_phone: string | null
           manager_title: string | null
+          popular_count: number | null
           post_id: number
           preferred: string | null
           salary: number
@@ -404,6 +405,7 @@ export type Database = {
           manager_name?: string | null
           manager_phone?: string | null
           manager_title?: string | null
+          popular_count?: number | null
           post_id: number
           preferred?: string | null
           salary: number
@@ -431,6 +433,7 @@ export type Database = {
           manager_name?: string | null
           manager_phone?: string | null
           manager_title?: string | null
+          popular_count?: number | null
           post_id?: number
           preferred?: string | null
           salary?: number

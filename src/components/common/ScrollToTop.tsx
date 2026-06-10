@@ -30,7 +30,7 @@ export function ScrollToTop() {
   if (!isVisible) return null;
 
   return (
-    <div className="hidden md:flex fixed bottom-6 right-6 z-50 flex-col items-center gap-3">
+    <div className="flex md:hidden fixed bottom-6 right-6 z-50 flex-col items-center gap-3">
       {user && (
         <button
           className="cursor-pointer w-12 h-12 bg-gray-100 hover:bg-gray-300 text-black rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"
