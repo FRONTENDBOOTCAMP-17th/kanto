@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { JobCard } from "./JobCard";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
-import type { JobWithPost } from "@/type/job";
+import type { JobWithPost } from "@/type/job/jobList";
 
 interface Props {
   posts: JobWithPost[];

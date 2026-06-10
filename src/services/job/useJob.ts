@@ -1,5 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
-import type { JobWithPost } from "@/type/job";
+import type { JobWithPost } from "@/type/job/jobList";
 
 interface JobListFilter {
   search?: string;
