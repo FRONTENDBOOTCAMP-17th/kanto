@@ -27,7 +27,7 @@ export function JobList({ posts, likedIds }: Props) {
 
   return (
     <>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col divide-y divide-gray-200 border-t border-b border-gray-200">
         {posts.map((post) => {
           const job = post.jobs?.[0];
           if (!job) return null;
