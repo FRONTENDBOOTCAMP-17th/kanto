@@ -1,5 +1,3 @@
-import { Suspense } from "react";
-
 import { getRentalList } from "@/services/rental/rental";
 import { getLikeList } from "@/services/likes";
 import { RentalList } from "./_components/RentalList";
@@ -50,21 +48,19 @@ export default async function RentalPage({
           </p>
         </div>
 
-        <Suspense fallback={null}>
-          <RentalFilters />
-        </Suspense>
+        <RentalFilters
+          defaultSearch={params.search ?? ""}
+          defaultRoomType={params.roomType ?? "all"}
+          defaultLocation={params.location ?? "all"}
+        />
 
         <div className="border-t border-gray-200 mb-8" />
 
-        <Suspense fallback={<div className="flex-1" />}>
-          <RentalList initialPosts={pagedPosts} initialLikedIds={likedIds} />
-        </Suspense>
+        <RentalList initialPosts={pagedPosts} initialLikedIds={likedIds} />
 
         {totalPages > 1 && (
           <div className="flex justify-center mt-8">
-            <Suspense fallback={null}>
-              <PaginationUrl currentPage={currentPage} totalPage={totalPages} />
-            </Suspense>
+            <PaginationUrl currentPage={currentPage} totalPage={totalPages} />
           </div>
         )}
       </div>

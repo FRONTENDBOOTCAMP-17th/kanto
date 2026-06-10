@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import Link from "next/link";
 
 import { getUsedGoodsList } from "@/services/usedGoods/usedGoods";
@@ -51,21 +50,19 @@ export default async function UsedGoodsPage({
         </Link>
       </div>
 
-      <Suspense fallback={null}>
-        <UsedGoodsFilters />
-      </Suspense>
+      <UsedGoodsFilters
+        defaultSearch={params.search ?? ""}
+        defaultCategory={params.category ?? "all"}
+        defaultLocation={params.location ?? "all"}
+      />
 
       <div className="border-t border-gray-200 my-6" />
 
-      <Suspense fallback={<div className="flex-1" />}>
-        <UsedGoodsList initialPosts={pagedPosts} initialLikedIds={likedIds} />
-      </Suspense>
+      <UsedGoodsList initialPosts={pagedPosts} initialLikedIds={likedIds} />
 
       {totalPages > 1 && (
         <div className="flex justify-center mt-8">
-          <Suspense fallback={null}>
-            <PaginationUrl currentPage={currentPage} totalPage={totalPages} />
-          </Suspense>
+          <PaginationUrl currentPage={currentPage} totalPage={totalPages} />
         </div>
       )}
     </main>

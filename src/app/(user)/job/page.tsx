@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,9 +5,9 @@ import { getJobList } from "@/services/job/useJob";
 import { getLikeList } from "@/services/likes";
 import { JobFilters } from "./_components/JobFilters";
 import { JobList } from "./_components/JobList";
-import { PaginationUrl } from "./_components/PaginationUrl";
+import { PaginationUrl } from "@/components/common/PaginationUrl";
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 10;
 
 export default async function JobPage({
   searchParams,
@@ -46,17 +45,17 @@ export default async function JobPage({
           </Link>
         </div>
 
-        <Suspense>
-          <JobFilters />
-        </Suspense>
+        <JobFilters
+          defaultSearch={params.search ?? ""}
+          defaultType={params.type ?? "all"}
+          defaultLocation={params.location ?? "all"}
+        />
 
         <JobList posts={pagedPosts} likedIds={likedIds} />
 
         {totalPages > 1 && (
           <div className="flex justify-center mt-8">
-            <Suspense>
-              <PaginationUrl currentPage={currentPage} totalPage={totalPages} />
-            </Suspense>
+            <PaginationUrl currentPage={currentPage} totalPage={totalPages} />
           </div>
         )}
       </main>

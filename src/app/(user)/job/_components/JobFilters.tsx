@@ -6,21 +6,27 @@ import { FilterDropdown } from "@/components/common/FilterDropdown";
 import { EMPLOYEE_TYPES } from "@/type/job/jobCreate";
 import { useUrlParams } from "@/hooks/useUrlParams";
 
-export function JobFilters() {
-  const { updateParams, searchParams } = useUrlParams();
-  const [searchInput, setSearchInput] = useState(searchParams.get("search") ?? "");
+interface Props {
+  defaultSearch: string;
+  defaultType: string;
+  defaultLocation: string;
+}
+
+export function JobFilters({ defaultSearch, defaultType, defaultLocation }: Props) {
+  const { updateParams } = useUrlParams();
+  const [searchInput, setSearchInput] = useState(defaultSearch);
 
   return (
     <SearchBar
       searchInput={searchInput}
       onSearchChange={setSearchInput}
       onSearchSubmit={(e) => { e.preventDefault(); updateParams({ search: searchInput }); }}
-      locationFilter={searchParams.get("location") ?? "all"}
+      locationFilter={defaultLocation}
       onLocationChange={(v) => updateParams({ location: v })}
     >
       <FilterDropdown
         options={[{ id: "all", label: "전체" }, ...EMPLOYEE_TYPES]}
-        value={searchParams.get("type") ?? "all"}
+        value={defaultType}
         onChange={(v) => updateParams({ type: v })}
       />
     </SearchBar>

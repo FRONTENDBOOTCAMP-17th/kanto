@@ -6,21 +6,27 @@ import { FilterDropdown } from "@/components/common/FilterDropdown";
 import { PRODUCT_CATEGORIES } from "@/type/usedGoods";
 import { useUrlParams } from "@/hooks/useUrlParams";
 
-export function UsedGoodsFilters() {
-  const { updateParams, searchParams } = useUrlParams();
-  const [searchInput, setSearchInput] = useState(searchParams.get("search") ?? "");
+interface Props {
+  defaultSearch: string;
+  defaultCategory: string;
+  defaultLocation: string;
+}
+
+export function UsedGoodsFilters({ defaultSearch, defaultCategory, defaultLocation }: Props) {
+  const { updateParams } = useUrlParams();
+  const [searchInput, setSearchInput] = useState(defaultSearch);
 
   return (
     <SearchBar
       searchInput={searchInput}
       onSearchChange={setSearchInput}
       onSearchSubmit={(e) => { e.preventDefault(); updateParams({ search: searchInput }); }}
-      locationFilter={searchParams.get("location") ?? "all"}
+      locationFilter={defaultLocation}
       onLocationChange={(v) => updateParams({ location: v })}
     >
       <FilterDropdown
         options={PRODUCT_CATEGORIES}
-        value={searchParams.get("category") ?? "all"}
+        value={defaultCategory}
         onChange={(v) => updateParams({ category: v })}
       />
     </SearchBar>
