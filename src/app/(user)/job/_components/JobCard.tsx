@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Heart, MapPin, CheckCircle2 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { toggleLike } from "@/services/likeToggle";
 
 interface JobCardProps {
   id: number;
@@ -43,16 +43,7 @@ export function JobCard({
     setIsLiked(!wasLiked);
     setLikeCount((c) => c + (wasLiked ? -1 : 1));
 
-    const { error } = wasLiked
-      ? await supabase
-          .from("common_likes")
-          .delete()
-          .eq("user_id", currentUserId)
-          .eq("target_type", "post")
-          .eq("target_id", id)
-      : await supabase
-          .from("common_likes")
-          .insert({ user_id: currentUserId, target_type: "post", target_id: id });
+    const { error } = await toggleLike(id, currentUserId, wasLiked);
 
     if (error) {
       setIsLiked(wasLiked);
