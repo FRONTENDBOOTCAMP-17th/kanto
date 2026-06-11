@@ -6,7 +6,6 @@ import type { RentalWithPost } from "@/type/rental/rentalList";
 interface Props {
   initialPosts: RentalWithPost[];
   initialLikedIds: number[];
-  currentUserId: number | null;
 }
 
 export function RentalList({ initialPosts, initialLikedIds }: Props) {

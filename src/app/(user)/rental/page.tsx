@@ -21,7 +21,7 @@ export default async function RentalPage({
   const params = await searchParams;
   const currentPage = Number(params.page ?? 1);
 
-  const [posts, { likedIds, currentUserId }] = await Promise.all([
+  const [posts, { likedIds }] = await Promise.all([
     getRentalList({
       search: params.search,
       roomType: params.roomType,
@@ -56,7 +56,7 @@ export default async function RentalPage({
 
         <div className="border-t border-gray-200 mb-8" />
 
-        <RentalList initialPosts={pagedPosts} initialLikedIds={likedIds} currentUserId={currentUserId} />
+        <RentalList initialPosts={pagedPosts} initialLikedIds={likedIds} />
 
         {totalPages > 1 && (
           <div className="flex justify-center mt-8">
