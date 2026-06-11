@@ -23,7 +23,7 @@ export default async function UsedGoodsPage({
   const params = await searchParams;
   const currentPage = Number(params.page ?? 1);
 
-  const [posts, likedIds] = await Promise.all([
+  const [posts, { likedIds }] = await Promise.all([
     getUsedGoodsList({
       search: params.search,
       category: params.category,
