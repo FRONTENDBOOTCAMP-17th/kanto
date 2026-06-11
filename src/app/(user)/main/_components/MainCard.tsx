@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Heart, ImageIcon, MapPin } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import PopularBadge from "./PopularBadge";
+import { LikeButton } from "@/components/common/LikeButton";
 
 export type MainCardItem = {
   id: number;
@@ -12,6 +13,7 @@ export type MainCardItem = {
   time: string;
   popular: boolean;
   imageSrc?: string;
+  initialIsLiked: boolean;
 };
 
 function Placeholder() {
@@ -33,9 +35,11 @@ export default function MainCard({ item }: { item: MainCardItem }) {
           <Placeholder />
         )}
         {item.popular && <PopularBadge />}
-        <button className="hidden md:flex absolute top-2 right-2 w-8 h-8 bg-white rounded-full items-center justify-center shadow-sm cursor-pointer">
-          <Heart className="w-4 h-4 text-gray-400" />
-        </button>
+        <LikeButton
+          postId={item.id}
+          initialIsLiked={item.initialIsLiked}
+          className="hidden md:flex absolute top-2 right-2 w-8 h-8 bg-white rounded-full items-center justify-center shadow-sm cursor-pointer"
+        />
       </div>
 
       {/* 콘텐츠 */}

@@ -1,9 +1,13 @@
 import { getPopularList } from "@/services/main/main";
+import { getLikeList } from "@/services/likes";
 import { formatTimeAgo } from "@/utils/formatTime";
 import PopularList from "./PopularList";
 
 export default async function Popular() {
-  const { usedGoods, rentals, jobs } = await getPopularList();
+  const [{ usedGoods, rentals, jobs }, likedIds] = await Promise.all([
+    getPopularList(),
+    getLikeList(),
+  ]);
 
   const usedGoodsItems = usedGoods
     .filter((p) => p.used_goods[0] != null)
@@ -17,6 +21,7 @@ export default async function Popular() {
       time: formatTimeAgo(p.created_at),
       popular: p.like_count >= 20,
       imageSrc: (p.used_goods[0].images as string[] | null)?.[0],
+      initialIsLiked: likedIds.includes(p.id),
     }));
 
   const rentalItems = rentals
@@ -31,6 +36,7 @@ export default async function Popular() {
       time: formatTimeAgo(p.created_at),
       popular: p.like_count >= 20,
       imageSrc: (p.rentals[0].images as string[] | null)?.[0],
+      initialIsLiked: likedIds.includes(p.id),
     }));
 
   const jobItems = jobs
@@ -45,6 +51,7 @@ export default async function Popular() {
       time: formatTimeAgo(p.created_at),
       popular: p.like_count >= 20,
       imageSrc: (p.jobs[0].images as string[] | null)?.[0],
+      initialIsLiked: likedIds.includes(p.id),
     }));
 
   return (
