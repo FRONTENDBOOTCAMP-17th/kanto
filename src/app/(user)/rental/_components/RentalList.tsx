@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { useSearchBar } from "@/hooks/useSearchBar";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import {
@@ -92,10 +93,8 @@ export function RentalList({ initialPosts, initialLikedIds }: Props) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
-  const [searchInput, setSearchInput] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+  const { searchQuery, locationFilter, handleSearch } = useSearchBar();
   const [roomTypeFilter, setRoomTypeFilter] = useState("all");
-  const [locationFilter, setLocationFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState<
     Record<number, number>
@@ -121,11 +120,6 @@ export function RentalList({ initialPosts, initialLikedIds }: Props) {
   useEffect(() => {
     setCurrentPage(1);
   }, [roomTypeFilter, locationFilter, searchQuery]);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSearchQuery(searchInput);
-  };
 
   const handleLikeToggle = async (id: number) => {
     if (!isLoggedIn || currentUserId === null) {
@@ -196,16 +190,7 @@ export function RentalList({ initialPosts, initialLikedIds }: Props) {
           </p>
         </div>
 
-        <SearchBar
-          searchInput={searchInput}
-          onSearchChange={setSearchInput}
-          onSearchSubmit={handleSearch}
-          locationFilter={locationFilter}
-          onLocationChange={(v) => {
-            setLocationFilter(v);
-            setCurrentPage(1);
-          }}
-        >
+        <SearchBar onSearch={(q, l) => { handleSearch(q, l); setCurrentPage(1); }} showLocation>
           <FilterDropdown
             options={RENTAL_ROOM_TYPES}
             value={roomTypeFilter}

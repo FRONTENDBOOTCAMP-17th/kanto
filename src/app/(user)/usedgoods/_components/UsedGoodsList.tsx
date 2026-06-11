@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useSearchBar } from "@/hooks/useSearchBar";
 
 import { useLikes } from "@/hooks/useLikes";
 
@@ -27,15 +28,12 @@ export function UsedGoodsList({ initialPosts, initialLikedIds }: Props) {
   const { items, showLoginModal, setShowLoginModal, handleLikeToggle } =
     useLikes(initialPosts, initialLikedIds);
 
-  const [searchInput, setSearchInput] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+  const { searchQuery, locationFilter, handleSearch } = useSearchBar();
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [locationFilter, setLocationFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSearchQuery(searchInput);
+  const onSearch = (query: string, location: string) => {
+    handleSearch(query, location);
     setCurrentPage(1);
   };
 
@@ -72,13 +70,7 @@ export function UsedGoodsList({ initialPosts, initialLikedIds }: Props) {
         </Button>
       </div>
 
-      <SearchBar
-        searchInput={searchInput}
-        onSearchChange={setSearchInput}
-        onSearchSubmit={handleSearch}
-        locationFilter={locationFilter}
-        onLocationChange={(v) => { setLocationFilter(v); setCurrentPage(1); }}
-      >
+      <SearchBar onSearch={onSearch} showLocation>
         <FilterDropdown
           options={PRODUCT_CATEGORIES}
           value={categoryFilter}
