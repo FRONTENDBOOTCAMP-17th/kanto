@@ -1,7 +1,6 @@
 import type { Tables } from "@/type/supabase";
 import type { Post } from "@/type/post";
 import type { SellerInfo } from "@/type/user";
-
 export const EMPLOYEE_TYPES = ["정규직", "계약직", "파트타임"] as const;
 export const SALARY_TYPES = ["시급", "주급", "월급"] as const;
 
