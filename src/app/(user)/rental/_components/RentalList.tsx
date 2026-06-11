@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useCurrentUserId } from "@/hooks/useCurrentUserId";
 import { RentalCard } from "./RentalCard";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import type { RentalWithPost } from "@/type/rental/rentalList";
@@ -9,10 +8,10 @@ import type { RentalWithPost } from "@/type/rental/rentalList";
 interface Props {
   initialPosts: RentalWithPost[];
   initialLikedIds: number[];
+  currentUserId: number | null;
 }
 
-export function RentalList({ initialPosts, initialLikedIds }: Props) {
-  const currentUserId = useCurrentUserId();
+export function RentalList({ initialPosts, initialLikedIds, currentUserId }: Props) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const likedSet = new Set(initialLikedIds);
 
