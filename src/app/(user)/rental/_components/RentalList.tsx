@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import { RentalCard } from "./RentalCard";
-import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import type { RentalWithPost } from "@/type/rental/rentalList";
 
 interface Props {
@@ -11,8 +9,7 @@ interface Props {
   currentUserId: number | null;
 }
 
-export function RentalList({ initialPosts, initialLikedIds, currentUserId }: Props) {
-  const [showLoginModal, setShowLoginModal] = useState(false);
+export function RentalList({ initialPosts, initialLikedIds }: Props) {
   const likedSet = new Set(initialLikedIds);
 
   if (initialPosts.length === 0) {
@@ -25,33 +22,25 @@ export function RentalList({ initialPosts, initialLikedIds, currentUserId }: Pro
   }
 
   return (
-    <>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {initialPosts.map((post) => {
-          const rental = post.rentals?.[0];
-          return (
-            <RentalCard
-              key={post.id}
-              id={post.id}
-              title={post.title}
-              price={rental?.price ?? null}
-              location={rental?.location ?? null}
-              locationDetail={rental?.location_detail ?? null}
-              createdAt={post.created_at}
-              images={(rental?.images as string[] | null) ?? []}
-              amenities={(rental?.amenities as string[] | null) ?? []}
-              likeCount={post.like_count ?? 0}
-              initialIsLiked={likedSet.has(post.id)}
-              currentUserId={currentUserId}
-              onLoginRequired={() => setShowLoginModal(true)}
-            />
-          );
-        })}
-      </div>
-      <LoginRequiredModal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-      />
-    </>
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {initialPosts.map((post) => {
+        const rental = post.rentals?.[0];
+        return (
+          <RentalCard
+            key={post.id}
+            id={post.id}
+            title={post.title}
+            price={rental?.price ?? null}
+            location={rental?.location ?? null}
+            locationDetail={rental?.location_detail ?? null}
+            createdAt={post.created_at}
+            images={(rental?.images as string[] | null) ?? []}
+            amenities={(rental?.amenities as string[] | null) ?? []}
+            likeCount={post.like_count ?? 0}
+            initialIsLiked={likedSet.has(post.id)}
+          />
+        );
+      })}
+    </div>
   );
 }

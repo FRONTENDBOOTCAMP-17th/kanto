@@ -2,10 +2,8 @@
 
 import { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { MapPin, TrendingUp, ChevronLeft, ChevronRight, Heart } from "lucide-react";
-import { useCurrentUserId } from "@/hooks/useCurrentUserId";
-import { useJobLike } from "@/hooks/job/useJobLike";
-import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
+import { MapPin, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { LikeButton } from "@/components/common/LikeButton";
 import type { JobWithPost } from "@/type/job/jobList";
 
 interface Props {
@@ -15,14 +13,10 @@ interface Props {
 
 interface CardProps {
   post: JobWithPost;
-  currentUserId: number | null;
   initialIsLiked: boolean;
-  onLoginRequired: () => void;
 }
 
-function PopularJobCard({ post, currentUserId, initialIsLiked, onLoginRequired }: CardProps) {
-  const { isLiked, handleLike } = useJobLike({ id: post.id, currentUserId, initialIsLiked, onLoginRequired });
-
+function PopularJobCard({ post, initialIsLiked }: CardProps) {
   const job = post.jobs?.[0];
   if (!job) return null;
 
@@ -36,18 +30,9 @@ function PopularJobCard({ post, currentUserId, initialIsLiked, onLoginRequired }
           <p className="text-sm font-semibold text-gray-900 truncate">{post.title}</p>
           <p className="text-xs text-gray-500 truncate">{job.company_name}</p>
         </div>
-        <button
-          type="button"
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleLike(); }}
-          aria-label={isLiked ? "찜 취소" : "찜하기"}
-          className="shrink-0"
-        >
-          <Heart
-            className={`w-4 h-4 transition-colors cursor-pointer ${
-              isLiked ? "fill-red-500 text-red-500" : "text-gray-300 hover:text-red-400"
-            }`}
-          />
-        </button>
+        <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} className="shrink-0">
+          <LikeButton postId={post.id} initialIsLiked={initialIsLiked} />
+        </div>
       </div>
 
       <div className="flex items-end justify-between gap-1">
@@ -72,8 +57,6 @@ export function PopularJobs({ posts, likedIds }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const currentUserId = useCurrentUserId();
   const likedSet = new Set(likedIds);
 
   const updateScrollState = useCallback(() => {
@@ -104,59 +87,50 @@ export function PopularJobs({ posts, likedIds }: Props) {
   if (posts.length === 0) return null;
 
   return (
-    <>
-      <section className="mb-6">
-        <div className="flex items-center gap-1.5 mb-3">
-          <h2 className="text-xl font-black text-gray-700">인기 공고</h2>
-          <TrendingUp className="w-6 h-6 -mb-2 text-teal-500" />
-        </div>
+    <section className="mb-6">
+      <div className="flex items-center gap-1.5 mb-3">
+        <h2 className="text-xl font-black text-gray-700">인기 공고</h2>
+        <TrendingUp className="w-6 h-6 -mb-2 text-teal-500" />
+      </div>
 
-        <div className="relative">
-          {canScrollLeft && (
-            <button
-              type="button"
-              onClick={() => scroll("left")}
-              className="hidden cursor-pointer md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-colors"
-              aria-label="이전"
-            >
-              <ChevronLeft className="w-4 h-4 text-gray-600" />
-            </button>
-          )}
-
-          <div
-            ref={scrollRef}
-            className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide [&::-webkit-scrollbar]:hidden"
-            style={{ scrollbarWidth: "none" }}
-            onScroll={updateScrollState}
+      <div className="relative">
+        {canScrollLeft && (
+          <button
+            type="button"
+            onClick={() => scroll("left")}
+            className="hidden cursor-pointer md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-colors"
+            aria-label="이전"
           >
-            {posts.map((post) => (
-              <PopularJobCard
-                key={post.id}
-                post={post}
-                currentUserId={currentUserId}
-                initialIsLiked={likedSet.has(post.id)}
-                onLoginRequired={() => setShowLoginModal(true)}
-              />
-            ))}
-          </div>
+            <ChevronLeft className="w-4 h-4 text-gray-600" />
+          </button>
+        )}
 
-          {canScrollRight && (
-            <button
-              type="button"
-              onClick={() => scroll("right")}
-              className="hidden cursor-pointer md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-colors"
-              aria-label="다음"
-            >
-              <ChevronRight className="w-4 h-4 text-gray-600" />
-            </button>
-          )}
+        <div
+          ref={scrollRef}
+          className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide [&::-webkit-scrollbar]:hidden"
+          style={{ scrollbarWidth: "none" }}
+          onScroll={updateScrollState}
+        >
+          {posts.map((post) => (
+            <PopularJobCard
+              key={post.id}
+              post={post}
+              initialIsLiked={likedSet.has(post.id)}
+            />
+          ))}
         </div>
-      </section>
 
-      <LoginRequiredModal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-      />
-    </>
+        {canScrollRight && (
+          <button
+            type="button"
+            onClick={() => scroll("right")}
+            className="hidden cursor-pointer md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-colors"
+            aria-label="다음"
+          >
+            <ChevronRight className="w-4 h-4 text-gray-600" />
+          </button>
+        )}
+      </div>
+    </section>
   );
 }

@@ -11,7 +11,7 @@ const pages = [
   },
   {
     category: "메인페이지",
-    items: [{ label: "홈", path: "/home", status: "wip" }],
+    items: [{ label: "홈", path: "/main", status: "wip" }],
   },
   {
     category: "중고마켓",

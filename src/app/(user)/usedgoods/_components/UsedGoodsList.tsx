@@ -1,9 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useCurrentUserId } from "@/hooks/useCurrentUserId";
 import { UsedGoodsCard } from "@/components/usedgoods/UsedGoodsCard";
-import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import type { UsedGoodsWithPost } from "@/type/usedGoods";
 
 interface Props {
@@ -12,8 +9,6 @@ interface Props {
 }
 
 export function UsedGoodsList({ initialPosts, initialLikedIds }: Props) {
-  const currentUserId = useCurrentUserId();
-  const [showLoginModal, setShowLoginModal] = useState(false);
   const likedSet = new Set(initialLikedIds);
 
   if (initialPosts.length === 0) {
@@ -26,36 +21,28 @@ export function UsedGoodsList({ initialPosts, initialLikedIds }: Props) {
   }
 
   return (
-    <>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-        {initialPosts.map((post) => {
-          const goods = post.used_goods?.[0];
-          return (
-            <UsedGoodsCard
-              key={post.id}
-              id={post.id}
-              title={post.title}
-              price={goods?.price ?? 0}
-              locationText={
-                goods?.location_type === "그 외 지역"
-                  ? (goods.location_custom ?? "")
-                  : (goods?.location_type ?? "")
-              }
-              images={goods?.images ?? null}
-              createdAt={post.created_at}
-              likeCount={post.like_count ?? 0}
-              initialIsLiked={likedSet.has(post.id)}
-              sellerName={post.users?.name ?? ""}
-              currentUserId={currentUserId}
-              onLoginRequired={() => setShowLoginModal(true)}
-            />
-          );
-        })}
-      </div>
-      <LoginRequiredModal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-      />
-    </>
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+      {initialPosts.map((post) => {
+        const goods = post.used_goods?.[0];
+        return (
+          <UsedGoodsCard
+            key={post.id}
+            id={post.id}
+            title={post.title}
+            price={goods?.price ?? 0}
+            locationText={
+              goods?.location_type === "그 외 지역"
+                ? (goods.location_custom ?? "")
+                : (goods?.location_type ?? "")
+            }
+            images={goods?.images ?? null}
+            createdAt={post.created_at}
+            likeCount={post.like_count ?? 0}
+            initialIsLiked={likedSet.has(post.id)}
+            sellerName={post.users?.name ?? ""}
+          />
+        );
+      })}
+    </div>
   );
 }

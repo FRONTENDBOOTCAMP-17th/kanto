@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Heart, MapPin } from "lucide-react";
-import { useJobLike } from "@/hooks/job/useJobLike";
+import { MapPin } from "lucide-react";
+import { LikeButton } from "@/components/common/LikeButton";
 
 interface JobCardProps {
   id: number;
@@ -12,8 +12,6 @@ interface JobCardProps {
   salaryType: string | null;
   locationText: string;
   initialIsLiked: boolean;
-  currentUserId: number | null;
-  onLoginRequired: () => void;
 }
 
 export function JobCard({
@@ -24,11 +22,8 @@ export function JobCard({
   salaryType,
   locationText,
   initialIsLiked,
-  currentUserId,
-  onLoginRequired,
 }: JobCardProps) {
   const router = useRouter();
-  const { isLiked, handleLike } = useJobLike({ id, currentUserId, initialIsLiked, onLoginRequired });
 
   return (
     <div
@@ -56,18 +51,8 @@ export function JobCard({
         </div>
       </div>
 
-      <div className="shrink-0">
-        <button
-          type="button"
-          onClick={(e) => { e.stopPropagation(); handleLike(); }}
-          aria-label={isLiked ? "찜 취소" : "찜하기"}
-        >
-          <Heart
-            className={`w-5 h-5 transition-colors ${
-              isLiked ? "fill-red-500 text-red-500" : "text-gray-300 hover:text-red-400"
-            }`}
-          />
-        </button>
+      <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
+        <LikeButton postId={id} initialIsLiked={initialIsLiked} />
       </div>
     </div>
   );
