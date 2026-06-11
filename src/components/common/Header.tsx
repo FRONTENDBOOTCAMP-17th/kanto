@@ -310,7 +310,7 @@ export function Header() {
                       {
                         label: "채팅 목록",
                         icon: MessageCircle,
-                        href: "/chats",
+                        href: "/chat",
                       },
                     ].map(({ label, icon: Icon, href }) => (
                       <button
@@ -402,7 +402,7 @@ export function Header() {
                     { icon: User, href: "/my-profile", label: "내 정보" },
                     { icon: Heart, href: "/favorites", label: "찜" },
                     { icon: FileText, href: "/my-posts", label: "내 글" },
-                    { icon: MessageCircle, href: "/chats", label: "채팅" },
+                    { icon: MessageCircle, href: "/chat", label: "채팅" },
                   ].map(({ icon: Icon, href, label }) => (
                     <Link
                       key={href}

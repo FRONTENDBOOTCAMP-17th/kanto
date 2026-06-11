@@ -122,6 +122,7 @@ export function useCreateJobForm(userId: number) {
     });
 
     if (jobError) {
+      await supabase.from("posts").delete().eq("id", post.id);
       alert("공고 등록에 실패했습니다.");
       setIsSubmitting(false);
       return;
