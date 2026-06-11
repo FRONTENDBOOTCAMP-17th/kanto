@@ -24,6 +24,7 @@ import EditButton from "@/components/common/EditButton";
 import DeleteButton from "@/components/common/DeleteButton";
 import { supabase } from "@/lib/supabase";
 import Toast from "@/components/common/Toast";
+import ReportModal from "@/components/common/ReportModal";
 
 type UsedGoods = Tables<"used_goods"> & {
   posts: Tables<"posts"> & {
@@ -37,12 +38,14 @@ export default function UsedGoodsDetail({
   user,
   initialLiked,
   userId,
+  initialReported,
 }: {
   data: UsedGoods;
   relatedData: UsedGoods[] | null;
   user: User | null;
   initialLiked: boolean;
   userId: number | undefined;
+  initialReported: boolean;
 }) {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -50,6 +53,7 @@ export default function UsedGoodsDetail({
   const [likeCount, setLikeCount] = useState(data.posts.like_count);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [showReportModal, setShowReportModal] = useState(false);
 
   const accession = data.posts.users.created_at
     ? new Date(data.posts.users.created_at)
@@ -258,9 +262,19 @@ export default function UsedGoodsDetail({
               <Share2 className="w-4 h-4" />
             </button>
             <Toast message={toastMessage} showMessage={showToast} />
-            <button className="border-2 p-1.5 rounded-lg">
+            <button
+              onClick={() => setShowReportModal(true)}
+              className="border-2 p-1.5 rounded-lg"
+            >
               <Siren className="w-4 h-4 text-red-400" />
             </button>
+            <ReportModal
+              isOpen={showReportModal}
+              onClose={() => setShowReportModal(false)}
+              postId={data.post_id}
+              userId={userId}
+              initialReported={initialReported}
+            />
           </div>
           <div className="border-b-2 flex space-x-2 pb-4 text-gray-400">
             <p className="flex gap-2">

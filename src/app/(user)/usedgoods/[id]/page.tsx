@@ -50,6 +50,16 @@ export default async function UsedGoodsDetailPage({
         .single()
     : { data: null };
 
+  const { data: reportData } = userData
+    ? await serverSupabase
+        .from("common_reports")
+        .select("id")
+        .eq("target_id", data.post_id)
+        .eq("target_type", "post")
+        .eq("user_id", userData.id)
+        .single()
+    : { data: null };
+
   return (
     <div>
       <UsedGoodsDetail
@@ -58,6 +68,7 @@ export default async function UsedGoodsDetailPage({
         user={user}
         initialLiked={!!likeData}
         userId={userData?.id}
+        initialReported={!!reportData}
       />
     </div>
   );
