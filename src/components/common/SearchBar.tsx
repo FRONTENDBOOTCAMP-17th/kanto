@@ -10,29 +10,19 @@ const LOCATION_OPTIONS = [
 ];
 
 interface SearchBarProps {
-  searchInput: string;
-  onSearchChange: (value: string) => void;
-  onSearchSubmit: (e: React.FormEvent) => void;
-  locationFilter?: string;
-  onLocationChange?: (value: string) => void;
+  onSearch?: (query: string, location: string) => void;
+  showLocation?: boolean;
   children?: React.ReactNode;
 }
 
-export function SearchBar({
-  searchInput,
-  onSearchChange,
-  onSearchSubmit,
-  locationFilter,
-  onLocationChange,
-  children,
-}: SearchBarProps) {
+export function SearchBar({ onSearch, showLocation = false, children }: SearchBarProps) {
+  const [searchInput, setSearchInput] = useState("");
+  const [locationFilter, setLocationFilter] = useState("all");
   const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
   const [mobileLocationOpen, setMobileLocationOpen] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
   const locationDropdownRef = useRef<HTMLDivElement>(null);
 
-  const showLocation =
-    locationFilter !== undefined && onLocationChange !== undefined;
   const selectedLocationLabel =
     LOCATION_OPTIONS.find((loc) => loc.id === locationFilter)?.label ??
     "전체 지역";
@@ -57,9 +47,14 @@ export function SearchBar({
     };
   }, [mobileLocationOpen]);
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSearch?.(searchInput, locationFilter);
+  };
+
   return (
     <div className="mb-8">
-      <form onSubmit={onSearchSubmit}>
+      <form onSubmit={handleSubmit}>
         {/* 모바일 */}
         <div className="md:hidden space-y-2">
           {showLocation && (
@@ -89,7 +84,7 @@ export function SearchBar({
               type="text"
               placeholder="검색어를 입력해주세요"
               value={searchInput}
-              onChange={(e) => onSearchChange(e.target.value)}
+              onChange={(e) => setSearchInput(e.target.value)}
               className="min-w-0 flex-1 h-full bg-transparent outline-none text-gray-700 placeholder-gray-400 px-2 text-sm"
             />
             <button
@@ -135,7 +130,7 @@ export function SearchBar({
                     key={loc.id}
                     type="button"
                     onClick={() => {
-                      onLocationChange?.(loc.id);
+                      setLocationFilter(loc.id);
                       setLocationDropdownOpen(false);
                     }}
                     className={`w-full text-left px-5 py-2.5 text-sm transition-colors hover:bg-teal-50 hover:text-teal-600 ${
@@ -163,7 +158,7 @@ export function SearchBar({
             type="text"
             placeholder="검색어를 입력해주세요"
             value={searchInput}
-            onChange={(e) => onSearchChange(e.target.value)}
+            onChange={(e) => setSearchInput(e.target.value)}
             className="min-w-0 flex-1 h-full bg-transparent outline-none text-gray-700 placeholder-gray-400 px-2 text-sm"
           />
           <button
@@ -202,7 +197,7 @@ export function SearchBar({
                   key={loc.id}
                   type="button"
                   onClick={() => {
-                    onLocationChange?.(loc.id);
+                    setLocationFilter(loc.id);
                     setMobileLocationOpen(false);
                   }}
                   className={`w-full flex items-center justify-between px-5 py-4 rounded-xl mb-2 transition-colors ${
