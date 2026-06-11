@@ -34,7 +34,7 @@ interface UsedGoods {
     like_count: number;
     view_count: number;
     status: string;
-    post_type: "used_goods" | "jobs" | "rentals" | "community_posts";
+    post_type: string;
     created_at: Date;
     updated_at: Date;
     users: {
