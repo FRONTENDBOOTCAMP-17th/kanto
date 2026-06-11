@@ -6,9 +6,10 @@ import type { RentalWithPost } from "@/type/rental/rentalList";
 interface Props {
   initialPosts: RentalWithPost[];
   initialLikedIds: number[];
+  currentUserId: number | null;
 }
 
-export function RentalList({ initialPosts, initialLikedIds }: Props) {
+export function RentalList({ initialPosts, initialLikedIds, currentUserId }: Props) {
   const likedSet = new Set(initialLikedIds);
 
   if (initialPosts.length === 0) {
@@ -37,6 +38,7 @@ export function RentalList({ initialPosts, initialLikedIds }: Props) {
             amenities={(rental?.amenities as string[] | null) ?? []}
             likeCount={post.like_count ?? 0}
             initialIsLiked={likedSet.has(post.id)}
+            currentUserId={currentUserId}
           />
         );
       })}

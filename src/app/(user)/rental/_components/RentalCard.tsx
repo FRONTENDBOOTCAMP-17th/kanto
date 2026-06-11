@@ -26,6 +26,7 @@ interface RentalCardProps {
   amenities: string[];
   likeCount: number;
   initialIsLiked: boolean;
+  currentUserId: number | null;
 }
 
 export function RentalCard({
@@ -39,6 +40,7 @@ export function RentalCard({
   amenities,
   likeCount,
   initialIsLiked,
+  currentUserId,
 }: RentalCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -144,6 +146,7 @@ export function RentalCard({
       <LikeButton
         postId={id}
         initialIsLiked={initialIsLiked}
+        currentUserId={currentUserId}
         className="absolute top-2 right-2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors z-10"
       />
     </div>

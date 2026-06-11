@@ -14,6 +14,7 @@ export type MainCardItem = {
   popular: boolean;
   imageSrc?: string;
   initialIsLiked: boolean;
+  currentUserId: number | null;
 };
 
 function Placeholder() {
@@ -38,6 +39,7 @@ export default function MainCard({ item }: { item: MainCardItem }) {
         <LikeButton
           postId={item.id}
           initialIsLiked={item.initialIsLiked}
+          currentUserId={item.currentUserId}
           className="hidden md:flex absolute top-2 right-2 w-8 h-8 bg-white rounded-full items-center justify-center shadow-sm cursor-pointer"
         />
       </div>

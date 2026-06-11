@@ -1,11 +1,18 @@
 /** 도배 방지 훅 */
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function useSpamPrevention() {
   const [isCooldown, setIsCooldown] = useState(false);
   const [cooldownSeconds, setCooldownSeconds] = useState(10);
   const sendTimestamps = useRef<number[]>([]);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
 
   const recordSend = (): boolean => {
     const now = Date.now();
@@ -18,10 +25,11 @@ export function useSpamPrevention() {
       setIsCooldown(true);
       setCooldownSeconds(10);
 
-      const interval = setInterval(() => {
+      intervalRef.current = setInterval(() => {
         setCooldownSeconds((prev) => {
           if (prev <= 1) {
-            clearInterval(interval);
+            clearInterval(intervalRef.current!);
+            intervalRef.current = null;
             setIsCooldown(false);
             return 0;
           }

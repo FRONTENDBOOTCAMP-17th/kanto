@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { getUsedGoodsItem } from "@/services/usedGoods/usedGoods";
 import UsedGoodsDetail from "@/app/(user)/usedgoods/[id]/_components/UsedGoodsDetail";
 
 export default async function UsedGoodsDetailPage({
@@ -7,11 +7,7 @@ export default async function UsedGoodsDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const { data } = await supabase
-    .from("used_goods")
-    .select(`*, posts (*, users (*))`)
-    .eq("post_id", Number(id))
-    .single();
+  const data = await getUsedGoodsItem(Number(id));
 
   if (!data) {
     return <div>상품을 찾을 수 없습니다.</div>;

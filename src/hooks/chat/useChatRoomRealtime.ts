@@ -44,21 +44,6 @@ export function useChatRoomRealtime({
 
           setMessages((prev) => {
             if (prev.some((m) => m.id === newMsg.id)) return prev;
-
-            if (newMsg.sender_id === currentUser.id) {
-              const idx = prev.findIndex(
-                (m) =>
-                  m.id > 1e12 &&
-                  m.sender_id === currentUser.id &&
-                  m.content === newMsg.content,
-              );
-              if (idx !== -1) {
-                const updated = [...prev];
-                updated[idx] = msgWithSender;
-                return updated;
-              }
-            }
-
             return [...prev, msgWithSender];
           });
         },
@@ -85,5 +70,6 @@ export function useChatRoomRealtime({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [chatId, currentUser, partner]);
+  // currentUser·partner 객체 전체 대신 .id만 사용 — 참조 변경 시 채널 재구독 방지
+  }, [chatId, currentUser.id, partner.id, setMessages]); // eslint-disable-line react-hooks/exhaustive-deps
 }

@@ -35,7 +35,7 @@ export function useChatMessages({
         .neq("sender_id", currentUser.id)
         .eq("is_read", false);
     })();
-  }, []);
+  }, [chatId, currentUser.id]);
 
   useEffect(() => {
     if (wasLoadingMore.current) {

@@ -23,7 +23,7 @@ export default async function UsedGoodsPage({
   const params = await searchParams;
   const currentPage = Number(params.page ?? 1);
 
-  const [posts, { likedIds }] = await Promise.all([
+  const [posts, { likedIds, currentUserId }] = await Promise.all([
     getUsedGoodsList({
       search: params.search,
       category: params.category,
@@ -58,7 +58,7 @@ export default async function UsedGoodsPage({
 
       <div className="border-t border-gray-200 my-6" />
 
-      <UsedGoodsList initialPosts={pagedPosts} initialLikedIds={likedIds} />
+      <UsedGoodsList initialPosts={pagedPosts} initialLikedIds={likedIds} currentUserId={currentUserId} />
 
       {totalPages > 1 && (
         <div className="flex justify-center mt-8">

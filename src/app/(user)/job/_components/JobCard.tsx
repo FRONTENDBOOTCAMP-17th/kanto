@@ -12,6 +12,7 @@ interface JobCardProps {
   salaryType: string | null;
   locationText: string;
   initialIsLiked: boolean;
+  currentUserId: number | null;
 }
 
 export function JobCard({
@@ -22,6 +23,7 @@ export function JobCard({
   salaryType,
   locationText,
   initialIsLiked,
+  currentUserId,
 }: JobCardProps) {
   const router = useRouter();
 
@@ -52,7 +54,7 @@ export function JobCard({
       </div>
 
       <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
-        <LikeButton postId={id} initialIsLiked={initialIsLiked} />
+        <LikeButton postId={id} initialIsLiked={initialIsLiked} currentUserId={currentUserId} />
       </div>
     </div>
   );
