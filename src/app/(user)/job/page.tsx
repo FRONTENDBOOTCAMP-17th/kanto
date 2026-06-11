@@ -18,7 +18,7 @@ export default async function JobPage({
   const params = await searchParams;
   const currentPage = Number(params.page ?? 1);
 
-  const [posts, { likedIds }, popularPosts] = await Promise.all([
+  const [posts, { likedIds, currentUserId }, popularPosts] = await Promise.all([
     getJobList({
       search: params.search,
       employeeType: params.type,
@@ -55,9 +55,9 @@ export default async function JobPage({
 
         <div className="border-t border-gray-200 my-6" />
 
-        <PopularJobs posts={popularPosts} likedIds={likedIds} />
+        <PopularJobs posts={popularPosts} likedIds={likedIds} currentUserId={currentUserId} />
 
-        <JobList posts={pagedPosts} likedIds={likedIds} />
+        <JobList posts={pagedPosts} likedIds={likedIds} currentUserId={currentUserId} />
 
         {totalPages > 1 && (
           <div className="flex justify-center mt-8">

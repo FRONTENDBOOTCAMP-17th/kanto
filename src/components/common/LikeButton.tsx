@@ -2,20 +2,19 @@
 
 import { useState } from "react";
 import { Heart } from "lucide-react";
-import { useCurrentUserId } from "@/hooks/useCurrentUserId";
 import { toggleLike } from "@/services/likeToggle";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 
 interface LikeButtonProps {
   postId: number;
   initialIsLiked: boolean;
+  currentUserId: number | null;
   className?: string;
 }
 
-export function LikeButton({ postId, initialIsLiked, className }: LikeButtonProps) {
+export function LikeButton({ postId, initialIsLiked, currentUserId, className }: LikeButtonProps) {
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [showModal, setShowModal] = useState(false);
-  const currentUserId = useCurrentUserId();
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();

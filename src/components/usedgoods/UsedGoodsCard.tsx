@@ -15,6 +15,7 @@ interface UsedGoodsCardProps {
   createdAt: string;
   likeCount: number;
   initialIsLiked: boolean;
+  currentUserId: number | null;
   sellerName: string;
 }
 
@@ -27,6 +28,7 @@ export function UsedGoodsCard({
   createdAt,
   likeCount,
   initialIsLiked,
+  currentUserId,
   sellerName,
 }: UsedGoodsCardProps) {
   const thumbnail = Array.isArray(images)
@@ -74,6 +76,7 @@ export function UsedGoodsCard({
       <LikeButton
         postId={id}
         initialIsLiked={initialIsLiked}
+        currentUserId={currentUserId}
         className="absolute top-2 right-2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors"
       />
     </div>

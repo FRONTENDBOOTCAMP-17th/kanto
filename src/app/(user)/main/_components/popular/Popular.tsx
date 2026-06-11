@@ -4,7 +4,7 @@ import { formatTimeAgo } from "@/utils/formatTime";
 import PopularTabs from "./PopularTabs";
 
 export default async function Popular() {
-  const [{ usedGoods, rentals, jobs }, { likedIds }] = await Promise.all([
+  const [{ usedGoods, rentals, jobs }, { likedIds, currentUserId }] = await Promise.all([
     getPopularList(),
     getLikeList(),
   ]);
@@ -22,6 +22,7 @@ export default async function Popular() {
       popular: p.like_count >= 20,
       imageSrc: (p.used_goods[0].images as string[] | null)?.[0],
       initialIsLiked: likedIds.includes(p.id),
+      currentUserId,
     }));
 
   const rentalItems = rentals
@@ -37,6 +38,7 @@ export default async function Popular() {
       popular: p.like_count >= 20,
       imageSrc: (p.rentals[0].images as string[] | null)?.[0],
       initialIsLiked: likedIds.includes(p.id),
+      currentUserId,
     }));
 
   const jobItems = jobs
@@ -52,6 +54,7 @@ export default async function Popular() {
       popular: p.like_count >= 20,
       imageSrc: (p.jobs[0].images as string[] | null)?.[0],
       initialIsLiked: likedIds.includes(p.id),
+      currentUserId,
     }));
 
   return (

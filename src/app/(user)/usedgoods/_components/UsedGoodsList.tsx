@@ -6,9 +6,10 @@ import type { UsedGoodsWithPost } from "@/type/usedGoods";
 interface Props {
   initialPosts: UsedGoodsWithPost[];
   initialLikedIds: number[];
+  currentUserId: number | null;
 }
 
-export function UsedGoodsList({ initialPosts, initialLikedIds }: Props) {
+export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId }: Props) {
   const likedSet = new Set(initialLikedIds);
 
   if (initialPosts.length === 0) {
@@ -39,6 +40,7 @@ export function UsedGoodsList({ initialPosts, initialLikedIds }: Props) {
             createdAt={post.created_at}
             likeCount={post.like_count ?? 0}
             initialIsLiked={likedSet.has(post.id)}
+            currentUserId={currentUserId}
             sellerName={post.users?.name ?? ""}
           />
         );

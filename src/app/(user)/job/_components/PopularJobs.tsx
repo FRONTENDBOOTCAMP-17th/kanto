@@ -9,14 +9,16 @@ import type { JobWithPost } from "@/type/job/jobList";
 interface Props {
   posts: JobWithPost[];
   likedIds: number[];
+  currentUserId: number | null;
 }
 
 interface CardProps {
   post: JobWithPost;
   initialIsLiked: boolean;
+  currentUserId: number | null;
 }
 
-function PopularJobCard({ post, initialIsLiked }: CardProps) {
+function PopularJobCard({ post, initialIsLiked, currentUserId }: CardProps) {
   const job = post.jobs?.[0];
   if (!job) return null;
 
@@ -31,7 +33,7 @@ function PopularJobCard({ post, initialIsLiked }: CardProps) {
           <p className="text-xs text-gray-500 truncate">{job.company_name}</p>
         </div>
         <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} className="shrink-0">
-          <LikeButton postId={post.id} initialIsLiked={initialIsLiked} />
+          <LikeButton postId={post.id} initialIsLiked={initialIsLiked} currentUserId={currentUserId} />
         </div>
       </div>
 
@@ -53,7 +55,7 @@ function PopularJobCard({ post, initialIsLiked }: CardProps) {
   );
 }
 
-export function PopularJobs({ posts, likedIds }: Props) {
+export function PopularJobs({ posts, likedIds, currentUserId }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -116,6 +118,7 @@ export function PopularJobs({ posts, likedIds }: Props) {
               key={post.id}
               post={post}
               initialIsLiked={likedSet.has(post.id)}
+              currentUserId={currentUserId}
             />
           ))}
         </div>

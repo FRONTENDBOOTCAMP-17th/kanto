@@ -6,9 +6,10 @@ import type { JobWithPost } from "@/type/job/jobList";
 interface Props {
   posts: JobWithPost[];
   likedIds: number[];
+  currentUserId: number | null;
 }
 
-export function JobList({ posts, likedIds }: Props) {
+export function JobList({ posts, likedIds, currentUserId }: Props) {
   const likedSet = new Set(likedIds);
 
   if (posts.length === 0) {
@@ -35,6 +36,7 @@ export function JobList({ posts, likedIds }: Props) {
             salaryType={job.salary_type}
             locationText={job.location_custom ?? job.location_type}
             initialIsLiked={likedSet.has(post.id)}
+            currentUserId={currentUserId}
           />
         );
       })}
