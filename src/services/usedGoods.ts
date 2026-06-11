@@ -15,6 +15,8 @@ export async function getUsedGoodsList(): Promise<UsedGoodsWithPost[]> {
     .from("posts")
     .select(USED_GOODS_SELECT)
     .eq("post_type", "used_goods")
+    .eq("status", "active")
+    .not("used_goods", "is", null)
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
@@ -50,7 +52,8 @@ export async function getUsedGoodsByCategory(
     .from("posts")
     .select(USED_GOODS_SELECT)
     .eq("post_type", "used_goods")
-    .eq("used_goods.category", category)
+    .eq("status", "active")
+    .not("used_goods", "is", null)
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
