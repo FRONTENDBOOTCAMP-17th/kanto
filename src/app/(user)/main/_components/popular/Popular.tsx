@@ -1,7 +1,7 @@
 import { getPopularList } from "@/services/main/main";
 import { getLikeList } from "@/services/likes";
 import { formatTimeAgo } from "@/utils/formatTime";
-import PopularList from "./PopularList";
+import PopularTabs from "./PopularTabs";
 
 export default async function Popular() {
   const [{ usedGoods, rentals, jobs }, likedIds] = await Promise.all([
@@ -59,9 +59,11 @@ export default async function Popular() {
       <div className="mt-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-6 md:mb-10">인기 목록</h1>
       </div>
-      <PopularList title="중고거래" items={usedGoodsItems} link={`/usedgoods`} />
-      <PopularList title="구인구직" items={jobItems} link={`job`} />
-      <PopularList title="방렌트" items={rentalItems} link={`rental`} />
+      <PopularTabs
+        usedGoodsItems={usedGoodsItems}
+        jobItems={jobItems}
+        rentalItems={rentalItems}
+      />
     </>
   );
 }
