@@ -58,6 +58,18 @@ export async function getUsedGoodsDetail(
   return data as UsedGoodsWithPost;
 }
 
+export async function getUsedGoodsItem(postId: number) {
+  const supabase = await createSupabaseServerClient();
+
+  const { data } = await supabase
+    .from("used_goods")
+    .select(`*, posts (*, users (*))`)
+    .eq("post_id", postId)
+    .single();
+
+  return data;
+}
+
 export async function getUsedGoodsByCategory(
   category: string
 ): Promise<UsedGoodsWithPost[]> {
