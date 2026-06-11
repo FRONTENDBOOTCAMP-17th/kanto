@@ -5,7 +5,7 @@ import { getNotionContent } from '@/services/notion/notion'
 export const revalidate = 3600
 
 export default async function YouthTermsPage() {
-  const content = await getNotionContent(process.env.NOTION_TERMS_YOUTH_PAGE_ID!)
+  const content = await getNotionContent(process.env.NOTION_TERMS_YOUTH_PAGE_ID)
 
   return (
     <main className="min-h-screen bg-gray-900 text-gray-100">
