@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { MapPin, Clock, Wifi, AirVent, Car, Utensils, Heart } from "lucide-react";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import { formatTimeAgo } from "@/utils/formatTime";
-import { toggleLike } from "@/services/likeToggle";
+import { LikeButton } from "@/components/common/LikeButton";
+import { useState } from "react";
 
 const AMENITY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   wifi: Wifi,
@@ -26,8 +26,6 @@ interface RentalCardProps {
   amenities: string[];
   likeCount: number;
   initialIsLiked: boolean;
-  currentUserId: number | null;
-  onLoginRequired: () => void;
 }
 
 export function RentalCard({
@@ -39,36 +37,13 @@ export function RentalCard({
   createdAt,
   images,
   amenities,
-  likeCount: initialLikeCount,
+  likeCount,
   initialIsLiked,
-  currentUserId,
-  onLoginRequired,
 }: RentalCardProps) {
-  const [isLiked, setIsLiked] = useState(initialIsLiked);
-  const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const displayLocation =
     location === "그 외 지역" ? (locationDetail ?? location) : location;
-
-  const handleLike = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (currentUserId === null) {
-      onLoginRequired();
-      return;
-    }
-    const wasLiked = isLiked;
-    setIsLiked(!wasLiked);
-    setLikeCount((c) => c + (wasLiked ? -1 : 1));
-
-    const { error } = await toggleLike(id, currentUserId, wasLiked);
-
-    if (error) {
-      setIsLiked(wasLiked);
-      setLikeCount((c) => c + (wasLiked ? 1 : -1));
-    }
-  };
 
   return (
     <div className="relative">
@@ -166,16 +141,11 @@ export function RentalCard({
         </Card>
       </Link>
 
-      <button
-        type="button"
-        onClick={handleLike}
+      <LikeButton
+        postId={id}
+        initialIsLiked={initialIsLiked}
         className="absolute top-2 right-2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors z-10"
-        aria-label={isLiked ? "찜 취소" : "찜하기"}
-      >
-        <Heart
-          className={`w-4 h-4 ${isLiked ? "fill-red-500 text-red-500" : "text-gray-700"}`}
-        />
-      </button>
+      />
     </div>
   );
 }
