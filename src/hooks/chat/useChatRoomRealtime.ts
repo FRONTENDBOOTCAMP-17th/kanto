@@ -44,21 +44,6 @@ export function useChatRoomRealtime({
 
           setMessages((prev) => {
             if (prev.some((m) => m.id === newMsg.id)) return prev;
-
-            if (newMsg.sender_id === currentUser.id) {
-              const idx = prev.findIndex(
-                (m) =>
-                  m.id > 1e12 &&
-                  m.sender_id === currentUser.id &&
-                  m.content === newMsg.content,
-              );
-              if (idx !== -1) {
-                const updated = [...prev];
-                updated[idx] = msgWithSender;
-                return updated;
-              }
-            }
-
             return [...prev, msgWithSender];
           });
         },
