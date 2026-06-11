@@ -123,7 +123,7 @@ export default function UsedGoodsDetail({
         <Header />
         <div className="flex items-center justify-between">
           <button
-            onClick={() => router.push("/usedgoods")}
+            onClick={() => router.back()}
             className="flex mx-2 my-4 gap-2"
           >
             <MoveLeft />

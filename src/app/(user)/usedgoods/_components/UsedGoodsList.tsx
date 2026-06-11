@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { useLikes } from "@/hooks/useLikes";
 
@@ -21,10 +21,15 @@ interface Props {
 
 export function UsedGoodsList({ initialPosts, initialLikedIds }: Props) {
   const router = useRouter();
+  const SearchParams = useSearchParams();
   const { items, showLoginModal, setShowLoginModal, handleLikeToggle } =
     useLikes(initialPosts, initialLikedIds);
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const currentPage = Number(SearchParams.get("page") ?? 1);
+
+  const handlePageChange = (page: number) => {
+    router.push(`/usedgoods?page=${page}`);
+  };
 
   const ITEMS_PER_PAGE = 12;
   const totalPage = Math.ceil(items.length / ITEMS_PER_PAGE);
@@ -66,7 +71,7 @@ export function UsedGoodsList({ initialPosts, initialLikedIds }: Props) {
             <Pagination
               currentPage={currentPage}
               totalPage={totalPage}
-              onPageChange={setCurrentPage}
+              onPageChange={handlePageChange}
             />
           </div>
         </>
