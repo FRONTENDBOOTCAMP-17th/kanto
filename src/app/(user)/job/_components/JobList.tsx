@@ -1,9 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useCurrentUserId } from "@/hooks/useCurrentUserId";
 import { JobCard } from "./JobCard";
-import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import type { JobWithPost } from "@/type/job/jobList";
 
 interface Props {
@@ -12,8 +9,6 @@ interface Props {
 }
 
 export function JobList({ posts, likedIds }: Props) {
-  const currentUserId = useCurrentUserId();
-  const [showLoginModal, setShowLoginModal] = useState(false);
   const likedSet = new Set(likedIds);
 
   if (posts.length === 0) {
@@ -26,31 +21,23 @@ export function JobList({ posts, likedIds }: Props) {
   }
 
   return (
-    <>
-      <div className="flex flex-col divide-y divide-gray-200 border-t border-b border-gray-200">
-        {posts.map((post) => {
-          const job = post.jobs?.[0];
-          if (!job) return null;
-          return (
-            <JobCard
-              key={post.id}
-              id={post.id}
-              title={post.title}
-              companyName={job.company_name}
-              salary={job.salary}
-              salaryType={job.salary_type}
-              locationText={job.location_custom ?? job.location_type}
-              initialIsLiked={likedSet.has(post.id)}
-              currentUserId={currentUserId}
-              onLoginRequired={() => setShowLoginModal(true)}
-            />
-          );
-        })}
-      </div>
-      <LoginRequiredModal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-      />
-    </>
+    <div className="flex flex-col divide-y divide-gray-200 border-t border-b border-gray-200">
+      {posts.map((post) => {
+        const job = post.jobs?.[0];
+        if (!job) return null;
+        return (
+          <JobCard
+            key={post.id}
+            id={post.id}
+            title={post.title}
+            companyName={job.company_name}
+            salary={job.salary}
+            salaryType={job.salary_type}
+            locationText={job.location_custom ?? job.location_type}
+            initialIsLiked={likedSet.has(post.id)}
+          />
+        );
+      })}
+    </div>
   );
 }
