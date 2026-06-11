@@ -13,9 +13,7 @@ export function CreateJobForm({ userId }: { userId: number }) {
       <div className="max-w-lg mx-auto">
         <Card className="p-8">
           <div className="flex items-center gap-3 mb-6">
-            <h1 className="text-2xl font-bold text-gray-900">
-              구인구직 글쓰기
-            </h1>
+            <h1 className="text-2xl font-bold text-gray-900">구인구직 글쓰기</h1>
             <span className="text-sm font-medium bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full">
               {form.step}/2
             </span>

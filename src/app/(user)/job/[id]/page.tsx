@@ -1,0 +1,48 @@
+import { getJobDetail } from "@/services/job/jobDetail";
+import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarresel";
+import JobTitle from "./_components/JobTitle";
+import JobInfo from "./_components/JobInfo";
+import JobAuthorInfo from "./_components/JobAuthorInfo";
+import JobContent from "./_components/JobContent";
+import CompanyInfo from "./_components/CompanyInfo";
+
+export default async function JobDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  let job;
+  try {
+    job = await getJobDetail(Number(id));
+  } catch {
+    return (
+      <div className="p-8 text-center text-gray-500">
+        게시글을 찾을 수 없습니다.
+      </div>
+    );
+  }
+
+  const images = (job.images as string[]) ?? [];
+
+  return (
+    <div className="w-full max-w-3xl mx-auto px-4 py-6">
+      <div className="border border-gray-200 rounded-2xl overflow-hidden divide-y divide-gray-200">
+        <JobTitle job={job} />
+        <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
+          <JobInfo job={job} />
+          <JobAuthorInfo job={job} />
+        </div>
+        {images.length > 0 && (
+          <div className="p-6 space-y-2">
+            <h2 className="font-semibold text-base">사진</h2>
+            <ImageCarousel images={images} />
+          </div>
+        )}
+        <JobContent job={job} />
+        <CompanyInfo job={job} />
+      </div>
+    </div>
+  );
+}

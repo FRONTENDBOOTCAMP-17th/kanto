@@ -1,82 +1,10 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { useSearchBar } from "@/hooks/useSearchBar";
-import Link from "next/link";
-import { Card } from "@/components/ui/card";
-import {
-  MapPin,
-  Clock,
-  Wifi,
-  AirVent,
-  Car,
-  Utensils,
-  Heart,
-} from "lucide-react";
-import { ImageWithFallback } from "@/components/common/ImageWithFallback";
-import { Pagination } from "@/components/common/Pagination";
-import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
-import { SearchBar } from "@/components/common/SearchBar";
-import { FilterDropdown } from "@/components/common/FilterDropdown";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { RENTAL_ROOM_TYPES } from "@/type/rental/rentalList";
+import { RentalCard } from "./RentalCard";
+import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import type { RentalWithPost } from "@/type/rental/rentalList";
-
-const AMENITY_ICONS: Record<
-  string,
-  React.ComponentType<{ className?: string }>
-> = {
-  wifi: Wifi,
-  aircon: AirVent,
-  parking: Car,
-  kitchen: Utensils,
-};
-
-const ITEMS_PER_PAGE = 12;
-
-function formatTimeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const minutes = Math.floor(diff / 60000);
-  if (minutes < 60) return `${minutes}분 전`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}시간 전`;
-  const days = Math.floor(hours / 24);
-  return `${days}일 전`;
-}
-
-interface RentalItem {
-  id: number;
-  title: string;
-  price: number | null;
-  location: string | null;
-  locationDetail: string | null;
-  createdAt: string;
-  images: string[];
-  amenities: string[];
-  likeCount: number;
-  isLiked: boolean;
-  roomType: string | null;
-}
-
-function formatRentalItem(
-  post: RentalWithPost,
-  likedSet: Set<number>,
-): RentalItem {
-  const rental = post.rentals?.[0];
-  return {
-    id: post.id,
-    title: post.title,
-    price: rental?.price ?? null,
-    location: rental?.location ?? null,
-    locationDetail: rental?.location_detail ?? null,
-    createdAt: post.created_at,
-    images: (rental?.images as string[] | null) ?? [],
-    amenities: (rental?.amenities as string[] | null) ?? [],
-    likeCount: post.like_count,
-    isLiked: likedSet.has(post.id),
-    roomType: rental?.room_type ?? null,
-  };
-}
 
 interface Props {
   initialPosts: RentalWithPost[];
@@ -84,282 +12,61 @@ interface Props {
 }
 
 export function RentalList({ initialPosts, initialLikedIds }: Props) {
-  const [items, setItems] = useState<RentalItem[]>(() => {
-    const likedSet = new Set(initialLikedIds);
-    return initialPosts.map((post) => formatRentalItem(post, likedSet));
-  });
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
-
-  const { searchQuery, locationFilter, handleSearch } = useSearchBar();
-  const [roomTypeFilter, setRoomTypeFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [currentImageIndex, setCurrentImageIndex] = useState<
-    Record<number, number>
-  >({});
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const likedSet = new Set(initialLikedIds);
 
   useEffect(() => {
-    const initSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      setIsLoggedIn(!!session);
+    supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) return;
-      const { data: userData } = await supabase
+      supabase
         .from("users")
         .select("id")
         .eq("auth_id", session.user.id)
-        .single();
-      if (userData) setCurrentUserId(userData.id);
-    };
-    initSession();
+        .single()
+        .then(({ data }) => {
+          if (data) setCurrentUserId(data.id);
+        });
+    });
   }, []);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [roomTypeFilter, locationFilter, searchQuery]);
-
-  const handleLikeToggle = async (id: number) => {
-    if (!isLoggedIn || currentUserId === null) {
-      setShowLoginModal(true);
-      return;
-    }
-    const target = items.find((item) => item.id === id);
-    if (!target) return;
-
-    setItems((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              isLiked: !item.isLiked,
-              likeCount: item.likeCount + (item.isLiked ? -1 : 1),
-            }
-          : item,
-      ),
+  if (initialPosts.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-gray-400 gap-2">
+        <p className="text-lg font-medium">등록된 매물이 없습니다</p>
+        <p className="text-sm">첫 번째 매물을 등록해보세요!</p>
+      </div>
     );
-
-    if (target.isLiked) {
-      await supabase
-        .from("common_likes")
-        .delete()
-        .eq("user_id", currentUserId)
-        .eq("target_type", "post")
-        .eq("target_id", id);
-    } else {
-      await supabase
-        .from("common_likes")
-        .insert({ user_id: currentUserId, target_type: "post", target_id: id });
-    }
-  };
-
-  const filteredItems = useMemo(() => {
-    return items.filter((item) => {
-      const matchSearch =
-        !searchQuery ||
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (item.location ?? "").toLowerCase().includes(searchQuery.toLowerCase());
-      const matchRoomType =
-        roomTypeFilter === "all" || item.roomType === roomTypeFilter;
-      const matchLocation =
-        locationFilter === "all" || item.location === locationFilter;
-      return matchSearch && matchRoomType && matchLocation;
-    });
-  }, [items, searchQuery, roomTypeFilter, locationFilter]);
-
-  const totalPage = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
-  const pagedItems = filteredItems.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE,
-  );
-
-  const goToSlide = (id: number, idx: number) =>
-    setCurrentImageIndex((prev) => ({ ...prev, [id]: idx }));
+  }
 
   return (
-    <main className="flex-1 bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-center text-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">방렌트</h1>
-          <p className="text-gray-600 mt-1">
-            {searchQuery
-              ? `"${searchQuery}" 검색 결과`
-              : "필리핀 한인을 위한 방 렌트 정보"}
-          </p>
-        </div>
-
-        <SearchBar onSearch={(q, l) => { handleSearch(q, l); setCurrentPage(1); }} showLocation>
-          <FilterDropdown
-            options={RENTAL_ROOM_TYPES}
-            value={roomTypeFilter}
-            onChange={(v) => {
-              setRoomTypeFilter(v);
-              setCurrentPage(1);
-            }}
-          />
-        </SearchBar>
-
-        <div className="border-t border-gray-200 mb-8" />
-
-        {filteredItems.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-400 gap-2">
-            <p className="text-lg font-medium">등록된 매물이 없습니다</p>
-            <p className="text-sm">첫 번째 매물을 등록해보세요!</p>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              {pagedItems.map((item) => {
-                const currentIndex = currentImageIndex[item.id] ?? 0;
-                const displayLocation =
-                  item.location === "그 외 지역"
-                    ? (item.locationDetail ?? item.location)
-                    : item.location;
-
-                return (
-                  <div key={item.id} className="relative">
-                    <Link href={`/rental/${item.id}`}>
-                      <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group">
-                        <div className="relative aspect-square overflow-hidden bg-gray-100">
-                          {item.images.length > 0 ? (
-                            <>
-                              {item.images.map((image, idx) => (
-                                <div
-                                  key={idx}
-                                  className={`absolute inset-0 transition-opacity duration-300 ${
-                                    idx === currentIndex
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  }`}
-                                >
-                                  <ImageWithFallback
-                                    src={image}
-                                    alt={`${item.title} ${idx + 1}`}
-                                    fill
-                                    className="object-cover"
-                                    sizes="(max-width: 768px) 100vw, 25vw"
-                                  />
-                                </div>
-                              ))}
-                              {item.images.length > 1 && (
-                                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10">
-                                  {item.images.map((_, idx) => (
-                                    <button
-                                      key={idx}
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        goToSlide(item.id, idx);
-                                      }}
-                                      className={`h-1.5 rounded-full transition-all ${
-                                        idx === currentIndex
-                                          ? "bg-white w-4"
-                                          : "bg-white/60 hover:bg-white/80 w-1.5"
-                                      }`}
-                                      aria-label={`이미지 ${idx + 1}로 이동`}
-                                    />
-                                  ))}
-                                </div>
-                              )}
-                            </>
-                          ) : (
-                            <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
-                              <span className="text-gray-400 text-sm">
-                                이미지 없음
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="p-4">
-                          {item.amenities.length > 0 && (
-                            <div className="flex gap-2 mb-2">
-                              {item.amenities
-                                .filter((a) => a in AMENITY_ICONS)
-                                .map((amenity) => {
-                                  const Icon = AMENITY_ICONS[amenity];
-                                  return (
-                                    <div
-                                      key={amenity}
-                                      className="w-6 h-6 bg-teal-50 rounded flex items-center justify-center"
-                                      title={amenity}
-                                    >
-                                      <Icon className="w-4 h-4 text-teal-600" />
-                                    </div>
-                                  );
-                                })}
-                            </div>
-                          )}
-
-                          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 text-sm">
-                            {item.title}
-                          </h3>
-
-                          <p className="text-lg font-bold text-gray-900 mb-3">
-                            {item.price != null
-                              ? `₱${item.price.toLocaleString()}`
-                              : "가격 협의"}
-                          </p>
-
-                          <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
-                            <MapPin className="w-3 h-3 flex-shrink-0" />
-                            <span className="truncate">
-                              {displayLocation ?? "위치 미정"}
-                            </span>
-                          </div>
-
-                          <div className="flex items-center justify-between text-xs text-gray-500">
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-3 h-3" />
-                              <span>{formatTimeAgo(item.createdAt)}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Heart className="w-3 h-3" />
-                              <span>{item.likeCount}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </Card>
-                    </Link>
-
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleLikeToggle(item.id);
-                      }}
-                      className="absolute top-2 right-2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors z-10"
-                      aria-label={item.isLiked ? "찜 취소" : "찜하기"}
-                    >
-                      <Heart
-                        className={`w-4 h-4 ${item.isLiked ? "fill-red-500 text-red-500" : "text-gray-700"}`}
-                      />
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-
-            {totalPage > 1 && (
-              <div className="flex justify-center mt-8">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPage={totalPage}
-                  onPageChange={setCurrentPage}
-                />
-              </div>
-            )}
-          </>
-        )}
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {initialPosts.map((post) => {
+          const rental = post.rentals?.[0];
+          return (
+            <RentalCard
+              key={post.id}
+              id={post.id}
+              title={post.title}
+              price={rental?.price ?? null}
+              location={rental?.location ?? null}
+              locationDetail={rental?.location_detail ?? null}
+              createdAt={post.created_at}
+              images={(rental?.images as string[] | null) ?? []}
+              amenities={(rental?.amenities as string[] | null) ?? []}
+              likeCount={post.like_count ?? 0}
+              initialIsLiked={likedSet.has(post.id)}
+              currentUserId={currentUserId}
+              onLoginRequired={() => setShowLoginModal(true)}
+            />
+          );
+        })}
       </div>
-
       <LoginRequiredModal
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
       />
-    </main>
+    </>
   );
 }

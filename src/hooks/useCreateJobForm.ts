@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useImageUpload } from "@/hooks/useImageUpload";
 import type { TradeLocation } from "@/type/location";
-import type { EmployeeType, SalaryType } from "@/type/job";
+import type { EmployeeType, SalaryType } from "@/type/job/jobCreate";
 
 export function useCreateJobForm(userId: number) {
   const router = useRouter();

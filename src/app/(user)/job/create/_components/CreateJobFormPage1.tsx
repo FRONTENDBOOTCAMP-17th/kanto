@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TRADE_LOCATIONS, type TradeLocation } from "@/type/location";
-import { EMPLOYEE_TYPES, SALARY_TYPES, type EmployeeType, type SalaryType } from "@/type/job";
+import { EMPLOYEE_TYPES, SALARY_TYPES, type EmployeeType, type SalaryType } from "@/type/job/jobCreate";
 
 interface CreateJobFormPageOneProps {
   title: string; setTitle: (v: string) => void;
@@ -59,7 +59,7 @@ export function CreateJobFormPageOne({
           <SelectTrigger><SelectValue placeholder="고용 형태를 선택하세요" /></SelectTrigger>
           <SelectContent>
             {EMPLOYEE_TYPES.map((type) => (
-              <SelectItem key={type} value={type}>{type}</SelectItem>
+              <SelectItem key={type.id} value={type.id}>{type.label}</SelectItem>
             ))}
           </SelectContent>
         </Select>
