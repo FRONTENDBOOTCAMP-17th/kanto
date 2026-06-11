@@ -33,7 +33,7 @@ interface UsedGoods {
     user_id: number;
     like_count: number;
     view_count: number;
-    status: "active" | "inactive" | "deleted";
+    status: string;
     post_type: "used_goods" | "jobs" | "rentals" | "community_posts";
     created_at: Date;
     updated_at: Date;
