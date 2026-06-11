@@ -1,6 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
 
-// 찜목록 조회
+// 찜목록 조회...
 
 interface LikeListResult {
   likedIds: number[];
