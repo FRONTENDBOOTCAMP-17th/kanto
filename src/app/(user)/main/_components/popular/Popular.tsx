@@ -4,7 +4,7 @@ import { formatTimeAgo } from "@/utils/formatTime";
 import PopularTabs from "./PopularTabs";
 
 export default async function Popular() {
-  const [{ usedGoods, rentals, jobs }, likedIds] = await Promise.all([
+  const [{ usedGoods, rentals, jobs }, { likedIds }] = await Promise.all([
     getPopularList(),
     getLikeList(),
   ]);
