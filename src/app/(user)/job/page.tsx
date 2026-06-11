@@ -18,7 +18,7 @@ export default async function JobPage({
   const params = await searchParams;
   const currentPage = Number(params.page ?? 1);
 
-  const [posts, likedIds, popularPosts] = await Promise.all([
+  const [posts, { likedIds }, popularPosts] = await Promise.all([
     getJobList({
       search: params.search,
       employeeType: params.type,
