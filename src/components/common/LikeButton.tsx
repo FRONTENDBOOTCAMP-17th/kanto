@@ -37,11 +37,11 @@ export function LikeButton({ postId, initialIsLiked, className }: LikeButtonProp
     <>
       <button
         onClick={handleClick}
-        className={className}
+        className={`group cursor-pointer hover:bg-gray-100 ${className ?? ""}`}
         aria-label={isLiked ? "찜 해제" : "찜하기"}
       >
         <Heart
-          className={`w-4 h-4 transition-colors ${isLiked ? "fill-red-500 text-red-500" : "text-gray-400"}`}
+          className={`w-4 h-4 transition-colors ${isLiked ? "fill-red-500 text-red-500" : "text-gray-400 group-hover:text-red-500"}`}
         />
       </button>
       <LoginRequiredModal isOpen={showModal} onClose={() => setShowModal(false)} />
