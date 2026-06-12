@@ -50,10 +50,16 @@ export function UsedGoodsCard({
           </div>
 
           <div className="p-2 sm:p-4 flex flex-col flex-1">
-            <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 text-sm">{title}</h3>
-            <p className="text-lg font-bold text-gray-900 mb-1">₱{price.toLocaleString()}</p>
+            <h3 className="font-semibold text-gray-900 mb-2 line-clamp-1 text-sm">
+              {title}
+            </h3>
+            <p className="text-lg font-bold text-gray-900 mb-1">
+              ₱ {price.toLocaleString()}
+            </p>
             {sellerName && (
-              <p className="text-xs text-gray-400 mb-2 truncate">{sellerName}</p>
+              <p className="text-xs text-gray-400 mb-2 truncate">
+                {sellerName}
+              </p>
             )}
             <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
               <MapPin className="w-3 h-3 shrink-0" />

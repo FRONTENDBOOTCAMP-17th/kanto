@@ -41,7 +41,7 @@ export function ScrollToTop() {
         </button>
       )}
       <button
-        className="cursor-pointer w-12 h-12 bg-teal-500 hover:bg-teal-600 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"
+        className="cursor-pointer w-12 h-12 btn-primary rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"
         aria-label="맨 위로 이동"
         onClick={handleScrollToTop}
       >

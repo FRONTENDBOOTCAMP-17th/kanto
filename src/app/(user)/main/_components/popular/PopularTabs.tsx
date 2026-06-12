@@ -40,7 +40,7 @@ export default function PopularTabs({ usedGoodsItems, jobItems, rentalItems }: P
       </div>
 
       <div className="hidden md:block">
-        <div className="flex items-center justify-between mb-6">
+        <div className="section-header">
           <div className="flex gap-6 items-end">
             {TABS.map((tab) => (
               <button

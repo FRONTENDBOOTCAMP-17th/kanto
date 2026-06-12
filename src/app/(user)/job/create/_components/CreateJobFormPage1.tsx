@@ -127,7 +127,7 @@ export function CreateJobFormPageOne({
 
       <div className="flex gap-3 pt-2">
         <Button type="button" variant="outline" onClick={handleBack} className="flex-1">취소</Button>
-        <Button type="button" onClick={handleNextStep} className="flex-1 bg-teal-500 hover:bg-teal-600">다음 단계</Button>
+        <Button type="button" variant="teal" onClick={handleNextStep} className="flex-1">다음 단계</Button>
       </div>
     </div>
   );

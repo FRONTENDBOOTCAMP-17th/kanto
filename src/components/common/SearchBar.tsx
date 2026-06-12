@@ -122,7 +122,7 @@ export function SearchBar({ onSearch, showLocation = false, children }: SearchBa
             </button>
             {locationDropdownOpen && (
               <div
-                className="fixed w-52 bg-white rounded-2xl shadow-xl border border-gray-200 py-2 z-[100]"
+                className="fixed w-52 bg-white rounded-2xl shadow-xl border border-gray-200 py-2 z-100"
                 style={{ top: dropdownPos.top, left: dropdownPos.left }}
               >
                 {LOCATION_OPTIONS.map((loc) => (
@@ -133,7 +133,7 @@ export function SearchBar({ onSearch, showLocation = false, children }: SearchBa
                       setLocationFilter(loc.id);
                       setLocationDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-5 py-2.5 text-sm transition-colors hover:bg-teal-50 hover:text-teal-600 ${
+                    className={`dropdown-item ${
                       locationFilter === loc.id
                         ? "bg-teal-50 text-teal-600 font-semibold"
                         : "text-gray-700"
