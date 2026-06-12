@@ -8,8 +8,8 @@ export default function MainPage() {
       <Hero />
 
       {/* 검색 섹션 */}
-      <section className="bg-gray-50 px-4 sm:px-6 lg:px-8 py-8">
-        <div className="max-w-7xl mx-auto">
+      <section className="bg-gray-50 py-8">
+        <div className="page-container">
           <p className="text-center text-gray-500 text-sm mb-4">
             중고거래 · 구인구직 · 방렌트를 한곳에서
           </p>

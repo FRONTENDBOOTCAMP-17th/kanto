@@ -125,6 +125,12 @@
   .page-container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
+  .page-title {
+    @apply text-2xl font-bold text-gray-900;
+  }
+  .page-title-lg {
+    @apply text-3xl font-bold text-gray-900;
+  }
 }
 
 @layer base {

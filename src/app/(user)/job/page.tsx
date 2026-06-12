@@ -38,7 +38,7 @@ export default async function JobPage({
     <div className="min-h-screen flex flex-col">
       <main className="flex-1 page-container w-full py-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">구인구직</h1>
+          <h1 className="page-title">구인구직</h1>
           <Link href="/job/create">
             <Button className="cursor-pointer bg-teal-500 hover:bg-teal-600 text-white gap-1">
               <Plus className="w-4 h-4" />
