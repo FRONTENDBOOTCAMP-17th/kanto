@@ -131,6 +131,9 @@
   .page-title-lg {
     @apply text-3xl font-bold text-gray-900;
   }
+  .section-header {
+    @apply flex items-center justify-between mb-6;
+  }
 }
 
 @layer base {
