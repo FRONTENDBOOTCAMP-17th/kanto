@@ -14,8 +14,6 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Header } from "@/components/common/Header";
-import { Footer } from "@/components/common/Footer";
 import { Tables } from "@/type/supabase";
 import { formatTimeAgo } from "@/utils/formatTime";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
@@ -120,7 +118,6 @@ export default function UsedGoodsDetail({
   return (
     <div>
       <section>
-        <Header />
         <div className="flex items-center justify-between">
           <button
             onClick={() => router.back()}
@@ -323,7 +320,6 @@ export default function UsedGoodsDetail({
           </div>
         </div>
       </section>
-      <Footer />
     </div>
   );
 }

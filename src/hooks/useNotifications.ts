@@ -9,15 +9,16 @@ export type Notification = Tables<"common_notifications">;
 
 export function useNotifications() {
   const { user } = useAuthStore();
+  const userId = user?.id;
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!userId) return;
 
     supabase
       .from("common_notifications")
       .select("*")
-      .eq("receiver_id", user.id)
+      .eq("receiver_id", userId)
       .order("created_at", { ascending: false })
       .limit(20)
       .then(({ data }) => {
@@ -25,17 +26,20 @@ export function useNotifications() {
       });
 
     const channel = supabase
-      .channel(`notifications:${user.id}`)
+      .channel(`notifications:${userId}`)
       .on(
         "postgres_changes",
         {
           event: "INSERT",
           schema: "public",
           table: "common_notifications",
-          filter: `receiver_id=eq.${user.id}`,
+          filter: `receiver_id=eq.${userId}`,
         },
         (payload) => {
-          setNotifications((prev) => [payload.new as Notification, ...prev]);
+          const newItem = payload.new as Notification;
+          setNotifications((prev) =>
+            prev.some((n) => n.id === newItem.id) ? prev : [newItem, ...prev],
+          );
         },
       )
       .subscribe();
@@ -44,16 +48,12 @@ export function useNotifications() {
       channel.unsubscribe();
       supabase.removeChannel(channel);
     };
-  }, [user]);
+  }, [userId]);
 
   const markAsRead = async (n: Notification) => {
     if (n.is_read) return;
 
-    setNotifications((prev) =>
-      prev.map((item) =>
-        item.id === n.id ? { ...item, is_read: true } : item,
-      ),
-    );
+    setNotifications((prev) => prev.filter((item) => item.id !== n.id));
 
     const { error } = await supabase
       .from("common_notifications")
@@ -61,24 +61,20 @@ export function useNotifications() {
       .eq("id", n.id);
 
     if (error) {
-      setNotifications((prev) =>
-        prev.map((item) =>
-          item.id === n.id ? { ...item, is_read: false } : item,
-        ),
-      );
+      setNotifications((prev) => [n, ...prev]);
     }
   };
 
   const markAllRead = async () => {
-    if (!user) return;
+    if (!userId) return;
     const snapshot = notifications;
 
-    setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
+    setNotifications([]);
 
     const { error } = await supabase
       .from("common_notifications")
       .update({ is_read: true })
-      .eq("receiver_id", user.id)
+      .eq("receiver_id", userId)
       .eq("is_read", false);
 
     if (error) setNotifications(snapshot);
