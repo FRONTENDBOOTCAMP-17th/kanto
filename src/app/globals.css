@@ -134,6 +134,9 @@
   .section-header {
     @apply flex items-center justify-between mb-6;
   }
+  .page-wrapper {
+    @apply min-h-screen flex flex-col;
+  }
   .card-like-btn {
     @apply absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center transition-colors;
   }

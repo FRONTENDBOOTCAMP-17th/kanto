@@ -35,7 +35,7 @@ export default async function JobPage({
   );
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="page-wrapper">
       <main className="flex-1 page-container w-full py-8">
         <div className="section-header">
           <h1 className="page-title">구인구직</h1>
