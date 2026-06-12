@@ -57,7 +57,7 @@ export default function Hero() {
 
   return (
     <div className="w-full bg-gray-50 pt-8 pb-0">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="page-container">
         <div
           className="relative w-full h-70 sm:h-85 md:h-100 overflow-hidden rounded-3xl shadow-xl"
           onMouseEnter={() => setPaused(true)}

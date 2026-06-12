@@ -16,7 +16,7 @@ export default function MainPage() {
           <MainSearchBar />
         </div>
       </section>
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-gray-200">
+      <section className="page-container border-t border-gray-200">
         <Popular />
       </section>
     </div>

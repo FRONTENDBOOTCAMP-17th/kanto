@@ -38,7 +38,7 @@ export default async function RentalPage({
 
   return (
     <main className="flex-1 bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="page-container">
         <div className="flex flex-col items-center text-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900">방렌트</h1>
           <p className="text-gray-600 mt-1">
