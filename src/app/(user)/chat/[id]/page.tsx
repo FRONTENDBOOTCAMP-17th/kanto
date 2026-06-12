@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
-import { getChatRoom } from "@/services/chat/chat";
-import { getMessage } from "@/services/chat/message";
+import { getChatDetail } from "@/services/chat/chat";
+import { getMessageList } from "@/services/chat/message";
 import ChatRoomClient from "./_components/ChatRoomClient";
 
 export default async function ChatRoomPage({
@@ -27,8 +27,8 @@ export default async function ChatRoomPage({
 
   const chatId = Number(id);
   const [chatRoom, messages] = await Promise.all([
-    getChatRoom(chatId, supabase),
-    getMessage(chatId, supabase),
+    getChatDetail(chatId, supabase),
+    getMessageList(chatId, supabase),
   ]);
 
   const partner =

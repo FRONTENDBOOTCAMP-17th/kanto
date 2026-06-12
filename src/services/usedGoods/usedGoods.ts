@@ -7,11 +7,16 @@ const USED_GOODS_SELECT = `
   users(id, name, avatar_url, created_at)
 ` as const;
 
-// 중고마켓 목록 조회
-export async function getUsedGoodsList(): Promise<UsedGoodsWithPost[]> {
+interface UsedGoodsListFilter {
+  search?: string;
+  category?: string;
+  location?: string;
+}
+
+export async function getUsedGoodsList(filter?: UsedGoodsListFilter): Promise<UsedGoodsWithPost[]> {
   const supabase = await createSupabaseServerClient();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("posts")
     .select(USED_GOODS_SELECT)
     .eq("post_type", "used_goods")
@@ -19,12 +24,25 @@ export async function getUsedGoodsList(): Promise<UsedGoodsWithPost[]> {
     .not("used_goods", "is", null)
     .order("created_at", { ascending: false });
 
+  if (filter?.search) {
+    query = query.ilike("title", `%${filter.search}%`);
+  }
+
+  const { data, error } = await query;
   if (error) throw new Error(error.message);
 
-  return data as UsedGoodsWithPost[];
+  let result = data as UsedGoodsWithPost[];
+
+  if (filter?.category) {
+    result = result.filter((p) => p.used_goods?.[0]?.category === filter.category);
+  }
+  if (filter?.location) {
+    result = result.filter((p) => p.used_goods?.[0]?.location_type === filter.location);
+  }
+
+  return result;
 }
 
-// 중고마켓 단건 상세 조회
 export async function getUsedGoodsDetail(
   postId: number,
 ): Promise<UsedGoodsWithPost> {
@@ -42,7 +60,18 @@ export async function getUsedGoodsDetail(
   return data as UsedGoodsWithPost;
 }
 
-// 카테고리별 목록 조회
+export async function getUsedGoodsItem(postId: number) {
+  const supabase = await createSupabaseServerClient();
+
+  const { data } = await supabase
+    .from("used_goods")
+    .select(`*, posts (*, users (*))`)
+    .eq("post_id", postId)
+    .single();
+
+  return data;
+}
+
 export async function getUsedGoodsByCategory(
   category: string,
 ): Promise<UsedGoodsWithPost[]> {

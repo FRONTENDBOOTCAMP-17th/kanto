@@ -11,7 +11,7 @@ const pages = [
   },
   {
     category: "메인페이지",
-    items: [{ label: "홈", path: "/home", status: "wip" }],
+    items: [{ label: "홈", path: "/main", status: "wip" }],
   },
   {
     category: "중고마켓",
@@ -22,15 +22,29 @@ const pages = [
     ],
   },
   {
-    category: "채팅",
-    items: [{ label: "채팅 목록", path: "/chat", status: "wip" }],
+    category: "방렌트",
+    items: [
+      { label: "목록", path: "/rental", status: "wip" },
+      { label: "상세", path: "/rental/1", status: "wip" },
+      { label: "글쓰기", path: "/rental/create", status: "wip" },
+    ],
   },
   {
     category: "구인구직",
     items: [
       { label: "목록", path: "/job", status: "wip" },
       { label: "상세", path: "/job/1", status: "wip" },
-      { label: "글쓰기", path: "/job/create", status: "wip" },
+      { label: "글쓰기", path: "/job/create", status: "wip" }
+    ],
+  },
+  {
+    category: "채팅",
+    items: [{ label: "채팅 목록", path: "/chat", status: "wip" }],
+  },
+  {
+    category: "이용약관",
+    items: [
+      { label: "이용약관", path: "/terms", status: "wip" },
     ],
   },
 ];
@@ -116,10 +130,14 @@ export default function DevPage() {
                   className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-gray-800">{label}</span>
+                    <span className="text-sm font-medium text-gray-800">
+                      {label}
+                    </span>
                     <span className="text-xs text-gray-400">{description}</span>
                   </div>
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${badgeStyle}`}>
+                  <span
+                    className={`text-xs font-medium px-2 py-0.5 rounded-full ${badgeStyle}`}
+                  >
                     {badge}
                   </span>
                 </Link>

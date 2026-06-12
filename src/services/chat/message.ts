@@ -5,7 +5,7 @@ const MESSAGE_SELECT = `*,
     sender:users!messages_sender_id_fkey(id, name, avatar_url, created_at)`;
 
 // 메시지 조회
-export async function getMessage(
+export async function getMessageList(
   chatId: number,
   supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
   before?: string,

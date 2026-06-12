@@ -56,8 +56,9 @@ export default function ChatRoomClient({
     const content = input.trim();
     setInput("");
 
+    const tempId = Date.now();
     const optimistic: MessageWithSender = {
-      id: Date.now(),
+      id: tempId,
       created_at: new Date().toISOString(),
       chat_id: chatId,
       sender_id: currentUser.id,
@@ -65,13 +66,17 @@ export default function ChatRoomClient({
       content,
       is_read: false,
       sender: currentUser,
+      tempId,
     };
     setMessages((prev) => [...prev, optimistic]);
 
     try {
-      await sendMessageAction({ chatId, postId, content });
+      const saved = await sendMessageAction({ chatId, postId, content });
+      setMessages((prev) =>
+        prev.map((m) => (m.tempId === tempId ? { ...m, id: saved.id, tempId: undefined } : m))
+      );
     } catch {
-      setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
+      setMessages((prev) => prev.filter((m) => m.tempId !== tempId));
     }
   };
 

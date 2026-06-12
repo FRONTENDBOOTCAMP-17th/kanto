@@ -5,4 +5,5 @@ export type Message = Tables<"messages">;
 
 export interface MessageWithSender extends Message {
   sender: SellerInfo;
+  tempId?: number;
 }

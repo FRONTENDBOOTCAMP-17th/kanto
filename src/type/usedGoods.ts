@@ -1,27 +1,28 @@
 import type { Tables } from "@/type/supabase";
-import type { Post } from "./post";
-import type { SellerInfo } from "./user";
+import type { Post } from "@/type/post";
+import type { SellerInfo } from "@/type/user";
 
-export type { TradeLocation } from "./location";
-export { TRADE_LOCATIONS } from "./location";
+export type { TradeLocation } from "@/type/location";
+export { TRADE_LOCATIONS } from "@/type/location";
 
 export const PRODUCT_CATEGORIES = [
-  "가구",
-  "의류",
-  "악세서리",
-  "유아용품",
-  "자동차",
-  "기타",
+  { id: "all", label: "전체" },
+  { id: "가구", label: "가구" },
+  { id: "의류", label: "의류" },
+  { id: "악세서리", label: "악세서리" },
+  { id: "유아용품", label: "유아용품" },
+  { id: "자동차", label: "자동차" },
+  { id: "기타", label: "기타" },
 ] as const;
 
 export const PRODUCT_CONDITIONS = [
-  "미개봉",
-  "가벼운 사용감",
-  "사용감 있음",
+  { id: "미개봉", label: "미개봉" },
+  { id: "가벼운 사용감", label: "가벼운 사용감" },
+  { id: "사용감 있음", label: "사용감 있음" },
 ] as const;
 
-export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number];
-export type ProductCondition = (typeof PRODUCT_CONDITIONS)[number];
+export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number]["id"];
+export type ProductCondition = (typeof PRODUCT_CONDITIONS)[number]["id"];
 
 export type UsedGoods = Tables<"used_goods">;
 

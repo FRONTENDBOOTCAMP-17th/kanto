@@ -1,9 +1,6 @@
 import { redirect } from "next/navigation";
 
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
-import { Header } from "@/components/common/Header";
-import { Footer } from "@/components/common/Footer";
-import { ScrollToTop } from "@/components/common/ScrollToTop";
 import { CreateUsedGoodsForm } from "./_components/CreateUsedGoodsForm";
 
 export default async function CreateUsedGoodsPage() {
@@ -26,10 +23,7 @@ export default async function CreateUsedGoodsPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-      <ScrollToTop />
       <CreateUsedGoodsForm userId={dbUser.id} />
-      <Footer />
     </div>
   );
 }

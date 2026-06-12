@@ -2,12 +2,14 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, ImagePlus, X } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { ImageUploadField } from "@/components/common/ImageUploadField";
 import {
   Select,
   SelectContent,
@@ -15,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { supabase } from "@/lib/supabase";
 import {
   PRODUCT_CATEGORIES,
   PRODUCT_CONDITIONS,
@@ -119,7 +120,6 @@ export function CreateUsedGoodsForm({
         .eq("post_id", postId);
       router.push("/usedgoods");
     } else {
-      // Step 1: posts 테이블 insert
       const { data: post, error: postError } = await supabase
         .from("posts")
         .insert({
@@ -139,7 +139,6 @@ export function CreateUsedGoodsForm({
         return;
       }
 
-      // Step 2: Storage 이미지 업로드
       const uploadedUrls: string[] = [];
       for (const file of imageFiles) {
         const filePath = `${userId}/${post.id}/${Date.now()}_${file.name}`;
@@ -160,7 +159,6 @@ export function CreateUsedGoodsForm({
         uploadedUrls.push(urlData.publicUrl);
       }
 
-      // Step 3: used_goods 테이블 insert
       const { error: goodsError } = await supabase.from("used_goods").insert({
         post_id: post.id,
         price: Number(price),
@@ -264,9 +262,9 @@ export function CreateUsedGoodsForm({
                   <SelectValue placeholder="카테고리를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  {PRODUCT_CATEGORIES.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
+                  {PRODUCT_CATEGORIES.filter((c) => c.id !== "all").map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {cat.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -285,8 +283,8 @@ export function CreateUsedGoodsForm({
                 </SelectTrigger>
                 <SelectContent>
                   {PRODUCT_CONDITIONS.map((cond) => (
-                    <SelectItem key={cond} value={cond}>
-                      {cond}
+                    <SelectItem key={cond.id} value={cond.id}>
+                      {cond.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -333,54 +331,13 @@ export function CreateUsedGoodsForm({
               />
             </div>
 
-            <div className="space-y-2">
-              <Label>사진 (최대 10장)</Label>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                className="hidden"
-                onChange={handleImageSelect}
-              />
-              <div className="space-y-3">
-                {imagePreviews.length > 0 && (
-                  <div className="grid grid-cols-5 gap-3">
-                    {imagePreviews.map((img, index) => (
-                      <div key={index} className="relative aspect-square">
-                        <img
-                          src={img}
-                          alt={`Upload ${index + 1}`}
-                          className="w-full h-full object-cover rounded-lg"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removeImage(index)}
-                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {imagePreviews.length < 10 && (
-                  <button
-                    type="button"
-                    onClick={handleImageUpload}
-                    className="w-full border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-teal-500 transition-colors"
-                  >
-                    <div className="flex flex-col items-center gap-2 text-gray-500">
-                      <ImagePlus className="w-8 h-8" />
-                      <span className="text-sm">사진 추가하기</span>
-                      <span className="text-xs">
-                        ({imagePreviews.length}/10)
-                      </span>
-                    </div>
-                  </button>
-                )}
-              </div>
-            </div>
+            <ImageUploadField
+              fileInputRef={fileInputRef}
+              imagePreviews={imagePreviews}
+              onUploadClick={handleImageUpload}
+              onSelect={handleImageSelect}
+              onRemove={removeImage}
+            />
 
             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
               <input

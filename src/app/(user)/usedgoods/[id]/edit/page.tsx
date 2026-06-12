@@ -1,4 +1,4 @@
-import { getUsedGoodsDetail } from "@/services/usedGoods";
+import { getUsedGoodsDetail } from "@/services/usedGoods/usedGoods";
 import { CreateUsedGoodsForm } from "@/app/(user)/usedgoods/create/_components/CreateUsedGoodsForm";
 
 export default async function EditPage({

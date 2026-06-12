@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabase";
+import { useAuthStore } from "@/store/authStore";
 import {
   Menu,
   User,
@@ -22,12 +24,6 @@ import {
   MessageCircle,
   Pencil,
 } from "lucide-react";
-
-// TODO: [Zustand] useAuthStore 완성 후 아래 interface 삭제하고
-// import { useAuthStore } from "@/stores/useAuthStore" 로 교체
-interface MockUser {
-  name: string;
-}
 
 const NAV_ITEMS = [
   { name: "중고거래", icon: ShoppingBag, href: "/usedgoods" },
@@ -82,13 +78,29 @@ const ICON_MAP: Record<string, { icon: React.ElementType; color: string }> = {
 
 export function Header() {
   const router = useRouter();
+  const { user, setUser, clearUser } = useAuthStore();
 
-  // TODO: [Zustand] useAuthStore 완성되면 아래 두 줄로 교체
-  // const { user, clear } = useAuthStore()
-  // const handleLogout = clear
-  const [user, setUser] = useState<MockUser | null>({ name: "테스트유저" }); // 개발용 mock — 실제 로그인 구현 전까지만 사용
-  // TODO: [Supabase] supabase.auth.signOut() 호출로 교체
-  const handleLogout = () => setUser(null);
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
+        if (!session) {
+          clearUser();
+          return;
+        }
+        const { data: userData } = await supabase
+          .from("users")
+          .select("*")
+          .eq("auth_id", session.user.id)
+          .single();
+        if (userData) setUser(userData);
+      },
+    );
+    return () => authListener.subscription.unsubscribe();
+  }, [setUser, clearUser]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -300,7 +312,7 @@ export function Header() {
                       {
                         label: "채팅 목록",
                         icon: MessageCircle,
-                        href: "/chats",
+                        href: "/chat",
                       },
                     ].map(({ label, icon: Icon, href }) => (
                       <button
@@ -392,7 +404,7 @@ export function Header() {
                     { icon: User, href: "/my-profile", label: "내 정보" },
                     { icon: Heart, href: "/favorites", label: "찜" },
                     { icon: FileText, href: "/my-posts", label: "내 글" },
-                    { icon: MessageCircle, href: "/chats", label: "채팅" },
+                    { icon: MessageCircle, href: "/chat", label: "채팅" },
                   ].map(({ icon: Icon, href, label }) => (
                     <Link
                       key={href}

@@ -1,13 +1,10 @@
-"use client";
-
 import Link from "next/link";
 import type { Json } from "@/type/supabase";
-
 import { Card } from "@/components/ui/card";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
-
 import { Heart, MapPin, Clock } from "lucide-react";
 import { formatTimeAgo } from "@/utils/formatTime";
+import { LikeButton } from "@/components/common/LikeButton";
 
 interface UsedGoodsCardProps {
   id: number;
@@ -17,9 +14,9 @@ interface UsedGoodsCardProps {
   images: Json | null;
   createdAt: string;
   likeCount: number;
-  isLiked: boolean;
+  initialIsLiked: boolean;
+  currentUserId: number | null;
   sellerName: string;
-  onLikeToggle: (id: number) => void;
 }
 
 export function UsedGoodsCard({
@@ -30,14 +27,13 @@ export function UsedGoodsCard({
   images,
   createdAt,
   likeCount,
-  isLiked,
+  initialIsLiked,
+  currentUserId,
   sellerName,
-  onLikeToggle,
 }: UsedGoodsCardProps) {
   const thumbnail = Array.isArray(images)
-    ? ((images[0] as string) ?? "/fallback-image.svg")
+    ? (images[0] as string) ?? "/fallback-image.svg"
     : "/fallback-image.svg";
-  const relativeTime = formatTimeAgo(createdAt);
 
   return (
     <div className="relative h-full">
@@ -51,21 +47,6 @@ export function UsedGoodsCard({
               sizes="(max-width: 768px) 100vw, 25vw"
               className="object-cover group-hover:scale-105 transition-transform duration-300"
             />
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                onLikeToggle(id);
-              }}
-              className="absolute top-2 right-2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors"
-              aria-label={isLiked ? "찜 해제" : "찜하기"}
-            >
-              <Heart
-                className={`w-4 h-4 ${
-                  isLiked ? "fill-red-500 text-red-500" : "text-gray-700"
-                }`}
-              />
-            </button>
           </div>
 
           <div className="p-2 sm:p-4 flex flex-col flex-1">
@@ -87,16 +68,23 @@ export function UsedGoodsCard({
             <div className="flex items-center justify-between text-xs text-gray-500">
               <div className="flex items-center gap-1">
                 <Clock className="w-3 h-3" />
-                <span>{relativeTime}</span>
+                <span>{formatTimeAgo(createdAt)}</span>
               </div>
               <div className="flex items-center gap-1">
                 <Heart className="w-3 h-3" />
-                <span>{likeCount ?? 0}</span>
+                <span>{likeCount}</span>
               </div>
             </div>
           </div>
         </Card>
       </Link>
+
+      <LikeButton
+        postId={id}
+        initialIsLiked={initialIsLiked}
+        currentUserId={currentUserId}
+        className="absolute top-2 right-2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors"
+      />
     </div>
   );
 }

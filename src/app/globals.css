@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@plugin "@tailwindcss/typography";
+
+/* 이미지 캐러셀 키프레임 */
+@import "../styles/carousel.css";
 
 @custom-variant dark (&:is(.dark *));
 

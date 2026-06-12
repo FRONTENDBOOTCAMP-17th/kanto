@@ -232,7 +232,7 @@ export default function UsedGoodsDetail({
             </div>
           )}
           <button
-            onClick={() => router.push("/chats")}
+            onClick={() => router.push("/chat")}
             className="rounded-md bg-teal-500 text-white w-full p-2 mt-2"
           >
             채팅하기

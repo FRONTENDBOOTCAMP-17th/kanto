@@ -363,26 +363,26 @@ export type Database = {
           company_name: string
           company_website: string | null
           company_year: number | null
-          contact: string | null
           created_at: string
-          deadline: string | null
+          deadline: string
           employee_count: number | null
-          employee_type: string | null
+          employee_type: string
           id: number
           images: Json | null
           industry: string | null
+          location_custom: string | null
+          location_type: Database["public"]["Enums"]["trade_location"]
           main_task: string
           manager_email: string | null
           manager_name: string | null
           manager_phone: string | null
           manager_title: string | null
+          popular_count: number | null
           post_id: number
           preferred: string | null
-          region: Database["public"]["Enums"]["trade_location"]
-          region_detail: string | null
-          salary: number | null
+          salary: number
           salary_type: string | null
-          work_hours: string | null
+          work_hours: string
         }
         Insert: {
           applicant_count?: string | null
@@ -391,26 +391,26 @@ export type Database = {
           company_name: string
           company_website?: string | null
           company_year?: number | null
-          contact?: string | null
           created_at?: string
-          deadline?: string | null
+          deadline: string
           employee_count?: number | null
-          employee_type?: string | null
+          employee_type: string
           id?: number
           images?: Json | null
           industry?: string | null
+          location_custom?: string | null
+          location_type: Database["public"]["Enums"]["trade_location"]
           main_task: string
           manager_email?: string | null
           manager_name?: string | null
           manager_phone?: string | null
           manager_title?: string | null
+          popular_count?: number | null
           post_id: number
           preferred?: string | null
-          region: Database["public"]["Enums"]["trade_location"]
-          region_detail?: string | null
-          salary?: number | null
+          salary: number
           salary_type?: string | null
-          work_hours?: string | null
+          work_hours: string
         }
         Update: {
           applicant_count?: string | null
@@ -419,26 +419,26 @@ export type Database = {
           company_name?: string
           company_website?: string | null
           company_year?: number | null
-          contact?: string | null
           created_at?: string
-          deadline?: string | null
+          deadline?: string
           employee_count?: number | null
-          employee_type?: string | null
+          employee_type?: string
           id?: number
           images?: Json | null
           industry?: string | null
+          location_custom?: string | null
+          location_type?: Database["public"]["Enums"]["trade_location"]
           main_task?: string
           manager_email?: string | null
           manager_name?: string | null
           manager_phone?: string | null
           manager_title?: string | null
+          popular_count?: number | null
           post_id?: number
           preferred?: string | null
-          region?: Database["public"]["Enums"]["trade_location"]
-          region_detail?: string | null
-          salary?: number | null
+          salary?: number
           salary_type?: string | null
-          work_hours?: string | null
+          work_hours?: string
         }
         Relationships: [
           {
@@ -640,40 +640,40 @@ export type Database = {
       }
       used_goods: {
         Row: {
-          category: string | null
-          condition: string | null
-          content: string | null
+          category: string
+          condition: Database["public"]["Enums"]["product_condition"]
+          content: string
           id: number
           images: Json | null
           location_custom: string | null
-          location_type: Database["public"]["Enums"]["trade_location"] | null
+          location_type: Database["public"]["Enums"]["trade_location"]
           post_id: number
-          price: number | null
-          safe_payment: boolean | null
+          price: number
+          safe_payment: boolean
         }
         Insert: {
-          category?: string | null
-          condition?: string | null
-          content?: string | null
+          category: string
+          condition: Database["public"]["Enums"]["product_condition"]
+          content: string
           id?: number
           images?: Json | null
           location_custom?: string | null
-          location_type?: Database["public"]["Enums"]["trade_location"] | null
+          location_type: Database["public"]["Enums"]["trade_location"]
           post_id: number
-          price?: number | null
-          safe_payment?: boolean | null
+          price: number
+          safe_payment?: boolean
         }
         Update: {
-          category?: string | null
-          condition?: string | null
-          content?: string | null
+          category?: string
+          condition?: Database["public"]["Enums"]["product_condition"]
+          content?: string
           id?: number
           images?: Json | null
           location_custom?: string | null
-          location_type?: Database["public"]["Enums"]["trade_location"] | null
+          location_type?: Database["public"]["Enums"]["trade_location"]
           post_id?: number
-          price?: number | null
-          safe_payment?: boolean | null
+          price?: number
+          safe_payment?: boolean
         }
         Relationships: [
           {
@@ -737,6 +737,7 @@ export type Database = {
       my_user_id: { Args: never; Returns: number }
     }
     Enums: {
+      product_condition: "미개봉" | "가벼운 사용감" | "사용감 있음"
       trade_location:
         | "BGC / Taguig"
         | "Makati"
@@ -872,6 +873,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      product_condition: ["미개봉", "가벼운 사용감", "사용감 있음"],
       trade_location: [
         "BGC / Taguig",
         "Makati",
