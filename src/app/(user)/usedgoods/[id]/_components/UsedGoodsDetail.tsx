@@ -25,6 +25,7 @@ import DeleteButton from "@/components/common/DeleteButton";
 import { supabase } from "@/lib/supabase";
 import Toast from "@/components/common/Toast";
 import ReportModal from "@/components/common/ReportModal";
+import { ROUTES } from "@/constants/routes";
 
 type UsedGoods = Tables<"used_goods"> & {
   posts: Tables<"posts"> & {
@@ -232,7 +233,7 @@ export default function UsedGoodsDetail({
             </div>
           )}
           <button
-            onClick={() => router.push("/chat")}
+            onClick={() => router.push(ROUTES.chat)}
             className="rounded-md bg-teal-500 text-white w-full p-2 mt-2"
           >
             채팅하기
