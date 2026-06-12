@@ -1,17 +1,18 @@
 import Link from "next/link";
 import Image from "next/image";
+import { ROUTES } from "@/constants/routes";
 
 const SERVICES = [
-  { href: "/usedgoods", label: "중고거래" },
-  { href: "/jobs", label: "구인구직" },
-  { href: "/rental", label: "방렌트" },
-  { href: "/community", label: "한인 커뮤니티" },
+  { href: ROUTES.usedgoods, label: "중고거래" },
+  { href: ROUTES.jobs, label: "구인구직" },
+  { href: ROUTES.rental, label: "방렌트" },
+  { href: ROUTES.community, label: "한인 커뮤니티" },
 ];
 
 const LEGAL_LINKS = [
-  { href: "/terms?tab=terms", label: "이용약관" },
-  { href: "/terms?tab=privacy", label: "개인정보처리방침" },
-  { href: "/terms?tab=location", label: "위치기반서비스" },
+  { href: ROUTES.termsOfService, label: "이용약관" },
+  { href: ROUTES.privacyPolicy, label: "개인정보처리방침" },
+  { href: ROUTES.locationPolicy, label: "위치기반서비스" },
 ];
 
 export function Footer() {
@@ -53,7 +54,7 @@ export function Footer() {
             <h4 className="text-white font-semibold mb-4">고객지원</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/report" className="hover:text-teal-500 transition-colors">
+                <Link href={ROUTES.report} className="hover:text-teal-500 transition-colors">
                   문의/신고하기
                 </Link>
               </li>

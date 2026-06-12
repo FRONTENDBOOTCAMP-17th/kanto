@@ -2,7 +2,7 @@ import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import type { RentalWithPost } from "@/type/rental/rentalList";
 import type { RentalWithPost as RentalDetail } from "@/type/rental/rentalDetail";
 
-const RENTAL_DETAIL_SELECT = `*, posts(*, users(*))` as const;
+const RENTAL_DETAIL_SELECT = `*, posts(*, users(id, name, email, avatar_url, provider, role, post_count, created_at, updated_at))` as const;
 const RENTAL_LIST_SELECT = `
   *,
   rentals(*),
