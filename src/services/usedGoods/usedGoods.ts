@@ -20,6 +20,8 @@ export async function getUsedGoodsList(filter?: UsedGoodsListFilter): Promise<Us
     .from("posts")
     .select(USED_GOODS_SELECT)
     .eq("post_type", "used_goods")
+    .eq("status", "active")
+    .not("used_goods", "is", null)
     .order("created_at", { ascending: false });
 
   if (filter?.search) {
@@ -42,7 +44,7 @@ export async function getUsedGoodsList(filter?: UsedGoodsListFilter): Promise<Us
 }
 
 export async function getUsedGoodsDetail(
-  postId: number
+  postId: number,
 ): Promise<UsedGoodsWithPost> {
   const supabase = await createSupabaseServerClient();
 
@@ -71,7 +73,7 @@ export async function getUsedGoodsItem(postId: number) {
 }
 
 export async function getUsedGoodsByCategory(
-  category: string
+  category: string,
 ): Promise<UsedGoodsWithPost[]> {
   const supabase = await createSupabaseServerClient();
 
@@ -79,7 +81,8 @@ export async function getUsedGoodsByCategory(
     .from("posts")
     .select(USED_GOODS_SELECT)
     .eq("post_type", "used_goods")
-    .eq("used_goods.category", category)
+    .eq("status", "active")
+    .not("used_goods", "is", null)
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);

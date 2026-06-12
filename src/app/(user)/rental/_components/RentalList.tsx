@@ -1,6 +1,7 @@
 "use client";
 
 import { RentalCard } from "./RentalCard";
+import { EmptyState } from "@/components/common/EmptyState";
 import type { RentalWithPost } from "@/type/rental/rentalList";
 
 interface Props {
@@ -13,12 +14,7 @@ export function RentalList({ initialPosts, initialLikedIds, currentUserId }: Pro
   const likedSet = new Set(initialLikedIds);
 
   if (initialPosts.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 text-gray-400 gap-2">
-        <p className="text-lg font-medium">등록된 매물이 없습니다</p>
-        <p className="text-sm">첫 번째 매물을 등록해보세요!</p>
-      </div>
-    );
+    return <EmptyState message="등록된 매물이 없습니다" description="첫 번째 매물을 등록해보세요!" />;
   }
 
   return (

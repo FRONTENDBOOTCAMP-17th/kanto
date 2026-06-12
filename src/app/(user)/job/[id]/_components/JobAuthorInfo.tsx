@@ -35,7 +35,7 @@ export default function JobAuthorInfo({ job }: { job: JobDetail }) {
           )}
         </div>
       )}
-      <Button className="w-full bg-teal-500 hover:bg-teal-600">
+      <Button variant="teal" className="w-full">
         지원하기
       </Button>
     </div>

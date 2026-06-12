@@ -147,7 +147,7 @@ export function RentalCard({
         postId={id}
         initialIsLiked={initialIsLiked}
         currentUserId={currentUserId}
-        className="absolute top-2 right-2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors z-10"
+        className="card-like-btn bg-white/90 hover:bg-white z-10"
       />
     </div>
   );

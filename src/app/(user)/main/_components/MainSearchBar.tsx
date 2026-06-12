@@ -75,7 +75,7 @@ export default function MainSearchBar() {
                     key={cat.id}
                     type="button"
                     onClick={() => { setSelectedCategory(cat); setDropdownOpen(false); }}
-                    className={`w-full text-left px-5 py-2.5 text-sm transition-colors hover:bg-teal-50 hover:text-teal-600 ${
+                    className={`dropdown-item ${
                       selectedCategory.id === cat.id ? "bg-teal-50 text-teal-600 font-semibold" : "text-gray-700"
                     }`}
                   >

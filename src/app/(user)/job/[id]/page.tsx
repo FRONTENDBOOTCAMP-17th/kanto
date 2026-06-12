@@ -27,7 +27,7 @@ export default async function JobDetailPage({
   const images = (job.images as string[]) ?? [];
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-4 py-6">
+    <div className="page-container w-full py-6">
       <div className="border border-gray-200 rounded-2xl overflow-hidden divide-y divide-gray-200">
         <JobTitle job={job} />
         <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">

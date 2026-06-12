@@ -30,7 +30,7 @@ export default function ChatListClient({ initialData, currentUserId }: Props) {
 
         {/* 헤더 */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">채팅 목록</h1>
+          <h1 className="page-title">채팅 목록</h1>
           <p className="text-sm text-gray-400 mt-1">진행 중인 대화를 확인하세요</p>
         </div>
 
