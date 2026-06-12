@@ -134,6 +134,12 @@
   .section-header {
     @apply flex items-center justify-between mb-6;
   }
+  .card-like-btn {
+    @apply absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center transition-colors;
+  }
+  .dropdown-item {
+    @apply w-full text-left px-5 py-2.5 text-sm transition-colors hover:bg-teal-50 hover:text-teal-600;
+  }
 }
 
 @layer base {
