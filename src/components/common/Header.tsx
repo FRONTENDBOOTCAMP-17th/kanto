@@ -48,10 +48,12 @@ export function Header() {
         }
         const { data: userData } = await supabase
           .from("users")
-          .select("id, name, email, avatar_url, provider, role, post_count, created_at, updated_at")
-          .eq("email", session.user.email)
+          .select(
+            "id, name, email, auth_id, avatar_url, provider, role, post_count, created_at, updated_at",
+          )
+          .eq("auth_id", session.user.id)
           .single();
-        if (userData) setUser(userData);
+        if (userData) setUser(userData as import("@/type/user").User);
       },
     );
     return () => authListener.subscription.unsubscribe();
@@ -71,15 +73,12 @@ export function Header() {
     handleLogout();
     setIsProfileOpen(false);
     setIsMobileOpen(false);
-    router.push("/");
+    router.push(ROUTES.home);
   };
 
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {
-      if (
-        profileRef.current &&
-        !profileRef.current.contains(e.target as Node)
-      )
+      if (profileRef.current && !profileRef.current.contains(e.target as Node))
         setIsProfileOpen(false);
     };
     if (isProfileOpen) document.addEventListener("mousedown", onClickOutside);
@@ -114,7 +113,7 @@ export function Header() {
           <div className="flex-1" />
 
           {/* 우측 액션 버튼 */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             {/* 글쓰기 */}
             {user && (
               <Button
@@ -154,7 +153,7 @@ export function Header() {
                       className="w-9 h-9 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-9 h-9 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center shadow-md">
+                    <div className="w-9 h-9 bg-linear-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center shadow-md">
                       <User className="w-5 h-5 text-white" />
                     </div>
                   )}
@@ -163,10 +162,26 @@ export function Header() {
                 {isProfileOpen && (
                   <div className="absolute right-0 top-12 w-40 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                     {[
-                      { label: "내 정보", icon: Settings, href: ROUTES.myProfile },
-                      { label: "찜 목록", icon: ThumbsUp, href: ROUTES.favorites },
-                      { label: "내 게시글", icon: FileText, href: ROUTES.myPosts },
-                      { label: "채팅 목록", icon: MessageCircle, href: ROUTES.chat },
+                      {
+                        label: "내 정보",
+                        icon: Settings,
+                        href: ROUTES.myProfile,
+                      },
+                      {
+                        label: "찜 목록",
+                        icon: ThumbsUp,
+                        href: ROUTES.favorites,
+                      },
+                      {
+                        label: "내 게시글",
+                        icon: FileText,
+                        href: ROUTES.myPosts,
+                      },
+                      {
+                        label: "채팅 목록",
+                        icon: MessageCircle,
+                        href: ROUTES.chat,
+                      },
                     ].map(({ label, icon: Icon, href }) => (
                       <button
                         key={href}

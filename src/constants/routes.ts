@@ -1,5 +1,5 @@
 export const ROUTES = {
-  home: "/home",
+  home: "/main",
   usedgoods: "/usedgoods",
   jobs: "/job",
   rental: "/rental",
@@ -8,7 +8,7 @@ export const ROUTES = {
   create: "/create",
   notifications: "/notifications",
   login: "/login",
-  myProfile: "/my-profile",
+  myProfile: "/profile",
   favorites: "/favorites",
   myPosts: "/my-posts",
   chat: "/chat",
