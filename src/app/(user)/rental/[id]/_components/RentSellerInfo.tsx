@@ -30,7 +30,7 @@ export default function RentSellorInfo({ rental }: { rental: RentalWithPost }) {
         </div>
       </div>
 
-      <Button className="bg-teal-500 hover:bg-teal-600 cursor-pointer">
+      <Button variant="teal" className="cursor-pointer">
         문의하기
       </Button>
     </>

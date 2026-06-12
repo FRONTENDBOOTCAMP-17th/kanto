@@ -143,6 +143,9 @@
   .dropdown-item {
     @apply w-full text-left px-5 py-2.5 text-sm transition-colors hover:bg-teal-50 hover:text-teal-600;
   }
+  .btn-primary {
+    @apply bg-teal-500 hover:bg-teal-600 text-white;
+  }
 }
 
 @layer base {

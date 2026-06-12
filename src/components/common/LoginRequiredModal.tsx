@@ -41,7 +41,8 @@ export function LoginRequiredModal({ isOpen, onClose }: LoginRequiredModalProps)
         </p>
 
         <Button
-          className="mt-6 w-full bg-teal-500 hover:bg-teal-600 text-white"
+          variant="teal"
+          className="mt-6 w-full"
           onClick={handleLogin}
         >
           로그인 하러 가기

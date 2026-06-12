@@ -97,8 +97,9 @@ export default function LoginForm() {
           </div>
           {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
           <Button
+            variant="teal"
             onClick={handleSubmit}
-            className="w-full bg-teal-500 hover:bg-teal-600"
+            className="w-full"
           >
             로그인
           </Button>

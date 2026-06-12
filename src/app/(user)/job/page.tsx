@@ -40,7 +40,7 @@ export default async function JobPage({
         <div className="section-header">
           <h1 className="page-title">구인구직</h1>
           <Link href="/job/create">
-            <Button className="cursor-pointer bg-teal-500 hover:bg-teal-600 text-white gap-1">
+            <Button variant="teal" className="cursor-pointer gap-1">
               <Plus className="w-4 h-4" />
               공고 등록
             </Button>
