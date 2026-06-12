@@ -21,7 +21,7 @@ export default async function CreateJobPage() {
   if (!dbUser) redirect("/login");
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="page-wrapper">
       <CreateJobForm userId={dbUser.id} />
     </div>
   );

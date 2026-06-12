@@ -1,6 +1,7 @@
 "use client";
 
 import { JobCard } from "./JobCard";
+import { EmptyState } from "@/components/common/EmptyState";
 import type { JobWithPost } from "@/type/job/jobList";
 
 interface Props {
@@ -13,12 +14,7 @@ export function JobList({ posts, likedIds, currentUserId }: Props) {
   const likedSet = new Set(likedIds);
 
   if (posts.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 text-gray-400 gap-2">
-        <p className="text-lg font-medium">등록된 구인공고가 없습니다</p>
-        <p className="text-sm">첫 번째 공고를 등록해보세요!</p>
-      </div>
-    );
+    return <EmptyState message="등록된 구인공고가 없습니다" description="첫 번째 공고를 등록해보세요!" />;
   }
 
   return (

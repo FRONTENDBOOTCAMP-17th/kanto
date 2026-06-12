@@ -66,7 +66,7 @@ export function FilterDropdown({
                 onChange(option.id);
                 setOpen(false);
               }}
-              className={`w-full text-left px-5 py-2.5 text-sm transition-colors hover:bg-teal-50 hover:text-teal-600 ${
+              className={`dropdown-item ${
                 value === option.id
                   ? "bg-teal-50 text-teal-600 font-semibold"
                   : "text-gray-700"

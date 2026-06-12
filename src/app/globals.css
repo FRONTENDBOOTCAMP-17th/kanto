@@ -121,6 +121,33 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@layer components {
+  .page-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  .page-title {
+    @apply text-2xl font-bold text-gray-900;
+  }
+  .page-title-lg {
+    @apply text-3xl font-bold text-gray-900;
+  }
+  .section-header {
+    @apply flex items-center justify-between mb-6;
+  }
+  .page-wrapper {
+    @apply min-h-screen flex flex-col;
+  }
+  .card-like-btn {
+    @apply absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center transition-colors;
+  }
+  .dropdown-item {
+    @apply w-full text-left px-5 py-2.5 text-sm transition-colors hover:bg-teal-50 hover:text-teal-600;
+  }
+  .btn-primary {
+    @apply bg-teal-500 hover:bg-teal-600 text-white;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

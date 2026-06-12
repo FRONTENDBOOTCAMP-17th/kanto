@@ -115,7 +115,7 @@ export function CreateJobFormPageTwo({
 
       <div className="flex gap-3 pt-2">
         <Button type="button" variant="outline" onClick={handlePrevStep} className="flex-1" disabled={isSubmitting}>이전 단계</Button>
-        <Button type="button" onClick={handleSubmit} className="flex-1 bg-teal-500 hover:bg-teal-600" disabled={isSubmitting}>
+        <Button type="button" variant="teal" onClick={handleSubmit} className="flex-1" disabled={isSubmitting}>
           {isSubmitting ? "등록 중..." : "작성 완료"}
         </Button>
       </div>

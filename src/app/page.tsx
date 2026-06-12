@@ -83,7 +83,7 @@ export default function DevPage() {
     <div className="min-h-screen bg-gray-50 p-10">
       <div className="max-w-xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Kanto Dev</h1>
+          <h1 className="page-title">Kanto Dev</h1>
           <p className="text-sm text-gray-400 mt-1">개발 환경 페이지 목록</p>
         </div>
 

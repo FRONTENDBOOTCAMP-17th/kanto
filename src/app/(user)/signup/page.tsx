@@ -493,7 +493,7 @@ export default function SignupPage() {
           <button
             onClick={handleSubmit}
             disabled={!requiredChecked || isLoading || isSuccess}
-            className="w-full bg-teal-500 hover:bg-teal-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-2.5 rounded-md transition-colors"
+            className="w-full btn-primary disabled:bg-gray-300 disabled:cursor-not-allowed font-medium py-2.5 rounded-md transition-colors"
           >
             {isLoading ? "처리 중..." : "회원가입"}
           </button>
@@ -587,7 +587,7 @@ export default function SignupPage() {
               <button
                 onClick={handleModalAgree}
                 disabled={!scrolledToBottom}
-                className="flex-1 bg-teal-500 hover:bg-teal-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-2.5 rounded-md transition-colors"
+                className="flex-1 btn-primary disabled:bg-gray-300 disabled:cursor-not-allowed font-medium py-2.5 rounded-md transition-colors"
               >
                 {scrolledToBottom ? "동의합니다" : "끝까지 읽어주세요"}
               </button>

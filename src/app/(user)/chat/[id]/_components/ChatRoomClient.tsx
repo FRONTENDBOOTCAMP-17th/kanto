@@ -85,7 +85,7 @@ export default function ChatRoomClient({
   }, [chatId]);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col max-w-2xl mx-auto h-screen w-full bg-gray-50">
       <ChatHeader
         partner={partner}
         postTitle={postTitle}

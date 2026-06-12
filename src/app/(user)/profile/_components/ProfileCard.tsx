@@ -16,7 +16,7 @@ export function ProfileCard({ user, onBack, onLogout }: ProfileCardProps) {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-white pb-10">
+    <div className="bg-white pb-10 rounded-2xl md:border md:border-gray-100">
       {/* 헤더 */}
       <div className="flex items-center gap-3 px-5 pt-5 pb-0">
         <button onClick={onBack} className="cursor-pointer p-1 -ml-1">
