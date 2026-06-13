@@ -54,9 +54,9 @@ export default function MessageList({
             {showDivider && (
               <div className="flex items-center gap-3 my-2">
                 <div className="flex-1 h-px bg-gray-200" />
-                <span className="text-xs text-gray-400">
+                <time dateTime={msg.created_at} className="text-xs text-gray-400">
                   {formatDateDivider(msg.created_at)}
-                </span>
+                </time>
                 <div className="flex-1 h-px bg-gray-200" />
               </div>
             )}
@@ -81,9 +81,9 @@ export default function MessageList({
                   {isMine && !msg.is_read && (
                     <span className="text-xs text-teal-500 font-medium">1</span>
                   )}
-                  <span className="text-xs text-gray-400">
+                  <time dateTime={msg.created_at} className="text-xs text-gray-400">
                     {formatMessageTime(msg.created_at)}
-                  </span>
+                  </time>
                 </div>
               </div>
             </div>

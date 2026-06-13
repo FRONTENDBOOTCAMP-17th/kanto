@@ -27,12 +27,16 @@ export default function ChatInput({
 
   return (
     <div className="bg-white border-t border-gray-100 px-3 py-3 flex items-center gap-2 shrink-0">
-      <button className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-teal-500 transition-colors shrink-0">
+      <button
+        aria-label="파일 첨부"
+        className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-teal-500 transition-colors shrink-0"
+      >
         <Plus className="w-5 h-5" />
       </button>
 
       <input
         type="text"
+        aria-label="메시지 입력"
         value={input}
         disabled={isCooldown}
         onChange={(e) => onChange(e.target.value)}
@@ -48,6 +52,7 @@ export default function ChatInput({
       <button
         onClick={onSend}
         disabled={!input.trim() || isCooldown}
+        aria-label="메시지 전송"
         className="w-9 h-9 rounded-full bg-teal-500 flex items-center justify-center shrink-0 disabled:opacity-40 hover:bg-teal-600 transition-colors"
       >
         <Send className="w-4 h-4 text-white" />

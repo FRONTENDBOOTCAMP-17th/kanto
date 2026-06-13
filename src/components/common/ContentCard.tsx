@@ -135,7 +135,7 @@ export function ContentCard({
             <div className="flex items-center justify-between text-xs text-gray-500 mt-auto pt-1">
               <div className="flex items-center gap-1">
                 <Clock className="w-3 h-3" />
-                <span>{formatTimeAgo(createdAt)}</span>
+                <time dateTime={createdAt}>{formatTimeAgo(createdAt)}</time>
               </div>
               <div className="flex items-center gap-1">
                 <Heart className="w-3 h-3" />

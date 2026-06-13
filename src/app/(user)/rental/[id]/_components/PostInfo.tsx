@@ -11,18 +11,21 @@ export default function PostInfo({ rental }: { rental: RentalWithPost }) {
         <div className="flex gap-2">
           <Button
             size="lg"
+            aria-label="좋아요"
             className="cursor-pointer border rounded-lg bg-white hover:bg-black/10 border-gray-200"
           >
             <Heart className="text-black" />
           </Button>
           <Button
             size="lg"
+            aria-label="공유하기"
             className="cursor-pointer border rounded-lg bg-white hover:bg-black/10 border-gray-200"
           >
             <Share2 className="text-black" />
           </Button>
           <Button
             size="lg"
+            aria-label="신고하기"
             className="cursor-pointer border rounded-lg bg-white hover:bg-red-300/50 border-gray-200"
           >
             <Siren className="text-black" />
@@ -36,7 +39,7 @@ export default function PostInfo({ rental }: { rental: RentalWithPost }) {
       <div className="text-gray-400 text-sm flex gap-4 mt-3">
         <span className="flex items-center leading-none gap-1">
           <Clock className="w-4 h-4" />
-          {formatTimeAgo(rental.created_at)}
+          <time dateTime={rental.created_at}>{formatTimeAgo(rental.created_at)}</time>
         </span>
         <span className="flex items-center gap-1">
           <Eye className="w-4 h-4" />

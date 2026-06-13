@@ -19,7 +19,7 @@ export function ProfileCard({ user, onBack, onLogout }: ProfileCardProps) {
     <div className="bg-white pb-10 rounded-2xl md:border md:border-gray-100">
       {/* 헤더 */}
       <div className="flex items-center gap-3 px-5 pt-5 pb-0">
-        <button onClick={onBack} className="cursor-pointer p-1 -ml-1">
+        <button onClick={onBack} aria-label="뒤로 가기" className="cursor-pointer p-1 -ml-1">
           <ArrowLeft className="w-5 h-5 text-gray-800" />
         </button>
         <span className="text-base font-medium text-gray-900">내 프로필</span>
@@ -31,7 +31,7 @@ export function ProfileCard({ user, onBack, onLogout }: ProfileCardProps) {
           <div className="w-20 h-20 rounded-full bg-teal-50 flex items-center justify-center">
             <User className="w-9 h-9 text-teal-500" />
           </div>
-          <button className="cursor-pointer absolute bottom-0 right-0 w-6 h-6 rounded-full bg-teal-500 border-2 border-white flex items-center justify-center">
+          <button aria-label="프로필 사진 변경" className="cursor-pointer absolute bottom-0 right-0 w-6 h-6 rounded-full bg-teal-500 border-2 border-white flex items-center justify-center">
             <Camera className="w-3 h-3 text-white" />
           </button>
         </div>
