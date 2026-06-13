@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useNotifications } from "@/hooks/useNotifications";
 import { getNotificationHref } from "@/utils/notification";
-import { NotificationDropdown } from "@/components/common/header/NotificationDropdown";
+import { NotificationItem } from "@/components/common/header/NotificationItem";
 import type { Notification } from "@/hooks/useNotifications";
 
 export default function NotificationsPage() {
@@ -18,13 +18,29 @@ export default function NotificationsPage() {
   };
 
   return (
-    <NotificationDropdown
-      variant="page"
-      notifications={notifications}
-      unreadCount={unreadCount}
-      onNotificationClick={handleClick}
-      onMarkAllRead={markAllRead}
-      onClose={() => router.back()}
-    />
+    <div className="max-w-lg mx-auto">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+        <span className="font-semibold text-gray-800 text-sm">알림</span>
+        {unreadCount > 0 && (
+          <button
+            onClick={markAllRead}
+            className="text-xs text-teal-500 hover:text-teal-600"
+          >
+            모두 읽음
+          </button>
+        )}
+      </div>
+      <div className="divide-y divide-gray-50">
+        {notifications.length === 0 ? (
+          <p className="py-8 text-center text-sm text-gray-400">
+            알림이 없습니다
+          </p>
+        ) : (
+          notifications.map((n) => (
+            <NotificationItem key={n.id} notification={n} onClick={handleClick} size="lg" />
+          ))
+        )}
+      </div>
+    </div>
   );
 }

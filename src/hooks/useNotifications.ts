@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
-import { ROUTES } from "@/constants/routes";
 import type { Tables } from "@/type/supabase";
 
 export type Notification = Tables<"common_notifications">;
@@ -26,28 +25,35 @@ export function useNotifications() {
         if (data) setNotifications(data);
       });
 
-    const channel = supabase
-      .channel(`notifications:${userId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "common_notifications",
-          filter: `receiver_id=eq.${userId}`,
-        },
-        (payload) => {
-          const newItem = payload.new as Notification;
-          setNotifications((prev) =>
-            prev.some((n) => n.id === newItem.id) ? prev : [newItem, ...prev],
-          );
-        },
-      )
-      .subscribe();
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let cancelled = false;
+
+    const timer = setTimeout(() => {
+      if (cancelled) return;
+      channel = supabase
+        .channel(`notifications:${userId}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "common_notifications",
+            filter: `receiver_id=eq.${userId}`,
+          },
+          (payload) => {
+            const newItem = payload.new as Notification;
+            setNotifications((prev) =>
+              prev.some((n) => n.id === newItem.id) ? prev : [newItem, ...prev],
+            );
+          },
+        )
+        .subscribe();
+    }, 0);
 
     return () => {
-      channel.unsubscribe();
-      supabase.removeChannel(channel);
+      cancelled = true;
+      clearTimeout(timer);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [userId]);
 

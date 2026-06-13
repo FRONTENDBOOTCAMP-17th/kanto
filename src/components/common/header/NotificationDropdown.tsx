@@ -9,7 +9,6 @@ interface Props {
   onNotificationClick: (n: Notification) => void;
   onMarkAllRead: () => void;
   onClose: () => void;
-  variant?: "dropdown" | "page";
 }
 
 export function NotificationDropdown({
@@ -18,15 +17,9 @@ export function NotificationDropdown({
   onNotificationClick,
   onMarkAllRead,
   onClose,
-  variant = "dropdown",
 }: Props) {
-  const wrapperClass =
-    variant === "page"
-      ? "w-full bg-white"
-      : "absolute right-0 top-12 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden";
-
   return (
-    <div className={wrapperClass}>
+    <div className="absolute right-0 top-12 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
         <span className="font-semibold text-gray-800 text-sm">알림</span>
         <div className="flex items-center gap-2">
@@ -38,15 +31,13 @@ export function NotificationDropdown({
               모두 읽음
             </button>
           )}
-          {variant !== "page" && (
-            <Link
-              href={ROUTES.notifications}
-              onClick={onClose}
-              className="text-xs text-gray-400 hover:text-gray-600"
-            >
-              전체보기
-            </Link>
-          )}
+          <Link
+            href={ROUTES.notifications}
+            onClick={onClose}
+            className="text-xs text-gray-400 hover:text-gray-600"
+          >
+            전체보기
+          </Link>
         </div>
       </div>
       <div className="max-h-80 overflow-y-auto divide-y divide-gray-50">
