@@ -27,11 +27,11 @@ export function GlobalLayout({ children, initialUser }: Props) {
   const isSignup = pathname.startsWith("/signup");
 
   return (
-    <>
-      {!isTerms && !isLogin && !isSignup && <Header initialUser={initialUser} />}
+    <div className="min-h-screen flex flex-col">
+      {!isTerms && !isLogin && !isSignup && <Header />}
       {!isTerms && !isLogin && !isSignup && <ScrollToTop />}
-      {children}
+      <main className="flex-1">{children}</main>
       {!isTerms && !isLogin && !isSignup && <Footer />}
-    </>
+    </div>
   );
 }

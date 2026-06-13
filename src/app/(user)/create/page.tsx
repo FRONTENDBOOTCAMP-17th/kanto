@@ -51,29 +51,29 @@ export default async function CreatePage() {
   if (!user) redirect("/login");
 
   return (
-    <div className="page-wrapper">
-      <div className="page-container py-10">
+    <div className="flex flex-col items-center py-10 px-4">
+      <div className="w-full max-w-sm md:max-w-xl">
         <h1 className="page-title mb-2">글쓰기</h1>
         <p className="text-sm text-gray-500 mb-8">어떤 글을 작성할까요?</p>
-        <div className="grid grid-cols-2 gap-4 max-w-lg">
+        <div className="grid grid-cols-2 gap-4">
           {CATEGORIES.map(
             ({ name, description, icon: Icon, href, color, bg, available }) =>
               available ? (
                 <Link
                   key={name}
                   href={href}
-                  className="flex flex-col gap-3 rounded-2xl border border-gray-200 p-5 hover:border-teal-400 hover:shadow-sm transition-all"
+                  className="flex flex-col gap-4 rounded-2xl border border-gray-200 p-5 md:p-8 hover:border-teal-400 hover:shadow-sm transition-all"
                 >
                   <div
-                    className={`w-10 h-10 rounded-xl ${bg} flex items-center justify-center`}
+                    className={`w-10 h-10 md:w-10 md:h-10 rounded-xl ${bg} flex items-center justify-center`}
                   >
-                    <Icon className={`w-5 h-5 ${color}`} />
+                    <Icon className={`w-5 h-5 md:w-7 md:h-7 ${color}`} />
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-800 text-sm">
+                    <p className="font-semibold text-gray-800 text-sm md:text-base">
                       {name}
                     </p>
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <p className="text-xs md:text-sm text-gray-400 mt-0.5">
                       {description}
                     </p>
                   </div>
@@ -81,20 +81,20 @@ export default async function CreatePage() {
               ) : (
                 <div
                   key={name}
-                  className="flex flex-col gap-3 rounded-2xl border border-gray-100 p-5 opacity-50 cursor-not-allowed"
+                  className="flex flex-col gap-4 rounded-2xl border border-gray-100 p-5 md:p-8 opacity-50 cursor-not-allowed"
                 >
                   <div
-                    className={`w-10 h-10 rounded-xl ${bg} flex items-center justify-center`}
+                    className={`w-10 h-10 md:w-14 md:h-14 rounded-xl ${bg} flex items-center justify-center`}
                   >
-                    <Icon className={`w-5 h-5 ${color}`} />
+                    <Icon className={`w-5 h-5 md:w-7 md:h-7 ${color}`} />
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <p className="font-semibold text-gray-800 text-sm">
+                      <p className="font-semibold text-gray-800 text-sm md:text-base">
                         {name}
                       </p>
                     </div>
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <p className="text-xs md:text-sm text-gray-400 mt-0.5">
                       {description}
                     </p>
                   </div>

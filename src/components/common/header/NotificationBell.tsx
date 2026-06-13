@@ -9,6 +9,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Bell } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants/routes";
 import { useNotifications } from "@/hooks/useNotifications";
 import { getNotificationHref } from "@/utils/notification";
@@ -63,24 +64,26 @@ export const NotificationBell = forwardRef<NotificationBellHandle, Props>(
       if (href) router.push(href);
     };
 
-    const Badge = unreadCount > 0 && (
-      <span className="absolute -top-1 -right-1 w-3 h-3 bg-teal-500 rounded-full flex items-center justify-center text-[7px] text-white font-bold">
-        {unreadCount}
-      </span>
-    );
-
     return (
       <div className="relative flex" ref={containerRef}>
-        <button
-          className="relative"
+        <Button
+          variant="ghost"
+          size="icon"
+          className="w-10 h-10"
           onClick={handleToggle}
           aria-label="알림"
           aria-expanded={isOpen}
           aria-haspopup="true"
         >
-          <Bell className="w-4 h-4 text-gray-700" />
-          {Badge}
-        </button>
+          <span className="relative">
+            <Bell className="w-5 h-5 text-gray-700" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-teal-500 rounded-full flex items-center justify-center text-[7px] text-white font-bold">
+                {unreadCount}
+              </span>
+            )}
+          </span>
+        </Button>
         {isOpen && (
           <NotificationDropdown
             notifications={notifications}
