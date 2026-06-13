@@ -34,10 +34,14 @@ export async function getUsedGoodsList(filter?: UsedGoodsListFilter): Promise<Us
   let result = data as UsedGoodsWithPost[];
 
   if (filter?.category) {
-    result = result.filter((p) => p.used_goods?.[0]?.category === filter.category);
+    result = result.filter(
+      (p) => p.used_goods?.[0]?.category === filter.category,
+    );
   }
   if (filter?.location) {
-    result = result.filter((p) => p.used_goods?.[0]?.location_type === filter.location);
+    result = result.filter(
+      (p) => p.used_goods?.[0]?.location_type === filter.location,
+    );
   }
 
   return result;
@@ -65,7 +69,7 @@ export async function getUsedGoodsItem(postId: number) {
 
   const { data } = await supabase
     .from("used_goods")
-    .select(`*, posts (*, users (id, name, avatar_url, created_at))`)
+    .select(`*, posts (*, users (id, auth_id, name, avatar_url, created_at))`)
     .eq("post_id", postId)
     .single();
 
