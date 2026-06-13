@@ -13,6 +13,16 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      "no-restricted-imports": ["error", {
+        paths: [{
+          name: "@/lib/supabaseServer",
+          message: "createSupabaseServerClient는 삭제되었습니다. @/utils/supabase/server 의 createClient 를 사용하세요.",
+        }],
+      }],
+    },
+  },
 ]);
 
 export default eslintConfig;
