@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createClient } from "@/utils/supabase/server";
 import { MessageWithSender } from "@/type/chat/message";
 
 const MESSAGE_SELECT = `*,
@@ -7,7 +7,7 @@ const MESSAGE_SELECT = `*,
 // 메시지 조회
 export async function getMessageList(
   chatId: number,
-  supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
+  supabase: Awaited<ReturnType<typeof createClient>>,
   before?: string,
 ): Promise<MessageWithSender[]> {
   let query = supabase
@@ -40,7 +40,7 @@ export async function postMessage(
     postId: number;
     content: string;
   },
-  supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
+  supabase: Awaited<ReturnType<typeof createClient>>,
 ) {
   const { data, error } = await supabase
     .from("messages")

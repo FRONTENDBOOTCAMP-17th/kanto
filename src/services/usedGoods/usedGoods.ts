@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createClient } from "@/utils/supabase/server";
 import type { UsedGoodsWithPost } from "@/type/usedGoods";
 
 const USED_GOODS_SELECT = `
@@ -14,7 +14,7 @@ interface UsedGoodsListFilter {
 }
 
 export async function getUsedGoodsList(filter?: UsedGoodsListFilter): Promise<UsedGoodsWithPost[]> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   let query = supabase
     .from("posts")
@@ -34,10 +34,14 @@ export async function getUsedGoodsList(filter?: UsedGoodsListFilter): Promise<Us
   let result = data as UsedGoodsWithPost[];
 
   if (filter?.category) {
-    result = result.filter((p) => p.used_goods?.[0]?.category === filter.category);
+    result = result.filter(
+      (p) => p.used_goods?.[0]?.category === filter.category,
+    );
   }
   if (filter?.location) {
-    result = result.filter((p) => p.used_goods?.[0]?.location_type === filter.location);
+    result = result.filter(
+      (p) => p.used_goods?.[0]?.location_type === filter.location,
+    );
   }
 
   return result;
@@ -46,7 +50,7 @@ export async function getUsedGoodsList(filter?: UsedGoodsListFilter): Promise<Us
 export async function getUsedGoodsDetail(
   postId: number,
 ): Promise<UsedGoodsWithPost> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("posts")
@@ -61,11 +65,11 @@ export async function getUsedGoodsDetail(
 }
 
 export async function getUsedGoodsItem(postId: number) {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   const { data } = await supabase
     .from("used_goods")
-    .select(`*, posts (*, users (id, name, avatar_url, created_at))`)
+    .select(`*, posts (*, users (id, auth_id, name, avatar_url, created_at))`)
     .eq("post_id", postId)
     .single();
 
@@ -75,7 +79,7 @@ export async function getUsedGoodsItem(postId: number) {
 export async function getUsedGoodsByCategory(
   category: string,
 ): Promise<UsedGoodsWithPost[]> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("posts")

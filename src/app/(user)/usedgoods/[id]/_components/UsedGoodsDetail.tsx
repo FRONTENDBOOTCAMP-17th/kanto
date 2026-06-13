@@ -24,6 +24,8 @@ import DeleteButton from "@/components/common/DeleteButton";
 import { supabase } from "@/lib/supabase";
 import Toast from "@/components/common/Toast";
 import ReportModal from "@/components/common/ReportModal";
+import { ROUTES } from "@/constants/routes";
+import postChat from "@/services/chat/postChat";
 
 type UsedGoods = Tables<"used_goods"> & {
   posts: Tables<"posts"> & {
@@ -92,6 +94,14 @@ export default function UsedGoodsDetail({
     setToastMessage(`URL이 복사되었습니다.\n${url}`);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const handleChat = async () => {
+    if (!userId) return;
+
+    const chatId = await postChat(userId, data.posts.users.id, data.post_id);
+
+    router.push(ROUTES.chatRoom(chatId));
   };
 
   useEffect(() => {
@@ -199,7 +209,9 @@ export default function UsedGoodsDetail({
           <h2 className="text-2xl pb-4 font-semibold">상품 정보</h2>
           <dl className="p-2 space-y-2 text-sm">
             <div className="flex gap-2">
-              <dt className="w-24 font-medium text-gray-500 shrink-0">카테고리</dt>
+              <dt className="w-24 font-medium text-gray-500 shrink-0">
+                카테고리
+              </dt>
               <dd>{data.category}</dd>
             </div>
             <div className="flex gap-2">
@@ -211,7 +223,9 @@ export default function UsedGoodsDetail({
               <dd>{`₱ ${data.price?.toLocaleString()}`}</dd>
             </div>
             <div className="flex gap-2">
-              <dt className="w-24 font-medium text-gray-500 shrink-0">거래 장소</dt>
+              <dt className="w-24 font-medium text-gray-500 shrink-0">
+                거래 장소
+              </dt>
               <dd>{data.location_type}</dd>
             </div>
           </dl>
@@ -246,12 +260,14 @@ export default function UsedGoodsDetail({
               <p className="text-sm">안전 결제가 필요한 판매자입니다.</p>
             </div>
           )}
-          <button
-            onClick={() => router.push("/chat")}
-            className="rounded-md bg-teal-500 text-white w-full p-2 mt-2"
-          >
-            채팅하기
-          </button>
+          {!isOwner && (
+            <button
+              onClick={handleChat}
+              className="rounded-md bg-teal-500 text-white w-full p-2 mt-2"
+            >
+              채팅하기
+            </button>
+          )}
         </div>
       </section>
       <section className="border-gray-200 border-2 p-2 m-2 rounded-xl">
@@ -301,7 +317,9 @@ export default function UsedGoodsDetail({
           <div className="border-b-2 flex space-x-2 pb-4 text-gray-400">
             <p className="flex gap-2">
               <Clock className="w-4 h-4 self-center" />
-              <time dateTime={data.posts.created_at}>{formatTimeAgo(data.posts.created_at)}</time>
+              <time dateTime={data.posts.created_at}>
+                {formatTimeAgo(data.posts.created_at)}
+              </time>
             </p>
             <p className="flex gap-2">
               <Eye className="w-4 h-4 self-center" /> {data.posts.view_count}

@@ -25,6 +25,7 @@ export function GlobalLayout({ children, initialUser }: Props) {
   const isTerms = pathname.startsWith("/terms");
   const isLogin = pathname.startsWith("/login");
   const isSignup = pathname.startsWith("/signup");
+  const isChat = pathname.startsWith("/chat");
 
   return (
     <div className="min-h-screen flex flex-col">
