@@ -690,6 +690,7 @@ export type Database = {
           auth_id: string | null
           avatar_url: string | null
           created_at: string | null
+          deleted_at: string | null
           email: string | null
           id: number
           name: string
@@ -703,6 +704,7 @@ export type Database = {
           auth_id?: string | null
           avatar_url?: string | null
           created_at?: string | null
+          deleted_at?: string | null
           email?: string | null
           id?: number
           name: string
@@ -716,6 +718,7 @@ export type Database = {
           auth_id?: string | null
           avatar_url?: string | null
           created_at?: string | null
+          deleted_at?: string | null
           email?: string | null
           id?: number
           name?: string

@@ -26,6 +26,7 @@ import Toast from "@/components/common/Toast";
 import ReportModal from "@/components/common/ReportModal";
 import { ROUTES } from "@/constants/routes";
 import postChat from "@/services/chat/postChat";
+import { useAuthStore } from "@/store/authStore";
 
 type UsedGoods = Tables<"used_goods"> & {
   posts: Tables<"posts"> & {
@@ -49,6 +50,7 @@ export default function UsedGoodsDetail({
   initialReported: boolean;
 }) {
   const router = useRouter();
+  const { user: storeUser } = useAuthStore();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(initialLiked);
   const [likeCount, setLikeCount] = useState(data.posts.like_count);
@@ -66,6 +68,10 @@ export default function UsedGoodsDetail({
 
   const handleLike = async () => {
     if (!userId) return;
+    if (storeUser?.deleted_at) {
+      alert("탈퇴 예정 계정은 찜하기를 이용할 수 없습니다.");
+      return;
+    }
 
     if (isLiked) {
       await supabase

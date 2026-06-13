@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Heart } from "lucide-react";
 import { toggleLike } from "@/services/likeToggle";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
+import { useAuthStore } from "@/store/authStore";
 
 interface LikeButtonProps {
   postId: number;
@@ -15,6 +16,7 @@ interface LikeButtonProps {
 export function LikeButton({ postId, initialIsLiked, currentUserId, className }: LikeButtonProps) {
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [showModal, setShowModal] = useState(false);
+  const { user } = useAuthStore();
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -22,6 +24,11 @@ export function LikeButton({ postId, initialIsLiked, currentUserId, className }:
 
     if (currentUserId === null) {
       setShowModal(true);
+      return;
+    }
+
+    if (user?.deleted_at) {
+      alert("탈퇴 예정 계정은 찜하기를 이용할 수 없습니다.");
       return;
     }
 

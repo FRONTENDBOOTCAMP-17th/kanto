@@ -16,7 +16,7 @@ export function useAuthInit() {
         const { data: userData } = await supabase
           .from("users")
           .select(
-            "id, name, email, auth_id, avatar_url, provider, role, post_count, created_at, updated_at",
+            "id, name, email, phone, auth_id, avatar_url, provider, role, post_count, created_at, updated_at, deleted_at",
           )
           .eq("auth_id", session.user.id)
           .single();
