@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
+import { useAuthInit } from "@/hooks/useAuthInit";
 import {
   Menu,
   User,
@@ -37,27 +38,8 @@ const NAV_ITEMS = [
 
 export function Header() {
   const router = useRouter();
-  const { user, setUser, clearUser } = useAuthStore();
-
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        if (!session) {
-          clearUser();
-          return;
-        }
-        const { data: userData } = await supabase
-          .from("users")
-          .select(
-            "id, name, email, auth_id, avatar_url, provider, role, post_count, created_at, updated_at",
-          )
-          .eq("auth_id", session.user.id)
-          .single();
-        if (userData) setUser(userData as import("@/type/user").User);
-      },
-    );
-    return () => authListener.subscription.unsubscribe();
-  }, [setUser, clearUser]);
+  const { user } = useAuthStore();
+  useAuthInit();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
