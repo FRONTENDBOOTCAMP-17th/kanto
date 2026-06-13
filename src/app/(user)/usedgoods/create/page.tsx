@@ -22,7 +22,7 @@ export default async function CreateUsedGoodsPage() {
   if (!dbUser) redirect("/login");
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="page-wrapper">
       <CreateUsedGoodsForm userId={dbUser.id} />
     </div>
   );

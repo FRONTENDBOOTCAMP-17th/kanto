@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { Plus } from "lucide-react";
 
 import { getUsedGoodsList } from "@/services/usedGoods/usedGoods";
 import { getLikeList } from "@/services/likes";
 import { UsedGoodsList } from "@/app/(user)/usedgoods/_components/UsedGoodsList";
 import { UsedGoodsFilters } from "./_components/UsedGoodsFilters";
 import { PaginationUrl } from "@/components/common/PaginationUrl";
+import { Button } from "@/components/ui/button";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -39,14 +41,15 @@ export default async function UsedGoodsPage({
   );
 
   return (
-    <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">중고거래</h1>
-        <Link
-          href="/usedgoods/create"
-          className="inline-flex items-center gap-1 bg-teal-500 hover:bg-teal-600 text-white text-sm font-medium px-4 py-2 rounded-md transition-colors"
-        >
-          + 글쓰기
+    <div className="page-wrapper">
+      <main className="flex-1 page-container w-full py-8">
+      <div className="section-header">
+        <h1 className="page-title">중고거래</h1>
+        <Link href="/usedgoods/create">
+          <Button variant="teal" className="cursor-pointer gap-1">
+            <Plus className="w-4 h-4" />
+            글쓰기
+          </Button>
         </Link>
       </div>
 
@@ -65,6 +68,7 @@ export default async function UsedGoodsPage({
           <PaginationUrl currentPage={currentPage} totalPage={totalPages} />
         </div>
       )}
-    </main>
+      </main>
+    </div>
   );
 }

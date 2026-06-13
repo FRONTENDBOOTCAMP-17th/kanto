@@ -216,7 +216,7 @@ export function CreateUsedGoodsForm({
         </Button>
 
         <Card className="p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="page-title-lg mb-2">
             {initialData ? "중고거래 수정" : "중고거래 글쓰기"}
           </h1>
           <p className="text-gray-600 mb-8">필요한 정보를 입력해주세요</p>
@@ -364,7 +364,8 @@ export function CreateUsedGoodsForm({
               </Button>
               <Button
                 type="submit"
-                className="flex-1 bg-teal-500 hover:bg-teal-600"
+                variant="teal"
+                className="flex-1"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "등록 중..." : "작성 완료"}
