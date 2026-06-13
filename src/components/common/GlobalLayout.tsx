@@ -10,13 +10,14 @@ export function GlobalLayout({ children }: { children: React.ReactNode }) {
   const isTerms = pathname.startsWith("/terms");
   const isLogin = pathname.startsWith("/login");
   const isSignup = pathname.startsWith("/signup");
+  const isChat = pathname.startsWith("/chat");
 
   return (
     <>
-      {!isTerms && !isLogin && !isSignup && <Header />}
-      {!isTerms && !isLogin && !isSignup && <ScrollToTop />}
+      {!isTerms && !isLogin && !isSignup && !isChat && <Header />}
+      {!isTerms && !isLogin && !isSignup && !isChat && <ScrollToTop />}
       {children}
-      {!isTerms && !isLogin && !isSignup && <Footer />}
+      {!isTerms && !isLogin && !isSignup && !isChat && <Footer />}
     </>
   );
 }

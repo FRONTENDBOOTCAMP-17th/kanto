@@ -209,7 +209,9 @@ export default function UsedGoodsDetail({
           <h2 className="text-2xl pb-4 font-semibold">상품 정보</h2>
           <dl className="p-2 space-y-2 text-sm">
             <div className="flex gap-2">
-              <dt className="w-24 font-medium text-gray-500 shrink-0">카테고리</dt>
+              <dt className="w-24 font-medium text-gray-500 shrink-0">
+                카테고리
+              </dt>
               <dd>{data.category}</dd>
             </div>
             <div className="flex gap-2">
@@ -221,7 +223,9 @@ export default function UsedGoodsDetail({
               <dd>{`₱ ${data.price?.toLocaleString()}`}</dd>
             </div>
             <div className="flex gap-2">
-              <dt className="w-24 font-medium text-gray-500 shrink-0">거래 장소</dt>
+              <dt className="w-24 font-medium text-gray-500 shrink-0">
+                거래 장소
+              </dt>
               <dd>{data.location_type}</dd>
             </div>
           </dl>
@@ -313,7 +317,9 @@ export default function UsedGoodsDetail({
           <div className="border-b-2 flex space-x-2 pb-4 text-gray-400">
             <p className="flex gap-2">
               <Clock className="w-4 h-4 self-center" />
-              <time dateTime={data.posts.created_at}>{formatTimeAgo(data.posts.created_at)}</time>
+              <time dateTime={data.posts.created_at}>
+                {formatTimeAgo(data.posts.created_at)}
+              </time>
             </p>
             <p className="flex gap-2">
               <Eye className="w-4 h-4 self-center" /> {data.posts.view_count}
