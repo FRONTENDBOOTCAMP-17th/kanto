@@ -1,19 +1,34 @@
 "use client";
 
+import { useRef } from "react";
 import { usePathname } from "next/navigation";
 import { Header } from "@/components/common/Header";
 import { Footer } from "@/components/common/Footer";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
+import { useAuthStore } from "@/store/authStore";
+import type { User } from "@/type/user";
 
-export function GlobalLayout({ children }: { children: React.ReactNode }) {
+interface Props {
+  children: React.ReactNode;
+  initialUser: User | null;
+}
+
+export function GlobalLayout({ children, initialUser }: Props) {
   const pathname = usePathname();
+
+  // 서버에서 읽은 유저를 렌더 시점에 동기적으로 스토어에 주입 — useEffect보다 먼저 실행되어 flash 방지
+  const initialized = useRef(false);
+  if (!initialized.current) {
+    initialized.current = true;
+    if (initialUser) useAuthStore.setState({ user: initialUser, isLoggedIn: true });
+  }
   const isTerms = pathname.startsWith("/terms");
   const isLogin = pathname.startsWith("/login");
   const isSignup = pathname.startsWith("/signup");
 
   return (
     <>
-      {!isTerms && !isLogin && !isSignup && <Header />}
+      {!isTerms && !isLogin && !isSignup && <Header initialUser={initialUser} />}
       {!isTerms && !isLogin && !isSignup && <ScrollToTop />}
       {children}
       {!isTerms && !isLogin && !isSignup && <Footer />}

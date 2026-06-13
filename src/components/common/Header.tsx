@@ -36,9 +36,14 @@ const NAV_ITEMS = [
   { name: "랜덤채팅", icon: Heart, href: ROUTES.dating },
 ];
 
-export function Header() {
+interface HeaderProps {
+  initialUser?: import("@/type/user").User | null;
+}
+
+export function Header({ initialUser }: HeaderProps = {}) {
   const router = useRouter();
-  const { user } = useAuthStore();
+  const { user: storeUser } = useAuthStore();
+  const user = storeUser ?? initialUser ?? null;
   useAuthInit();
 
   const handleLogout = async () => {

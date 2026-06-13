@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
+import { ROUTES } from "@/constants/routes";
 import type { Tables } from "@/type/supabase";
 
 export type Notification = Tables<"common_notifications">;
