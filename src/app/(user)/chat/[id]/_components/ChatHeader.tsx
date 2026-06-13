@@ -22,6 +22,7 @@ export default function ChatHeader({ partner, postTitle, onBack }: Props) {
     <div className="bg-teal-500 px-4 py-3 flex items-center gap-3 relative shrink-0">
       <button
         onClick={onBack}
+        aria-label="뒤로 가기"
         className="text-white p-1 rounded-full hover:bg-teal-600 transition-colors"
       >
         <ArrowLeft className="w-5 h-5" />
@@ -51,6 +52,9 @@ export default function ChatHeader({ partner, postTitle, onBack }: Props) {
       <div ref={menuRef} className="relative">
         <button
           onClick={() => setMenuOpen((prev) => !prev)}
+          aria-label="더보기 메뉴"
+          aria-expanded={menuOpen}
+          aria-haspopup="menu"
           className="text-white p-1 rounded-full hover:bg-teal-600 transition-colors"
         >
           <MoreVertical className="w-5 h-5" />

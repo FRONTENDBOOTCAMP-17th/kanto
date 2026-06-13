@@ -82,6 +82,9 @@ export const NotificationBell = forwardRef<NotificationBellHandle, Props>(
             size="icon"
             className="relative"
             onClick={handleToggle}
+            aria-label="알림"
+            aria-expanded={isOpen}
+            aria-haspopup="true"
           >
             <Bell className="w-5 h-5 text-gray-700" />
             {Badge}
@@ -103,6 +106,7 @@ export const NotificationBell = forwardRef<NotificationBellHandle, Props>(
           size="icon"
           className="md:hidden relative"
           onClick={() => router.push(ROUTES.notifications)}
+          aria-label="알림"
         >
           <Bell className="w-5 h-5 text-gray-700" />
           {Badge}

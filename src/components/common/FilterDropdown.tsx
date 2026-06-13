@@ -45,6 +45,8 @@ export function FilterDropdown({
           if (rect) setPos({ top: rect.bottom + 8, left: rect.left });
           setOpen((v) => !v);
         }}
+        aria-expanded={open}
+        aria-haspopup="listbox"
         className="flex items-center gap-1 px-3 h-8 rounded-full font-semibold text-gray-800 hover:bg-gray-100 transition-colors whitespace-nowrap text-sm select-none"
       >
         {selectedLabel}

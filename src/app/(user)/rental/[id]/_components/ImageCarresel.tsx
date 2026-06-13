@@ -55,12 +55,14 @@ export default function ImageCarousel({ images }: { images: string[] }) {
         </p>
         <button
           onClick={() => navigate("left")}
+          aria-label="이전 이미지"
           className="absolute cursor-pointer left-2 top-1/2 -translate-y-1/2 rounded-full bg-white p-1.5 z-10"
         >
           <ChevronLeft />
         </button>
         <button
           onClick={() => navigate("right")}
+          aria-label="다음 이미지"
           className="absolute cursor-pointer right-2 top-1/2 -translate-y-1/2 rounded-full bg-white p-1.5 z-10"
         >
           <ChevronRight />
@@ -69,19 +71,26 @@ export default function ImageCarousel({ images }: { images: string[] }) {
 
       <div className="flex gap-2 border-t-2 border-gray-200 p-2">
         {images.map((image, index) => (
-          <Image
+          <button
             key={image}
-            src={image}
-            alt={`썸네일 ${index + 1}`}
-            width={64}
-            height={64}
+            type="button"
             onClick={() => navigate(index > currentIndex ? "right" : "left", index)}
-            className={
-              currentIndex === index
-                ? "border-3 border-teal-400 rounded-xl overflow-hidden cursor-pointer object-contain"
-                : "border-3 rounded-xl overflow-hidden cursor-pointer object-contain"
-            }
-          />
+            aria-label={`${index + 1}번째 이미지로 이동`}
+            aria-pressed={currentIndex === index}
+            className="focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 rounded-xl"
+          >
+            <Image
+              src={image}
+              alt={`썸네일 ${index + 1}`}
+              width={64}
+              height={64}
+              className={
+                currentIndex === index
+                  ? "border-3 border-teal-400 rounded-xl overflow-hidden object-contain"
+                  : "border-3 rounded-xl overflow-hidden object-contain"
+              }
+            />
+          </button>
         ))}
       </div>
     </div>

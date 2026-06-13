@@ -41,10 +41,14 @@ export default function PopularTabs({ usedGoodsItems, jobItems, rentalItems }: P
 
       <div className="hidden md:block">
         <div className="section-header">
-          <div className="flex gap-6 items-end">
+          <div role="tablist" aria-label="인기 카테고리" className="flex gap-6 items-end">
             {TABS.map((tab) => (
               <button
                 key={tab.key}
+                role="tab"
+                aria-selected={activeTab === tab.key}
+                aria-controls={`tab-panel-${tab.key}`}
+                id={`tab-${tab.key}`}
                 onClick={() => setActiveTab(tab.key)}
                 className={`cursor-pointer ${
                   activeTab === tab.key
@@ -65,7 +69,12 @@ export default function PopularTabs({ usedGoodsItems, jobItems, rentalItems }: P
           </Link>
         </div>
 
-        <div className="grid grid-cols-4 gap-4">
+        <div
+          role="tabpanel"
+          id={`tab-panel-${activeTab}`}
+          aria-labelledby={`tab-${activeTab}`}
+          className="grid grid-cols-4 gap-4"
+        >
           {activeItems.map((item) => (
             <MainCard key={item.id} item={item} />
           ))}

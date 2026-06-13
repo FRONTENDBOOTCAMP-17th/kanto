@@ -1,6 +1,7 @@
 import type { ElementType } from "react";
 import { Heart, FileText, MessageCircle } from "lucide-react";
 import type { Notification } from "@/hooks/useNotifications";
+import { formatTimeAgo } from "@/utils/formatTime";
 
 const ICON_MAP: Record<string, { icon: ElementType; color: string }> = {
   like: { icon: Heart, color: "text-red-400" },
@@ -28,7 +29,11 @@ export function NotificationItem({ notification: n, onClick }: Props) {
       <div className="flex-1 min-w-0">
         <p className="text-xs font-medium text-gray-700">{n.title}</p>
         <p className="text-xs text-gray-500 mt-0.5 truncate">{n.body}</p>
-        <p className="text-xs text-gray-400 mt-0.5">{n.created_at}</p>
+        {n.created_at && (
+          <time dateTime={n.created_at} className="text-xs text-gray-400 mt-0.5">
+            {formatTimeAgo(n.created_at)}
+          </time>
+        )}
       </div>
       {!n.is_read && (
         <span className="w-2 h-2 bg-teal-500 rounded-full mt-1.5 shrink-0" />

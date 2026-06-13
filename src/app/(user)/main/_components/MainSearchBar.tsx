@@ -51,6 +51,8 @@ export default function MainSearchBar() {
           <button
             type="button"
             onClick={() => setBottomSheetOpen(true)}
+            aria-expanded={bottomSheetOpen}
+            aria-haspopup="dialog"
             className="md:hidden flex items-center gap-1 px-3 h-8 rounded-full font-semibold text-sm whitespace-nowrap transition-colors select-none hover:bg-gray-100"
           >
             <span>{selectedCategory.label}</span>
@@ -62,6 +64,8 @@ export default function MainSearchBar() {
             <button
               type="button"
               onClick={() => setDropdownOpen((v) => !v)}
+              aria-expanded={dropdownOpen}
+              aria-haspopup="listbox"
               className="flex items-center gap-1 px-3 h-8 rounded-full font-semibold text-sm whitespace-nowrap transition-colors select-none hover:bg-gray-100"
             >
               <span>{selectedCategory.label}</span>
@@ -89,6 +93,7 @@ export default function MainSearchBar() {
           <div className="w-px h-5 bg-gray-300 mx-1 shrink-0" />
           <input
             type="text"
+            aria-label="검색어 입력"
             placeholder="검색어를 입력해주세요"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
@@ -96,6 +101,7 @@ export default function MainSearchBar() {
           />
           <button
             type="submit"
+            aria-label="검색"
             className="cursor-pointer shrink-0 w-7 h-7 md:w-8 md:h-8 bg-gray-800 hover:bg-teal-500 rounded-full flex items-center justify-center transition-colors mr-0.5"
           >
             <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" />
@@ -116,6 +122,7 @@ export default function MainSearchBar() {
               <button
                 type="button"
                 onClick={() => setBottomSheetOpen(false)}
+                aria-label="카테고리 선택 닫기"
                 className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
               >
                 <X className="w-5 h-5 text-gray-500" />

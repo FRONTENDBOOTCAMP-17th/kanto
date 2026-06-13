@@ -61,6 +61,8 @@ export function SearchBar({ onSearch, showLocation = false, children }: SearchBa
             <button
               type="button"
               onClick={() => setMobileLocationOpen(true)}
+              aria-expanded={mobileLocationOpen}
+              aria-haspopup="dialog"
               className={`flex items-center gap-1.5 h-11 px-4 rounded-full border-2 transition-colors font-semibold text-sm whitespace-nowrap ${
                 locationFilter !== "all"
                   ? "border-teal-400 bg-teal-50 text-teal-700"
@@ -82,6 +84,7 @@ export function SearchBar({ onSearch, showLocation = false, children }: SearchBa
             )}
             <input
               type="text"
+              aria-label="검색어 입력"
               placeholder="검색어를 입력해주세요"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
@@ -89,6 +92,7 @@ export function SearchBar({ onSearch, showLocation = false, children }: SearchBa
             />
             <button
               type="submit"
+              aria-label="검색"
               className="cursor-pointer shrink-0 w-7 h-7 bg-gray-800 hover:bg-teal-500 rounded-full flex items-center justify-center transition-colors mr-0.5"
             >
               <ArrowRight className="w-3.5 h-3.5 text-white" />
@@ -108,6 +112,8 @@ export function SearchBar({ onSearch, showLocation = false, children }: SearchBa
                   setDropdownPos({ top: rect.bottom + 8, left: rect.left });
                 setLocationDropdownOpen((v) => !v);
               }}
+              aria-expanded={locationDropdownOpen}
+              aria-haspopup="listbox"
               className={`flex items-center gap-1 px-3 h-8 rounded-full font-semibold text-sm whitespace-nowrap transition-colors select-none ${
                 locationFilter !== "all"
                   ? "text-teal-700"
@@ -156,6 +162,7 @@ export function SearchBar({ onSearch, showLocation = false, children }: SearchBa
           <div className="w-px h-5 bg-gray-300 mx-1 shrink-0" />
           <input
             type="text"
+            aria-label="검색어 입력"
             placeholder="검색어를 입력해주세요"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
@@ -163,6 +170,7 @@ export function SearchBar({ onSearch, showLocation = false, children }: SearchBa
           />
           <button
             type="submit"
+            aria-label="검색"
             className="cursor-pointer shrink-0 w-8 h-8 bg-gray-800 hover:bg-teal-500 rounded-full flex items-center justify-center transition-colors mr-0.5"
           >
             <ArrowRight className="w-4 h-4 text-white" />
@@ -186,6 +194,7 @@ export function SearchBar({ onSearch, showLocation = false, children }: SearchBa
               <button
                 type="button"
                 onClick={() => setMobileLocationOpen(false)}
+                aria-label="지역 선택 닫기"
                 className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
               >
                 <X className="w-5 h-5 text-gray-500" />

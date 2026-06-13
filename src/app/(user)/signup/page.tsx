@@ -359,6 +359,8 @@ export default function SignupPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 표시"}
+                aria-pressed={showPassword}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
                 <EyeIcon visible={showPassword} />
@@ -397,6 +399,8 @@ export default function SignupPage() {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword((v) => !v)}
+                aria-label={showConfirmPassword ? "비밀번호 숨기기" : "비밀번호 표시"}
+                aria-pressed={showConfirmPassword}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
                 <EyeIcon visible={showConfirmPassword} />
@@ -410,60 +414,30 @@ export default function SignupPage() {
           </div>
 
           <div className="border-t pt-4 space-y-3">
-            <div
-              onClick={handleToggleAll}
-              className="flex items-center gap-3 bg-gray-50 rounded-lg px-4 py-3 cursor-pointer"
-            >
-              <div
-                className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 ${allChecked ? "bg-teal-500 border-teal-500" : "border-gray-300"}`}
-              >
-                {allChecked && (
-                  <svg
-                    className="w-3 h-3 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={3}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                )}
-              </div>
+            <label className="flex items-center gap-3 bg-gray-50 rounded-lg px-4 py-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={allChecked}
+                onChange={handleToggleAll}
+                className="w-4 h-4 accent-teal-500 shrink-0"
+              />
               <span className="text-sm font-medium text-gray-900">
                 전체 동의하기
               </span>
-            </div>
+            </label>
 
             <div className="space-y-1">
               {AGREES.map((a) => (
-                <div
+                <label
                   key={a.id}
-                  onClick={() => handleItemClick(a.id)}
                   className="flex items-start gap-3 px-4 py-2 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
                 >
-                  <div
-                    className={`mt-0.5 w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 ${agreed[a.id as keyof typeof agreed] ? "bg-teal-500 border-teal-500" : "border-gray-300"}`}
-                  >
-                    {agreed[a.id as keyof typeof agreed] && (
-                      <svg
-                        className="w-3 h-3 text-white"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={3}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    )}
-                  </div>
+                  <input
+                    type="checkbox"
+                    checked={agreed[a.id as keyof typeof agreed]}
+                    onChange={() => handleItemClick(a.id)}
+                    className="mt-0.5 w-4 h-4 accent-teal-500 shrink-0"
+                  />
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gray-900">{a.label}</span>
@@ -475,7 +449,7 @@ export default function SignupPage() {
                     </div>
                     <p className="text-xs text-gray-500 mt-0.5">{a.desc}</p>
                   </div>
-                </div>
+                </label>
               ))}
             </div>
           </div>

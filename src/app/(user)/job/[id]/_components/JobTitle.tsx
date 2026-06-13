@@ -12,20 +12,20 @@ export default function JobTitle({ job }: { job: JobDetail }) {
         <p className="text-gray-500 mt-1">{job.company_name}</p>
       </div>
       <div className="flex gap-2">
-        <button className="border p-2 rounded-lg hover:bg-gray-50">
+        <button aria-label="좋아요" className="border p-2 rounded-lg hover:bg-gray-50">
           <Heart className="w-4 h-4 text-pink-400" />
         </button>
-        <button className="border p-2 rounded-lg hover:bg-gray-50">
+        <button aria-label="공유하기" className="border p-2 rounded-lg hover:bg-gray-50">
           <Share2 className="w-4 h-4" />
         </button>
-        <button className="border p-2 rounded-lg hover:bg-gray-50">
+        <button aria-label="신고하기" className="border p-2 rounded-lg hover:bg-gray-50">
           <Siren className="w-4 h-4 text-red-400" />
         </button>
       </div>
       <div className="flex gap-4 text-sm text-gray-400">
         <span className="flex items-center gap-1">
           <Clock className="w-4 h-4" />
-          {formatTimeAgo(job.posts.created_at)}
+          <time dateTime={job.posts.created_at}>{formatTimeAgo(job.posts.created_at)}</time>
         </span>
         <span className="flex items-center gap-1">
           <Eye className="w-4 h-4" />

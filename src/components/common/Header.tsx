@@ -119,6 +119,7 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="icon"
+                aria-label="글쓰기"
                 onClick={() => router.push(ROUTES.create)}
               >
                 <Pencil className="w-5 h-5 text-gray-700" />
@@ -140,6 +141,9 @@ export function Header() {
                   variant="ghost"
                   size="icon"
                   className="w-12 h-12"
+                  aria-label="내 프로필 메뉴"
+                  aria-expanded={isProfileOpen}
+                  aria-haspopup="menu"
                   onClick={() => {
                     setIsProfileOpen((v) => !v);
                     notificationBellRef.current?.close();
@@ -221,6 +225,8 @@ export function Header() {
               variant="ghost"
               size="icon"
               className="md:hidden w-12 h-12"
+              aria-label={isMobileOpen ? "메뉴 닫기" : "메뉴 열기"}
+              aria-expanded={isMobileOpen}
               onClick={() => setIsMobileOpen((v) => !v)}
             >
               {isMobileOpen ? (
