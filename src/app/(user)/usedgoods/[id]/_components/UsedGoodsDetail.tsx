@@ -26,6 +26,7 @@ import { supabase } from "@/lib/supabase";
 import Toast from "@/components/common/Toast";
 import ReportModal from "@/components/common/ReportModal";
 import { ROUTES } from "@/constants/routes";
+import postChat from "@/services/chat/postChat";
 
 type UsedGoods = Tables<"used_goods"> & {
   posts: Tables<"posts"> & {
@@ -94,6 +95,14 @@ export default function UsedGoodsDetail({
     setToastMessage(`URL이 복사되었습니다.\n${url}`);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const handleChat = async () => {
+    if (!userId) return;
+
+    const chatId = await postChat(userId, data.posts.users.id, data.post_id);
+
+    router.push(ROUTES.chatRoom(chatId));
   };
 
   useEffect(() => {
@@ -232,12 +241,14 @@ export default function UsedGoodsDetail({
               <p className="text-sm">안전 결제가 필요한 판매자입니다.</p>
             </div>
           )}
-          <button
-            onClick={() => router.push(ROUTES.chat)}
-            className="rounded-md bg-teal-500 text-white w-full p-2 mt-2"
-          >
-            채팅하기
-          </button>
+          {!isOwner && (
+            <button
+              onClick={handleChat}
+              className="rounded-md bg-teal-500 text-white w-full p-2 mt-2"
+            >
+              채팅하기
+            </button>
+          )}
         </div>
       </section>
       <section className="border-gray-200 border-2 p-2 m-2 rounded-xl">
