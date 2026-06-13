@@ -68,6 +68,25 @@ export function ProfileInfoSection({
     router.push("/");
   };
 
+  const handleRestoreAccount = async () => {
+    setDeleteLoading(true);
+    const res = await fetch("/api/user", { method: "PATCH" });
+    if (!res.ok) {
+      setDeleteLoading(false);
+      alert("탈퇴 철회에 실패했습니다. 다시 시도해주세요.");
+      return;
+    }
+    const authId = user.auth_id;
+    if (!authId) { setDeleteLoading(false); return; }
+    const { data } = await supabase
+      .from("users")
+      .select("id, name, email, phone, auth_id, avatar_url, provider, role, post_count, created_at, updated_at, deleted_at")
+      .eq("auth_id", authId)
+      .single();
+    if (data) setUser(data as typeof user);
+    setDeleteLoading(false);
+  };
+
   return (
     <div className="flex flex-col divide-y divide-gray-100">
       {/* 프로필 편집 */}
@@ -136,14 +155,32 @@ export function ProfileInfoSection({
       <div className="px-5 md:px-0 py-6">
         <div className="max-w-md mx-auto">
           <p className="text-lg font-semibold text-gray-900 mb-2">계정 삭제</p>
-          <p className="text-sm text-gray-400 mb-4">탈퇴 시 모든 데이터가 삭제되며 복구할 수 없습니다.</p>
-          <button
-            type="button"
-            onClick={() => setShowDeleteModal(true)}
-            className="cursor-pointer px-4 py-2.5 rounded-lg border border-red-200 text-red-500 hover:text-white text-sm font-medium bg-transparent hover:bg-rose-600 transition-colors"
-          >
-            회원 탈퇴
-          </button>
+          {user.deleted_at ? (
+            <>
+              <p className="text-sm text-red-400 mb-4">
+                탈퇴 신청된 계정입니다. 30일 이내에 철회하지 않으면 모든 데이터가 영구 삭제됩니다.
+              </p>
+              <button
+                type="button"
+                onClick={handleRestoreAccount}
+                disabled={deleteLoading}
+                className="cursor-pointer px-4 py-2.5 rounded-lg border border-teal-500 text-teal-500 hover:text-white text-sm font-medium bg-transparent hover:bg-teal-500 transition-colors disabled:opacity-70"
+              >
+                {deleteLoading ? "처리 중..." : "탈퇴 철회"}
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="text-sm text-gray-400 mb-4">탈퇴 시 모든 데이터가 삭제되며 복구할 수 없습니다.</p>
+              <button
+                type="button"
+                onClick={() => setShowDeleteModal(true)}
+                className="cursor-pointer px-4 py-2.5 rounded-lg border border-red-200 text-red-500 hover:text-white text-sm font-medium bg-transparent hover:bg-rose-600 transition-colors"
+              >
+                회원 탈퇴
+              </button>
+            </>
+          )}
         </div>
       </div>
 
