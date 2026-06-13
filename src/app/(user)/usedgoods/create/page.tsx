@@ -15,11 +15,12 @@ export default async function CreateUsedGoodsPage() {
   // auth UUID → public.users.id (bigint) 조회
   const { data: dbUser } = await supabase
     .from("users")
-    .select("id")
+    .select("id, deleted_at")
     .eq("auth_id", user.id)
     .single();
 
   if (!dbUser) redirect("/login");
+  if (dbUser.deleted_at) redirect("/usedgoods");
 
   return (
     <div className="page-wrapper">
