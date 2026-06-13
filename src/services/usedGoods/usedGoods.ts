@@ -13,7 +13,9 @@ interface UsedGoodsListFilter {
   location?: string;
 }
 
-export async function getUsedGoodsList(filter?: UsedGoodsListFilter): Promise<UsedGoodsWithPost[]> {
+export async function getUsedGoodsList(
+  filter?: UsedGoodsListFilter,
+): Promise<UsedGoodsWithPost[]> {
   const supabase = await createSupabaseServerClient();
 
   let query = supabase
@@ -34,10 +36,14 @@ export async function getUsedGoodsList(filter?: UsedGoodsListFilter): Promise<Us
   let result = data as UsedGoodsWithPost[];
 
   if (filter?.category) {
-    result = result.filter((p) => p.used_goods?.[0]?.category === filter.category);
+    result = result.filter(
+      (p) => p.used_goods?.[0]?.category === filter.category,
+    );
   }
   if (filter?.location) {
-    result = result.filter((p) => p.used_goods?.[0]?.location_type === filter.location);
+    result = result.filter(
+      (p) => p.used_goods?.[0]?.location_type === filter.location,
+    );
   }
 
   return result;
