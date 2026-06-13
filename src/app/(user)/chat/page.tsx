@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createClient } from "@/utils/supabase/server";
 import { getChatList } from "@/services/chat/chat";
 import ChatListClient from "./_components/ChatListClient";
 
 export default async function ChatListPage() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   // 1. 로그인 유저 확인 (getUser는 서버에서 토큰 유효성까지 검증)
   const { data: { user } } = await supabase.auth.getUser();

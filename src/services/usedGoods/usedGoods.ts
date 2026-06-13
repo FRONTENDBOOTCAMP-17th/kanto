@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createClient } from "@/utils/supabase/server";
 import type { UsedGoodsWithPost } from "@/type/usedGoods";
 
 const USED_GOODS_SELECT = `
@@ -14,7 +14,7 @@ interface UsedGoodsListFilter {
 }
 
 export async function getUsedGoodsList(filter?: UsedGoodsListFilter): Promise<UsedGoodsWithPost[]> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   let query = supabase
     .from("posts")
@@ -46,7 +46,7 @@ export async function getUsedGoodsList(filter?: UsedGoodsListFilter): Promise<Us
 export async function getUsedGoodsDetail(
   postId: number,
 ): Promise<UsedGoodsWithPost> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("posts")
@@ -61,7 +61,7 @@ export async function getUsedGoodsDetail(
 }
 
 export async function getUsedGoodsItem(postId: number) {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   const { data } = await supabase
     .from("used_goods")
@@ -75,7 +75,7 @@ export async function getUsedGoodsItem(postId: number) {
 export async function getUsedGoodsByCategory(
   category: string,
 ): Promise<UsedGoodsWithPost[]> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("posts")

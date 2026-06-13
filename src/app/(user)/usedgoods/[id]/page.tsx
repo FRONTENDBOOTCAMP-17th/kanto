@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import { getUsedGoodsItem } from "@/services/usedGoods/usedGoods";
 import { supabase } from "@/lib/supabase";
 import UsedGoodsDetail from "@/app/(user)/usedgoods/[id]/_components/UsedGoodsDetail";
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createClient } from "@/utils/supabase/server";
 
 export default async function UsedGoodsDetailPage({
   params,
@@ -24,7 +24,7 @@ export default async function UsedGoodsDetailPage({
     .neq("id", data.id)
     .limit(8);
 
-  const serverSupabase = await createSupabaseServerClient();
+  const serverSupabase = await createClient();
   const {
     data: { user },
   } = await serverSupabase.auth.getUser();
