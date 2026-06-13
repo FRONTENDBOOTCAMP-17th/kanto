@@ -6,10 +6,15 @@ export function useImageUpload(maxCount = 10) {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const imagePreviewsRef = useRef<string[]>([]);
+
+  useEffect(() => {
+    imagePreviewsRef.current = imagePreviews;
+  }, [imagePreviews]);
 
   useEffect(() => {
     return () => {
-      imagePreviews.forEach((url) => URL.revokeObjectURL(url));
+      imagePreviewsRef.current.forEach((url) => URL.revokeObjectURL(url));
     };
   }, []);
 
