@@ -25,6 +25,7 @@ import {
   Pencil,
 } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
+import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { NotificationBell } from "./header/NotificationBell";
 import type { NotificationBellHandle } from "./header/NotificationBell";
 
@@ -41,20 +42,23 @@ export function Header() {
   const { user } = useAuthStore();
   useAuthInit();
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-  };
-
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const profileRef = useRef<HTMLDivElement>(null);
   const notificationBellRef = useRef<NotificationBellHandle>(null);
 
   const handleLogoutClick = () => {
-    handleLogout();
+    setIsLogoutModalOpen(true);
     setIsProfileOpen(false);
     setIsMobileOpen(false);
+  };
+
+  const handleLogoutConfirm = async () => {
+    setIsLogoutModalOpen(false);
+    await supabase.auth.signOut();
+    router.refresh();
     router.push(ROUTES.home);
   };
 
@@ -70,7 +74,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
       <div className="page-container">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-12 md:h-16">
           {/* 로고 */}
           <Link
             href={ROUTES.home}
@@ -95,12 +99,13 @@ export function Header() {
           <div className="flex-1" />
 
           {/* 우측 액션 버튼 */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center shrink-0">
             {/* 글쓰기 */}
             {user && (
               <Button
                 variant="ghost"
                 size="icon"
+                className="w-10 h-10"
                 aria-label="글쓰기"
                 onClick={() => router.push(ROUTES.create)}
               >
@@ -206,7 +211,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden w-12 h-12"
+              className="md:hidden w-10 h-10"
               aria-label={isMobileOpen ? "메뉴 닫기" : "메뉴 열기"}
               aria-expanded={isMobileOpen}
               onClick={() => setIsMobileOpen((v) => !v)}
@@ -280,6 +285,13 @@ export function Header() {
           </div>
         )}
       </div>
+      <ConfirmModal
+        isOpen={isLogoutModalOpen}
+        title="로그아웃 하시겠습니까?"
+        confirmLabel="로그아웃"
+        onConfirm={handleLogoutConfirm}
+        onCancel={() => setIsLogoutModalOpen(false)}
+      />
     </header>
   );
 }
