@@ -1,8 +1,8 @@
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createClient } from "@/utils/supabase/server";
 import type { User } from "@/type/user";
 
 export async function getSessionUser(): Promise<User | null> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
   const {
     data: { session },
   } = await supabase.auth.getSession();

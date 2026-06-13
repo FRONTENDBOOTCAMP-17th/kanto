@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ShoppingBag, Briefcase, Home, Users } from "lucide-react";
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createClient } from "@/utils/supabase/server";
 
 const CATEGORIES = [
   {
@@ -43,7 +43,7 @@ const CATEGORIES = [
 ] as const;
 
 export default async function CreatePage() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
