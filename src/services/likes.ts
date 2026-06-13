@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createClient } from "@/utils/supabase/server";
 
 // 찜목록 조회...
 
@@ -10,7 +10,7 @@ interface LikeListResult {
 export async function getLikeList(
   postType?: string,
 ): Promise<LikeListResult> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   const {
     data: { user },

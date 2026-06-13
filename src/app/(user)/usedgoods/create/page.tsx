@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createClient } from "@/utils/supabase/server";
 import { CreateUsedGoodsForm } from "./_components/CreateUsedGoodsForm";
 
 export default async function CreateUsedGoodsPage() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   const {
     data: { user },
