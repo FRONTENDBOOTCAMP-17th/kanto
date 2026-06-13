@@ -18,8 +18,8 @@ export function GlobalLayout({ children, initialUser }: Props) {
   const pathname = usePathname();
 
   // 서버에서 읽은 유저를 렌더 시점에 동기적으로 스토어에 주입 — useEffect보다 먼저 실행되어 flash 방지
-  const initialized = useRef(false);
-  if (!initialized.current) {
+  const initialized = useRef<true | null>(null);
+  if (initialized.current == null) {
     initialized.current = true;
     if (initialUser) useAuthStore.setState({ user: initialUser, isLoggedIn: true });
   }
