@@ -1,12 +1,10 @@
-import Link from "next/link";
-import { Plus } from "lucide-react";
+import { WriteButton } from "@/components/common/WriteButton";
 
 import { getUsedGoodsList } from "@/services/usedGoods/usedGoods";
 import { getLikeList } from "@/services/likes";
 import { UsedGoodsList } from "@/app/(user)/usedgoods/_components/UsedGoodsList";
 import { UsedGoodsFilters } from "./_components/UsedGoodsFilters";
 import { PaginationUrl } from "@/components/common/PaginationUrl";
-import { Button } from "@/components/ui/button";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -45,12 +43,7 @@ export default async function UsedGoodsPage({
       <main className="flex-1 page-container w-full py-8">
       <div className="section-header">
         <h1 className="page-title">중고거래</h1>
-        <Link href="/usedgoods/create">
-          <Button variant="teal" className="cursor-pointer gap-1">
-            <Plus className="w-4 h-4" />
-            글쓰기
-          </Button>
-        </Link>
+          <WriteButton href="/usedgoods/create" label="글쓰기" />
       </div>
 
       <UsedGoodsFilters
