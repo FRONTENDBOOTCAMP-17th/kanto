@@ -754,6 +754,10 @@ export type Database = {
       }
       users: {
         Row: {
+          alert_chat: boolean | null
+          alert_comment: boolean | null
+          alert_keywords: string[] | null
+          alert_post: boolean | null
           auth_id: string | null
           avatar_url: string | null
           avg_rating: number | null
@@ -770,6 +774,10 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          alert_chat?: boolean | null
+          alert_comment?: boolean | null
+          alert_keywords?: string[] | null
+          alert_post?: boolean | null
           auth_id?: string | null
           avatar_url?: string | null
           avg_rating?: number | null
@@ -786,6 +794,10 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          alert_chat?: boolean | null
+          alert_comment?: boolean | null
+          alert_keywords?: string[] | null
+          alert_post?: boolean | null
           auth_id?: string | null
           avatar_url?: string | null
           avg_rating?: number | null

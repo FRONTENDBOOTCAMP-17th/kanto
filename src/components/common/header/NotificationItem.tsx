@@ -1,12 +1,13 @@
 import type { ElementType } from "react";
-import { Heart, FileText, MessageCircle } from "lucide-react";
+import { Heart, FileText, MessageCircle, Bird } from "lucide-react";
 import type { Notification } from "@/hooks/useNotifications";
 import { formatTimeAgo } from "@/utils/formatTime";
 
 const ICON_MAP: Record<string, { icon: ElementType; color: string }> = {
-  like: { icon: Heart, color: "text-red-400" },
-  comment: { icon: FileText, color: "text-blue-400" },
-  chat: { icon: MessageCircle, color: "text-teal-400" },
+  like:     { icon: Heart,         color: "text-red-400" },
+  comment:  { icon: FileText,      color: "text-blue-400" },
+  chat:     { icon: MessageCircle, color: "text-teal-400" },
+  new_post: { icon: Bird,          color: "text-orange-400" },
 };
 
 interface Props {
