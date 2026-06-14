@@ -36,7 +36,7 @@ function ProfileForm({ user }: { user: UserType }) {
         >
           <ArrowLeft className="w-5 h-5 text-gray-800" />
         </button>
-        <span className="text-base font-semibold text-gray-900">내 프로필</span>
+        <h1 className="text-base font-semibold text-gray-900">내 프로필</h1>
       </div>
 
       <div className="md:flex md:p-8 p-0 bg-white md:rounded-xl md:border md:border-gray-100">
@@ -61,7 +61,7 @@ function ProfileForm({ user }: { user: UserType }) {
 
             {/* 활동 통계 */}
             <div className="flex flex-col gap-3 px-5 md:px-0">
-              <p className="text-sm font-semibold text-gray-700">활동 통계</p>
+              <h2 className="text-sm font-semibold text-gray-700">활동 통계</h2>
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="flex flex-col gap-0.5">
                   <span className="text-xl font-bold text-gray-900">{user.post_count ?? 0}</span>
@@ -82,7 +82,7 @@ function ProfileForm({ user }: { user: UserType }) {
 
             {/* 계정 정보 */}
             <div className="flex flex-col gap-3 px-5 md:px-0">
-              <p className="text-sm font-semibold text-gray-700">계정 정보</p>
+              <h2 className="text-sm font-semibold text-gray-700">계정 정보</h2>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-500">가입일</span>
                 <span className="text-sm text-gray-700">{formatSellerInfoCreatedAt(user.created_at)}</span>
@@ -107,7 +107,7 @@ function ProfileForm({ user }: { user: UserType }) {
             <div className="flex flex-col gap-3 px-5 md:px-0">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-teal-500" />
-                <p className="text-sm font-semibold text-gray-700">본인인증</p>
+                <h2 className="text-sm font-semibold text-gray-700">본인인증</h2>
               </div>
               <p className="text-xs text-gray-500 leading-relaxed">
                 게시물 작성과 랜덤채팅 참여는 인증이 필요합니다.

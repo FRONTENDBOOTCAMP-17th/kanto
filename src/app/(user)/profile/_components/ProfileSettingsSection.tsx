@@ -128,7 +128,7 @@ export function ProfileSettingsSection() {
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-2 mb-5">
             <MapPin className="w-4 h-4 text-gray-500" />
-            <p className="text-lg font-semibold text-gray-900">지역 설정</p>
+            <h2 className="text-lg font-semibold text-gray-900">지역 설정</h2>
           </div>
           <p className="text-sm text-gray-400 mb-4">
             중고거래·방렌트 게시글 검색 시 기준이 되는 지역입니다.
@@ -139,6 +139,7 @@ export function ProfileSettingsSection() {
               value={region}
               onChange={(e) => setRegion(e.target.value)}
               placeholder="e.g. BGC, Taguig"
+              aria-label="지역 입력"
               className="flex-1 px-3 py-2.5 text-sm text-gray-900 border border-gray-200 rounded-lg outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-200"
             />
             <button
@@ -156,11 +157,12 @@ export function ProfileSettingsSection() {
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-2 mb-5">
             <Globe className="w-4 h-4 text-gray-500" />
-            <p className="text-lg font-semibold text-gray-900">언어 설정</p>
+            <h2 className="text-lg font-semibold text-gray-900">언어 설정</h2>
           </div>
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
+            aria-label="언어 선택"
             className="w-full px-3 py-2.5 text-sm text-gray-900 border border-gray-200 rounded-lg outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-200 bg-white cursor-pointer"
           >
             {LANGUAGES.map(({ value, label }) => (
@@ -175,10 +177,14 @@ export function ProfileSettingsSection() {
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-2 mb-5">
             <Link className="w-4 h-4 text-gray-500" />
-            <p className="text-lg font-semibold text-gray-900">계정 연동</p>
+            <h2 className="text-lg font-semibold text-gray-900">계정 연동</h2>
           </div>
           {notice && (
-            <div className={`mb-4 px-3 py-2.5 rounded-lg text-sm ${notice.type === "success" ? "bg-teal-50 text-teal-700" : "bg-red-50 text-red-600"}`}>
+            <div
+              role="alert"
+              aria-live="polite"
+              className={`mb-4 px-3 py-2.5 rounded-lg text-sm ${notice.type === "success" ? "bg-teal-50 text-teal-700" : "bg-red-50 text-red-600"}`}
+            >
               {notice.text}
             </div>
           )}
@@ -194,7 +200,7 @@ export function ProfileSettingsSection() {
                     <span className="text-sm font-medium text-gray-900">{label}</span>
                   </div>
                   {identitiesLoading ? (
-                    <div className="w-14 h-6 rounded-2xl bg-gray-100 animate-pulse" />
+                    <div className="w-14 h-6 rounded-2xl bg-gray-100 animate-pulse" aria-label="로딩 중" />
                   ) : connected ? (
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-medium text-teal-600 bg-teal-50 px-2.5 py-1 rounded-2xl">
@@ -204,6 +210,7 @@ export function ProfileSettingsSection() {
                         <button
                           type="button"
                           onClick={() => handleUnlink(key)}
+                          aria-label={`${label} 연결 해제`}
                           className="cursor-pointer text-xs font-medium text-gray-400 hover:text-red-500 transition-colors"
                         >
                           해제
@@ -214,6 +221,7 @@ export function ProfileSettingsSection() {
                     <button
                       type="button"
                       onClick={() => handleLink(key)}
+                      aria-label={`${label} 연결하기`}
                       className="cursor-pointer text-xs font-medium text-gray-500 border border-gray-200 px-2.5 py-1 rounded-2xl hover:bg-gray-50 transition-colors"
                     >
                       연결하기

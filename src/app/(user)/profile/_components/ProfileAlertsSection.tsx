@@ -29,7 +29,7 @@ export function ProfileAlertsSection() {
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-2 mb-5">
             <Bell className="w-4 h-4 text-gray-500" />
-            <p className="text-lg font-semibold text-gray-900">알림 설정</p>
+            <h2 className="text-lg font-semibold text-gray-900">알림 설정</h2>
           </div>
           <div className="flex flex-col gap-5">
             {ALERT_ITEMS.map(({ label, desc, field }) => (
@@ -62,7 +62,7 @@ export function ProfileAlertsSection() {
             <div className="max-w-md mx-auto">
               <div className="flex items-center gap-2 mb-2">
                 <Tag className="w-4 h-4 text-gray-500" />
-                <p className="text-lg font-semibold text-gray-900">관심 카테고리</p>
+                <h2 className="text-lg font-semibold text-gray-900">관심 카테고리</h2>
               </div>
               <p className="text-sm text-gray-400 mb-5">선택한 카테고리의 새 게시글 알림을 받습니다.</p>
               <div className="flex flex-col gap-3">
@@ -87,7 +87,7 @@ export function ProfileAlertsSection() {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <Tag className="w-4 h-4 text-gray-500" />
-                  <p className="text-lg font-semibold text-gray-900">키워드 알림</p>
+                  <h2 className="text-lg font-semibold text-gray-900">키워드 알림</h2>
                 </div>
                 <span className="text-xs text-gray-400">{keywords.length} / {MAX_KEYWORDS}</span>
               </div>
@@ -98,8 +98,8 @@ export function ProfileAlertsSection() {
                   {keywords.map((kw) => (
                     <span key={kw} className="flex items-center gap-1 px-3 py-1 bg-teal-50 text-teal-700 text-sm rounded-full">
                       {kw}
-                      <button type="button" onClick={() => removeKeyword(kw)} className="text-teal-400 hover:text-teal-600 cursor-pointer">
-                        <X className="w-3 h-3" />
+                      <button type="button" onClick={() => removeKeyword(kw)} aria-label={`${kw} 키워드 삭제`} className="text-teal-400 hover:text-teal-600 cursor-pointer">
+                        <X className="w-3 h-3" aria-hidden="true" />
                       </button>
                     </span>
                   ))}
@@ -116,6 +116,7 @@ export function ProfileAlertsSection() {
                       onChange={(e) => setKeywordInput(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && addKeyword()}
                       placeholder="키워드 입력 (예: 맥북)"
+                      aria-label="키워드 입력"
                       className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-teal-400"
                     />
                     <button type="button" onClick={addKeyword} disabled={!keywordInput.trim()} className="px-3 py-2 bg-teal-500 text-white text-sm rounded-lg hover:bg-teal-600 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">

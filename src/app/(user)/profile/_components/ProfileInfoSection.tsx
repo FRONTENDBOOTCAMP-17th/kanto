@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
@@ -20,6 +20,17 @@ export function ProfileInfoSection({
   const [deleteLoading, setDeleteLoading] = useState(false);
   const { setUser, clearUser } = useAuthStore();
   const router = useRouter();
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!showDeleteModal) return;
+    cancelButtonRef.current?.focus();
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !deleteLoading) setShowDeleteModal(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [showDeleteModal, deleteLoading]);
 
   const handleSave = async () => {
     let avatarUrl = user.avatar_url;
@@ -92,7 +103,7 @@ export function ProfileInfoSection({
       {/* 프로필 편집 */}
       <div className="px-5 md:px-0 py-6">
         <div className="max-w-md mx-auto">
-          <p className="text-lg font-semibold text-gray-900 mb-6">프로필 편집</p>
+          <h2 className="text-lg font-semibold text-gray-900 mb-6">프로필 편집</h2>
           <form
             onSubmit={(e) => { e.preventDefault(); handleSave(); }}
             className="flex flex-col gap-5"
@@ -130,7 +141,7 @@ export function ProfileInfoSection({
       {/* 비밀번호 변경 — 이메일 로그인 전용 */}
       {(!user.provider || user.provider === "email") && <div className="px-5 md:px-0 py-6">
         <div className="max-w-md mx-auto">
-          <p className="text-lg font-semibold text-gray-900 mb-6">비밀번호 변경</p>
+          <h2 className="text-lg font-semibold text-gray-900 mb-6">비밀번호 변경</h2>
           <div className="flex flex-col gap-5">
             <ProfileField label="현재 비밀번호" type="password" value="" onChange={() => {}} />
             <ProfileField label="새 비밀번호" type="password" value="" onChange={() => {}} />
@@ -154,7 +165,7 @@ export function ProfileInfoSection({
       {/* 계정 삭제 */}
       <div className="px-5 md:px-0 py-6">
         <div className="max-w-md mx-auto">
-          <p className="text-lg font-semibold text-gray-900 mb-2">계정 삭제</p>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">계정 삭제</h2>
           {user.deleted_at ? (
             <>
               <p className="text-sm text-red-400 mb-4">
@@ -186,20 +197,28 @@ export function ProfileInfoSection({
 
       {/* 회원 탈퇴 확인 모달 */}
       {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-modal-title"
+          aria-describedby="delete-modal-desc"
+          className="fixed inset-0 z-50 flex items-center justify-center"
+        >
           <div
             className="absolute inset-0 bg-black/40"
             onClick={() => !deleteLoading && setShowDeleteModal(false)}
+            aria-hidden="true"
           />
           <div className="relative bg-white rounded-2xl shadow-xl w-[90%] max-w-sm p-6 flex flex-col gap-4">
             <div>
-              <p className="text-base font-semibold text-gray-900">정말 탈퇴하시겠습니까?</p>
-              <p className="text-sm text-gray-500 mt-1.5 leading-relaxed">
+              <p id="delete-modal-title" className="text-base font-semibold text-gray-900">정말 탈퇴하시겠습니까?</p>
+              <p id="delete-modal-desc" className="text-sm text-gray-500 mt-1.5 leading-relaxed">
                 탈퇴 시 작성하신 게시글, 채팅 내역 등 모든 데이터가 삭제되며 복구할 수 없습니다.
               </p>
             </div>
             <div className="flex gap-2 mt-1">
               <button
+                ref={cancelButtonRef}
                 type="button"
                 onClick={() => setShowDeleteModal(false)}
                 disabled={deleteLoading}
@@ -211,6 +230,7 @@ export function ProfileInfoSection({
                 type="button"
                 onClick={handleDeleteAccount}
                 disabled={deleteLoading}
+                aria-busy={deleteLoading}
                 className="cursor-pointer flex-1 py-2.5 rounded-lg bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-70"
               >
                 {deleteLoading ? "처리 중..." : "탈퇴하기"}
