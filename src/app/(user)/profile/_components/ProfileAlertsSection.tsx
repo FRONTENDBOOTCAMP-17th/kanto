@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bell, Tag } from "lucide-react";
+import { useAuthStore } from "@/store/authStore";
+import { supabase } from "@/lib/supabase";
 
 const CATEGORIES = [
   { key: "usedgoods", label: "중고거래" },
@@ -11,22 +13,65 @@ const CATEGORIES = [
   { key: "dating", label: "랜덤채팅" },
 ];
 
+const ALL_KEYS = CATEGORIES.map((c) => c.key);
+
 export function ProfileAlertsSection() {
+  const { user } = useAuthStore();
   const [chatAlert, setChatAlert] = useState(true);
   const [commentAlert, setCommentAlert] = useState(true);
   const [postAlert, setPostAlert] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] =
+    useState<string[]>(ALL_KEYS);
 
-  const toggleCategory = (key: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
-    );
+  useEffect(() => {
+    if (!user?.id) return;
+    supabase
+      .from("users")
+      .select("interest_categories")
+      .eq("id", user.id)
+      .single()
+      .then(({ data }) => {
+        if (data?.interest_categories) {
+          setSelectedCategories(data.interest_categories);
+        }
+      });
+  }, [user?.id]);
+
+  const toggleCategory = async (key: string) => {
+    if (!user?.id) return;
+
+    const next = selectedCategories.includes(key)
+      ? selectedCategories.filter((k) => k !== key)
+      : [...selectedCategories, key];
+
+    setSelectedCategories(next);
+
+    const value = next.length === ALL_KEYS.length ? null : next;
+    await supabase
+      .from("users")
+      .update({ interest_categories: value })
+      .eq("id", user.id);
   };
 
   const items = [
-    { label: "채팅 알림", desc: "새 채팅 메시지 알림", value: chatAlert, onChange: setChatAlert },
-    { label: "댓글 알림", desc: "내 게시글에 댓글이 달리면 알림", value: commentAlert, onChange: setCommentAlert },
-    { label: "새 게시글 알림", desc: "관심 카테고리 새 게시글 알림", value: postAlert, onChange: setPostAlert },
+    {
+      label: "채팅 알림",
+      desc: "새 채팅 메시지 알림",
+      value: chatAlert,
+      onChange: setChatAlert,
+    },
+    {
+      label: "댓글 알림",
+      desc: "내 게시글에 댓글이 달리면 알림",
+      value: commentAlert,
+      onChange: setCommentAlert,
+    },
+    {
+      label: "새 게시글 알림",
+      desc: "관심 카테고리 새 게시글 알림",
+      value: postAlert,
+      onChange: setPostAlert,
+    },
   ];
 
   return (
@@ -74,8 +119,13 @@ export function ProfileAlertsSection() {
           </p>
           <div className="flex flex-col gap-3">
             {CATEGORIES.map(({ key, label }) => (
-              <label key={key} className="flex items-center justify-between cursor-pointer">
-                <span className="text-sm font-medium text-gray-900">{label}</span>
+              <label
+                key={key}
+                className="flex items-center justify-between cursor-pointer"
+              >
+                <span className="text-sm font-medium text-gray-900">
+                  {label}
+                </span>
                 <input
                   type="checkbox"
                   checked={selectedCategories.includes(key)}

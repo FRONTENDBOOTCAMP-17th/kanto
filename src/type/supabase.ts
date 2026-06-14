@@ -638,6 +638,73 @@ export type Database = {
           },
         ]
       }
+      reviews: {
+        Row: {
+          content: string
+          created_at: string
+          deleted_at: string | null
+          id: number
+          post_id: number | null
+          post_price: number | null
+          post_title: string | null
+          rating: number
+          reviewee_id: number
+          reviewer_id: number
+          role: string
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          deleted_at?: string | null
+          id?: number
+          post_id?: number | null
+          post_price?: number | null
+          post_title?: string | null
+          rating: number
+          reviewee_id: number
+          reviewer_id: number
+          role: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          deleted_at?: string | null
+          id?: number
+          post_id?: number | null
+          post_price?: number | null
+          post_title?: string | null
+          rating?: number
+          reviewee_id?: number
+          reviewer_id?: number
+          role?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reviewee_id_fkey"
+            columns: ["reviewee_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       used_goods: {
         Row: {
           category: string
@@ -689,10 +756,12 @@ export type Database = {
         Row: {
           auth_id: string | null
           avatar_url: string | null
+          avg_rating: number | null
           created_at: string | null
           deleted_at: string | null
           email: string | null
           id: number
+          interest_categories: string[] | null
           name: string
           phone: string | null
           post_count: number | null
@@ -703,10 +772,12 @@ export type Database = {
         Insert: {
           auth_id?: string | null
           avatar_url?: string | null
+          avg_rating?: number | null
           created_at?: string | null
           deleted_at?: string | null
           email?: string | null
           id?: number
+          interest_categories?: string[] | null
           name: string
           phone?: string | null
           post_count?: number | null
@@ -717,10 +788,12 @@ export type Database = {
         Update: {
           auth_id?: string | null
           avatar_url?: string | null
+          avg_rating?: number | null
           created_at?: string | null
           deleted_at?: string | null
           email?: string | null
           id?: number
+          interest_categories?: string[] | null
           name?: string
           phone?: string | null
           post_count?: number | null
@@ -735,6 +808,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_deleted_users: { Args: never; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
       my_role: { Args: never; Returns: string }
       my_user_id: { Args: never; Returns: number }
