@@ -278,7 +278,6 @@ USING (auth_id = auth.uid());
 | 탈퇴 확인 모달 | `role="dialog"`, `aria-modal`, `aria-labelledby`, `aria-describedby` |
 | 모달 포커스 | 오픈 시 취소 버튼 자동 포커스, Escape 키 닫기 |
 | 알림 배너 | `role="alert"`, `aria-live="polite"` |
-| 로딩 스켈레톤 | `aria-label="로딩 중"` (서버 선조회로 대부분 제거됨) |
 
 ---
 
