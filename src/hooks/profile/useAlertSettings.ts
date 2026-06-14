@@ -1,8 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
+import { updateAlertToggle, updateInterestCategories, updateAlertKeywords } from "@/services/profile/profileAlert";
 
 export const CATEGORIES = [
   { key: "usedgoods", label: "중고거래" },
@@ -42,16 +42,10 @@ export function useAlertSettings(initial: AlertSettings) {
 
   const toggleAlert = async (field: AlertField, next: boolean) => {
     if (!userId) return;
-    if (field === "alert_chat") {
-      setChatAlert(next);
-      await supabase.from("users").update({ alert_chat: next }).eq("id", userId);
-    } else if (field === "alert_comment") {
-      setCommentAlert(next);
-      await supabase.from("users").update({ alert_comment: next }).eq("id", userId);
-    } else {
-      setPostAlert(next);
-      await supabase.from("users").update({ alert_post: next }).eq("id", userId);
-    }
+    if (field === "alert_chat") setChatAlert(next);
+    else if (field === "alert_comment") setCommentAlert(next);
+    else setPostAlert(next);
+    await updateAlertToggle(userId, field, next);
   };
 
   const toggleCategory = async (key: string) => {
@@ -61,7 +55,7 @@ export function useAlertSettings(initial: AlertSettings) {
       : [...selectedCategories, key];
     setSelectedCategories(next);
     const value = next.length === ALL_KEYS.length ? null : next;
-    await supabase.from("users").update({ interest_categories: value }).eq("id", userId);
+    await updateInterestCategories(userId, value);
   };
 
   const addKeyword = async () => {
@@ -74,14 +68,14 @@ export function useAlertSettings(initial: AlertSettings) {
     setKeywords(next);
     setKeywordInput("");
     setShowInput(false);
-    await supabase.from("users").update({ alert_keywords: next }).eq("id", userId);
+    await updateAlertKeywords(userId, next);
   };
 
   const removeKeyword = async (keyword: string) => {
     if (!userId) return;
     const next = keywords.filter((k) => k !== keyword);
     setKeywords(next);
-    await supabase.from("users").update({ alert_keywords: next.length > 0 ? next : null }).eq("id", userId);
+    await updateAlertKeywords(userId, next.length > 0 ? next : null);
   };
 
   const handleShowInput = () => {

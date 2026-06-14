@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
 import type { UserIdentity } from "@supabase/supabase-js";
+import { linkSocialIdentity, unlinkSocialIdentity } from "@/services/profile/profileSettings";
 
 export const LANGUAGES = [
   { value: "ko", label: "한국어" },
@@ -50,10 +50,7 @@ export function useProfileSettings(initialIdentities: UserIdentity[]) {
 
   const handleLink = async (provider: "google" | "kakao" | "facebook") => {
     sessionStorage.setItem("linkingProvider", provider);
-    const { error } = await supabase.auth.linkIdentity({
-      provider,
-      options: { redirectTo: window.location.href },
-    });
+    const { error } = await linkSocialIdentity(provider, window.location.href);
     if (error) {
       sessionStorage.removeItem("linkingProvider");
       setNotice({
@@ -66,7 +63,7 @@ export function useProfileSettings(initialIdentities: UserIdentity[]) {
   const handleUnlink = async (provider: string) => {
     const identity = identities.find((i) => i.provider === provider);
     if (!identity) return;
-    const { error } = await supabase.auth.unlinkIdentity(identity);
+    const { error } = await unlinkSocialIdentity(identity);
     if (!error) {
       setIdentities((prev) => prev.filter((i) => i.provider !== provider));
       setNotice({ type: "success", text: "소셜 계정 연결이 해제되었습니다." });
