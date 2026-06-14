@@ -7,11 +7,11 @@ import { useAuthStore } from "@/store/authStore";
 import type { User as UserType } from "@/type/user";
 import ProfileAvatar from "./profileAvatar";
 import { ProfileAside, ProfileMobileTabs, type Tab } from "./ProfileAside";
-import { ProfileInfoSection } from "./ProfileInfoSection";
-import { ProfileReviewsSection } from "./ProfileReviewsSection";
-import { ProfileAlertsSection } from "./ProfileAlertsSection";
-import { ProfileBlockedSection } from "./ProfileBlockedSection";
-import { ProfileSettingsSection } from "./ProfileSettingsSection";
+import { ProfileInfoSection } from "./sections/ProfileInfoSection";
+import { ProfileReviewsSection } from "./sections/ProfileReviewsSection";
+import { ProfileAlertsSection } from "./sections/ProfileAlertsSection";
+import { ProfileBlockedSection } from "./sections/ProfileBlockedSection";
+import { ProfileSettingsSection } from "./sections/ProfileSettingsSection";
 import { formatSellerInfoCreatedAt } from "@/utils/formatTime";
 
 export function ProfileCard() {
