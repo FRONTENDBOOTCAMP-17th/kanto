@@ -25,7 +25,7 @@ export type Rental = Database["public"]["Tables"]["rentals"]["Row"];
 
 export type RentSellerInfo = Pick<
   Database["public"]["Tables"]["users"]["Row"],
-  "id" | "name" | "avatar_url" | "created_at"
+  "id" | "name" | "avatar_url" | "created_at" | "auth_id"
 >;
 
 export type RentalWithPost = Rental & {

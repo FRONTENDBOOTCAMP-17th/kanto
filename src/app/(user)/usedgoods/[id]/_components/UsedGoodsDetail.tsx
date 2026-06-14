@@ -18,9 +18,7 @@ import { useState, useEffect } from "react";
 import { Tables } from "@/type/supabase";
 import { formatTimeAgo } from "@/utils/formatTime";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
-import { User } from "@supabase/supabase-js";
-import EditButton from "@/components/common/EditButton";
-import DeleteButton from "@/components/common/DeleteButton";
+import VerifyAuthor from "@/components/common/VerifyAuthor";
 import { supabase } from "@/lib/supabase";
 import Toast from "@/components/common/Toast";
 import ReportModal from "@/components/common/ReportModal";
@@ -37,20 +35,19 @@ type UsedGoods = Tables<"used_goods"> & {
 export default function UsedGoodsDetail({
   data,
   relatedData,
-  user,
   initialLiked,
   userId,
   initialReported,
 }: {
   data: UsedGoods;
   relatedData: UsedGoods[] | null;
-  user: User | null;
   initialLiked: boolean;
   userId: number | undefined;
   initialReported: boolean;
 }) {
   const router = useRouter();
   const { user: storeUser } = useAuthStore();
+  const isOwner = storeUser?.auth_id === data.posts.users?.auth_id;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(initialLiked);
   const [likeCount, setLikeCount] = useState(data.posts.like_count);
@@ -64,7 +61,6 @@ export default function UsedGoodsDetail({
 
   const images = (data.images as string[]) ?? [];
 
-  const isOwner = user?.id === data.posts.users?.auth_id;
 
   const handleLike = async () => {
     if (!userId) return;
@@ -143,12 +139,12 @@ export default function UsedGoodsDetail({
             <MoveLeft />
             목록으로
           </button>
-          {isOwner && (
-            <div className="flex gap-2 mr-2">
-              <EditButton id={data.post_id} />
-              <DeleteButton postId={data.post_id} />
-            </div>
-          )}
+          <VerifyAuthor
+            authorAuthId={data.posts.users?.auth_id}
+            editPath={`/usedgoods/${data.post_id}/edit`}
+            postId={data.post_id}
+            redirectPath="/usedgoods"
+          />
         </div>
         {images.length > 0 && (
           <div className="m-2 border-2 border-gray-200 rounded-2xl overflow-hidden">

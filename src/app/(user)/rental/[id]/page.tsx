@@ -4,6 +4,7 @@ import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarresel";
 import AccommondationInfo from "./_components/AccommondationInfo";
 import RentSellerInfo from "./_components/RentSellerInfo";
 import PostInfo from "./_components/PostInfo";
+import VerifyAuthor from "@/components/common/VerifyAuthor";
 
 export default async function RentalDetail({
   params,
@@ -27,7 +28,15 @@ export default async function RentalDetail({
 
   return (
     <div className="page-container">
-      <BackButton />
+      <div className="flex items-center justify-between">
+        <BackButton />
+        <VerifyAuthor
+          authorAuthId={rental.posts.users.auth_id}
+          editPath={`/rental/${id}/edit`}
+          postId={rental.post_id}
+          redirectPath="/rental"
+        />
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-2 md:gap-4 mt-4">
         <ImageCarousel images={images} />
 

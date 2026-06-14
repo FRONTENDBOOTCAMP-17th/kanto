@@ -4,7 +4,7 @@ import type { SellerInfo } from "@/type/user";
 
 export type Job = Database["public"]["Tables"]["jobs"]["Row"];
 
-export type JobSellerInfo = SellerInfo;
+export type JobSellerInfo = SellerInfo & { auth_id: string | null };
 
 export type JobDetail = Job & {
   posts: Post & {
