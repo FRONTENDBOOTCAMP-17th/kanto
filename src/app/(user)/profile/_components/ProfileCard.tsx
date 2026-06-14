@@ -7,20 +7,22 @@ import { useAuthStore } from "@/store/authStore";
 import type { User as UserType } from "@/type/user";
 import ProfileAvatar from "./profileAvatar";
 import { ProfileAside, ProfileMobileTabs, type Tab } from "./ProfileAside";
-import { ProfileInfoSection } from "./ProfileInfoSection";
-import { ProfileReviewsSection } from "./ProfileReviewsSection";
-import { ProfileAlertsSection } from "./ProfileAlertsSection";
-import { ProfileBlockedSection } from "./ProfileBlockedSection";
-import { ProfileSettingsSection } from "./ProfileSettingsSection";
+import { ProfileInfoSection } from "./sections/ProfileInfoSection";
+import { ProfileReviewsSection } from "./sections/ProfileReviewsSection";
+import { ProfileAlertsSection } from "./sections/ProfileAlertsSection";
+import type { AlertSettings } from "@/hooks/profile/useAlertSettings";
+import { ProfileBlockedSection } from "./sections/ProfileBlockedSection";
+import { ProfileSettingsSection } from "./sections/ProfileSettingsSection";
+import type { UserIdentity } from "@supabase/supabase-js";
 import { formatSellerInfoCreatedAt } from "@/utils/formatTime";
 
-export function ProfileCard() {
+export function ProfileCard({ alertSettings, initialIdentities }: { alertSettings: AlertSettings; initialIdentities: UserIdentity[] }) {
   const { user } = useAuthStore();
   if (!user) return null;
-  return <ProfileForm user={user} />;
+  return <ProfileForm user={user} alertSettings={alertSettings} initialIdentities={initialIdentities} />;
 }
 
-function ProfileForm({ user }: { user: UserType }) {
+function ProfileForm({ user, alertSettings, initialIdentities }: { user: UserType; alertSettings: AlertSettings; initialIdentities: UserIdentity[] }) {
   const [activeTab, setActiveTab] = useState<Tab>("info");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const router = useRouter();
@@ -36,7 +38,7 @@ function ProfileForm({ user }: { user: UserType }) {
         >
           <ArrowLeft className="w-5 h-5 text-gray-800" />
         </button>
-        <span className="text-base font-semibold text-gray-900">내 프로필</span>
+        <h1 className="text-base font-semibold text-gray-900">내 프로필</h1>
       </div>
 
       <div className="md:flex md:p-8 p-0 bg-white md:rounded-xl md:border md:border-gray-100">
@@ -61,7 +63,7 @@ function ProfileForm({ user }: { user: UserType }) {
 
             {/* 활동 통계 */}
             <div className="flex flex-col gap-3 px-5 md:px-0">
-              <p className="text-sm font-semibold text-gray-700">활동 통계</p>
+              <h2 className="text-sm font-semibold text-gray-700">활동 통계</h2>
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="flex flex-col gap-0.5">
                   <span className="text-xl font-bold text-gray-900">{user.post_count ?? 0}</span>
@@ -82,7 +84,7 @@ function ProfileForm({ user }: { user: UserType }) {
 
             {/* 계정 정보 */}
             <div className="flex flex-col gap-3 px-5 md:px-0">
-              <p className="text-sm font-semibold text-gray-700">계정 정보</p>
+              <h2 className="text-sm font-semibold text-gray-700">계정 정보</h2>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-500">가입일</span>
                 <span className="text-sm text-gray-700">{formatSellerInfoCreatedAt(user.created_at)}</span>
@@ -107,7 +109,7 @@ function ProfileForm({ user }: { user: UserType }) {
             <div className="flex flex-col gap-3 px-5 md:px-0">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-teal-500" />
-                <p className="text-sm font-semibold text-gray-700">본인인증</p>
+                <h2 className="text-sm font-semibold text-gray-700">본인인증</h2>
               </div>
               <p className="text-xs text-gray-500 leading-relaxed">
                 게시물 작성과 랜덤채팅 참여는 인증이 필요합니다.
@@ -123,9 +125,9 @@ function ProfileForm({ user }: { user: UserType }) {
         <div className="flex-1 md:pl-8">
           {activeTab === "info" && <ProfileInfoSection user={user} avatarFile={avatarFile} />}
           {activeTab === "reviews" && <ProfileReviewsSection />}
-          {activeTab === "alerts" && <ProfileAlertsSection />}
+          {activeTab === "alerts" && <ProfileAlertsSection initialSettings={alertSettings} />}
           {activeTab === "blocked" && <ProfileBlockedSection />}
-          {activeTab === "settings" && <ProfileSettingsSection />}
+          {activeTab === "settings" && <ProfileSettingsSection initialIdentities={initialIdentities} />}
         </div>
       </div>
     </div>

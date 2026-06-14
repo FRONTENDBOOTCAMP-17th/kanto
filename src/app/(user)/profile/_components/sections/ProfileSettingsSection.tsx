@@ -1,27 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { MapPin, Globe, Link } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { useProfileSettings, LANGUAGES, SOCIAL_PROVIDERS } from "@/hooks/profile/useProfileSettings";
 import type { UserIdentity } from "@supabase/supabase-js";
-
-const LANGUAGES = [
-  { value: "ko", label: "한국어" },
-  { value: "en", label: "English" },
-  { value: "fil", label: "Filipino" },
-];
-
-const SOCIAL_PROVIDERS: { key: "google" | "kakao" | "facebook"; label: string }[] = [
-  { key: "google", label: "구글" },
-  { key: "kakao", label: "카카오톡" },
-  { key: "facebook", label: "페이스북" },
-];
 
 function SocialIcon({ provider }: { provider: string }) {
   if (provider === "google") {
     return (
       <span className="w-7 h-7 rounded-lg border border-gray-200 bg-white flex items-center justify-center shrink-0">
-        <svg viewBox="0 0 24 24" className="w-4 h-4">
+        <svg viewBox="0 0 24 24" className="w-4 h-4" aria-hidden="true">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
           <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
           <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
@@ -33,7 +20,7 @@ function SocialIcon({ provider }: { provider: string }) {
   if (provider === "kakao") {
     return (
       <span className="w-7 h-7 rounded-lg bg-[#FEE500] flex items-center justify-center shrink-0">
-        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="#3C1E1E">
+        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="#3C1E1E" aria-hidden="true">
           <path d="M12 3C6.477 3 2 6.72 2 11.25c0 2.9 1.63 5.45 4.1 6.96L5.2 21l4.34-2.17c.79.16 1.6.25 2.46.25 5.523 0 10-3.72 10-8.25C22 6.72 17.523 3 12 3z" />
         </svg>
       </span>
@@ -42,7 +29,7 @@ function SocialIcon({ provider }: { provider: string }) {
   if (provider === "facebook") {
     return (
       <span className="w-7 h-7 rounded-lg bg-[#1877F2] flex items-center justify-center shrink-0">
-        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="white">
+        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="white" aria-hidden="true">
           <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
         </svg>
       </span>
@@ -51,75 +38,15 @@ function SocialIcon({ provider }: { provider: string }) {
   return null;
 }
 
-type Notice = { type: "success" | "error"; text: string };
-
-const ERROR_MESSAGES: Record<string, string> = {
-  identity_already_exists: "이미 다른 계정에 연동된 소셜 계정입니다.",
-  same_identity: "현재 계정에 이미 연동된 소셜 계정입니다.",
-};
-
-export function ProfileSettingsSection() {
-  const [region, setRegion] = useState("");
-  const [language, setLanguage] = useState("ko");
-  const [identities, setIdentities] = useState<UserIdentity[]>([]);
-  const [identitiesLoading, setIdentitiesLoading] = useState(true);
-  const [notice, setNotice] = useState<Notice | null>(() => {
-    if (typeof window === "undefined") return null;
-    const params = new URLSearchParams(window.location.search);
-    const errorCode = params.get("error_code");
-    if (!errorCode) return null;
-    return {
-      type: "error",
-      text: ERROR_MESSAGES[errorCode] ?? `연결에 실패했습니다. (${errorCode})`,
-    };
-  });
-
-  useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("error_code")) {
-      window.history.replaceState({}, "", window.location.pathname);
-    }
-
-    supabase.auth.getUserIdentities().then(({ data }) => {
-      if (data) {
-        setIdentities(data.identities);
-        const pending = sessionStorage.getItem("linkingProvider");
-        if (pending) {
-          sessionStorage.removeItem("linkingProvider");
-          if (data.identities.some((i) => i.provider === pending)) {
-            setNotice({ type: "success", text: "소셜 계정이 연결되었습니다." });
-          }
-        }
-      }
-      setIdentitiesLoading(false);
-    });
-  }, []);
-
-  const handleLink = async (provider: "google" | "kakao" | "facebook") => {
-    sessionStorage.setItem("linkingProvider", provider);
-    const { error } = await supabase.auth.linkIdentity({
-      provider,
-      options: { redirectTo: window.location.href },
-    });
-    if (error) {
-      sessionStorage.removeItem("linkingProvider");
-      setNotice({
-        type: "error",
-        text: ERROR_MESSAGES[error.code ?? ""] ?? `연결에 실패했습니다: ${error.message}`,
-      });
-    }
-  };
-
-  const handleUnlink = async (provider: string) => {
-    const identity = identities.find((i) => i.provider === provider);
-    if (!identity) return;
-    const { error } = await supabase.auth.unlinkIdentity(identity);
-    if (!error) {
-      setIdentities((prev) => prev.filter((i) => i.provider !== provider));
-      setNotice({ type: "success", text: "소셜 계정 연결이 해제되었습니다." });
-    } else {
-      setNotice({ type: "error", text: "연결 해제에 실패했습니다." });
-    }
-  };
+export function ProfileSettingsSection({ initialIdentities }: { initialIdentities: UserIdentity[] }) {
+  const {
+    region, setRegion,
+    language, setLanguage,
+    identities,
+    notice,
+    handleLink,
+    handleUnlink,
+  } = useProfileSettings(initialIdentities);
 
   return (
     <div className="flex flex-col divide-y divide-gray-100">
@@ -127,8 +54,8 @@ export function ProfileSettingsSection() {
       <div className="px-5 md:px-0 py-6">
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-2 mb-5">
-            <MapPin className="w-4 h-4 text-gray-500" />
-            <p className="text-lg font-semibold text-gray-900">지역 설정</p>
+            <MapPin className="w-4 h-4 text-gray-500" aria-hidden="true" />
+            <h2 className="text-lg font-semibold text-gray-900">지역 설정</h2>
           </div>
           <p className="text-sm text-gray-400 mb-4">
             중고거래·방렌트 게시글 검색 시 기준이 되는 지역입니다.
@@ -139,6 +66,7 @@ export function ProfileSettingsSection() {
               value={region}
               onChange={(e) => setRegion(e.target.value)}
               placeholder="e.g. BGC, Taguig"
+              aria-label="지역 입력"
               className="flex-1 px-3 py-2.5 text-sm text-gray-900 border border-gray-200 rounded-lg outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-200"
             />
             <button
@@ -155,12 +83,13 @@ export function ProfileSettingsSection() {
       <div className="px-5 md:px-0 py-6">
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-2 mb-5">
-            <Globe className="w-4 h-4 text-gray-500" />
-            <p className="text-lg font-semibold text-gray-900">언어 설정</p>
+            <Globe className="w-4 h-4 text-gray-500" aria-hidden="true" />
+            <h2 className="text-lg font-semibold text-gray-900">언어 설정</h2>
           </div>
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
+            aria-label="언어 선택"
             className="w-full px-3 py-2.5 text-sm text-gray-900 border border-gray-200 rounded-lg outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-200 bg-white cursor-pointer"
           >
             {LANGUAGES.map(({ value, label }) => (
@@ -174,18 +103,21 @@ export function ProfileSettingsSection() {
       <div className="px-5 md:px-0 py-6">
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-2 mb-5">
-            <Link className="w-4 h-4 text-gray-500" />
-            <p className="text-lg font-semibold text-gray-900">계정 연동</p>
+            <Link className="w-4 h-4 text-gray-500" aria-hidden="true" />
+            <h2 className="text-lg font-semibold text-gray-900">계정 연동</h2>
           </div>
           {notice && (
-            <div className={`mb-4 px-3 py-2.5 rounded-lg text-sm ${notice.type === "success" ? "bg-teal-50 text-teal-700" : "bg-red-50 text-red-600"}`}>
+            <div
+              role="alert"
+              aria-live="polite"
+              className={`mb-4 px-3 py-2.5 rounded-lg text-sm ${notice.type === "success" ? "bg-teal-50 text-teal-700" : "bg-red-50 text-red-600"}`}
+            >
               {notice.text}
             </div>
           )}
           <div className="flex flex-col gap-7">
             {SOCIAL_PROVIDERS.map(({ key, label }) => {
-              const identity = identities.find((i) => i.provider === key);
-              const connected = !!identity;
+              const connected = identities.some((i) => i.provider === key);
               const canUnlink = identities.length > 1;
               return (
                 <div key={key} className="flex items-center justify-between">
@@ -193,9 +125,7 @@ export function ProfileSettingsSection() {
                     <SocialIcon provider={key} />
                     <span className="text-sm font-medium text-gray-900">{label}</span>
                   </div>
-                  {identitiesLoading ? (
-                    <div className="w-14 h-6 rounded-2xl bg-gray-100 animate-pulse" />
-                  ) : connected ? (
+                  {connected ? (
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-medium text-teal-600 bg-teal-50 px-2.5 py-1 rounded-2xl">
                         연결됨
@@ -204,6 +134,7 @@ export function ProfileSettingsSection() {
                         <button
                           type="button"
                           onClick={() => handleUnlink(key)}
+                          aria-label={`${label} 연결 해제`}
                           className="cursor-pointer text-xs font-medium text-gray-400 hover:text-red-500 transition-colors"
                         >
                           해제
@@ -214,6 +145,7 @@ export function ProfileSettingsSection() {
                     <button
                       type="button"
                       onClick={() => handleLink(key)}
+                      aria-label={`${label} 연결하기`}
                       className="cursor-pointer text-xs font-medium text-gray-500 border border-gray-200 px-2.5 py-1 rounded-2xl hover:bg-gray-50 transition-colors"
                     >
                       연결하기
