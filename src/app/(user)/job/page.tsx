@@ -41,7 +41,7 @@ export default async function JobPage({
         </div>
 
         <JobFilters
-          defaultSearch={params.search ?? ""}
+          givenSearch={params.search ?? ""}
           defaultType={params.type ?? "all"}
           defaultLocation={params.location ?? "all"}
         />

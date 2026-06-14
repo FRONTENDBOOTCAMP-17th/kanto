@@ -9,6 +9,7 @@ export const PRODUCT_CATEGORIES = [
   { id: "all", label: "전체" },
   { id: "가구", label: "가구" },
   { id: "의류", label: "의류" },
+  { id: "전자기기", label: "전자기기" },
   { id: "악세서리", label: "악세서리" },
   { id: "유아용품", label: "유아용품" },
   { id: "자동차", label: "자동차" },

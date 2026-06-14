@@ -47,7 +47,7 @@ export default async function UsedGoodsPage({
       </div>
 
       <UsedGoodsFilters
-        defaultSearch={params.search ?? ""}
+        givenSearch={params.search ?? ""}
         defaultCategory={params.category ?? "all"}
         defaultLocation={params.location ?? "all"}
       />
