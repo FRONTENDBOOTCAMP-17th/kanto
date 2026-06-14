@@ -23,40 +23,29 @@ const ERROR_MESSAGES: Record<string, string> = {
 
 type Notice = { type: "success" | "error"; text: string };
 
-export function useProfileSettings() {
+export function useProfileSettings(initialIdentities: UserIdentity[]) {
   const [region, setRegion] = useState("");
   const [language, setLanguage] = useState("ko");
-  const [identities, setIdentities] = useState<UserIdentity[]>([]);
-  const [identitiesLoading, setIdentitiesLoading] = useState(true);
+  const [identities, setIdentities] = useState<UserIdentity[]>(initialIdentities);
   const [notice, setNotice] = useState<Notice | null>(() => {
     if (typeof window === "undefined") return null;
     const params = new URLSearchParams(window.location.search);
     const errorCode = params.get("error_code");
-    if (!errorCode) return null;
-    return {
-      type: "error",
-      text: ERROR_MESSAGES[errorCode] ?? `연결에 실패했습니다. (${errorCode})`,
-    };
+    if (errorCode) {
+      return { type: "error", text: ERROR_MESSAGES[errorCode] ?? `연결에 실패했습니다. (${errorCode})` };
+    }
+    const pending = sessionStorage.getItem("linkingProvider");
+    if (pending && initialIdentities.some((i) => i.provider === pending)) {
+      sessionStorage.removeItem("linkingProvider");
+      return { type: "success", text: "소셜 계정이 연결되었습니다." };
+    }
+    return null;
   });
 
   useEffect(() => {
     if (new URLSearchParams(window.location.search).get("error_code")) {
       window.history.replaceState({}, "", window.location.pathname);
     }
-
-    supabase.auth.getUserIdentities().then(({ data }) => {
-      if (data) {
-        setIdentities(data.identities);
-        const pending = sessionStorage.getItem("linkingProvider");
-        if (pending) {
-          sessionStorage.removeItem("linkingProvider");
-          if (data.identities.some((i) => i.provider === pending)) {
-            setNotice({ type: "success", text: "소셜 계정이 연결되었습니다." });
-          }
-        }
-      }
-      setIdentitiesLoading(false);
-    });
   }, []);
 
   const handleLink = async (provider: "google" | "kakao" | "facebook") => {
@@ -90,7 +79,6 @@ export function useProfileSettings() {
     region, setRegion,
     language, setLanguage,
     identities,
-    identitiesLoading,
     notice,
     handleLink,
     handleUnlink,

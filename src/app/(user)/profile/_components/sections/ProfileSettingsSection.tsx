@@ -2,6 +2,7 @@
 
 import { MapPin, Globe, Link } from "lucide-react";
 import { useProfileSettings, LANGUAGES, SOCIAL_PROVIDERS } from "@/hooks/profile/useProfileSettings";
+import type { UserIdentity } from "@supabase/supabase-js";
 
 function SocialIcon({ provider }: { provider: string }) {
   if (provider === "google") {
@@ -37,16 +38,15 @@ function SocialIcon({ provider }: { provider: string }) {
   return null;
 }
 
-export function ProfileSettingsSection() {
+export function ProfileSettingsSection({ initialIdentities }: { initialIdentities: UserIdentity[] }) {
   const {
     region, setRegion,
     language, setLanguage,
     identities,
-    identitiesLoading,
     notice,
     handleLink,
     handleUnlink,
-  } = useProfileSettings();
+  } = useProfileSettings(initialIdentities);
 
   return (
     <div className="flex flex-col divide-y divide-gray-100">
@@ -125,9 +125,7 @@ export function ProfileSettingsSection() {
                     <SocialIcon provider={key} />
                     <span className="text-sm font-medium text-gray-900">{label}</span>
                   </div>
-                  {identitiesLoading ? (
-                    <div className="w-14 h-6 rounded-2xl bg-gray-100 animate-pulse" aria-label="로딩 중" />
-                  ) : connected ? (
+                  {connected ? (
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-medium text-teal-600 bg-teal-50 px-2.5 py-1 rounded-2xl">
                         연결됨

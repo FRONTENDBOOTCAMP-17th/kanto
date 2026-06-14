@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
 
@@ -15,37 +15,30 @@ export const CATEGORIES = [
 export const ALL_KEYS = CATEGORIES.map((c) => c.key);
 export const MAX_KEYWORDS = 5;
 
+export type AlertSettings = {
+  alert_chat: boolean;
+  alert_comment: boolean;
+  alert_post: boolean;
+  interest_categories: string[] | null;
+  alert_keywords: string[] | null;
+};
+
 type AlertField = "alert_chat" | "alert_comment" | "alert_post";
 
-export function useAlertSettings() {
+export function useAlertSettings(initial: AlertSettings) {
   const { user } = useAuthStore();
   const userId = user?.id;
 
-  const [chatAlert, setChatAlert] = useState(true);
-  const [commentAlert, setCommentAlert] = useState(true);
-  const [postAlert, setPostAlert] = useState(false);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(ALL_KEYS);
-  const [keywords, setKeywords] = useState<string[]>([]);
+  const [chatAlert, setChatAlert] = useState(initial.alert_chat);
+  const [commentAlert, setCommentAlert] = useState(initial.alert_comment);
+  const [postAlert, setPostAlert] = useState(initial.alert_post);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    initial.interest_categories ?? ALL_KEYS
+  );
+  const [keywords, setKeywords] = useState<string[]>(initial.alert_keywords ?? []);
   const [keywordInput, setKeywordInput] = useState("");
   const [showInput, setShowInput] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (!userId) return;
-    supabase
-      .from("users")
-      .select("alert_chat, alert_comment, alert_post, interest_categories, alert_keywords")
-      .eq("id", userId)
-      .single()
-      .then(({ data }) => {
-        if (!data) return;
-        if (data.alert_chat != null) setChatAlert(data.alert_chat);
-        if (data.alert_comment != null) setCommentAlert(data.alert_comment);
-        if (data.alert_post != null) setPostAlert(data.alert_post);
-        if (data.interest_categories) setSelectedCategories(data.interest_categories);
-        if (data.alert_keywords) setKeywords(data.alert_keywords);
-      });
-  }, [userId]);
 
   const toggleAlert = async (field: AlertField, next: boolean) => {
     if (!userId) return;

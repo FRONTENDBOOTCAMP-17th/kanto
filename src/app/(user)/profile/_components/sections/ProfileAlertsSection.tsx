@@ -1,7 +1,7 @@
 "use client";
 
 import { Bell, Tag, Plus, X } from "lucide-react";
-import { useAlertSettings, CATEGORIES, MAX_KEYWORDS } from "@/hooks/profile/useAlertSettings";
+import { useAlertSettings, CATEGORIES, MAX_KEYWORDS, type AlertSettings } from "@/hooks/profile/useAlertSettings";
 
 const ALERT_ITEMS = [
   { label: "채팅 알림", desc: "새 채팅 메시지 알림", field: "alert_chat" as const },
@@ -9,7 +9,7 @@ const ALERT_ITEMS = [
   { label: "새 게시글 알림", desc: "관심 카테고리·키워드 새 게시글 알림", field: "alert_post" as const },
 ];
 
-export function ProfileAlertsSection() {
+export function ProfileAlertsSection({ initialSettings }: { initialSettings: AlertSettings }) {
   const {
     chatAlert, commentAlert, postAlert,
     selectedCategories,
@@ -18,7 +18,7 @@ export function ProfileAlertsSection() {
     toggleAlert, toggleCategory,
     addKeyword, removeKeyword,
     handleShowInput, handleCancelInput,
-  } = useAlertSettings();
+  } = useAlertSettings(initialSettings);
 
   const alertValues = { alert_chat: chatAlert, alert_comment: commentAlert, alert_post: postAlert };
 

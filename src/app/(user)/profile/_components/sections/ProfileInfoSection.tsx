@@ -1,7 +1,7 @@
 "use client";
 
 import type { User as UserType } from "@/type/user";
-import { ProfileField } from "./ProfileField";
+import { ProfileField } from "../ProfileField";
 import { useProfileInfo } from "@/hooks/profile/useProfileInfo";
 
 export function ProfileInfoSection({

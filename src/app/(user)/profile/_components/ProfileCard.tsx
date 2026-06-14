@@ -10,17 +10,19 @@ import { ProfileAside, ProfileMobileTabs, type Tab } from "./ProfileAside";
 import { ProfileInfoSection } from "./sections/ProfileInfoSection";
 import { ProfileReviewsSection } from "./sections/ProfileReviewsSection";
 import { ProfileAlertsSection } from "./sections/ProfileAlertsSection";
+import type { AlertSettings } from "@/hooks/profile/useAlertSettings";
 import { ProfileBlockedSection } from "./sections/ProfileBlockedSection";
 import { ProfileSettingsSection } from "./sections/ProfileSettingsSection";
+import type { UserIdentity } from "@supabase/supabase-js";
 import { formatSellerInfoCreatedAt } from "@/utils/formatTime";
 
-export function ProfileCard() {
+export function ProfileCard({ alertSettings, initialIdentities }: { alertSettings: AlertSettings; initialIdentities: UserIdentity[] }) {
   const { user } = useAuthStore();
   if (!user) return null;
-  return <ProfileForm user={user} />;
+  return <ProfileForm user={user} alertSettings={alertSettings} initialIdentities={initialIdentities} />;
 }
 
-function ProfileForm({ user }: { user: UserType }) {
+function ProfileForm({ user, alertSettings, initialIdentities }: { user: UserType; alertSettings: AlertSettings; initialIdentities: UserIdentity[] }) {
   const [activeTab, setActiveTab] = useState<Tab>("info");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const router = useRouter();
@@ -123,9 +125,9 @@ function ProfileForm({ user }: { user: UserType }) {
         <div className="flex-1 md:pl-8">
           {activeTab === "info" && <ProfileInfoSection user={user} avatarFile={avatarFile} />}
           {activeTab === "reviews" && <ProfileReviewsSection />}
-          {activeTab === "alerts" && <ProfileAlertsSection />}
+          {activeTab === "alerts" && <ProfileAlertsSection initialSettings={alertSettings} />}
           {activeTab === "blocked" && <ProfileBlockedSection />}
-          {activeTab === "settings" && <ProfileSettingsSection />}
+          {activeTab === "settings" && <ProfileSettingsSection initialIdentities={initialIdentities} />}
         </div>
       </div>
     </div>
