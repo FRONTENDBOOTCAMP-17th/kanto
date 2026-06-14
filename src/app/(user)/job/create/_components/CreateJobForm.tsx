@@ -4,9 +4,10 @@ import { Card } from "@/components/ui/card";
 import { useCreateJobForm } from "@/hooks/useCreateJobForm";
 import { CreateJobFormPageOne } from "./CreateJobFormPage1";
 import { CreateJobFormPageTwo } from "./CreateJobFormPage2";
+import type { JobInitialData } from "@/type/job/jobCreate";
 
-export function CreateJobForm({ userId }: { userId: number }) {
-  const form = useCreateJobForm(userId);
+export function CreateJobForm({ userId, initialData }: { userId: number; initialData?: JobInitialData }) {
+  const form = useCreateJobForm(userId, initialData);
 
   return (
     <main className="flex-1 bg-gray-50 py-8 px-4">

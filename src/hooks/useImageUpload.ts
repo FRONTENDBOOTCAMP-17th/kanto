@@ -2,9 +2,9 @@
 
 import { useState, useRef, useEffect } from "react";
 
-export function useImageUpload(maxCount = 10) {
+export function useImageUpload(initialUrls: string[] = [], maxCount = 10) {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>(initialUrls);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imagePreviewsRef = useRef<string[]>([]);
 
