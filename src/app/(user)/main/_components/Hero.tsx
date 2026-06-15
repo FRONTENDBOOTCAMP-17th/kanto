@@ -80,11 +80,11 @@ export default function Hero() {
                   </div>
 
                   {/* 콘텐츠 */}
-                  <div className="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 max-w-2xl">
-                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 leading-tight drop-shadow">
+                  <div className="relative z-10 h-full flex flex-col justify-center px-4 md:px-16 max-w-2xl">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 leading-tight drop-shadow break-keep">
                       {slide.title}
                     </h2>
-                    <p className="text-sm sm:text-base text-white/85 mb-6 drop-shadow">
+                    <p className="text-sm sm:text-base text-white/85 mb-6 drop-shadow break-keep">
                       {slide.description}
                     </p>
                     <Link
@@ -104,7 +104,7 @@ export default function Hero() {
           <button
             type="button"
             onClick={prev}
-            className="absolute left-3 cursor-pointer top-1/2 -translate-y-1/2 w-9 h-9 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white backdrop-blur-sm transition-colors z-10"
+            className="absolute left-3 cursor-pointer bottom-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 w-9 h-9 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white backdrop-blur-sm transition-colors z-10"
             aria-label="이전 슬라이드"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -112,7 +112,7 @@ export default function Hero() {
           <button
             type="button"
             onClick={next}
-            className="absolute right-3 cursor-pointer top-1/2 -translate-y-1/2 w-9 h-9 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white backdrop-blur-sm transition-colors z-10"
+            className="absolute right-3 cursor-pointer bottom-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 w-9 h-9 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white backdrop-blur-sm transition-colors z-10"
             aria-label="다음 슬라이드"
           >
             <ChevronRight className="w-5 h-5" />
