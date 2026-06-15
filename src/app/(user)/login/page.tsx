@@ -8,11 +8,12 @@ export default function LoginPage() {
       <Card className="w-full max-w-md p-8 relative min-h-200 flex flex-col">
         <div className="flex flex-col items-center justify-center flex-1 mb-8 mt-4">
           <Image
-            src="/logoIcon+Text.png"
+            src="/kantoLogo.png"
             alt="Kanto"
-            width={80}
-            height={80}
-            className="h-20 w-auto"
+            width={200}
+            height={94}
+            priority
+            className="select-none"
           />
         </div>
         <LoginForm />
