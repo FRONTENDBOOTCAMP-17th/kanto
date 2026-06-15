@@ -21,7 +21,6 @@ import {
   ThumbsUp,
   FileText,
   LogOut,
-  MessageCircle,
 } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
@@ -156,11 +155,6 @@ export function Header() {
                         icon: FileText,
                         href: ROUTES.myPosts,
                       },
-                      {
-                        label: "채팅 목록",
-                        icon: MessageCircle,
-                        href: ROUTES.chat,
-                      },
                     ].map(({ label, icon: Icon, href }) => (
                       <button
                         key={href}
@@ -236,7 +230,6 @@ export function Header() {
                     { icon: User, href: ROUTES.myProfile, label: "내 정보" },
                     { icon: Heart, href: ROUTES.favorites, label: "찜" },
                     { icon: FileText, href: ROUTES.myPosts, label: "내 글" },
-                    { icon: MessageCircle, href: ROUTES.chat, label: "채팅" },
                   ].map(({ icon: Icon, href, label }) => (
                     <Link
                       key={href}

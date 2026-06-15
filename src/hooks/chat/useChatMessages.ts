@@ -1,4 +1,4 @@
-import { loadMoreMessagesAction } from "@/app/(user)/chat/[id]/actions";
+import { loadMoreMessagesAction } from "@/components/common/chat/chatPanel/room/actions";
 import { supabase } from "@/lib/supabase";
 import { MessageWithSender } from "@/type/chat/message";
 import { SellerInfo } from "@/type/user";
@@ -17,14 +17,15 @@ export function useChatMessages({
   chatId,
   partner,
 }: Props) {
-  const [messages, setMessages] =
-    useState<MessageWithSender[]>(initialMessages);
-  const [hasMore, setHasMore] = useState(initialMessages.length === 50);
+  const safeMessages = initialMessages ?? [];
+  const [messages, setMessages] = useState<MessageWithSender[]>(safeMessages);
+  const [hasMore, setHasMore] = useState(safeMessages.length === 50);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const wasLoadingMore = useRef(false);
+  const isInitialScroll = useRef(true);
 
   useEffect(() => {
     (async () => {
@@ -42,7 +43,10 @@ export function useChatMessages({
       wasLoadingMore.current = false;
       return;
     }
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({
+      behavior: isInitialScroll.current ? "instant" : "smooth",
+    });
+    isInitialScroll.current = false;
   }, [messages]);
 
   const loadMore = async () => {

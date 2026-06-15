@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Send } from "lucide-react";
+import { Send } from "lucide-react";
 
 interface Props {
   input: string;
@@ -26,14 +26,7 @@ export default function ChatInput({
   };
 
   return (
-    <div className="bg-white border-t border-gray-100 px-3 py-3 flex items-center gap-2 shrink-0">
-      <button
-        aria-label="파일 첨부"
-        className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-teal-500 transition-colors shrink-0"
-      >
-        <Plus className="w-5 h-5" />
-      </button>
-
+    <div className="bg-white border-t border-gray-100 px-4 py-3 md:px-3 md:py-2.5 flex items-center gap-2 shrink-0">
       <input
         type="text"
         aria-label="메시지 입력"
@@ -43,19 +36,18 @@ export default function ChatInput({
         onKeyDown={handleKeyDown}
         placeholder={
           isCooldown
-            ? `도배 감지로 ${cooldownSeconds}초간 채팅이 금지되었습니다.`
+            ? `${cooldownSeconds}초 후 다시 입력 가능합니다`
             : "메시지를 입력하세요..."
         }
-        className="flex-1 text-sm bg-gray-50 rounded-full px-4 py-2 outline-none border border-gray-200 focus:border-teal-400 transition-colors"
+        className="flex-1 min-w-0 text-base md:text-sm bg-gray-50 rounded-full px-4 py-2.5 md:py-2 outline-none border border-gray-200 focus:border-teal-400 focus:bg-white transition-colors disabled:opacity-50"
       />
-
       <button
         onClick={onSend}
         disabled={!input.trim() || isCooldown}
         aria-label="메시지 전송"
-        className="w-9 h-9 rounded-full bg-teal-500 flex items-center justify-center shrink-0 disabled:opacity-40 hover:bg-teal-600 transition-colors"
+        className="w-10 h-10 md:w-8 md:h-8 rounded-full bg-teal-500 flex items-center justify-center shrink-0 disabled:opacity-30 hover:bg-teal-600 transition-colors"
       >
-        <Send className="w-4 h-4 text-white" />
+        <Send className="w-4 h-4 md:w-3.5 md:h-3.5 text-white" />
       </button>
     </div>
   );
