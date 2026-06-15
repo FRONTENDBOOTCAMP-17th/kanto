@@ -1,10 +1,10 @@
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createClient } from "@/utils/supabase/server";
 import type { RentalWithPost } from "@/type/rental/rentalList";
 import type { RentalWithPost as RentalDetail } from "@/type/rental/rentalDetail";
 import { supabase } from "@/lib/supabase";
 
 const RENTAL_DETAIL_SELECT =
-  `*, posts(*, users(id, name, email, avatar_url, provider, role, post_count, created_at, updated_at))` as const;
+  `*, posts(*, users(id, name, email, avatar_url, auth_id, provider, role, post_count, created_at, updated_at))` as const;
 const RENTAL_LIST_SELECT = `
   *,
   rentals(*),
@@ -12,7 +12,7 @@ const RENTAL_LIST_SELECT = `
 ` as const;
 
 export async function getRentalDetail(postId: number): Promise<RentalDetail> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("rentals")
@@ -29,12 +29,12 @@ interface RentalListFilter {
   search?: string;
   roomType?: string;
   location?: string;
+  targetIds?: number[];
+  userId?: number;
 }
 
-export async function getRentalList(
-  filter?: RentalListFilter,
-): Promise<RentalWithPost[]> {
-  const supabase = await createSupabaseServerClient();
+export async function getRentalList(filter?: RentalListFilter): Promise<RentalWithPost[]> {
+  const supabase = await createClient();
 
   let query = supabase
     .from("posts")
@@ -43,6 +43,12 @@ export async function getRentalList(
     .eq("status", "active")
     .order("created_at", { ascending: false });
 
+  if (filter?.targetIds?.length) {
+    query = query.in("id", filter.targetIds);
+  }
+  if (filter?.userId) {
+    query = query.eq("user_id", filter.userId);
+  }
   if (filter?.search) {
     query = query.ilike("title", `%${filter.search}%`);
   }

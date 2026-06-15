@@ -59,7 +59,7 @@ export default async function RentalPage({
         </div>
 
         <RentalFilters
-          defaultSearch={params.search ?? ""}
+          givenSearch={params.search ?? ""}
           defaultRoomType={params.roomType ?? "all"}
           defaultLocation={params.location ?? "all"}
         />

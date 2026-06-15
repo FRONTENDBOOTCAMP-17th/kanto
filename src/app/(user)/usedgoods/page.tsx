@@ -1,12 +1,10 @@
-import Link from "next/link";
-import { Plus } from "lucide-react";
+import { WriteButton } from "@/components/common/WriteButton";
 
 import { getUsedGoodsList } from "@/services/usedGoods/usedGoods";
 import { getLikeList } from "@/services/likes";
 import { UsedGoodsList } from "@/app/(user)/usedgoods/_components/UsedGoodsList";
 import { UsedGoodsFilters } from "./_components/UsedGoodsFilters";
 import { PaginationUrl } from "@/components/common/PaginationUrl";
-import { Button } from "@/components/ui/button";
 
 const ITEMS_PER_PAGE = 12;
 

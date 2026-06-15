@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCarousel } from "@/hooks/useCarousel";
 
@@ -8,7 +9,16 @@ export default function ImageCarousel({ images }: { images: string[] }) {
   const { currentIndex, prevIndex, direction, isAnimating, navigate, dragHandlers } =
     useCarousel(images.length);
 
-  if (images.length === 0) return <div>이미지가 없습니다.</div>;
+  if (images.length === 0)
+    return (
+      <ImageWithFallback
+        src="/fallback-image.svg"
+        alt="이미지 없음"
+        width={400}
+        height={400}
+        className="w-full aspect-square object-contain rounded-2xl border-2 border-gray-200"
+      />
+    );
 
   return (
     <div className="border-2 border-gray-200 rounded-2xl overflow-hidden">

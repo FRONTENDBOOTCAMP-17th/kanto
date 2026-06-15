@@ -1,10 +1,10 @@
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createClient } from "@/utils/supabase/server";
 import type { JobDetail } from "@/type/job/jobsDetail";
 
-const JOB_DETAIL_SELECT = `*, posts(*, users(id, name, email, avatar_url, provider, role, post_count, created_at, updated_at))` as const;
+const JOB_DETAIL_SELECT = `*, posts(*, users(id, name, email, avatar_url, auth_id, provider, role, post_count, created_at, updated_at))` as const;
 
 export async function getJobDetail(postId: number): Promise<JobDetail> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("jobs")

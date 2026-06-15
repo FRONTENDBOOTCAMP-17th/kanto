@@ -16,18 +16,37 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    setIsLoading(true);
+    setErrorMsg(null);
+
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
     });
 
-    if (error) {
-      setErrorMsg("로그인에 실패했어요. 다시 시도해주세요.");
+    setIsLoading(false);
+
+    if (!res.ok) {
+      const { code } = await res.json();
+      if (res.status === 429) {
+        setErrorMsg("로그인 시도가 너무 많습니다. 잠시 후 다시 시도해주세요.");
+      } else if (code === "invalid_credentials") {
+        setErrorMsg("이메일 또는 비밀번호가 올바르지 않습니다.");
+      } else if (code === "email_not_confirmed") {
+        setErrorMsg("이메일 인증이 완료되지 않았습니다. 메일함을 확인해주세요.");
+      } else {
+        setErrorMsg("로그인에 실패했어요. 다시 시도해주세요.");
+      }
+      setPassword("");
       return;
     }
 
+    const { session } = await res.json();
+    await supabase.auth.setSession(session);
     router.push("/");
   };
 
@@ -74,7 +93,13 @@ export default function LoginForm() {
       </div>
 
       {showEmailForm && (
-        <div className="space-y-4 mt-6">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+          className="space-y-4 mt-6"
+        >
           <div className="space-y-2">
             <Label htmlFor="email">이메일</Label>
             <Input
@@ -98,7 +123,8 @@ export default function LoginForm() {
           {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
           <Button
             variant="teal"
-            onClick={handleSubmit}
+            type="submit"
+            disabled={isLoading}
             className="w-full"
           >
             로그인
@@ -114,7 +140,7 @@ export default function LoginForm() {
               </Link>
             </p>
           </div>
-        </div>
+        </form>
       )}
 
       {!showEmailForm && (

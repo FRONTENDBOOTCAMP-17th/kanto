@@ -4,6 +4,7 @@ import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarresel";
 import AccommondationInfo from "./_components/AccommondationInfo";
 import RentSellerInfo from "./_components/RentSellerInfo";
 import PostInfo from "./_components/PostInfo";
+import VerifyAuthor from "@/components/common/VerifyAuthor";
 
 export default async function RentalDetail({
   params,
@@ -27,11 +28,19 @@ export default async function RentalDetail({
 
   return (
     <div className="page-container">
-      <BackButton />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4 mt-4">
+      <div className="flex items-center justify-between">
+        <BackButton />
+        <VerifyAuthor
+          authorAuthId={rental.posts.users.auth_id}
+          editPath={`/rental/${id}/edit`}
+          postId={rental.post_id ?? 0}
+          redirectPath="/rental"
+        />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-2 md:gap-4 mt-4">
         <ImageCarousel images={images} />
 
-        <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4">
+        <div className="border border-gray-200 rounded-2xl  p-6 flex flex-col justify-between gap-4">
           <AccommondationInfo rental={rental} />
           <hr className="border-gray-200" />
           <RentSellerInfo rental={rental} />

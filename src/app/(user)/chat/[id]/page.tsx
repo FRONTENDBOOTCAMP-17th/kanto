@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createClient } from "@/utils/supabase/server";
 import { getChatDetail } from "@/services/chat/chat";
 import { getMessageList } from "@/services/chat/message";
 import ChatRoomClient from "./_components/ChatRoomClient";
@@ -10,7 +10,7 @@ export default async function ChatRoomPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   const {
     data: { user },

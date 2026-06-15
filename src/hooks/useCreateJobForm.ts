@@ -5,38 +5,39 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useImageUpload } from "@/hooks/useImageUpload";
 import type { TradeLocation } from "@/type/location";
-import type { EmployeeType, SalaryType } from "@/type/job/jobCreate";
+import type { EmployeeType, SalaryType, JobInitialData } from "@/type/job/jobCreate";
 
-export function useCreateJobForm(userId: number) {
+export function useCreateJobForm(userId: number, initialData?: JobInitialData) {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
 
   // 1단계: 채용 정보
-  const [title, setTitle] = useState("");
-  const [employeeType, setEmployeeType] = useState<EmployeeType | "">("");
-  const [salary, setSalary] = useState("");
-  const [salaryType, setSalaryType] = useState<SalaryType | "">("");
-  const [locationType, setLocationType] = useState<TradeLocation | "">("");
-  const [locationCustom, setLocationCustom] = useState("");
-  const [deadline, setDeadline] = useState("");
-  const [workHours, setWorkHours] = useState("");
-  const [mainTask, setMainTask] = useState("");
-  const [preferred, setPreferred] = useState("");
+  const [title, setTitle] = useState(initialData?.title ?? "");
+  const [employeeType, setEmployeeType] = useState<EmployeeType | "">(initialData?.employee_type as EmployeeType ?? "");
+  const [salary, setSalary] = useState(initialData?.salary?.toString() ?? "");
+  const [salaryType, setSalaryType] = useState<SalaryType | "">(initialData?.salary_type as SalaryType ?? "");
+  const [locationType, setLocationType] = useState<TradeLocation | "">(initialData?.location_type as TradeLocation ?? "");
+  const [locationCustom, setLocationCustom] = useState(initialData?.location_custom ?? "");
+  const [deadline, setDeadline] = useState(initialData?.deadline ?? "");
+  const [workHours, setWorkHours] = useState(initialData?.work_hours ?? "");
+  const [mainTask, setMainTask] = useState(initialData?.main_task ?? "");
+  const [preferred, setPreferred] = useState(initialData?.preferred ?? "");
 
   // 2단계: 회사 및 담당자 정보
-  const [companyName, setCompanyName] = useState("");
-  const [companyIntro, setCompanyIntro] = useState("");
-  const [industry, setIndustry] = useState("");
-  const [companyYear, setCompanyYear] = useState("");
-  const [employeeCount, setEmployeeCount] = useState("");
-  const [companyAddress, setCompanyAddress] = useState("");
-  const [companyWebsite, setCompanyWebsite] = useState("");
-  const [managerName, setManagerName] = useState("");
-  const [managerTitle, setManagerTitle] = useState("");
-  const [managerPhone, setManagerPhone] = useState("");
-  const [managerEmail, setManagerEmail] = useState("");
+  const [companyName, setCompanyName] = useState(initialData?.company_name ?? "");
+  const [companyIntro, setCompanyIntro] = useState(initialData?.company_intro ?? "");
+  const [industry, setIndustry] = useState(initialData?.industry ?? "");
+  const [companyYear, setCompanyYear] = useState(initialData?.company_year?.toString() ?? "");
+  const [employeeCount, setEmployeeCount] = useState(initialData?.employee_count?.toString() ?? "");
+  const [companyAddress, setCompanyAddress] = useState(initialData?.company_address ?? "");
+  const [companyWebsite, setCompanyWebsite] = useState(initialData?.company_website ?? "");
+  const [managerName, setManagerName] = useState(initialData?.manager_name ?? "");
+  const [managerTitle, setManagerTitle] = useState(initialData?.manager_title ?? "");
+  const [managerPhone, setManagerPhone] = useState(initialData?.manager_phone ?? "");
+  const [managerEmail, setManagerEmail] = useState(initialData?.manager_email ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const imageUpload = useImageUpload();
+  const imageUpload = useImageUpload(initialData?.images as string[] ?? []);
+
 
   const handleNextStep = () => {
     if (!title || !employeeType || !salary || !locationType || !deadline || !workHours || !mainTask) {
@@ -58,46 +59,7 @@ export function useCreateJobForm(userId: number) {
     }
     setIsSubmitting(true);
 
-    const { data: post, error: postError } = await supabase
-      .from("posts")
-      .insert({
-        user_id: userId,
-        post_type: "jobs",
-        title,
-        status: "active",
-        view_count: 0,
-        like_count: 0,
-      })
-      .select("id")
-      .single();
-
-    if (postError || !post) {
-      alert("게시글 등록에 실패했습니다.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    const uploadedUrls: string[] = [];
-    for (const file of imageUpload.imageFiles) {
-      const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-      const filePath = `${userId}/${post.id}/${Date.now()}.${ext}`;
-      const { error: uploadError } = await supabase.storage
-        .from("images")
-        .upload(filePath, file);
-
-      if (uploadError) {
-        await supabase.from("posts").delete().eq("id", post.id);
-        alert("이미지 업로드에 실패했습니다.");
-        setIsSubmitting(false);
-        return;
-      }
-
-      const { data: urlData } = supabase.storage.from("images").getPublicUrl(filePath);
-      uploadedUrls.push(urlData.publicUrl);
-    }
-
-    const { error: jobError } = await supabase.from("jobs").insert({
-      post_id: post.id,
+    const jobFields = {
       company_name: companyName,
       company_intro: companyIntro,
       industry: industry || null,
@@ -118,6 +80,73 @@ export function useCreateJobForm(userId: number) {
       manager_title: managerTitle || null,
       manager_phone: managerPhone || null,
       manager_email: managerEmail || null,
+    };
+
+    // 수정 모드
+    if (initialData?.post_id) {
+      const uploadedUrls: string[] = [];
+      for (const file of imageUpload.imageFiles) {
+        const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+        const filePath = `${userId}/${initialData.post_id}/${Date.now()}.${ext}`;
+        const { error: uploadError } = await supabase.storage.from("images").upload(filePath, file);
+        if (uploadError) {
+          alert("이미지 업로드에 실패했습니다.");
+          setIsSubmitting(false);
+          return;
+        }
+        const { data: urlData } = supabase.storage.from("images").getPublicUrl(filePath);
+        uploadedUrls.push(urlData.publicUrl);
+      }
+
+      const existingUrls = imageUpload.imagePreviews.filter(url => !url.startsWith("blob:"));
+      const finalImages = [...existingUrls, ...uploadedUrls];
+
+      await supabase.from("posts").update({ title }).eq("id", initialData.post_id);
+      const { error } = await supabase.from("jobs")
+        .update({ ...jobFields, images: finalImages.length > 0 ? finalImages : null })
+        .eq("post_id", initialData.post_id);
+
+      if (error) {
+        alert("수정에 실패했습니다.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      router.push(`/job/${initialData.post_id}`);
+      return;
+    }
+
+    // 등록 모드
+    const { data: post, error: postError } = await supabase
+      .from("posts")
+      .insert({ user_id: userId, post_type: "jobs", title, status: "active", view_count: 0, like_count: 0 })
+      .select("id")
+      .single();
+
+    if (postError || !post) {
+      alert("게시글 등록에 실패했습니다.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const uploadedUrls: string[] = [];
+    for (const file of imageUpload.imageFiles) {
+      const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+      const filePath = `${userId}/${post.id}/${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage.from("images").upload(filePath, file);
+      if (uploadError) {
+        await supabase.from("posts").delete().eq("id", post.id);
+        alert("이미지 업로드에 실패했습니다.");
+        setIsSubmitting(false);
+        return;
+      }
+      const { data: urlData } = supabase.storage.from("images").getPublicUrl(filePath);
+      uploadedUrls.push(urlData.publicUrl);
+    }
+
+    const { error: jobError } = await supabase.from("jobs").insert({
+      post_id: post.id,
+      ...jobFields,
       images: uploadedUrls.length > 0 ? uploadedUrls : null,
     });
 

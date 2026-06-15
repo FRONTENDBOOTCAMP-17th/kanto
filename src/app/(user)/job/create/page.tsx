@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createClient } from "@/utils/supabase/server";
 import { CreateJobForm } from "./_components/CreateJobForm";
 
 export default async function CreateJobPage() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   const {
     data: { user },
@@ -14,11 +14,12 @@ export default async function CreateJobPage() {
 
   const { data: dbUser } = await supabase
     .from("users")
-    .select("id")
+    .select("id, deleted_at")
     .eq("auth_id", user.id)
     .single();
 
   if (!dbUser) redirect("/login");
+  if (dbUser.deleted_at) redirect("/job");
 
   return (
     <div className="page-wrapper">

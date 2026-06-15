@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createClient } from "@/utils/supabase/server";
 import { ChatWithUsers } from "@/type/chat/chat";
 
 const CHAT_SELECT = `*,
@@ -10,7 +10,7 @@ const CHAT_SELECT = `*,
 export async function getChatList(
   currentUserId: number,
 ): Promise<ChatWithUsers[]> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("chats")
@@ -28,7 +28,7 @@ export async function getChatList(
 
 export async function getChatDetail(
   chatId: number,
-  supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
+  supabase: Awaited<ReturnType<typeof createClient>>,
 ): Promise<ChatWithUsers> {
   const { data, error } = await supabase
     .from("chats")

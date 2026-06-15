@@ -1,6 +1,4 @@
-import Link from "next/link";
-import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { WriteButton } from "@/components/common/WriteButton";
 import { getJobList, getPopularJobs } from "@/services/job/job";
 import { getLikeList } from "@/services/likes";
 import { JobFilters } from "@/app/(user)/job/_components/JobFilters";
@@ -39,16 +37,11 @@ export default async function JobPage({
       <main className="flex-1 page-container w-full py-8">
         <div className="section-header">
           <h1 className="page-title">구인구직</h1>
-          <Link href="/job/create">
-            <Button variant="teal" className="cursor-pointer gap-1">
-              <Plus className="w-4 h-4" />
-              공고 등록
-            </Button>
-          </Link>
+          <WriteButton href="/job/create" label="공고 등록" />
         </div>
 
         <JobFilters
-          defaultSearch={params.search ?? ""}
+          givenSearch={params.search ?? ""}
           defaultType={params.type ?? "all"}
           defaultLocation={params.location ?? "all"}
         />

@@ -5,6 +5,7 @@ import JobInfo from "./_components/JobInfo";
 import JobAuthorInfo from "./_components/JobAuthorInfo";
 import JobContent from "./_components/JobContent";
 import CompanyInfo from "./_components/CompanyInfo";
+import VerifyAuthor from "@/components/common/VerifyAuthor";
 
 export default async function JobDetailPage({
   params,
@@ -28,6 +29,14 @@ export default async function JobDetailPage({
 
   return (
     <div className="page-container w-full py-6">
+      <div className="flex justify-end mb-4">
+        <VerifyAuthor
+          authorAuthId={job.posts.users.auth_id}
+          editPath={`/job/${id}/edit`}
+          postId={job.post_id}
+          redirectPath="/job"
+        />
+      </div>
       <div className="border border-gray-200 rounded-2xl overflow-hidden divide-y divide-gray-200">
         <JobTitle job={job} />
         <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">

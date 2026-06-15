@@ -1,16 +1,16 @@
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createClient } from "@/utils/supabase/server";
 import type { JobWithPost } from "@/type/job/jobList";
 
 interface JobListFilter {
   search?: string;
   employeeType?: string;
   location?: string;
+  targetIds?: number[];
+  userId?: number;
 }
 
-export async function getJobList(
-  filter?: JobListFilter,
-): Promise<JobWithPost[]> {
-  const supabase = await createSupabaseServerClient();
+export async function getJobList(filter?: JobListFilter): Promise<JobWithPost[]> {
+  const supabase = await createClient();
 
   let query = supabase
     .from("posts")
@@ -19,6 +19,12 @@ export async function getJobList(
     .eq("status", "active")
     .order("created_at", { ascending: false });
 
+  if (filter?.targetIds?.length) {
+    query = query.in("id", filter.targetIds);
+  }
+  if (filter?.userId) {
+    query = query.eq("user_id", filter.userId);
+  }
   if (filter?.search) {
     query = query.ilike("title", `%${filter.search}%`);
   }
@@ -43,7 +49,7 @@ export async function getJobList(
 }
 
 export async function getPopularJobs(): Promise<JobWithPost[]> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("posts")

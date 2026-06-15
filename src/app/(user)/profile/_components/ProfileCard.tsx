@@ -1,118 +1,134 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, User, Camera, ShieldCheck } from "lucide-react";
-import type { ProfileCardProps } from "@/type/profile";
-import { ProfileField } from "@/app/(user)/profile/_components/ProfileField";
+import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/authStore";
+import type { User as UserType } from "@/type/user";
+import ProfileAvatar from "./profileAvatar";
+import { ProfileAside, ProfileMobileTabs, type Tab } from "./ProfileAside";
+import { ProfileInfoSection } from "./sections/ProfileInfoSection";
+import { ProfileReviewsSection } from "./sections/ProfileReviewsSection";
+import { ProfileAlertsSection } from "./sections/ProfileAlertsSection";
+import type { AlertSettings } from "@/hooks/profile/useAlertSettings";
+import { ProfileBlockedSection } from "./sections/ProfileBlockedSection";
+import { ProfileSettingsSection } from "./sections/ProfileSettingsSection";
+import type { UserIdentity } from "@supabase/supabase-js";
+import { formatSellerInfoCreatedAt } from "@/utils/formatTime";
 
-export function ProfileCard({ user, onBack, onLogout }: ProfileCardProps) {
-  const [name, setName] = useState(user.name);
-  const [phone, setPhone] = useState("+63 917 123 4567");
-  const [location, setLocation] = useState("Makati, Manila");
-
-  const handleSave = () => {};
-  const handleDeleteAccount = () => {};
-
+export function ProfileCard({ alertSettings, initialIdentities }: { alertSettings: AlertSettings; initialIdentities: UserIdentity[] }) {
+  const { user } = useAuthStore();
   if (!user) return null;
+  return <ProfileForm user={user} alertSettings={alertSettings} initialIdentities={initialIdentities} />;
+}
+
+function ProfileForm({ user, alertSettings, initialIdentities }: { user: UserType; alertSettings: AlertSettings; initialIdentities: UserIdentity[] }) {
+  const [activeTab, setActiveTab] = useState<Tab>("info");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const router = useRouter();
 
   return (
-    <div className="bg-white pb-10 rounded-2xl md:border md:border-gray-100">
+    <div className="bg-white md:bg-gray-50 min-h-screen md:min-h-0 md:rounded-xl overflow-hidden">
       {/* 헤더 */}
-      <div className="flex items-center gap-3 px-5 pt-5 pb-0">
-        <button onClick={onBack} aria-label="뒤로 가기" className="cursor-pointer p-1 -ml-1">
+      <div className="bg-white border-b border-gray-200 px-5 py-4 flex items-center gap-3">
+        <button
+          onClick={() => router.back()}
+          aria-label="뒤로 가기"
+          className="cursor-pointer p-1 -ml-1"
+        >
           <ArrowLeft className="w-5 h-5 text-gray-800" />
         </button>
-        <span className="text-base font-medium text-gray-900">내 프로필</span>
+        <h1 className="text-base font-semibold text-gray-900">내 프로필</h1>
       </div>
 
-      {/* 아바타 섹션 */}
-      <div className="flex flex-col items-center px-5 pt-7 pb-6">
-        <div className="relative w-20 h-20">
-          <div className="w-20 h-20 rounded-full bg-teal-50 flex items-center justify-center">
-            <User className="w-9 h-9 text-teal-500" />
+      <div className="md:flex md:p-8 p-0 bg-white md:rounded-xl md:border md:border-gray-100">
+        <ProfileAside activeTab={activeTab} onTabChange={setActiveTab} />
+
+        {/* 사이드바 — 프로필 정보 */}
+        <div className="md:w-64 md:shrink-0 flex flex-col gap-6 md:border-r md:border-gray-100 md:px-8">
+          <ProfileMobileTabs activeTab={activeTab} onTabChange={setActiveTab} />
+
+          <div className={`flex flex-col gap-6 ${activeTab !== "info" ? "hidden md:flex" : ""}`}>
+            <ProfileAvatar
+              avatarUrl={user.avatar_url ?? ""}
+              name={user.name ?? ""}
+              onFileChange={setAvatarFile}
+            />
+            <div className="-mt-4 text-center">
+              <p className="font-semibold text-gray-900">{user.name ?? ""}</p>
+              <p className="text-sm text-gray-400 mt-0.5">{user.email ?? ""}</p>
+            </div>
+
+            <div className="border-t border-gray-100" />
+
+            {/* 활동 통계 */}
+            <div className="flex flex-col gap-3 px-5 md:px-0">
+              <h2 className="text-sm font-semibold text-gray-700">활동 통계</h2>
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-xl font-bold text-gray-900">{user.post_count ?? 0}</span>
+                  <span className="text-xs text-gray-500">게시글</span>
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-xl font-bold text-gray-900">0</span>
+                  <span className="text-xs text-gray-500">찜 목록</span>
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-xl font-bold text-gray-900">0</span>
+                  <span className="text-xs text-gray-500">받은 후기</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-100" />
+
+            {/* 계정 정보 */}
+            <div className="flex flex-col gap-3 px-5 md:px-0">
+              <h2 className="text-sm font-semibold text-gray-700">계정 정보</h2>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">가입일</span>
+                <span className="text-sm text-gray-700">{formatSellerInfoCreatedAt(user.created_at)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">가입경로</span>
+                <span className="text-sm text-gray-700">
+                  {user.provider === "google"
+                    ? "구글"
+                    : user.provider === "kakao"
+                      ? "카카오톡"
+                      : user.provider === "facebook"
+                        ? "페이스북"
+                        : "이메일"}
+                </span>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-100" />
+
+            {/* 본인인증 */}
+            <div className="flex flex-col gap-3 px-5 md:px-0">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-teal-500" />
+                <h2 className="text-sm font-semibold text-gray-700">본인인증</h2>
+              </div>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                게시물 작성과 랜덤채팅 참여는 인증이 필요합니다.
+              </p>
+              <button className="cursor-pointer w-full py-2.5 rounded-lg border border-teal-500 text-teal-500 text-sm font-medium bg-transparent hover:bg-teal-50 transition-colors">
+                본인인증 하기
+              </button>
+            </div>
           </div>
-          <button aria-label="프로필 사진 변경" className="cursor-pointer absolute bottom-0 right-0 w-6 h-6 rounded-full bg-teal-500 border-2 border-white flex items-center justify-center">
-            <Camera className="w-3 h-3 text-white" />
-          </button>
         </div>
-        <p className="text-xs text-gray-400 mt-2.5">사진을 클릭하여 변경</p>
-      </div>
 
-      {/* 폼 필드 + 저장 버튼 */}
-      <form
-        onSubmit={(e) => { e.preventDefault(); handleSave(); }}
-        className="px-5 flex flex-col gap-4"
-      >
-        <ProfileField
-          label="이름"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full px-3 py-2.5 text-sm text-gray-900 border border-teal-500 rounded-lg outline-none focus:ring-2 focus:ring-teal-200"
-        />
-
-        <ProfileField
-          label="이메일"
-          type="email"
-          value={user.email}
-          disabled
-          hint="이메일은 변경할 수 없습니다"
-        />
-
-        <ProfileField
-          label="전화번호"
-          type="tel"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
-
-        <ProfileField
-          label="지역"
-          type="text"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-        />
-
-        <button
-          type="submit"
-          className="cursor-pointer w-full py-3.5 rounded-lg bg-teal-500 text-white text-sm font-medium hover:bg-teal-600 transition-colors mt-3"
-        >
-          저장하기
-        </button>
-      </form>
-
-      <div className="border-t border-gray-100 my-7" />
-
-      {/* 본인인증 섹션 */}
-      <div className="px-5 flex flex-col gap-3">
-        <div className="flex items-center gap-2">
-          <ShieldCheck className="w-5 h-5 text-teal-500" />
-          <span className="text-base font-medium text-gray-900">본인인증</span>
+        {/* 메인 콘텐츠 */}
+        <div className="flex-1 md:pl-8">
+          {activeTab === "info" && <ProfileInfoSection user={user} avatarFile={avatarFile} />}
+          {activeTab === "reviews" && <ProfileReviewsSection />}
+          {activeTab === "alerts" && <ProfileAlertsSection initialSettings={alertSettings} />}
+          {activeTab === "blocked" && <ProfileBlockedSection />}
+          {activeTab === "settings" && <ProfileSettingsSection initialIdentities={initialIdentities} />}
         </div>
-        <p className="text-sm text-gray-500 leading-relaxed">
-          게시물 작성과 랜덤채팅 참여는 인증이 필요합니다.
-        </p>
-        <button className="cursor-pointer w-full py-3 rounded-lg border border-teal-500 text-teal-500 text-sm font-medium bg-transparent hover:bg-teal-50 transition-colors">
-          본인인증 하기
-        </button>
-      </div>
-
-      <div className="border-t border-gray-100 my-7" />
-
-      {/* 로그아웃 / 회원탈퇴 */}
-      <div className="px-5 flex flex-col gap-3">
-        <button
-          onClick={onLogout}
-          className="cursor-pointer w-full py-3 rounded-lg border border-gray-200 text-red-500 text-sm font-medium bg-transparent hover:bg-gray-100 transition-colors"
-        >
-          로그아웃
-        </button>
-        <button
-          onClick={handleDeleteAccount}
-          className="cursor-pointer w-full py-3 rounded-lg border border-red-200 text-red-500 hover:text-white text-sm font-medium bg-transparent hover:bg-rose-600 transition-colors"
-        >
-          회원 탈퇴
-        </button>
       </div>
     </div>
   );
