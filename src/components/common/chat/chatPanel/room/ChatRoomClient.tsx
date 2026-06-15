@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
-import { markChatReadAction, sendMessageAction } from "../actions";
+import { markChatReadAction, sendMessageAction } from "./actions";
 import { useSpamPrevention } from "@/hooks/chat/useSpamPrevention";
 import { useChatRoomRealtime } from "@/hooks/chat/useChatRoomRealtime";
 import { useChatMessages } from "@/hooks/chat/useChatMessages";
@@ -19,6 +19,7 @@ interface Props {
   postId: number;
   partner: SellerInfo;
   postTitle: string;
+  onBack?: () => void;
 }
 
 export default function ChatRoomClient({
@@ -28,6 +29,7 @@ export default function ChatRoomClient({
   postId,
   partner,
   postTitle,
+  onBack,
 }: Props) {
   const router = useRouter();
   const [input, setInput] = useState("");
@@ -85,11 +87,11 @@ export default function ChatRoomClient({
   }, [chatId]);
 
   return (
-    <div className="flex flex-col max-w-2xl mx-auto h-screen w-full bg-gray-50">
+    <div className="flex flex-col h-full w-full bg-gray-50">
       <ChatHeader
         partner={partner}
         postTitle={postTitle}
-        onBack={() => router.back()}
+        onBack={onBack ?? (() => router.back())}
       />
       <MessageList
         messages={messages}
