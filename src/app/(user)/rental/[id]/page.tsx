@@ -33,7 +33,7 @@ export default async function RentalDetail({
         <VerifyAuthor
           authorAuthId={rental.posts.users.auth_id}
           editPath={`/rental/${id}/edit`}
-          postId={rental.post_id}
+          postId={rental.post_id ?? 0}
           redirectPath="/rental"
         />
       </div>

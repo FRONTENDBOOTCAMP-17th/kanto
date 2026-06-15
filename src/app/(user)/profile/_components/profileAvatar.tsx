@@ -13,7 +13,7 @@ export default function ProfileAvatar({
   name: string | null;
   onFileChange: (file: File) => void;
 }) {
-  const { fileInputRef, imagePreviews, handleImageUpload, handleImageSelect } = useImageUpload(1);
+  const { fileInputRef, imagePreviews, handleImageUpload, handleImageSelect } = useImageUpload([], 1);
 
   const handleSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
