@@ -4,13 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { TERMS_LIST } from "../_config";
 
-const termsNavigationList = [
-  { label: "운영정책", href: "/terms/policy" },
-  { label: "서비스 이용약관", href: "/terms/service" },
-  { label: "개인정보 처리방침", href: "/terms/privacy" },
-  { label: "청소년 보호정책", href: "/terms/youth" },
-];
+const termsNavigationList = TERMS_LIST.map(({ type, label }) => ({
+  label,
+  href: `/terms/${type}`,
+}));
 
 export default function TermsNav() {
   const pathname = usePathname();
