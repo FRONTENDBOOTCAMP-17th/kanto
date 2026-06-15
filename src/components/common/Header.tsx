@@ -77,7 +77,7 @@ export function Header() {
           {/* 로고 */}
           <Link
             href={ROUTES.home}
-            className="flex items-center hover:opacity-80 transition-opacity flex-shrink-0"
+            className="flex items-center hover:opacity-80 transition-opacity shrink-0"
           >
             <Image
               src="/kantoMobileLogo.png"
@@ -90,7 +90,7 @@ export function Header() {
               src="/kantoLogo.png"
               alt="kanto"
               width={120}
-              height={40}
+              height={56}
               className="hidden md:block"
             />
           </Link>
