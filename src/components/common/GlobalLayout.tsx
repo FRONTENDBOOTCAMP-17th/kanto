@@ -27,14 +27,17 @@ export function GlobalLayout({ children, initialUser }: Props) {
   const isLogin = pathname.startsWith("/login");
   const isSignup = pathname.startsWith("/signup");
   const isChat = pathname.startsWith("/chat");
+  const isAdmin = pathname.startsWith("/admin");
+
+  const hideShell = isTerms || isLogin || isSignup || isChat || isAdmin;
 
   return (
     <div className="min-h-screen flex flex-col">
-      {!isTerms && !isLogin && !isSignup && <Header />}
-      {!isTerms && !isLogin && !isSignup && <DeletionPendingBanner />}
-      {!isTerms && !isLogin && !isSignup && <ScrollToTop />}
+      {!hideShell && <Header />}
+      {!hideShell && <DeletionPendingBanner />}
+      {!hideShell && <ScrollToTop />}
       <main className="flex-1">{children}</main>
-      {!isTerms && !isLogin && !isSignup && <Footer />}
+      {!hideShell && <Footer />}
     </div>
   );
 }
