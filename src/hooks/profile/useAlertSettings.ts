@@ -2,7 +2,11 @@
 
 import { useRef, useState } from "react";
 import { useAuthStore } from "@/store/authStore";
-import { updateAlertToggle, updateInterestCategories, updateAlertKeywords } from "@/services/profile/profileAlert";
+import {
+  updateAlertToggle,
+  updateInterestCategories,
+  updateAlertKeywords,
+} from "@/services/profile/profileAlert";
 
 export const CATEGORIES = [
   { key: "usedgoods", label: "중고거래" },
@@ -33,29 +37,36 @@ export function useAlertSettings(initial: AlertSettings) {
   const [commentAlert, setCommentAlert] = useState(initial.alert_comment);
   const [postAlert, setPostAlert] = useState(initial.alert_post);
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    initial.interest_categories ?? ALL_KEYS
+    initial.interest_categories ?? ALL_KEYS,
   );
-  const [keywords, setKeywords] = useState<string[]>(initial.alert_keywords ?? []);
+  const [keywords, setKeywords] = useState<string[]>(
+    initial.alert_keywords ?? [],
+  );
   const [keywordInput, setKeywordInput] = useState("");
   const [showInput, setShowInput] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const toggleAlert = async (field: AlertField, next: boolean) => {
     if (!userId) return;
+    const prev = field === "alert_chat" ? chatAlert : field === "alert_comment" ? commentAlert : postAlert;
     if (field === "alert_chat") setChatAlert(next);
     else if (field === "alert_comment") setCommentAlert(next);
     else setPostAlert(next);
-    await updateAlertToggle(userId, field, next);
+    const { error } = await updateAlertToggle(userId, field, next);
+    if (error) {
+      if (field === "alert_chat") setChatAlert(prev);
+      else if (field === "alert_comment") setCommentAlert(prev);
+      else setPostAlert(prev);
+    }
   };
 
   const toggleCategory = async (key: string) => {
     if (!userId) return;
-    const next = selectedCategories.includes(key)
-      ? selectedCategories.filter((k) => k !== key)
-      : [...selectedCategories, key];
+    const prev = selectedCategories;
+    const next = prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key];
     setSelectedCategories(next);
-    const value = next.length === ALL_KEYS.length ? null : next;
-    await updateInterestCategories(userId, value);
+    const { error } = await updateInterestCategories(userId, next.length === ALL_KEYS.length ? null : next);
+    if (error) setSelectedCategories(prev);
   };
 
   const addKeyword = async () => {
@@ -64,18 +75,22 @@ export function useAlertSettings(initial: AlertSettings) {
       setKeywordInput("");
       return;
     }
-    const next = [...keywords, trimmed];
+    const prev = keywords;
+    const next = [...prev, trimmed];
     setKeywords(next);
     setKeywordInput("");
     setShowInput(false);
-    await updateAlertKeywords(userId, next);
+    const { error } = await updateAlertKeywords(userId, next);
+    if (error) setKeywords(prev);
   };
 
   const removeKeyword = async (keyword: string) => {
     if (!userId) return;
-    const next = keywords.filter((k) => k !== keyword);
+    const prev = keywords;
+    const next = prev.filter((k) => k !== keyword);
     setKeywords(next);
-    await updateAlertKeywords(userId, next.length > 0 ? next : null);
+    const { error } = await updateAlertKeywords(userId, next.length > 0 ? next : null);
+    if (error) setKeywords(prev);
   };
 
   const handleShowInput = () => {
@@ -89,12 +104,20 @@ export function useAlertSettings(initial: AlertSettings) {
   };
 
   return {
-    chatAlert, commentAlert, postAlert,
+    chatAlert,
+    commentAlert,
+    postAlert,
     selectedCategories,
-    keywords, keywordInput, setKeywordInput, showInput,
+    keywords,
+    keywordInput,
+    setKeywordInput,
+    showInput,
     inputRef,
-    toggleAlert, toggleCategory,
-    addKeyword, removeKeyword,
-    handleShowInput, handleCancelInput,
+    toggleAlert,
+    toggleCategory,
+    addKeyword,
+    removeKeyword,
+    handleShowInput,
+    handleCancelInput,
   };
 }
