@@ -11,6 +11,7 @@ interface UsedGoodsListFilter {
   search?: string;
   category?: string;
   location?: string;
+  targetIds?: number[];
 }
 
 export async function getUsedGoodsList(filter?: UsedGoodsListFilter): Promise<UsedGoodsWithPost[]> {
@@ -24,6 +25,9 @@ export async function getUsedGoodsList(filter?: UsedGoodsListFilter): Promise<Us
     .not("used_goods", "is", null)
     .order("created_at", { ascending: false });
 
+  if (filter?.targetIds?.length) {
+    query = query.in("id", filter.targetIds);
+  }
   if (filter?.search) {
     query = query.ilike("title", `%${filter.search}%`);
   }

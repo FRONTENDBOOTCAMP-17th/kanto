@@ -28,6 +28,7 @@ interface RentalListFilter {
   search?: string;
   roomType?: string;
   location?: string;
+  targetIds?: number[];
 }
 
 export async function getRentalList(filter?: RentalListFilter): Promise<RentalWithPost[]> {
@@ -40,6 +41,9 @@ export async function getRentalList(filter?: RentalListFilter): Promise<RentalWi
     .eq("status", "active")
     .order("created_at", { ascending: false });
 
+  if (filter?.targetIds?.length) {
+    query = query.in("id", filter.targetIds);
+  }
   if (filter?.search) {
     query = query.ilike("title", `%${filter.search}%`);
   }
