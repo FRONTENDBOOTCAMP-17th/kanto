@@ -43,11 +43,21 @@ export const config = {
   ],
 };
 
+const PROTECTED_PATHS = ["/job/create", "/usedgoods/create", "/create", "/myposts", "/favorites"];
+
 async function redirectIfAuthenticated(
   user: User | null,
   request: NextRequest,
 ) {
   const { pathname } = request.nextUrl;
+
+  if (!user && (
+    PROTECTED_PATHS.includes(pathname) ||
+    pathname.endsWith("/edit")
+  )) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   if (user && ["/login", "/signup"].includes(pathname)) {
     return NextResponse.redirect(new URL("/main", request.url));
   }
