@@ -12,7 +12,7 @@ const SERVICES = [
 const LEGAL_LINKS = [
   { href: ROUTES.termsOfService, label: "이용약관" },
   { href: ROUTES.privacyPolicy, label: "개인정보처리방침" },
-  { href: ROUTES.locationPolicy, label: "위치기반서비스" },
+  { href: ROUTES.youthPolicy, label: "청소년 보호정책" },
 ];
 
 export function Footer() {
