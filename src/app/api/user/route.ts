@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { createClient } from "@/utils/supabase/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 const HIDE_POST_TYPES = ["used_goods", "jobs", "rental"];
 
 export async function DELETE() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
 
   if (error || !user) {
@@ -47,7 +47,7 @@ export async function DELETE() {
 }
 
 export async function PATCH() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
 
   if (error || !user) {
