@@ -10,7 +10,13 @@ const TABS = [
 
 type TabKey = (typeof TABS)[number]["key"];
 
-export function FavoritesTabs({ activeType }: { activeType: TabKey }) {
+export function FavoritesTabs({
+  activeType,
+  tabPath,
+}: {
+  activeType: TabKey;
+  tabPath: string;
+}) {
   return (
     <div role="tablist" aria-label="찜 목록 카테고리" className="flex gap-6 items-end">
       {TABS.map((tab) => (
@@ -18,7 +24,7 @@ export function FavoritesTabs({ activeType }: { activeType: TabKey }) {
           key={tab.key}
           role="tab"
           aria-selected={activeType === tab.key}
-          href={`/favorites?type=${tab.key}`}
+          href={`${tabPath}?type=${tab.key}`}
           className={`cursor-pointer ${
             activeType === tab.key
               ? "text-black text-2xl underline underline-offset-8 font-semibold"

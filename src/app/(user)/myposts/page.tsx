@@ -6,12 +6,12 @@ import { getRentalList } from "@/services/rental/rental";
 import { UsedGoodsList } from "@/app/(user)/usedgoods/_components/UsedGoodsList";
 import { JobList } from "@/app/(user)/job/_components/JobList";
 import { RentalList } from "@/app/(user)/rental/_components/RentalList";
-import { FavoritesTabs } from "./_components/FavoritesTabs";
+import { FavoritesTabs } from "@/app/(user)/favorites/_components/FavoritesTabs";
 
 const CATEGORY_TYPE = ["used_goods", "jobs", "rental"] as const;
 type TabType = (typeof CATEGORY_TYPE)[number];
 
-export default async function FavoritesPage({
+export default async function MypostsPage({
   searchParams,
 }: {
   searchParams: Promise<{ type?: string }>;
@@ -28,27 +28,27 @@ export default async function FavoritesPage({
   return (
     <div className="page-wrapper">
       <main className="flex-1 page-container w-full py-8">
-        <h1 className="page-title mb-6">찜 목록</h1>
-        <FavoritesTabs activeType={activeType} tabPath="/favorites" />
+        <h1 className="page-title mb-6">내 게시글</h1>
+        <FavoritesTabs activeType={activeType} tabPath="/myposts" />
         <div className="border-t border-gray-200 my-6" />
 
         {activeType === "used_goods" && (
           <UsedGoodsList
-            initialPosts={await getUsedGoodsList({ targetIds: likedIds })}
+            initialPosts={await getUsedGoodsList({ userId: currentUserId })}
             initialLikedIds={likedIds}
             currentUserId={currentUserId}
           />
         )}
         {activeType === "jobs" && (
           <JobList
-            posts={await getJobList({ targetIds: likedIds })}
+            posts={await getJobList({ userId: currentUserId })}
             likedIds={likedIds}
             currentUserId={currentUserId}
           />
         )}
         {activeType === "rental" && (
           <RentalList
-            initialPosts={await getRentalList({ targetIds: likedIds })}
+            initialPosts={await getRentalList({ userId: currentUserId })}
             initialLikedIds={likedIds}
             currentUserId={currentUserId}
           />
