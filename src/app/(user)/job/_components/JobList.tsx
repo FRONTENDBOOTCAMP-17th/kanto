@@ -8,13 +8,14 @@ interface Props {
   posts: JobWithPost[];
   likedIds: number[];
   currentUserId: number | null;
+  emptyMessage?: string;
 }
 
-export function JobList({ posts, likedIds, currentUserId }: Props) {
+export function JobList({ posts, likedIds, currentUserId, emptyMessage = "등록된 구인공고가 없습니다" }: Props) {
   const likedSet = new Set(likedIds);
 
   if (posts.length === 0) {
-    return <EmptyState message="등록된 구인공고가 없습니다" description="첫 번째 공고를 등록해보세요!" />;
+    return <EmptyState message={emptyMessage} />;
   }
 
   return (

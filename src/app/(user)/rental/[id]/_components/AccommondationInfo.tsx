@@ -11,6 +11,7 @@ import {
   WashingMachine,
   Refrigerator,
   Vault,
+  ShieldUser,
 } from "lucide-react";
 import { ReactNode } from "react";
 
@@ -27,6 +28,7 @@ const AMENITY_ICONS: Record<string, ReactNode> = {
   세탁기: <WashingMachine className="w-4 h-4" />,
   냉장고: <Refrigerator className="w-4 h-4" />,
   금고: <Vault className="w-4 h-4" />,
+  보안요원: <ShieldUser className="w-4 h-4" />,
 };
 
 export default function AccommondationInfo({ rental }: { rental: Rental }) {
