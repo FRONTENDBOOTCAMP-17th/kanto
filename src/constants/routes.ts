@@ -14,7 +14,7 @@ export const ROUTES = {
   chat: "/chat",
   chatRoom: (id: string | number) => `/chat/${id}`,
   report: "/report",
-  termsOfService: "/terms?tab=terms",
-  privacyPolicy: "/terms?tab=privacy",
-  locationPolicy: "/terms?tab=location",
+  termsOfService: "/terms/policy",
+  privacyPolicy: "/terms/privacy",
+  youthPolicy: "/terms/youth",
 } as const;
