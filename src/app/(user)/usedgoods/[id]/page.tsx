@@ -62,7 +62,6 @@ export default async function UsedGoodsDetailPage({
       <UsedGoodsDetail
         data={data}
         relatedData={relatedData}
-        user={user}
         initialLiked={!!likeData}
         userId={userData?.id}
         initialReported={!!reportData}

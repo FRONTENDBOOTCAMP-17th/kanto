@@ -118,7 +118,7 @@ export function CreateUsedGoodsForm({
           images: finalImages,
         })
         .eq("post_id", postId);
-      router.push("/usedgoods");
+      router.push(`/usedgoods/${postId}`);
     } else {
       const { data: post, error: postError } = await supabase
         .from("posts")

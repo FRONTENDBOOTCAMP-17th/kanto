@@ -11,6 +11,8 @@ interface UsedGoodsListFilter {
   search?: string;
   category?: string;
   location?: string;
+  targetIds?: number[];
+  userId?: number;
 }
 
 export async function getUsedGoodsList(filter?: UsedGoodsListFilter): Promise<UsedGoodsWithPost[]> {
@@ -24,6 +26,12 @@ export async function getUsedGoodsList(filter?: UsedGoodsListFilter): Promise<Us
     .not("used_goods", "is", null)
     .order("created_at", { ascending: false });
 
+  if (filter?.targetIds?.length) {
+    query = query.in("id", filter.targetIds);
+  }
+  if (filter?.userId) {
+    query = query.eq("user_id", filter.userId);
+  }
   if (filter?.search) {
     query = query.ilike("title", `%${filter.search}%`);
   }
@@ -69,7 +77,7 @@ export async function getUsedGoodsItem(postId: number) {
 
   const { data } = await supabase
     .from("used_goods")
-    .select(`*, posts (*, users (id, auth_id, name, avatar_url, created_at))`)
+    .select(`*, posts (*, users (id, auth_id, name, avatar_url, created_at, deleted_at, email, phone, post_count, provider, role, updated_at))`)
     .eq("post_id", postId)
     .single();
 

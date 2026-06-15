@@ -22,7 +22,7 @@ export function useCreateUsedGoodsForm(userId: number) {
   const [content, setContent] = useState("");
   const [safePayment, setSafePayment] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const imageUpload = useImageUpload(10);
+  const imageUpload = useImageUpload([], 10);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

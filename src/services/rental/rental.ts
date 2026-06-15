@@ -3,7 +3,7 @@ import type { RentalWithPost } from "@/type/rental/rentalList";
 import type { RentalWithPost as RentalDetail } from "@/type/rental/rentalDetail";
 
 const RENTAL_DETAIL_SELECT =
-  `*, posts(*, users(id, name, email, avatar_url, provider, role, post_count, created_at, updated_at))` as const;
+  `*, posts(*, users(id, name, email, avatar_url, auth_id, provider, role, post_count, created_at, updated_at))` as const;
 const RENTAL_LIST_SELECT = `
   *,
   rentals(*),
@@ -28,6 +28,8 @@ interface RentalListFilter {
   search?: string;
   roomType?: string;
   location?: string;
+  targetIds?: number[];
+  userId?: number;
 }
 
 export async function getRentalList(filter?: RentalListFilter): Promise<RentalWithPost[]> {
@@ -40,6 +42,12 @@ export async function getRentalList(filter?: RentalListFilter): Promise<RentalWi
     .eq("status", "active")
     .order("created_at", { ascending: false });
 
+  if (filter?.targetIds?.length) {
+    query = query.in("id", filter.targetIds);
+  }
+  if (filter?.userId) {
+    query = query.eq("user_id", filter.userId);
+  }
   if (filter?.search) {
     query = query.ilike("title", `%${filter.search}%`);
   }

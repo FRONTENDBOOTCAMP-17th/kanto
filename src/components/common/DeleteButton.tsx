@@ -1,28 +1,40 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { ConfirmModal } from "@/components/common/ConfirmModal";
 
 interface DeleteButtonProps {
   postId: number;
+  redirectPath: string;
 }
 
-export default function DeleteButton({ postId }: DeleteButtonProps) {
+export default function DeleteButton({ postId, redirectPath }: DeleteButtonProps) {
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleDelete = async () => {
-    if (!confirm("정말 삭제하시겠습니까?")) return;
     await supabase.from("posts").delete().eq("id", postId);
-
-    router.push("/usedgoods");
+    setIsOpen(false);
+    router.push(redirectPath);
   };
 
   return (
-    <button
-      onClick={handleDelete}
-      className="border-2 px-2 py-1 rounded-xl bg-red-600 border-red-600 text-white"
-    >
-      삭제
-    </button>
+    <>
+      <button
+        onClick={() => setIsOpen(true)}
+        className="border-2 px-2 py-1 rounded-xl bg-red-600 border-red-600 text-white"
+      >
+        삭제
+      </button>
+      <ConfirmModal
+        isOpen={isOpen}
+        title="정말 삭제하시겠습니까?"
+        confirmLabel="삭제"
+        onConfirm={handleDelete}
+        onCancel={() => setIsOpen(false)}
+      />
+    </>
   );
 }

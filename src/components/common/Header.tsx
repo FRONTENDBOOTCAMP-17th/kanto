@@ -22,7 +22,6 @@ import {
   FileText,
   LogOut,
   MessageCircle,
-  Pencil,
 } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
@@ -101,18 +100,6 @@ export function Header() {
           {/* 우측 액션 버튼 */}
           <div className="flex items-center shrink-0">
             {/* 글쓰기 */}
-            {user && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-10 h-10"
-                aria-label="글쓰기"
-                onClick={() => router.push(ROUTES.create)}
-              >
-                <Pencil className="w-5 h-5 text-gray-700" />
-              </Button>
-            )}
-
             {/* 알림 */}
             {user && (
               <NotificationBell

@@ -1,28 +1,25 @@
 "use client";
 
-import { useState } from "react";
 import { SearchBar } from "@/components/common/SearchBar";
 import { FilterDropdown } from "@/components/common/FilterDropdown";
 import { PRODUCT_CATEGORIES } from "@/type/usedGoods";
 import { useUrlParams } from "@/hooks/useUrlParams";
 
 interface Props {
-  defaultSearch: string;
+  givenSearch: string;
   defaultCategory: string;
   defaultLocation: string;
 }
 
-export function UsedGoodsFilters({ defaultSearch, defaultCategory, defaultLocation }: Props) {
+export function UsedGoodsFilters({ givenSearch, defaultCategory, defaultLocation }: Props) {
   const { updateParams } = useUrlParams();
-  const [searchInput, setSearchInput] = useState(defaultSearch);
 
   return (
     <SearchBar
-      searchInput={searchInput}
-      onSearchChange={setSearchInput}
-      onSearchSubmit={(e) => { e.preventDefault(); updateParams({ search: searchInput }); }}
-      locationFilter={defaultLocation}
-      onLocationChange={(v) => updateParams({ location: v })}
+      givenSearch={givenSearch}
+      defaultLocation={defaultLocation}
+      onSearch={(query, location) => updateParams({ search: query, location })}
+      showLocation
     >
       <FilterDropdown
         options={PRODUCT_CATEGORIES}

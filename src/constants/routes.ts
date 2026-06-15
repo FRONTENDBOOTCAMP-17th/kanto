@@ -10,7 +10,7 @@ export const ROUTES = {
   login: "/login",
   myProfile: "/profile",
   favorites: "/favorites",
-  myPosts: "/my-posts",
+  myPosts: "/myposts",
   chat: "/chat",
   chatRoom: (id: string | number) => `/chat/${id}`,
   report: "/report",

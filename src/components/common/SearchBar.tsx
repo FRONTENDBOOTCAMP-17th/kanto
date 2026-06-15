@@ -10,14 +10,16 @@ const LOCATION_OPTIONS = [
 ];
 
 interface SearchBarProps {
+  givenSearch?: string;
+  defaultLocation?: string;
   onSearch?: (query: string, location: string) => void;
   showLocation?: boolean;
   children?: React.ReactNode;
 }
 
-export function SearchBar({ onSearch, showLocation = false, children }: SearchBarProps) {
-  const [searchInput, setSearchInput] = useState("");
-  const [locationFilter, setLocationFilter] = useState("all");
+export function SearchBar({ givenSearch = "", defaultLocation = "all", onSearch, showLocation = false, children }: SearchBarProps) {
+  const [searchInput, setSearchInput] = useState(givenSearch);
+  const [locationFilter, setLocationFilter] = useState(defaultLocation);
   const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
   const [mobileLocationOpen, setMobileLocationOpen] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });

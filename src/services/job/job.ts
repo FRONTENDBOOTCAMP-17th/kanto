@@ -5,6 +5,8 @@ interface JobListFilter {
   search?: string;
   employeeType?: string;
   location?: string;
+  targetIds?: number[];
+  userId?: number;
 }
 
 export async function getJobList(filter?: JobListFilter): Promise<JobWithPost[]> {
@@ -17,6 +19,12 @@ export async function getJobList(filter?: JobListFilter): Promise<JobWithPost[]>
     .eq("status", "active")
     .order("created_at", { ascending: false });
 
+  if (filter?.targetIds?.length) {
+    query = query.in("id", filter.targetIds);
+  }
+  if (filter?.userId) {
+    query = query.eq("user_id", filter.userId);
+  }
   if (filter?.search) {
     query = query.ilike("title", `%${filter.search}%`);
   }
