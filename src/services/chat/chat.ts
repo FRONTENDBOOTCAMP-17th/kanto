@@ -23,7 +23,7 @@ export async function getChatList(
     throw new Error(error.message);
   }
 
-  return data as ChatWithUsers[];
+  return (data ?? []) as ChatWithUsers[];
 }
 
 export async function getChatDetail(
@@ -42,4 +42,3 @@ export async function getChatDetail(
 
   return data as ChatWithUsers;
 }
-

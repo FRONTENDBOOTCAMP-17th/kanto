@@ -22,9 +22,9 @@ import VerifyAuthor from "@/components/common/VerifyAuthor";
 import { supabase } from "@/lib/supabase";
 import Toast from "@/components/common/Toast";
 import ReportModal from "@/components/common/ReportModal";
-import { ROUTES } from "@/constants/routes";
 import postChat from "@/services/chat/postChat";
 import { useAuthStore } from "@/store/authStore";
+import { useChatStore } from "@/store/chatStore";
 
 type UsedGoods = Tables<"used_goods"> & {
   posts: Tables<"posts"> & {
@@ -103,7 +103,7 @@ export default function UsedGoodsDetail({
 
     const chatId = await postChat(userId, data.posts.users.id, data.post_id);
 
-    router.push(ROUTES.chatRoom(chatId));
+    useChatStore.getState().openWidget(chatId);
   };
 
   useEffect(() => {

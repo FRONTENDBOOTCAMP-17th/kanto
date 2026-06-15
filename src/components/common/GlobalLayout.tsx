@@ -8,6 +8,7 @@ import { ScrollToTop } from "@/components/common/ScrollToTop";
 import { useAuthStore } from "@/store/authStore";
 import type { User } from "@/type/user";
 import { DeletionPendingBanner } from "@/components/common/DeletionPendingBanner";
+import FloatingChatWidget from "@/components/common/chat/FloatingChatWidget";
 
 interface Props {
   children: React.ReactNode;

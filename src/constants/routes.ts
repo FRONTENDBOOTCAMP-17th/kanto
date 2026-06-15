@@ -11,8 +11,6 @@ export const ROUTES = {
   myProfile: "/profile",
   favorites: "/favorites",
   myPosts: "/myposts",
-  chat: "/chat",
-  chatRoom: (id: string | number) => `/chat/${id}`,
   report: "/report",
   termsOfService: "/terms/policy",
   privacyPolicy: "/terms/privacy",
