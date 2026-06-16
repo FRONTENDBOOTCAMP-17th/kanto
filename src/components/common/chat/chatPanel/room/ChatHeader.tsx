@@ -12,6 +12,7 @@ interface Props {
   postTitle: string;
   chatId: number;
   onBack: () => void;
+  onLeave?: () => void;
 }
 
 export default function ChatHeader({
@@ -19,6 +20,7 @@ export default function ChatHeader({
   postTitle,
   chatId,
   onBack,
+  onLeave
 }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -27,7 +29,7 @@ export default function ChatHeader({
 
   const handleLeave = async () => {
     await leaveChatAction(chatId);
-    onBack();
+    onLeave?.();
   };
 
   return (

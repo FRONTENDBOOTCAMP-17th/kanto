@@ -14,7 +14,15 @@ interface ChatRoomData {
   postTitle: string;
 }
 
-export default function ChatRoom({ chatId, onBack }: { chatId: number; onBack?: () => void }) {
+export default function ChatRoom({
+  chatId,
+  onBack,
+  onLeave,
+}: {
+  chatId: number;
+  onBack?: () => void;
+  onLeave?: () => void;
+}) {
   const [data, setData] = useState<ChatRoomData | null>(null);
 
   useEffect(() => {
@@ -33,5 +41,12 @@ export default function ChatRoom({ chatId, onBack }: { chatId: number; onBack?: 
       </div>
     );
 
-  return <ChatRoomClient {...data} initialMessages={data.messages} onBack={onBack} />;
+  return (
+    <ChatRoomClient
+      {...data}
+      initialMessages={data.messages}
+      onBack={onBack}
+      onLeave={onLeave}
+    />
+  );
 }
