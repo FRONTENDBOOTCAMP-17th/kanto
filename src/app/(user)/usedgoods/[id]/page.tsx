@@ -3,7 +3,6 @@ export const dynamic = "force-dynamic";
 import { getUsedGoodsItem } from "@/services/usedGoods/usedGoods";
 import { supabase } from "@/lib/supabase";
 import UsedGoodsDetail from "@/app/(user)/usedgoods/[id]/_components/UsedGoodsDetail";
-import { createClient } from "@/utils/supabase/server";
 import { viewCountUp } from "@/services/view";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
 

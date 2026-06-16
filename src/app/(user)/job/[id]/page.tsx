@@ -50,7 +50,7 @@ export default async function JobDetailPage({
         {images.length > 0 && (
           <div className="p-6 space-y-2">
             <h2 className="font-semibold text-base">사진</h2>
-            <div className="aspect-[4/3]">
+            <div className="aspect-4/3">
               <ImageCarousel images={images} />
             </div>
           </div>
