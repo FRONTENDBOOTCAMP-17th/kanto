@@ -2,9 +2,10 @@
 import { useAuthStore } from "@/store/authStore";
 import { ChevronUp, Plus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function ScrollToTop() {
+  const prevScrollY = useRef(0);
   const [isVisible, setIsVisible] = useState(false);
   const router = useRouter();
   const path = usePathname();
@@ -12,10 +13,10 @@ export function ScrollToTop() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsVisible(window.scrollY > 250);
-      // 높이를 얼마부터 동작하게 할것인가?
+      const currentScrollY = window.scrollY;
+      setIsVisible(prevScrollY.current > currentScrollY);
+      prevScrollY.current = currentScrollY;
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
