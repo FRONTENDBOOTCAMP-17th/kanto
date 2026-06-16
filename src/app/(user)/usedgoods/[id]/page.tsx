@@ -4,6 +4,7 @@ import { getUsedGoodsItem } from "@/services/usedGoods/usedGoods";
 import { supabase } from "@/lib/supabase";
 import UsedGoodsDetail from "@/app/(user)/usedgoods/[id]/_components/UsedGoodsDetail";
 import { createClient } from "@/utils/supabase/server";
+import { viewCountUp } from "@/services/view";
 
 export default async function UsedGoodsDetailPage({
   params,
@@ -56,6 +57,8 @@ export default async function UsedGoodsDetailPage({
         .eq("user_id", userData.id)
         .single()
     : { data: null };
+
+  await viewCountUp(data.post_id);
 
   return (
     <div>

@@ -6,6 +6,7 @@ import JobAuthorInfo from "./_components/JobAuthorInfo";
 import JobContent from "./_components/JobContent";
 import CompanyInfo from "./_components/CompanyInfo";
 import VerifyAuthor from "@/components/common/VerifyAuthor";
+import { viewCountUp } from "@/services/view";
 
 export default async function JobDetailPage({
   params,
@@ -26,6 +27,7 @@ export default async function JobDetailPage({
   }
 
   const images = (job.images as string[]) ?? [];
+  await viewCountUp(job.post_id);
 
   return (
     <div className="page-container w-full py-6">
