@@ -1,9 +1,11 @@
 "use client";
 import { ChevronUp, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 export function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,8 +22,7 @@ export function ScrollToTop() {
   };
 
   const handlePlus = () => {
-    // user === ture일 경우에 (로그인이 되어있는 경우에)
-    // 글쓰기 위치로 이동되도록
+    router.push("/create");
   };
 
   // user 로그인 로그아웃 구현을 위해 만든 상태
