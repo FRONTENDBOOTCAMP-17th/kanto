@@ -1,11 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUploadField } from "@/components/common/ImageUploadField";
 import { useImageUpload } from "@/hooks/useImageUpload";
+
+const URL_REGEX = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&/=]*)$/i;
 
 interface CreateJobFormPageTwoProps {
   companyName: string; setCompanyName: (v: string) => void;
@@ -42,6 +45,16 @@ export function CreateJobFormPageTwo({
   handleSubmit,
   handlePrevStep,
 }: CreateJobFormPageTwoProps) {
+  const [websiteError, setWebsiteError] = useState("");
+
+  const handleWebsiteBlur = () => {
+    if (companyWebsite && !URL_REGEX.test(companyWebsite)) {
+      setWebsiteError("올바른 웹사이트 주소를 입력해주세요 (예: https://company.com)");
+    } else {
+      setWebsiteError("");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <p className="text-gray-500">회사 정보와 담당자 연락처를 입력해주세요</p>
@@ -63,11 +76,11 @@ export function CreateJobFormPageTwo({
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="companyYear">설립연도</Label>
-            <Input id="companyYear" placeholder="예: 2018" value={companyYear} onChange={(e) => setCompanyYear(e.target.value)} />
+            <Input id="companyYear" inputMode="numeric" placeholder="예: 2018" value={companyYear} onChange={(e) => setCompanyYear(e.target.value.replace(/\D/g, ""))} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="employeeCount">직원 수</Label>
-            <Input id="employeeCount" placeholder="예: 10-30명" value={employeeCount} onChange={(e) => setEmployeeCount(e.target.value)} />
+            <Input id="employeeCount" inputMode="numeric" placeholder="예: 10" value={employeeCount} onChange={(e) => setEmployeeCount(e.target.value.replace(/\D/g, ""))} />
           </div>
         </div>
         <div className="space-y-2">
@@ -76,7 +89,14 @@ export function CreateJobFormPageTwo({
         </div>
         <div className="space-y-2">
           <Label htmlFor="companyWebsite">웹사이트</Label>
-          <Input id="companyWebsite" placeholder="예: www.company.com" value={companyWebsite} onChange={(e) => setCompanyWebsite(e.target.value)} />
+          <Input
+            id="companyWebsite"
+            placeholder="예: https://company.com"
+            value={companyWebsite}
+            onChange={(e) => setCompanyWebsite(e.target.value)}
+            onBlur={handleWebsiteBlur}
+          />
+          {websiteError && <p className="text-xs text-red-500">{websiteError}</p>}
         </div>
       </div>
 

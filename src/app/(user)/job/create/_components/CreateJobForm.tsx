@@ -36,8 +36,10 @@ export function CreateJobForm({ userId, initialData }: { userId: number; initial
               setLocationCustom={form.setLocationCustom}
               deadline={form.deadline}
               setDeadline={form.setDeadline}
-              workHours={form.workHours}
-              setWorkHours={form.setWorkHours}
+              workHoursStart={form.workHoursStart}
+              setWorkHoursStart={form.setWorkHoursStart}
+              workHoursEnd={form.workHoursEnd}
+              setWorkHoursEnd={form.setWorkHoursEnd}
               mainTask={form.mainTask}
               setMainTask={form.setMainTask}
               preferred={form.preferred}
