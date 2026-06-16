@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { AMENITIES, type Amenity } from "@/type/rental/rentalDetail";
 
 const LOCATIONS = [
   "BGC / Taguig",
@@ -42,9 +43,7 @@ export default function RentalCreateForm({ userId }: { userId: number }) {
   );
   const [maxOccupants, setMaxOccupants] = useState("");
   const [description, setDescription] = useState("");
-  const [amenities, setAmenities] = useState<
-    ("와이파이" | "에어컨" | "주차" | "주방")[]
-  >([]);
+  const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [location, setLocation] = useState<Location | "">("");
   const [locationDetail, setLocationDetail] = useState("");
   const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -290,7 +289,7 @@ export default function RentalCreateForm({ userId }: { userId: number }) {
             <div className="space-y-2">
               <Label>편의시설</Label>
               <div className="flex gap-2 flex-wrap">
-                {(["와이파이", "에어컨", "주차", "주방"] as const).map(
+                {AMENITIES.map(
                   (item) => (
                     <button
                       key={item}

@@ -1,4 +1,5 @@
 import { getRentalDetail } from "@/services/rental/rental";
+import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
 import BackButton from "@/app/(user)/rental/[id]/_components/BackButton";
 import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarresel";
 import AccommondationInfo from "./_components/AccommondationInfo";
@@ -28,6 +29,9 @@ export default async function RentalDetail({
   const images = (rental.images as string[]) ?? [];
   await viewCountUp(rental.post_id ?? 0);
 
+  const postId = rental.post_id ?? 0;
+  const { userId, initialLiked, initialReported } = await getUserLikeReportStatus(postId);
+
   return (
     <div className="page-container pb-12">
       <div className="flex items-center justify-between">
@@ -35,7 +39,7 @@ export default async function RentalDetail({
         <VerifyAuthor
           authorAuthId={rental.posts.users.auth_id}
           editPath={`/rental/${id}/edit`}
-          postId={rental.post_id ?? 0}
+          postId={postId}
           redirectPath="/rental"
         />
       </div>
@@ -50,7 +54,13 @@ export default async function RentalDetail({
           <RentSellerInfo rental={rental} />
         </div>
       </div>
-      <PostInfo rental={rental} />
+      <PostInfo
+        rental={rental}
+        userId={userId}
+        postId={postId}
+        initialLiked={initialLiked}
+        initialReported={initialReported}
+      />
     </div>
   );
 }

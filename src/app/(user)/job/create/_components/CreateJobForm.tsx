@@ -1,6 +1,8 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import { useCreateJobForm } from "@/hooks/useCreateJobForm";
 import { CreateJobFormPageOne } from "./CreateJobFormPage1";
 import { CreateJobFormPageTwo } from "./CreateJobFormPage2";
@@ -12,6 +14,10 @@ export function CreateJobForm({ userId, initialData }: { userId: number; initial
   return (
     <main className="flex-1 bg-gray-50 py-8 px-4">
       <div className="max-w-lg mx-auto">
+        <Button variant="ghost" onClick={form.handleBack} className="mb-6">
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          뒤로가기
+        </Button>
         <Card className="p-8">
           <div className="flex items-center gap-3 mb-6">
             <h1 className="page-title">구인구직 글쓰기</h1>
