@@ -19,7 +19,8 @@ export function useCreateJobForm(userId: number, initialData?: JobInitialData) {
   const [locationType, setLocationType] = useState<TradeLocation | "">(initialData?.location_type as TradeLocation ?? "");
   const [locationCustom, setLocationCustom] = useState(initialData?.location_custom ?? "");
   const [deadline, setDeadline] = useState(initialData?.deadline ?? "");
-  const [workHours, setWorkHours] = useState(initialData?.work_hours ?? "");
+  const [workHoursStart, setWorkHoursStart] = useState(() => (initialData?.work_hours ?? "").split(" - ")[0] ?? "");
+  const [workHoursEnd, setWorkHoursEnd] = useState(() => (initialData?.work_hours ?? "").split(" - ")[1] ?? "");
   const [mainTask, setMainTask] = useState(initialData?.main_task ?? "");
   const [preferred, setPreferred] = useState(initialData?.preferred ?? "");
 
@@ -40,7 +41,7 @@ export function useCreateJobForm(userId: number, initialData?: JobInitialData) {
 
 
   const handleNextStep = () => {
-    if (!title || !employeeType || !salary || !locationType || !deadline || !workHours || !mainTask) {
+    if (!title || !employeeType || !salary || !locationType || !deadline || !workHoursStart || !workHoursEnd || !mainTask) {
       alert("필수 항목을 모두 입력해주세요.");
       return;
     }
@@ -69,7 +70,7 @@ export function useCreateJobForm(userId: number, initialData?: JobInitialData) {
       employee_type: employeeType as EmployeeType,
       salary: Number(salary),
       salary_type: salaryType || null,
-      work_hours: workHours,
+      work_hours: `${workHoursStart} - ${workHoursEnd}`,
       company_year: companyYear ? Number(companyYear) : null,
       employee_count: employeeCount ? Number(employeeCount) : null,
       company_address: companyAddress || null,
@@ -170,7 +171,8 @@ export function useCreateJobForm(userId: number, initialData?: JobInitialData) {
     locationType, setLocationType,
     locationCustom, setLocationCustom,
     deadline, setDeadline,
-    workHours, setWorkHours,
+    workHoursStart, setWorkHoursStart,
+    workHoursEnd, setWorkHoursEnd,
     mainTask, setMainTask,
     preferred, setPreferred,
     handleNextStep,

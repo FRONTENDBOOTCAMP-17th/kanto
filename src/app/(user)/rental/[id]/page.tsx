@@ -27,7 +27,7 @@ export default async function RentalDetail({
   const images = (rental.images as string[]) ?? [];
 
   return (
-    <div className="page-container">
+    <div className="page-container pb-12">
       <div className="flex items-center justify-between">
         <BackButton />
         <VerifyAuthor
@@ -37,10 +37,10 @@ export default async function RentalDetail({
           redirectPath="/rental"
         />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-2 md:gap-4 mt-4">
-        <ImageCarousel images={images} />
+      <div className={`grid grid-cols-1 ${images.length > 0 ? "md:grid-cols-2" : ""} items-stretch gap-2 md:gap-4 mt-4`}>
+        {images.length > 0 && <ImageCarousel images={images} />}
 
-        <div className="border border-gray-200 rounded-2xl  p-6 flex flex-col justify-between gap-4">
+        <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-[450px]">
           <AccommondationInfo rental={rental} />
           <hr className="border-gray-200" />
           <RentSellerInfo rental={rental} />

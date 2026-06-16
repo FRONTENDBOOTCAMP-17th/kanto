@@ -50,7 +50,12 @@ export default async function JobPage({
 
         <PopularJobs posts={popularPosts} likedIds={likedIds} currentUserId={currentUserId} />
 
-        <JobList posts={pagedPosts} likedIds={likedIds} currentUserId={currentUserId} />
+        <JobList
+          posts={pagedPosts}
+          likedIds={likedIds}
+          currentUserId={currentUserId}
+          emptyMessage={params.search ? "검색 결과가 없어요" : "등록된 구인공고가 없습니다"}
+        />
 
         {totalPages > 1 && (
           <div className="flex justify-center mt-8">

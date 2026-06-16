@@ -22,12 +22,16 @@ interface CreateJobFormPageOneProps {
   locationType: TradeLocation | ""; setLocationType: (v: TradeLocation | "") => void;
   locationCustom: string; setLocationCustom: (v: string) => void;
   deadline: string; setDeadline: (v: string) => void;
-  workHours: string; setWorkHours: (v: string) => void;
+  workHoursStart: string; setWorkHoursStart: (v: string) => void;
+  workHoursEnd: string; setWorkHoursEnd: (v: string) => void;
   mainTask: string; setMainTask: (v: string) => void;
   preferred: string; setPreferred: (v: string) => void;
   handleNextStep: () => void;
   handleBack: () => void;
 }
+
+const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
+const MINUTES = ["00", "30"];
 
 export function CreateJobFormPageOne({
   title, setTitle,
@@ -37,7 +41,8 @@ export function CreateJobFormPageOne({
   locationType, setLocationType,
   locationCustom, setLocationCustom,
   deadline, setDeadline,
-  workHours, setWorkHours,
+  workHoursStart, setWorkHoursStart,
+  workHoursEnd, setWorkHoursEnd,
   mainTask, setMainTask,
   preferred, setPreferred,
   handleNextStep,
@@ -111,8 +116,26 @@ export function CreateJobFormPageOne({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="workHours">근무 시간 *</Label>
-        <Input id="workHours" placeholder="예: 09:00 - 18:00" value={workHours} onChange={(e) => setWorkHours(e.target.value)} />
+        <Label>근무 시간 *</Label>
+        <div className="flex items-center gap-2">
+          <Select value={workHoursStart.split(":")[0] ?? ""} onValueChange={(h) => setWorkHoursStart(`${h}:${workHoursStart.split(":")[1] ?? "00"}`)}>
+            <SelectTrigger className="w-20"><SelectValue placeholder="시" /></SelectTrigger>
+            <SelectContent>{HOURS.map((h) => <SelectItem key={h} value={h}>{h}시</SelectItem>)}</SelectContent>
+          </Select>
+          <Select value={workHoursStart.split(":")[1] ?? ""} onValueChange={(m) => setWorkHoursStart(`${workHoursStart.split(":")[0] ?? "00"}:${m}`)}>
+            <SelectTrigger className="w-20"><SelectValue placeholder="분" /></SelectTrigger>
+            <SelectContent>{MINUTES.map((m) => <SelectItem key={m} value={m}>{m}분</SelectItem>)}</SelectContent>
+          </Select>
+          <span className="text-gray-500">~</span>
+          <Select value={workHoursEnd.split(":")[0] ?? ""} onValueChange={(h) => setWorkHoursEnd(`${h}:${workHoursEnd.split(":")[1] ?? "00"}`)}>
+            <SelectTrigger className="w-20"><SelectValue placeholder="시" /></SelectTrigger>
+            <SelectContent>{HOURS.map((h) => <SelectItem key={h} value={h}>{h}시</SelectItem>)}</SelectContent>
+          </Select>
+          <Select value={workHoursEnd.split(":")[1] ?? ""} onValueChange={(m) => setWorkHoursEnd(`${workHoursEnd.split(":")[0] ?? "00"}:${m}`)}>
+            <SelectTrigger className="w-20"><SelectValue placeholder="분" /></SelectTrigger>
+            <SelectContent>{MINUTES.map((m) => <SelectItem key={m} value={m}>{m}분</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div className="space-y-2">
