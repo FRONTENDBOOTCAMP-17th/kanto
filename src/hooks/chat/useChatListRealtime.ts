@@ -39,6 +39,12 @@ export function useChatListRealtime({ currentUserId, setChats }: Props) {
             return;
 
           setChats((prev) => {
+            const isUser1 = updated.user_id_1 === currentUserId;
+            const iLeft = isUser1
+              ? updated.user_id_1_left
+              : updated.user_id_2_left;
+            if (!iLeft) return prev.filter((c) => c.id !== updated.id);
+
             const exists = prev.some((c) => c.id === updated.id);
 
             if (!exists) {
