@@ -875,6 +875,7 @@ export type Database = {
           user_id: number
         }[]
       }
+      increment_view_count: { Args: { p_post_id: number }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
       my_role: { Args: never; Returns: string }
       my_user_id: { Args: never; Returns: number }
