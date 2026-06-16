@@ -6,6 +6,7 @@ import AccommondationInfo from "./_components/AccommondationInfo";
 import RentSellerInfo from "./_components/RentSellerInfo";
 import PostInfo from "./_components/PostInfo";
 import VerifyAuthor from "@/components/common/VerifyAuthor";
+import { viewCountUp } from "@/services/view";
 
 export default async function RentalDetail({
   params,
@@ -26,6 +27,7 @@ export default async function RentalDetail({
   }
 
   const images = (rental.images as string[]) ?? [];
+  await viewCountUp(rental.post_id ?? 0);
 
   const postId = rental.post_id ?? 0;
   const { userId, initialLiked, initialReported } = await getUserLikeReportStatus(postId);
@@ -41,7 +43,9 @@ export default async function RentalDetail({
           redirectPath="/rental"
         />
       </div>
-      <div className={`grid grid-cols-1 ${images.length > 0 ? "md:grid-cols-2" : ""} items-stretch gap-2 md:gap-4 mt-4`}>
+      <div
+        className={`grid grid-cols-1 ${images.length > 0 ? "md:grid-cols-2" : ""} items-stretch gap-2 md:gap-4 mt-4`}
+      >
         {images.length > 0 && <ImageCarousel images={images} />}
 
         <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-[450px]">

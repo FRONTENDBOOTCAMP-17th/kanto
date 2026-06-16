@@ -79,7 +79,7 @@ export async function getUsedGoodsItem(postId: number) {
 
   const { data } = await supabase
     .from("used_goods")
-    .select(`*, posts (*, users (id, auth_id, name, avatar_url, created_at))`)
+    .select(`*, posts (*, users (*))`)
     .eq("post_id", postId)
     .single();
 
