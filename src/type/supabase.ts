@@ -237,9 +237,10 @@ export type Database = {
       }
       common_reports: {
         Row: {
+          category: string | null
           created_at: string
+          description: string | null
           id: number
-          reason: string | null
           resolved_at: string | null
           status: string | null
           target_id: number | null
@@ -247,9 +248,10 @@ export type Database = {
           user_id: number | null
         }
         Insert: {
+          category?: string | null
           created_at?: string
+          description?: string | null
           id?: number
-          reason?: string | null
           resolved_at?: string | null
           status?: string | null
           target_id?: number | null
@@ -257,9 +259,10 @@ export type Database = {
           user_id?: number | null
         }
         Update: {
+          category?: string | null
           created_at?: string
+          description?: string | null
           id?: number
-          reason?: string | null
           resolved_at?: string | null
           status?: string | null
           target_id?: number | null
