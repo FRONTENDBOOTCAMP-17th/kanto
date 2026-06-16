@@ -57,18 +57,45 @@ test("K4 구인구직 목록", async ({ page }) => {
   await page.screenshot({ path: `${SHOT}/kanto-K4-job-list.png`, fullPage: true });
 });
 
+async function login(page: Page) {
+  await page.goto("/login");
+  await settle(page, 1000);
+  await page.getByRole("button", { name: "이메일로 로그인" }).click().catch(() => {});
+  await page.locator("#email").fill(EMAIL);
+  await page.locator("#password").fill(PASSWORD);
+  await page.getByRole("button", { name: "로그인", exact: true }).click();
+  await settle(page);
+}
+
 test("K5 로그인 폼 렌더(이메일)", async ({ page }) => {
   await page.goto("/login");
   await settle(page, 1000);
   await page.getByRole("button", { name: "이메일로 로그인" }).click().catch(() => {});
   await page.waitForTimeout(800);
   await page.screenshot({ path: `${SHOT}/kanto-K5-login-form.png`, fullPage: true });
-  // 로그인 제출은 api/login(Upstash Redis 키)에 의존 — 키 없는 환경에선 생략.
-  if (PASSWORD && process.env.RUN_LOGIN === "1") {
-    await page.locator("#email").fill(EMAIL);
-    await page.locator("#password").fill(PASSWORD);
-    await page.getByRole("button", { name: "로그인", exact: true }).click();
-    await settle(page);
-    await page.screenshot({ path: `${SHOT}/kanto-K5b-after-login.png`, fullPage: true });
-  }
+});
+
+// 로그인 1회 후 같은 세션에서 이어서 둘러보기(실제 사용자처럼). 각 화면 상태코드는 콘솔에 기록.
+test("K6 로그인 후 둘러보기(메인·프로필·구인글쓰기·채팅위젯)", async ({ page }) => {
+  test.setTimeout(90_000);
+  await login(page);
+
+  const main = await page.goto("/main");
+  await settle(page);
+  await page.screenshot({ path: `${SHOT}/kanto-K6a-after-login-main.png`, fullPage: true });
+  console.log("after-login /main status:", main?.status());
+
+  const prof = await page.goto("/profile");
+  await settle(page);
+  await page.screenshot({ path: `${SHOT}/kanto-K6b-profile.png`, fullPage: true });
+  console.log("/profile status:", prof?.status());
+
+  const job = await page.goto("/job/create");
+  await settle(page);
+  await page.screenshot({ path: `${SHOT}/kanto-K6c-job-create.png`, fullPage: true });
+  console.log("/job/create status:", job?.status());
+
+  await page.goto("/main");
+  await settle(page);
+  await page.screenshot({ path: `${SHOT}/kanto-K6d-chat-widget.png`, fullPage: true });
 });
