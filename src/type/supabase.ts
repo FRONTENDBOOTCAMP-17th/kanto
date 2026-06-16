@@ -51,8 +51,10 @@ export type Database = {
           last_message_content: string | null
           post_id: number
           user_id_1: number | null
+          user_id_1_left: boolean | null
           user_id_1_unread: number | null
           user_id_2: number | null
+          user_id_2_left: boolean | null
           user_id_2_unread: number | null
         }
         Insert: {
@@ -62,8 +64,10 @@ export type Database = {
           last_message_content?: string | null
           post_id: number
           user_id_1?: number | null
+          user_id_1_left?: boolean | null
           user_id_1_unread?: number | null
           user_id_2?: number | null
+          user_id_2_left?: boolean | null
           user_id_2_unread?: number | null
         }
         Update: {
@@ -73,8 +77,10 @@ export type Database = {
           last_message_content?: string | null
           post_id?: number
           user_id_1?: number | null
+          user_id_1_left?: boolean | null
           user_id_1_unread?: number | null
           user_id_2?: number | null
+          user_id_2_left?: boolean | null
           user_id_2_unread?: number | null
         }
         Relationships: [

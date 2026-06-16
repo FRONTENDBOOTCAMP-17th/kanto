@@ -27,7 +27,9 @@ export default function FloatingChatWidget() {
         useChatStore.getState().clearPendingChat();
         fetch("/api/chat/list")
           .then((r) => r.json())
-          .then((json) => { if (!json.error) setChats(json.chatList); });
+          .then((json) => {
+            if (!json.error) setChats(json.chatList);
+          });
       }
     });
   }, []);
@@ -38,7 +40,9 @@ export default function FloatingChatWidget() {
     } else {
       document.body.style.overflow = "";
     }
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [isOpen]);
 
   useEffect(() => {
@@ -71,11 +75,13 @@ export default function FloatingChatWidget() {
   return (
     <div className="flex flex-col items-end gap-2">
       {isOpen && (
-        <div className="
+        <div
+          className="
           w-80 h-120 flex flex-col bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden
           md:w-80 md:h-120 md:rounded-2xl
           max-md:fixed max-md:inset-0 max-md:w-full max-md:h-full max-md:rounded-none max-md:shadow-none max-md:border-0 max-md:z-40
-        ">
+        "
+        >
           {!currentUserId ? (
             <div className="flex items-center justify-center h-full text-sm text-gray-400">
               로딩중...
@@ -90,7 +96,14 @@ export default function FloatingChatWidget() {
               }}
             />
           ) : view === "room" && selectedChatId !== null ? (
-            <ChatRoom chatId={selectedChatId} onBack={() => setView("list")} />
+            <ChatRoom
+              chatId={selectedChatId}
+              onBack={() => setView("list")}
+              onLeave={() => {
+                setChats((prev) => prev.filter((c) => c.id !== selectedChatId));
+                setView("list")
+              }}
+            />
           ) : null}
         </div>
       )}

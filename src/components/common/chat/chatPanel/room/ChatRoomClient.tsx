@@ -20,6 +20,7 @@ interface Props {
   partner: SellerInfo;
   postTitle: string;
   onBack?: () => void;
+  onLeave?: () => void;
 }
 
 export default function ChatRoomClient({
@@ -30,6 +31,7 @@ export default function ChatRoomClient({
   partner,
   postTitle,
   onBack,
+  onLeave
 }: Props) {
   const router = useRouter();
   const [input, setInput] = useState("");
@@ -75,7 +77,9 @@ export default function ChatRoomClient({
     try {
       const saved = await sendMessageAction({ chatId, postId, content });
       setMessages((prev) =>
-        prev.map((m) => (m.tempId === tempId ? { ...m, id: saved.id, tempId: undefined } : m))
+        prev.map((m) =>
+          m.tempId === tempId ? { ...m, id: saved.id, tempId: undefined } : m,
+        ),
       );
     } catch {
       setMessages((prev) => prev.filter((m) => m.tempId !== tempId));
@@ -91,7 +95,9 @@ export default function ChatRoomClient({
       <ChatHeader
         partner={partner}
         postTitle={postTitle}
+        chatId={chatId}
         onBack={onBack ?? (() => router.back())}
+        onLeave={onLeave}
       />
       <MessageList
         messages={messages}
