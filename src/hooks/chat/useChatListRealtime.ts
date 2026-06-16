@@ -38,8 +38,19 @@ export function useChatListRealtime({ currentUserId, setChats }: Props) {
           )
             return;
 
-          setChats((prev) =>
-            prev
+          setChats((prev) => {
+            const exists = prev.some((c) => c.id === updated.id);
+
+            if (!exists) {
+              fetch("/api/chat/list")
+                .then((r) => r.json())
+                .then((json) => {
+                  if (!json.error) setChats(json.chatList);
+                });
+              return prev;
+            }
+
+            return prev
               .map((c) =>
                 c.id === updated.id
                   ? {
@@ -55,8 +66,8 @@ export function useChatListRealtime({ currentUserId, setChats }: Props) {
                 (b.last_message_at ?? "").localeCompare(
                   a.last_message_at ?? "",
                 ),
-              ),
-          );
+              );
+          });
         },
       )
       .subscribe();

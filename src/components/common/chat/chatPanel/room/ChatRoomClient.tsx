@@ -75,7 +75,9 @@ export default function ChatRoomClient({
     try {
       const saved = await sendMessageAction({ chatId, postId, content });
       setMessages((prev) =>
-        prev.map((m) => (m.tempId === tempId ? { ...m, id: saved.id, tempId: undefined } : m))
+        prev.map((m) =>
+          m.tempId === tempId ? { ...m, id: saved.id, tempId: undefined } : m,
+        ),
       );
     } catch {
       setMessages((prev) => prev.filter((m) => m.tempId !== tempId));
@@ -91,6 +93,7 @@ export default function ChatRoomClient({
       <ChatHeader
         partner={partner}
         postTitle={postTitle}
+        chatId={chatId}
         onBack={onBack ?? (() => router.back())}
       />
       <MessageList

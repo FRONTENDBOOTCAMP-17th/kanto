@@ -5,18 +5,30 @@ import Image from "next/image";
 import { ArrowLeft, MoreVertical } from "lucide-react";
 import type { SellerInfo } from "@/type/user";
 import { useClickOutside } from "@/hooks/useClickOutside";
+import { leaveChatAction } from "./leaveChatAction";
 
 interface Props {
   partner: SellerInfo;
   postTitle: string;
+  chatId: number;
   onBack: () => void;
 }
 
-export default function ChatHeader({ partner, postTitle, onBack }: Props) {
+export default function ChatHeader({
+  partner,
+  postTitle,
+  chatId,
+  onBack,
+}: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(menuRef, () => setMenuOpen(false));
+
+  const handleLeave = async () => {
+    await leaveChatAction(chatId);
+    onBack();
+  };
 
   return (
     <div className="bg-teal-500 px-4 py-3 md:px-3 md:py-2.5 flex items-center gap-2 relative shrink-0">
@@ -46,7 +58,9 @@ export default function ChatHeader({ partner, postTitle, onBack }: Props) {
         <p className="text-white font-semibold text-sm md:text-xs leading-tight truncate">
           {partner.name}
         </p>
-        <p className="text-teal-100 text-xs md:text-[10px] truncate">{postTitle}</p>
+        <p className="text-teal-100 text-xs md:text-[10px] truncate">
+          {postTitle}
+        </p>
       </div>
 
       <div ref={menuRef} className="relative">
@@ -68,7 +82,10 @@ export default function ChatHeader({ partner, postTitle, onBack }: Props) {
             <button className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors border-t border-gray-100">
               차단하기
             </button>
-            <button className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors border-t border-gray-100">
+            <button
+              onClick={handleLeave}
+              className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors border-t border-gray-100"
+            >
               채팅방 나가기
             </button>
           </div>
