@@ -27,18 +27,19 @@ export function GlobalLayout({ children, initialUser }: Props) {
   const isTerms = pathname.startsWith("/terms");
   const isLogin = pathname.startsWith("/login");
   const isSignup = pathname.startsWith("/signup");
-  const isChat = pathname.startsWith("/chat");
-  const isAdmin = pathname.startsWith("/admin");
-
-  const hideShell = isTerms || isLogin || isSignup || isChat || isAdmin;
 
   return (
     <div className="min-h-screen flex flex-col">
-      {!hideShell && <Header />}
-      {!hideShell && <DeletionPendingBanner />}
-      {!hideShell && <ScrollToTop />}
+      {!isTerms && !isLogin && !isSignup && <Header />}
+      {!isTerms && !isLogin && !isSignup && <DeletionPendingBanner />}
+      {!isTerms && !isLogin && !isSignup && (
+        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
+          <ScrollToTop />
+          <FloatingChatWidget />
+        </div>
+      )}
       <main className="flex-1">{children}</main>
-      {!hideShell && <Footer />}
+      {!isTerms && !isLogin && !isSignup && <Footer />}
     </div>
   );
 }
