@@ -17,4 +17,5 @@ export const ROUTES = {
   youthPolicy: "/terms/youth",
   admin: "/admin",
   adminReports: "/admin/reports",
+  paymentReturn: "/payment/return",
 } as const;

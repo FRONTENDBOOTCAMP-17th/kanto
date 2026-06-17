@@ -8,8 +8,8 @@ import { CreateJobFormPageOne } from "./CreateJobFormPage1";
 import { CreateJobFormPageTwo } from "./CreateJobFormPage2";
 import type { JobInitialData } from "@/type/job/jobCreate";
 
-export function CreateJobForm({ userId, initialData }: { userId: number; initialData?: JobInitialData }) {
-  const form = useCreateJobForm(userId, initialData);
+export function CreateJobForm({ userId, userName, initialData }: { userId: number; userName: string; initialData?: JobInitialData }) {
+  const form = useCreateJobForm(userId, userName, initialData);
 
   return (
     <main className="flex-1 bg-gray-50 py-8 px-4">
@@ -72,7 +72,6 @@ export function CreateJobForm({ userId, initialData }: { userId: number; initial
               companyWebsite={form.companyWebsite}
               setCompanyWebsite={form.setCompanyWebsite}
               managerName={form.managerName}
-              setManagerName={form.setManagerName}
               managerTitle={form.managerTitle}
               setManagerTitle={form.setManagerTitle}
               managerPhone={form.managerPhone}
