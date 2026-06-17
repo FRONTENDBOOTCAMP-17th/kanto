@@ -91,7 +91,7 @@ export const NotificationBell = forwardRef<NotificationBellHandle, Props>(
         </Button>
         {isOpen && (
           <NotificationDropdown
-            notifications={notifications}
+            notifications={notifications.filter((n) => !n.is_read)}
             unreadCount={unreadCount}
             onNotificationClick={handleNotificationClick}
             onMarkAllRead={markAllRead}
