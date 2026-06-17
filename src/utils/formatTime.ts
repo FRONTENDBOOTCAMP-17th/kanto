@@ -82,13 +82,3 @@ export function formatDateDivider(
     day: "numeric",
   });
 }
-
-// TODO(i18n): 문장에 단어("가입")가 박혀 있어 메시지 카탈로그(Time 네임스페이스)로
-// 옮긴 뒤 컴포넌트에서 useTranslations로 조합해야 한다. 분담 대상 예시.
-export function formatSellerInfoCreatedAt(date: string | null): string {
-  if (!date) {
-    return `가입일 정보 없음`;
-  }
-  const accession = new Date(date);
-  return `${accession.getFullYear()}년 ${accession.getMonth() + 1}월 가입`;
-}
