@@ -3,13 +3,9 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { AlertTriangle, ArrowRight, Clock, Eye } from "lucide-react";
-import {
-  CATEGORY,
-  CAT_ORDER,
-  daysSince,
-  type Category,
-  type DashboardData,
-} from "../_lib/constants";
+import { CATEGORY, CAT_ORDER } from "../_lib/constants";
+import { daysSince } from "../_lib/utils";
+import type { Category, DashboardData } from "@/type/admin";
 
 function reportStatusFromCount(count: number) {
   if (count >= 5)

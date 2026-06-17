@@ -3,17 +3,13 @@
 import { useMemo, useState } from "react";
 import { Flag, FileText, User, X, ExternalLink } from "lucide-react";
 import {
-  type Report,
-  type Outcome,
-  type ReportType,
-  type Status,
-  type Sanction,
   REASON_STYLE,
   CATEGORY_STYLE,
   STATUS_STYLE,
   SANCTION_LABEL,
   PAGE_SIZE,
 } from "../_lib/constants";
+import type { Report, Outcome, ReportType, Status, Sanction } from "@/type/admin";
 import {
   resolveReport,
   dismissReport,

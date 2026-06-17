@@ -4,10 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { POST_TYPE_LABEL } from "../_lib/constants";
-import {
-  type Report,
-  type Status,
-} from "./_lib/constants";
+import type { Report, Status, Sanction } from "@/type/admin";
 import ReportsClient from "./_components/ReportsClient";
 
 export default async function ReportsPage() {
@@ -97,7 +94,7 @@ export default async function ReportsPage() {
     const description = r.description ?? "";
     const status = (r.status ?? "pending") as Status;
     const reportDate = r.created_at.split("T")[0];
-    const sanctionType = (r.sanction_type as import("./_lib/constants").Sanction | null) ?? null;
+    const sanctionType = (r.sanction_type as Sanction | null) ?? null;
 
     if (r.target_type === "post") {
       const post = r.target_id != null ? postMap.get(r.target_id) : undefined;

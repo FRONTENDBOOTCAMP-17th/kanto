@@ -1,4 +1,4 @@
-# Admin Reports — 신고 처리 및 제재 로직 구현
+# Admin Reports — 신고 처리 및 제재 로직 구현 - THLIMM
 
 ## 개요
 
@@ -36,16 +36,16 @@ src/app/(admin)/admin/reports/
 
 공통 타입과 스타일 토큰을 정의합니다.
 
-| 항목 | 설명 |
-|------|------|
-| `ReportType` | `"post"` \| `"user"` |
-| `Status` | `"pending"` \| `"resolved"` \| `"dismissed"` |
-| `Sanction` | `"none"` \| `"7d"` \| `"30d"` \| `"perm"` |
-| `Outcome` | 처리 결과 객체 (deactivated, sanctionLabel, target, resolvedDate) |
-| `Report` | 신고 데이터 인터페이스 |
-| `REASON_STYLE` | 신고 사유별 색상 맵 |
-| `STATUS_STYLE` | 처리 상태별 라벨·색상 맵 |
-| `SANCTION_LABEL` | 제재 키 → 한국어 라벨 맵 |
+| 항목             | 설명                                                              |
+| ---------------- | ----------------------------------------------------------------- |
+| `ReportType`     | `"post"` \| `"user"`                                              |
+| `Status`         | `"pending"` \| `"resolved"` \| `"dismissed"`                      |
+| `Sanction`       | `"none"` \| `"7d"` \| `"30d"` \| `"perm"`                         |
+| `Outcome`        | 처리 결과 객체 (deactivated, sanctionLabel, target, resolvedDate) |
+| `Report`         | 신고 데이터 인터페이스                                            |
+| `REASON_STYLE`   | 신고 사유별 색상 맵                                               |
+| `STATUS_STYLE`   | 처리 상태별 라벨·색상 맵                                          |
+| `SANCTION_LABEL` | 제재 키 → 한국어 라벨 맵                                          |
 
 **이번 작업에서 `Report` 인터페이스에 추가된 필드:**
 
@@ -98,11 +98,11 @@ sanctionExpiresAt?: string | null // 제재 만료 일시
 
 **이번 작업에서 변경된 부분:**
 
-| 함수 | 변경 내용 |
-|------|-----------|
-| `startEdit()` | 로컬 state 대신 `sel.postDeactivated`, `sel.sanctionType`(DB 값)을 읽어 편집 폼 초기화 |
-| `resolve()` | 서버 액션 `resolveReport()` / `updateReportResolution()` 호출 추가. 낙관적 UI 업데이트는 유지 |
-| `dismiss()` | 서버 액션 `dismissReport()` 호출 추가 |
+| 함수           | 변경 내용                                                                                                                                                           |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `startEdit()`  | 로컬 state 대신 `sel.postDeactivated`, `sel.sanctionType`(DB 값)을 읽어 편집 폼 초기화                                                                              |
+| `resolve()`    | 서버 액션 `resolveReport()` / `updateReportResolution()` 호출 추가. 낙관적 UI 업데이트는 유지                                                                       |
+| `dismiss()`    | 서버 액션 `dismissReport()` 호출 추가                                                                                                                               |
 | 처리 결과 표시 | 로컬 `outcomes` state가 없을 때 DB 값(`sel.postDeactivated`, `sel.sanctionType`, `sel.resolvedAt`)을 fallback으로 사용 — 이전 세션에서 처리된 신고도 결과 표시 가능 |
 
 **낙관적 업데이트 전략:**
@@ -116,33 +116,33 @@ Supabase CLI로 원격 DB에 직접 적용했습니다 (`supabase db query --lin
 
 ### `common_reports` 테이블
 
-| 컬럼 | 타입 | 설명 |
-|------|------|------|
-| `post_deactivated` | `BOOLEAN NOT NULL DEFAULT FALSE` | 게시글 비활성화 여부 |
-| `sanction_type` | `TEXT CHECK IN ('7d','30d','perm')` | 적용된 제재 종류 |
-| `sanction_expires_at` | `TIMESTAMPTZ` | 제재 만료 일시 |
+| 컬럼                  | 타입                                | 설명                 |
+| --------------------- | ----------------------------------- | -------------------- |
+| `post_deactivated`    | `BOOLEAN NOT NULL DEFAULT FALSE`    | 게시글 비활성화 여부 |
+| `sanction_type`       | `TEXT CHECK IN ('7d','30d','perm')` | 적용된 제재 종류     |
+| `sanction_expires_at` | `TIMESTAMPTZ`                       | 제재 만료 일시       |
 
 ### `users` 테이블
 
-| 컬럼 | 타입 | 설명 |
-|------|------|------|
+| 컬럼              | 타입          | 설명                                                 |
+| ----------------- | ------------- | ---------------------------------------------------- |
 | `suspended_until` | `TIMESTAMPTZ` | 정지 만료 일시 (`null`=정상, `9999-12-31`=영구 정지) |
 
 ---
 
 ## 완료된 기능
 
-| 기능 | 설명 |
-|------|------|
-| 신고 처리완료 | 처리 결과(게시글 비활성화, 유저 제재)를 DB에 저장 |
-| 신고 무시 | `common_reports.status = 'dismissed'` 처리 |
-| 처리 결과 수정 | 이미 처리된 신고를 다시 열어 제재/비활성화 변경 가능 |
-| 게시글 비활성화 | `posts.status = 'inactive'` → 다른 사용자에게 노출 중단 |
-| 게시글 재활성화 | 수정 시 비활성화 취소 → `posts.status = 'active'` 복원 |
-| 유저 정지 저장 | `users.suspended_until` 에 정지 만료 일시 기록 (7일/30일/영구) |
-| 제재 해제/변경 | 수정 시 `suspended_until` 재설정 또는 `null` 로 초기화 |
-| 처리 결과 표시 | 드로어에서 이전 세션 처리 결과도 DB 값으로 표시 |
-| DB 마이그레이션 | Supabase CLI로 원격 DB에 신규 컬럼 4개 직접 적용 |
+| 기능            | 설명                                                           |
+| --------------- | -------------------------------------------------------------- |
+| 신고 처리완료   | 처리 결과(게시글 비활성화, 유저 제재)를 DB에 저장              |
+| 신고 무시       | `common_reports.status = 'dismissed'` 처리                     |
+| 처리 결과 수정  | 이미 처리된 신고를 다시 열어 제재/비활성화 변경 가능           |
+| 게시글 비활성화 | `posts.status = 'inactive'` → 다른 사용자에게 노출 중단        |
+| 게시글 재활성화 | 수정 시 비활성화 취소 → `posts.status = 'active'` 복원         |
+| 유저 정지 저장  | `users.suspended_until` 에 정지 만료 일시 기록 (7일/30일/영구) |
+| 제재 해제/변경  | 수정 시 `suspended_until` 재설정 또는 `null` 로 초기화         |
+| 처리 결과 표시  | 드로어에서 이전 세션 처리 결과도 DB 값으로 표시                |
+| DB 마이그레이션 | Supabase CLI로 원격 DB에 신규 컬럼 4개 직접 적용               |
 
 ---
 
@@ -162,20 +162,23 @@ const { data: userRow } = await supabase
   .eq("auth_id", user.id)
   .single();
 
-if (userRow?.suspended_until && new Date(userRow.suspended_until) > new Date()) {
+if (
+  userRow?.suspended_until &&
+  new Date(userRow.suspended_until) > new Date()
+) {
   throw new Error("계정이 정지 상태입니다.");
 }
 ```
 
 **체크가 필요한 파일 목록:**
 
-| 파일 | 게시글 유형 |
-|------|------------|
-| `src/hooks/usedgoods/useCreateUsedGoodsForm.ts` | 중고거래 글쓰기 |
-| `src/hooks/useCreateJobForm.ts` | 구인구직 글쓰기 |
-| `src/app/(user)/rental/create/_components/RentalCreateForm.tsx` | 방렌트 글쓰기 |
-| 커뮤니티 글쓰기 훅/폼 (확인 필요) | 커뮤니티 글쓰기 |
-| 댓글 작성 로직 (확인 필요) | 댓글 |
+| 파일                                                            | 게시글 유형     |
+| --------------------------------------------------------------- | --------------- |
+| `src/hooks/usedgoods/useCreateUsedGoodsForm.ts`                 | 중고거래 글쓰기 |
+| `src/hooks/useCreateJobForm.ts`                                 | 구인구직 글쓰기 |
+| `src/app/(user)/rental/create/_components/RentalCreateForm.tsx` | 방렌트 글쓰기   |
+| 커뮤니티 글쓰기 훅/폼 (확인 필요)                               | 커뮤니티 글쓰기 |
+| 댓글 작성 로직 (확인 필요)                                      | 댓글            |
 
 > 현재 글쓰기가 클라이언트 사이드에서 직접 Supabase에 insert 하는 구조이므로,  
 > 각 훅/폼에서 insert 전에 위 체크를 추가하는 방식이 가장 빠릅니다.  
@@ -190,11 +193,11 @@ if (userRow?.suspended_until && new Date(userRow.suspended_until) > new Date()) 
 
 **검토가 필요한 동작:**
 
-| 접근 주체 | 현재 동작 | 권장 동작 |
-|-----------|-----------|-----------|
-| 일반 유저 | 404 | "비활성화된 게시글입니다" 안내 페이지 표시 |
-| 게시글 작성자 | 404 | 동일하게 안내 or 본인 게시글임을 알리는 메시지 |
-| 어드민 | 404 | 게시글 내용을 볼 수 있어야 할 수 있음 |
+| 접근 주체     | 현재 동작 | 권장 동작                                      |
+| ------------- | --------- | ---------------------------------------------- |
+| 일반 유저     | 404       | "비활성화된 게시글입니다" 안내 페이지 표시     |
+| 게시글 작성자 | 404       | 동일하게 안내 or 본인 게시글임을 알리는 메시지 |
+| 어드민        | 404       | 게시글 내용을 볼 수 있어야 할 수 있음          |
 
 **작업 위치:**  
 각 게시글 상세 페이지의 서버 컴포넌트(`page.tsx`)에서 `notFound()` 대신 상태에 따른 분기 처리 추가 필요.

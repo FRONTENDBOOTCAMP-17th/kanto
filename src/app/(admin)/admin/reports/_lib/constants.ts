@@ -1,30 +1,4 @@
-export type ReportType = "post" | "user";
-export type Status = "pending" | "resolved" | "dismissed";
-export type Sanction = "none" | "7d" | "30d" | "perm";
-export interface Outcome {
-  deactivated: boolean;
-  sanctionLabel: string;
-  target: string;
-  resolvedDate: string;
-}
-
-export interface Report {
-  id: number;
-  type: ReportType;
-  targetId: number;
-  authorId?: number;
-  targetName: string;
-  category?: string;
-  author?: string;
-  reason: string;
-  description: string;
-  reportDate: string;
-  status: Status;
-  resolvedAt?: string | null;
-  postDeactivated?: boolean;
-  sanctionType?: Sanction | null;
-  sanctionExpiresAt?: string | null;
-}
+import type { Status, Sanction } from "@/type/admin";
 
 export const REASON_STYLE: Record<string, { fg: string; bg: string }> = {
   욕설: { fg: "#ea580c", bg: "#fff7ed" },
@@ -57,13 +31,16 @@ export const SANCTION_LABEL: Record<Exclude<Sanction, "none">, string> = {
 
 export const PAGE_SIZE = 12;
 
-export function normalizeReportReason(cat: string): Reason {
+export function normalizeReportReason(cat: string): string {
   const c = cat.trim();
   if (c.includes("욕설") || c.includes("도배")) return "욕설 및 도배";
   if (c.includes("사기")) return "사기";
   if (c.includes("허위")) return "허위 게시글";
   if (c.includes("불법")) return "불법 게시물";
-  if (c.includes("성") && (c.includes("범죄") || c.includes("희롱") || c.includes("추행")))
+  if (
+    c.includes("성") &&
+    (c.includes("범죄") || c.includes("희롱") || c.includes("추행"))
+  )
     return "성적 콘텐츠 / 성범죄";
   if (c.includes("개인정보")) return "개인정보 침해";
   return "기타";

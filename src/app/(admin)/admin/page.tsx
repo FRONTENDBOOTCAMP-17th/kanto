@@ -5,13 +5,9 @@ import {
   POST_TYPE_LABEL,
   CAT_ORDER,
   REPORT_COLORS,
-  normalizeReason,
-  fillDailyGaps,
-  daysSince,
-  type Category,
-  type ReportedUser,
-  type ReportedPost,
 } from "./_lib/constants";
+import { normalizeReason, fillDailyGaps, daysSince } from "./_lib/utils";
+import type { Category, ReportedUser, ReportedPost } from "@/type/admin";
 import HeaderSection from "./_components/HeaderSection";
 import UrgentReportBanner from "./_components/UrgentReportBanner";
 import KpiCards from "./_components/KpiCards";
