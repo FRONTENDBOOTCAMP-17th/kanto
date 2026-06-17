@@ -1,18 +1,24 @@
 "use client";
 
+import { useState } from "react";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ResponsiveSelect } from "@/components/ui/responsive-select";
+import { JobPreferredModal } from "./JobPreferredModal";
 import { TRADE_LOCATIONS, type TradeLocation } from "@/type/location";
-import { EMPLOYEE_TYPES, SALARY_TYPES, type EmployeeType, type SalaryType } from "@/type/job/jobCreate";
+import {
+  EMPLOYEE_TYPES,
+  SALARY_TYPES,
+  WORK_DAYS,
+  DAY_PRESETS,
+  PREFERRED_LABELS,
+  type EmployeeType,
+  type SalaryType,
+} from "@/type/job/jobCreate";
 
 interface CreateJobFormPageOneProps {
   title: string; setTitle: (v: string) => void;
@@ -24,14 +30,23 @@ interface CreateJobFormPageOneProps {
   deadline: string; setDeadline: (v: string) => void;
   workHoursStart: string; setWorkHoursStart: (v: string) => void;
   workHoursEnd: string; setWorkHoursEnd: (v: string) => void;
+  workDays: string[]; setWorkDays: (v: string[]) => void;
+  isTimeNegotiable: boolean; setIsTimeNegotiable: (v: boolean) => void;
   mainTask: string; setMainTask: (v: string) => void;
   preferred: string; setPreferred: (v: string) => void;
+  preferredTags: string[]; setPreferredTags: (v: string[]) => void;
   handleNextStep: () => void;
   handleBack: () => void;
 }
 
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
 const MINUTES = ["00", "30"];
+
+const EMPLOYEE_OPTIONS = EMPLOYEE_TYPES.map((t) => ({ value: t.id, label: t.label }));
+const SALARY_OPTIONS = SALARY_TYPES.map((t) => ({ value: t, label: t }));
+const LOCATION_OPTIONS = TRADE_LOCATIONS.map((l) => ({ value: l, label: l }));
+const HOUR_OPTIONS = HOURS.map((h) => ({ value: h, label: `${h}시` }));
+const MINUTE_OPTIONS = MINUTES.map((m) => ({ value: m, label: `${m}분` }));
 
 export function CreateJobFormPageOne({
   title, setTitle,
@@ -43,11 +58,24 @@ export function CreateJobFormPageOne({
   deadline, setDeadline,
   workHoursStart, setWorkHoursStart,
   workHoursEnd, setWorkHoursEnd,
+  workDays, setWorkDays,
+  isTimeNegotiable, setIsTimeNegotiable,
   mainTask, setMainTask,
   preferred, setPreferred,
+  preferredTags, setPreferredTags,
   handleNextStep,
   handleBack,
 }: CreateJobFormPageOneProps) {
+  const [showPreferredModal, setShowPreferredModal] = useState(false);
+
+  const toggleDay = (day: string) =>
+    setWorkDays(workDays.includes(day) ? workDays.filter((d) => d !== day) : [...workDays, day]);
+
+  const toggleTag = (key: string) =>
+    setPreferredTags(
+      preferredTags.includes(key) ? preferredTags.filter((t) => t !== key) : [...preferredTags, key],
+    );
+
   return (
     <div className="space-y-4">
       <p className="text-gray-500">채용 공고의 기본 정보를 입력해주세요</p>
@@ -60,14 +88,12 @@ export function CreateJobFormPageOne({
 
       <div className="space-y-2">
         <Label>고용 형태 *</Label>
-        <Select value={employeeType} onValueChange={(v) => setEmployeeType(v as EmployeeType)}>
-          <SelectTrigger><SelectValue placeholder="고용 형태를 선택하세요" /></SelectTrigger>
-          <SelectContent>
-            {EMPLOYEE_TYPES.map((type) => (
-              <SelectItem key={type.id} value={type.id}>{type.label}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <ResponsiveSelect
+          value={employeeType}
+          onValueChange={(v) => setEmployeeType(v as EmployeeType)}
+          options={EMPLOYEE_OPTIONS}
+          placeholder="고용 형태를 선택하세요"
+        />
       </div>
 
       <div className="space-y-2">
@@ -84,27 +110,24 @@ export function CreateJobFormPageOne({
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">PHP</span>
           </div>
-          <Select value={salaryType} onValueChange={(v) => setSalaryType(v as SalaryType)}>
-            <SelectTrigger className="w-24"><SelectValue placeholder="단위" /></SelectTrigger>
-            <SelectContent>
-              {SALARY_TYPES.map((type) => (
-                <SelectItem key={type} value={type}>{type}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <ResponsiveSelect
+            value={salaryType}
+            onValueChange={(v) => setSalaryType(v as SalaryType)}
+            options={SALARY_OPTIONS}
+            placeholder="단위"
+            className="w-24"
+          />
         </div>
       </div>
 
       <div className="space-y-2">
         <Label>근무 지역 *</Label>
-        <Select value={locationType} onValueChange={(v) => setLocationType(v as TradeLocation)}>
-          <SelectTrigger><SelectValue placeholder="지역을 선택하세요" /></SelectTrigger>
-          <SelectContent>
-            {TRADE_LOCATIONS.map((loc) => (
-              <SelectItem key={loc} value={loc}>{loc}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <ResponsiveSelect
+          value={locationType}
+          onValueChange={(v) => setLocationType(v as TradeLocation)}
+          options={LOCATION_OPTIONS}
+          placeholder="지역을 선택하세요"
+        />
         {locationType === "그 외 지역" && (
           <Input placeholder="상세 지역을 입력하세요" value={locationCustom} onChange={(e) => setLocationCustom(e.target.value)} />
         )}
@@ -116,42 +139,138 @@ export function CreateJobFormPageOne({
       </div>
 
       <div className="space-y-2">
-        <Label>근무 시간 *</Label>
+        <div className="flex items-center justify-between">
+          <Label>근무 시간 *</Label>
+          <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+            <Checkbox checked={isTimeNegotiable} onCheckedChange={(v) => setIsTimeNegotiable(v === true)} />
+            시간 협의
+          </label>
+        </div>
         <div className="flex items-center gap-2">
-          <Select value={workHoursStart.split(":")[0] ?? ""} onValueChange={(h) => setWorkHoursStart(`${h}:${workHoursStart.split(":")[1] ?? "00"}`)}>
-            <SelectTrigger className="w-20"><SelectValue placeholder="시" /></SelectTrigger>
-            <SelectContent>{HOURS.map((h) => <SelectItem key={h} value={h}>{h}시</SelectItem>)}</SelectContent>
-          </Select>
-          <Select value={workHoursStart.split(":")[1] ?? ""} onValueChange={(m) => setWorkHoursStart(`${workHoursStart.split(":")[0] ?? "00"}:${m}`)}>
-            <SelectTrigger className="w-20"><SelectValue placeholder="분" /></SelectTrigger>
-            <SelectContent>{MINUTES.map((m) => <SelectItem key={m} value={m}>{m}분</SelectItem>)}</SelectContent>
-          </Select>
+          <ResponsiveSelect
+            className="w-20"
+            disabled={isTimeNegotiable}
+            value={workHoursStart.split(":")[0] ?? ""}
+            onValueChange={(h) => setWorkHoursStart(`${h}:${workHoursStart.split(":")[1] ?? "00"}`)}
+            options={HOUR_OPTIONS}
+            placeholder="시"
+          />
+          <ResponsiveSelect
+            className="w-20"
+            disabled={isTimeNegotiable}
+            value={workHoursStart.split(":")[1] ?? ""}
+            onValueChange={(m) => setWorkHoursStart(`${workHoursStart.split(":")[0] ?? "00"}:${m}`)}
+            options={MINUTE_OPTIONS}
+            placeholder="분"
+          />
           <span className="text-gray-500">~</span>
-          <Select value={workHoursEnd.split(":")[0] ?? ""} onValueChange={(h) => setWorkHoursEnd(`${h}:${workHoursEnd.split(":")[1] ?? "00"}`)}>
-            <SelectTrigger className="w-20"><SelectValue placeholder="시" /></SelectTrigger>
-            <SelectContent>{HOURS.map((h) => <SelectItem key={h} value={h}>{h}시</SelectItem>)}</SelectContent>
-          </Select>
-          <Select value={workHoursEnd.split(":")[1] ?? ""} onValueChange={(m) => setWorkHoursEnd(`${workHoursEnd.split(":")[0] ?? "00"}:${m}`)}>
-            <SelectTrigger className="w-20"><SelectValue placeholder="분" /></SelectTrigger>
-            <SelectContent>{MINUTES.map((m) => <SelectItem key={m} value={m}>{m}분</SelectItem>)}</SelectContent>
-          </Select>
+          <ResponsiveSelect
+            className="w-20"
+            disabled={isTimeNegotiable}
+            value={workHoursEnd.split(":")[0] ?? ""}
+            onValueChange={(h) => setWorkHoursEnd(`${h}:${workHoursEnd.split(":")[1] ?? "00"}`)}
+            options={HOUR_OPTIONS}
+            placeholder="시"
+          />
+          <ResponsiveSelect
+            className="w-20"
+            disabled={isTimeNegotiable}
+            value={workHoursEnd.split(":")[1] ?? ""}
+            onValueChange={(m) => setWorkHoursEnd(`${workHoursEnd.split(":")[0] ?? "00"}:${m}`)}
+            options={MINUTE_OPTIONS}
+            placeholder="분"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>근무 요일 *</Label>
+        <div className="flex flex-wrap gap-2">
+          {DAY_PRESETS.map((preset) => (
+            <button
+              key={preset.id}
+              type="button"
+              disabled={isTimeNegotiable}
+              onClick={() => setWorkDays([...preset.days])}
+              className="px-3 py-1 rounded-full border border-gray-300 text-sm text-gray-600 transition-colors hover:border-teal-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {preset.id}
+            </button>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {WORK_DAYS.map((day) => {
+            const selected = workDays.includes(day);
+            return (
+              <button
+                key={day}
+                type="button"
+                disabled={isTimeNegotiable}
+                onClick={() => toggleDay(day)}
+                className={`w-9 h-9 rounded-full border text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                  selected ? "bg-teal-600 text-white border-teal-600" : "bg-white text-gray-700 border-gray-300"
+                }`}
+              >
+                {day}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="mainTask">주요 업무 *</Label>
-        <Textarea id="mainTask" placeholder="주요 업무를 입력하세요" value={mainTask} onChange={(e) => setMainTask(e.target.value)} rows={4} />
+        <Textarea id="mainTask" placeholder="주요 업무를 입력하세요" value={mainTask} onChange={(e) => setMainTask(e.target.value)} className="resize-none min-h-28" />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="preferred">우대 사항</Label>
-        <Textarea id="preferred" placeholder="우대 사항을 입력하세요" value={preferred} onChange={(e) => setPreferred(e.target.value)} rows={3} />
+        <Label>우대 사항</Label>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setShowPreferredModal(true)}
+          className="w-full justify-start font-normal text-gray-600"
+        >
+          {preferredTags.length > 0 ? `${preferredTags.length}개 선택됨` : "우대 사항 선택"}
+        </Button>
+        {preferredTags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {preferredTags.map((key) => (
+              <span
+                key={key}
+                className="flex items-center gap-1 rounded-full bg-teal-50 py-1 pl-3 pr-2 text-sm text-teal-700"
+              >
+                {PREFERRED_LABELS[key] ?? key}
+                <button
+                  type="button"
+                  onClick={() => toggleTag(key)}
+                  aria-label="제거"
+                  className="transition-colors hover:text-teal-900"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+        <Input
+          placeholder="그 외 우대 사항을 직접 입력하세요"
+          value={preferred}
+          onChange={(e) => setPreferred(e.target.value)}
+        />
       </div>
 
       <div className="flex gap-3 pt-2">
         <Button type="button" variant="outline" onClick={handleBack} className="flex-1">취소</Button>
         <Button type="button" variant="teal" onClick={handleNextStep} className="flex-1">다음 단계</Button>
       </div>
+
+      <JobPreferredModal
+        isOpen={showPreferredModal}
+        onClose={() => setShowPreferredModal(false)}
+        selected={preferredTags}
+        onToggle={toggleTag}
+      />
     </div>
   );
 }

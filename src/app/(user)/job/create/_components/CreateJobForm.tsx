@@ -46,10 +46,16 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
               setWorkHoursStart={form.setWorkHoursStart}
               workHoursEnd={form.workHoursEnd}
               setWorkHoursEnd={form.setWorkHoursEnd}
+              workDays={form.workDays}
+              setWorkDays={form.setWorkDays}
+              isTimeNegotiable={form.isTimeNegotiable}
+              setIsTimeNegotiable={form.setIsTimeNegotiable}
               mainTask={form.mainTask}
               setMainTask={form.setMainTask}
               preferred={form.preferred}
               setPreferred={form.setPreferred}
+              preferredTags={form.preferredTags}
+              setPreferredTags={form.setPreferredTags}
               handleNextStep={form.handleNextStep}
               handleBack={form.handleBack}
             />

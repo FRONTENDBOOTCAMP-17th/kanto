@@ -67,7 +67,7 @@ export function CreateJobFormPageTwo({
         </div>
         <div className="space-y-2">
           <Label htmlFor="companyIntro">회사 소개 *</Label>
-          <Textarea id="companyIntro" placeholder="회사에 대한 소개를 입력하세요" value={companyIntro} onChange={(e) => setCompanyIntro(e.target.value)} rows={3} />
+          <Textarea id="companyIntro" placeholder="회사에 대한 소개를 입력하세요" value={companyIntro} onChange={(e) => setCompanyIntro(e.target.value)} className="resize-none min-h-28" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="industry">업종</Label>

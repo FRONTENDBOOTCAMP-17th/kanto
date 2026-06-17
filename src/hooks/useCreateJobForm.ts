@@ -21,8 +21,11 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   const [deadline, setDeadline] = useState(initialData?.deadline ?? "");
   const [workHoursStart, setWorkHoursStart] = useState(() => (initialData?.work_hours ?? "").split(" - ")[0] ?? "");
   const [workHoursEnd, setWorkHoursEnd] = useState(() => (initialData?.work_hours ?? "").split(" - ")[1] ?? "");
+  const [workDays, setWorkDays] = useState<string[]>(initialData?.work_days ?? []);
+  const [isTimeNegotiable, setIsTimeNegotiable] = useState(initialData?.is_time_negotiable ?? false);
   const [mainTask, setMainTask] = useState(initialData?.main_task ?? "");
   const [preferred, setPreferred] = useState(initialData?.preferred ?? "");
+  const [preferredTags, setPreferredTags] = useState<string[]>(initialData?.preferred_tags ?? []);
 
   // 2단계: 회사 및 담당자 정보
   const [companyName, setCompanyName] = useState(initialData?.company_name ?? "");
@@ -41,8 +44,12 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
 
 
   const handleNextStep = () => {
-    if (!title || !employeeType || !salary || !locationType || !deadline || !workHoursStart || !workHoursEnd || !mainTask) {
+    if (!title || !employeeType || !salary || !locationType || !deadline || !mainTask) {
       alert("필수 항목을 모두 입력해주세요.");
+      return;
+    }
+    if (!isTimeNegotiable && (!workHoursStart || !workHoursEnd || workDays.length === 0)) {
+      alert("근무 시간과 근무 요일을 입력하거나 시간 협의를 선택해주세요.");
       return;
     }
     if (locationType === "그 외 지역" && !locationCustom) {
@@ -70,12 +77,15 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       employee_type: employeeType as EmployeeType,
       salary: Number(salary),
       salary_type: salaryType || null,
-      work_hours: `${workHoursStart} - ${workHoursEnd}`,
+      work_hours: isTimeNegotiable ? null : `${workHoursStart} - ${workHoursEnd}`,
+      work_days: isTimeNegotiable ? null : workDays,
+      is_time_negotiable: isTimeNegotiable,
       company_year: companyYear ? Number(companyYear) : null,
       employee_count: employeeCount ? Number(employeeCount) : null,
       company_address: companyAddress || null,
       company_website: companyWebsite || null,
       preferred: preferred || null,
+      preferred_tags: preferredTags.length > 0 ? preferredTags : null,
       deadline,
       manager_name: managerName,
       manager_title: managerTitle || null,
@@ -173,8 +183,11 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     deadline, setDeadline,
     workHoursStart, setWorkHoursStart,
     workHoursEnd, setWorkHoursEnd,
+    workDays, setWorkDays,
+    isTimeNegotiable, setIsTimeNegotiable,
     mainTask, setMainTask,
     preferred, setPreferred,
+    preferredTags, setPreferredTags,
     handleNextStep,
     // 2단계
     companyName, setCompanyName,

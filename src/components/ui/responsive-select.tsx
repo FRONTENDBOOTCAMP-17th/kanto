@@ -1,0 +1,155 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { ChevronDown, X } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+interface Option {
+  value: string;
+  label: string;
+}
+
+interface Props {
+  value: string;
+  onValueChange: (value: string) => void;
+  options: Option[];
+  placeholder?: string;
+  disabled?: boolean;
+  /** 트리거 너비 등 추가 클래스 */
+  className?: string;
+  /** 모바일 바텀시트 제목 (미지정 시 placeholder 사용) */
+  label?: string;
+}
+
+/**
+ * md 미만에서는 검색 필터와 동일한 바텀시트 드롭다운을, md 이상에서는 Radix Select를 사용한다.
+ * Radix 드롭다운은 항목이 많아도 max-h-60 내에서 스크롤된다.
+ */
+export function ResponsiveSelect({
+  value,
+  onValueChange,
+  options,
+  placeholder,
+  disabled,
+  className,
+  label,
+}: Props) {
+  const [mounted, setMounted] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
+  const selectedLabel = options.find((o) => o.value === value)?.label;
+
+  return (
+    <>
+      {/* 모바일: 필드형 트리거 + 바텀시트 */}
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setMobileOpen(true)}
+        className={`flex h-9 items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:hidden ${
+          className ?? "w-full"
+        }`}
+      >
+        <span className={`truncate ${selectedLabel ? "" : "text-muted-foreground"}`}>
+          {selectedLabel ?? placeholder}
+        </span>
+        <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
+      </button>
+
+      {/* 데스크탑: Radix Select */}
+      <Select value={value} onValueChange={onValueChange} disabled={disabled}>
+        <SelectTrigger className={`hidden md:flex ${className ?? ""}`}>
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent className="max-h-60">
+          {options.map((o) => (
+            <SelectItem key={o.value} value={o.value}>
+              {o.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      {/* 모바일 바텀시트 */}
+      {mounted &&
+        mobileOpen &&
+        createPortal(
+          <div className="fixed inset-0 z-100 flex flex-col justify-end md:hidden">
+            <div
+              className="absolute inset-0 bg-black/40"
+              onClick={() => setMobileOpen(false)}
+            />
+            <div className="relative flex max-h-[70vh] w-full flex-col rounded-t-3xl bg-white pb-8">
+              <div className="flex justify-center pt-3 pb-1">
+                <div className="h-1 w-10 rounded-full bg-gray-300" />
+              </div>
+              <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+                <span className="text-lg font-bold text-gray-900">
+                  {label ?? placeholder ?? "선택"}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setMobileOpen(false)}
+                  aria-label="닫기"
+                  className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-100"
+                >
+                  <X className="h-5 w-5 text-gray-500" />
+                </button>
+              </div>
+              <div className="overflow-y-auto px-4 py-3">
+                {options.map((o) => (
+                  <button
+                    key={o.value}
+                    type="button"
+                    onClick={() => {
+                      onValueChange(o.value);
+                      setMobileOpen(false);
+                    }}
+                    className={`mb-2 flex w-full items-center justify-between rounded-xl px-5 py-4 transition-colors ${
+                      value === o.value
+                        ? "bg-teal-50 text-teal-600"
+                        : "text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    <span className={`text-base ${value === o.value ? "font-semibold" : ""}`}>
+                      {o.label}
+                    </span>
+                    {value === o.value && (
+                      <div className="flex h-5 w-5 items-center justify-center rounded-full bg-teal-500">
+                        <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 12 12">
+                          <path
+                            d="M2 6l3 3 5-5"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
+    </>
+  );
+}
