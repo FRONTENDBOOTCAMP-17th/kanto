@@ -43,17 +43,28 @@ export default async function RentalDetail({
           redirectPath="/rental"
         />
       </div>
-      <div
-        className={`grid grid-cols-1 ${images.length > 0 ? "md:grid-cols-2" : ""} items-stretch gap-2 md:gap-4 mt-4`}
-      >
-        {images.length > 0 && <ImageCarousel images={images} />}
-
-        <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-112.5">
-          <AccommondationInfo rental={rental} />
-          <hr className="border-gray-200" />
-          <RentSellerInfo rental={rental} />
+      {images.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 items-stretch gap-2 md:gap-4 mt-4">
+          <ImageCarousel images={images} />
+          <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-112.5">
+            <AccommondationInfo rental={rental} />
+            <hr className="border-gray-200" />
+            <RentSellerInfo rental={rental} />
+          </div>
         </div>
-      </div>
+      ) : (
+        /* 이미지 없을 때: 구인구직처럼 2열 나란히 */
+        <div className="border border-gray-200 rounded-2xl overflow-hidden mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
+            <div className="p-6 flex flex-col gap-4">
+              <AccommondationInfo rental={rental} />
+            </div>
+            <div className="p-6 flex flex-col gap-4">
+              <RentSellerInfo rental={rental} />
+            </div>
+          </div>
+        </div>
+      )}
       <PostInfo
         rental={rental}
         userId={userId}
