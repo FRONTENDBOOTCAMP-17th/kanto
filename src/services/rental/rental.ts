@@ -1,7 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import type { RentalWithPost } from "@/type/rental/rentalList";
 import type { RentalWithPost as RentalDetail } from "@/type/rental/rentalDetail";
-import { supabase } from "@/lib/supabase";
 
 const RENTAL_DETAIL_SELECT =
   `*, posts(*, users(id, name, email, avatar_url, auth_id, provider, role, post_count, created_at, updated_at))` as const;
@@ -33,7 +32,9 @@ interface RentalListFilter {
   userId?: number;
 }
 
-export async function getRentalList(filter?: RentalListFilter): Promise<RentalWithPost[]> {
+export async function getRentalList(
+  filter?: RentalListFilter,
+): Promise<RentalWithPost[]> {
   const supabase = await createClient();
 
   let query = supabase
@@ -92,7 +93,7 @@ interface RentalCreate {
 }
 
 export async function getRentalCreate(input: RentalCreate) {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createClient();
 
   const {
     data: { user },

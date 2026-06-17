@@ -1,4 +1,6 @@
-import { WriteButton } from "@/components/common/WriteButton";
+import Link from "next/link";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 import { getUsedGoodsList } from "@/services/usedGoods/usedGoods";
 import { getLikeList } from "@/services/likes";
@@ -57,7 +59,7 @@ export default async function UsedGoodsPage({
         </div>
 
         <UsedGoodsFilters
-          defaultSearch={params.search ?? ""}
+          givenSearch={params.search ?? ""}
           defaultCategory={params.category ?? "all"}
           defaultLocation={params.location ?? "all"}
         />
