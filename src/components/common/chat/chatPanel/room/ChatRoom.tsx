@@ -4,6 +4,7 @@ import ChatRoomClient from "./ChatRoomClient";
 import { MessageWithSender } from "@/type/chat/message";
 import { SellerInfo } from "@/type/user";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface ChatRoomData {
   messages: MessageWithSender[];
@@ -23,6 +24,7 @@ export default function ChatRoom({
   onBack?: () => void;
   onLeave?: () => void;
 }) {
+  const t = useTranslations("Chat");
   const [data, setData] = useState<ChatRoomData | null>(null);
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export default function ChatRoom({
   if (!data)
     return (
       <div className="flex items-center justify-center h-full text-sm text-gray-400">
-        로딩중...
+        {t("loading")}
       </div>
     );
 
