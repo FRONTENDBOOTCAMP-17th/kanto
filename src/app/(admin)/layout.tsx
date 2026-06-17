@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   FileText,
@@ -13,11 +15,11 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { icon: LayoutDashboard, label: "대시보드", active: true },
-  { icon: FileText, label: "글 관리" },
-  { icon: Users, label: "유저 관리" },
-  { icon: Flag, label: "신고 내역", badge: 12 },
-  { icon: MessageSquare, label: "채팅기록" },
+  { icon: LayoutDashboard, label: "대시보드", href: "/admin" },
+  { icon: FileText, label: "글 관리", href: null },
+  { icon: Users, label: "유저 관리", href: "/admin/users" },
+  { icon: Flag, label: "신고 내역", href: "/admin/reports" },
+  { icon: MessageSquare, label: "채팅기록", href: null },
 ];
 
 export default function AdminLayout({
@@ -26,6 +28,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const [navOpen, setNavOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <div className="flex min-h-screen bg-[#f5f7f8] text-gray-900">
@@ -89,26 +92,41 @@ export default function AdminLayout({
           운영 메뉴
         </div>
         <nav className="flex flex-col gap-[3px]">
-          {navItems.map(({ icon: Icon, label, active, badge }) => (
-            <button
-              key={label}
-              onClick={() => setNavOpen(false)}
-              className={[
-                "flex items-center gap-3 rounded-[11px] px-[13px] py-[11px] text-left text-[14.5px]",
-                active
-                  ? "bg-teal-50 font-semibold text-teal-600"
-                  : "font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900",
-              ].join(" ")}
-            >
-              <Icon className="h-[19px] w-[19px]" strokeWidth={2} />
-              <span>{label}</span>
-              {badge && (
-                <span className="ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-[11px] font-bold text-white">
-                  {badge}
-                </span>
-              )}
-            </button>
-          ))}
+          {navItems.map(({ icon: Icon, label, href, badge }) => {
+            const isActive = href !== null && (href === "/admin" ? pathname === "/admin" : pathname.startsWith(href));
+            const className = [
+              "flex items-center gap-3 rounded-[11px] px-[13px] py-[11px] text-left text-[14.5px]",
+              isActive
+                ? "bg-teal-50 font-semibold text-teal-600"
+                : "font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900",
+              href === null ? "cursor-not-allowed opacity-40" : "",
+            ].join(" ");
+            const content = (
+              <>
+                <Icon className="h-[19px] w-[19px]" strokeWidth={2} />
+                <span>{label}</span>
+                {badge && (
+                  <span className="ml-auto flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-[11px] font-bold text-white">
+                    {badge}
+                  </span>
+                )}
+              </>
+            );
+            return href !== null ? (
+              <Link
+                key={label}
+                href={href}
+                onClick={() => setNavOpen(false)}
+                className={className}
+              >
+                {content}
+              </Link>
+            ) : (
+              <span key={label} className={className}>
+                {content}
+              </span>
+            );
+          })}
         </nav>
 
         <div className="flex-1" />
