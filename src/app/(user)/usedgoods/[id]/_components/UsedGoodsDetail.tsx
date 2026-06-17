@@ -143,7 +143,7 @@ export default function UsedGoodsDetail({
             userId={userId}
             initialLiked={initialLiked}
             initialReported={initialReported}
-            onLikeChange={(liked) => setLikeCount((prev) => liked ? prev + 1 : prev - 1)}
+            onLikeChange={(liked) => setLikeCount((prev) => liked ? prev + 1 : Math.max(prev - 1, 0))}
             size="lg"
             className="hidden md:flex shrink-0"
           />
@@ -167,7 +167,7 @@ export default function UsedGoodsDetail({
             userId={userId}
             initialLiked={initialLiked}
             initialReported={initialReported}
-            onLikeChange={(liked) => setLikeCount((prev) => liked ? prev + 1 : prev - 1)}
+            onLikeChange={(liked) => setLikeCount((prev) => liked ? prev + 1 : Math.max(prev - 1, 0))}
             size="sm"
             className="md:hidden ml-auto"
           />

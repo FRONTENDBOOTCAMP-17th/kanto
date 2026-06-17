@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, ChevronDown, X } from "lucide-react";
 
 const CATEGORIES = [
-  { id: "job",       label: "구인구직", path: "/job" },
   { id: "usedgoods", label: "중고거래", path: "/usedgoods" },
+  { id: "job",       label: "구인구직", path: "/job" },
   { id: "rental",    label: "방렌트",   path: "/rental" },
   { id: "community", label: "커뮤니티", path: "/community" },
 ] as const;

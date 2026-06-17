@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { formatTimeAgo } from "@/utils/formatTime";
-import { Clock, Eye } from "lucide-react";
+import { Clock, Eye, Heart } from "lucide-react";
 import { RentalWithPost } from "@/type/rental/rentalDetail";
 import InteractionButtons from "@/components/common/InteractionButtons";
 
@@ -20,6 +21,11 @@ export default function PostInfo({
   initialLiked,
   initialReported,
 }: PostInfoProps) {
+  const [likeCount, setLikeCount] = useState(rental.posts.like_count ?? 0);
+
+  const handleLikeChange = (liked: boolean) =>
+    setLikeCount((prev) => liked ? prev + 1 : Math.max(prev - 1, 0));
+
   return (
     <div className="mt-2 md:mt-4 border border-gray-200 rounded-2xl p-6">
       <div className="flex items-start justify-between gap-2">
@@ -28,8 +34,8 @@ export default function PostInfo({
           postId={postId}
           userId={userId}
           initialLiked={initialLiked}
-
           initialReported={initialReported}
+          onLikeChange={handleLikeChange}
           size="lg"
           className="hidden md:flex shrink-0"
         />
@@ -47,12 +53,16 @@ export default function PostInfo({
           <Eye className="w-4 h-4" />
           조회수 : {rental.posts.view_count}
         </span>
+        <span className="flex items-center gap-1">
+          <Heart className="w-4 h-4" />
+          {likeCount}
+        </span>
         <InteractionButtons
           postId={postId}
           userId={userId}
           initialLiked={initialLiked}
-
           initialReported={initialReported}
+          onLikeChange={handleLikeChange}
           size="sm"
           className="md:hidden ml-auto"
         />

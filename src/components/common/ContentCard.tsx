@@ -42,6 +42,7 @@ export function ContentCard({
   listOnMobile = false,
 }: ContentCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [count, setCount] = useState(likeCount);
   const hasImages = images.length > 0;
   const hasCarousel = images.length > 1;
 
@@ -139,7 +140,7 @@ export function ContentCard({
               </div>
               <div className="flex items-center gap-1">
                 <Heart className="w-3 h-3" />
-                <span>{likeCount}</span>
+                <span>{count}</span>
               </div>
             </div>
           </div>
@@ -150,6 +151,7 @@ export function ContentCard({
         postId={postId}
         initialIsLiked={initialIsLiked}
         currentUserId={currentUserId}
+        onLikeChange={(liked) => setCount((prev) => liked ? prev + 1 : Math.max(prev - 1, 0))}
         className={`card-like-btn bg-white/90 hover:bg-white z-10 ${
           listOnMobile ? "hidden md:flex" : "flex"
         }`}

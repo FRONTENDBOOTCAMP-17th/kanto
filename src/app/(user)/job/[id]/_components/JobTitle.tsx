@@ -1,6 +1,7 @@
 "use client";
 
-import { Clock, Eye, Users } from "lucide-react";
+import { useState } from "react";
+import { Clock, Eye, Heart, Users } from "lucide-react";
 import { formatTimeAgo } from "@/utils/formatTime";
 import type { JobDetail } from "@/type/job/jobsDetail";
 import InteractionButtons from "@/components/common/InteractionButtons";
@@ -13,6 +14,11 @@ interface JobTitleProps {
 }
 
 export default function JobTitle({ job, userId, initialLiked, initialReported }: JobTitleProps) {
+  const [likeCount, setLikeCount] = useState(job.posts.like_count ?? 0);
+
+  const handleLikeChange = (liked: boolean) =>
+    setLikeCount((prev) => liked ? prev + 1 : Math.max(prev - 1, 0));
+
   return (
     <div className="p-6 space-y-4">
       <div className="flex items-start justify-between gap-2">
@@ -25,6 +31,7 @@ export default function JobTitle({ job, userId, initialLiked, initialReported }:
           userId={userId}
           initialLiked={initialLiked}
           initialReported={initialReported}
+          onLikeChange={handleLikeChange}
           size="lg"
           className="hidden md:flex shrink-0"
         />
@@ -38,6 +45,10 @@ export default function JobTitle({ job, userId, initialLiked, initialReported }:
           <Eye className="w-4 h-4" />
           조회수: {job.posts.view_count}
         </span>
+        <span className="flex items-center gap-1">
+          <Heart className="w-4 h-4" />
+          {likeCount}
+        </span>
         {job.applicant_count && (
           <span className="flex items-center gap-1">
             <Users className="w-4 h-4" />
@@ -49,6 +60,7 @@ export default function JobTitle({ job, userId, initialLiked, initialReported }:
           userId={userId}
           initialLiked={initialLiked}
           initialReported={initialReported}
+          onLikeChange={handleLikeChange}
           size="sm"
           className="md:hidden ml-auto"
         />

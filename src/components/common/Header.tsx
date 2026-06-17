@@ -16,7 +16,6 @@ import {
   Briefcase,
   Home,
   Heart,
-  Users,
   Settings,
   ThumbsUp,
   FileText,
@@ -31,8 +30,6 @@ const NAV_ITEMS = [
   { name: "중고거래", icon: ShoppingBag, href: ROUTES.usedgoods },
   { name: "구인구직", icon: Briefcase, href: ROUTES.jobs },
   { name: "방렌트", icon: Home, href: ROUTES.rental },
-  { name: "커뮤니티", icon: Users, href: ROUTES.community },
-  { name: "랜덤채팅", icon: Heart, href: ROUTES.dating },
 ];
 
 export function Header() {
@@ -205,6 +202,20 @@ export function Header() {
             </Button>
           </div>
         </div>
+
+        {/* 데스크탑 네비게이션 */}
+        <nav className="hidden md:flex items-center justify-center gap-1 border-t border-gray-100 py-1">
+          {NAV_ITEMS.map(({ name, icon: Icon, href }) => (
+            <Link
+              key={href}
+              href={href}
+              className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 hover:text-teal-500 hover:bg-teal-50 rounded-lg transition-colors font-medium"
+            >
+              <Icon className="w-4 h-4" />
+              {name}
+            </Link>
+          ))}
+        </nav>
 
         {/* 모바일 메뉴 */}
         {isMobileOpen && (

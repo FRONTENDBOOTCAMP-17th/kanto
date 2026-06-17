@@ -11,9 +11,10 @@ interface LikeButtonProps {
   initialIsLiked: boolean;
   currentUserId: number | null;
   className?: string;
+  onLikeChange?: (liked: boolean) => void;
 }
 
-export function LikeButton({ postId, initialIsLiked, currentUserId, className }: LikeButtonProps) {
+export function LikeButton({ postId, initialIsLiked, currentUserId, className, onLikeChange }: LikeButtonProps) {
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [showModal, setShowModal] = useState(false);
   const { user } = useAuthStore();
@@ -34,9 +35,13 @@ export function LikeButton({ postId, initialIsLiked, currentUserId, className }:
 
     const wasLiked = isLiked;
     setIsLiked(!wasLiked);
+    onLikeChange?.(!wasLiked);
 
     const { error } = await toggleLike(postId, currentUserId, wasLiked);
-    if (error) setIsLiked(wasLiked);
+    if (error) {
+      setIsLiked(wasLiked);
+      onLikeChange?.(wasLiked);
+    }
   };
 
   return (
