@@ -94,7 +94,7 @@ return (
 ## 3. 메시지 카탈로그 & 네임스페이스
 
 메시지는 `messages/{ko,en,ta}.json`에 **기능(네임스페이스)별**로 둔다.
-**세 파일의 top-level 네임스페이스는 항상 동일**해야 한다(현재 15개).
+**세 파일의 top-level 네임스페이스는 항상 동일**해야 한다(현재 19개).
 
 | 네임스페이스 | 용도 |
 |---|---|
@@ -110,6 +110,10 @@ return (
 | `Main` | 메인 페이지(Hero·검색·인기목록) |
 | `Time` | 가입일 등 날짜 프로즈 |
 | `UsedGoods`, `Job`, `Rental` | 각 도메인 목록·상세·작성폼 |
+| `Profile` | 프로필 페이지(메뉴·카드·정보/알림/차단/후기/설정 섹션·토스트) |
+| `Signup` | 회원가입 폼·약관 동의·약관 모달 |
+| `Terms` | 약관 페이지 네비/헤더(약관 본문은 Notion 원문) |
+| `Favorites` | 찜 목록·내 게시글 페이지 + 공유 탭(카테고리). 알림 페이지는 기존 `Notifications` 재사용 |
 
 ---
 
@@ -192,13 +196,18 @@ tt("joinedYearMonth", { year, month }); // "{year}년 {month}월 가입"
 - **인프라**: 플러그인·config·request·cookie·Provider·`<html lang>`·LanguageSwitcher·formatTime 로케일화
 - **Batch 1 — 공용 컴포넌트 전체**: 버튼·모달(삭제/확인/신고/로그인안내)·검색바·채팅 위젯·알림·탈퇴배너·이미지 캐러셀
 - **Batch 2 — 마켓플레이스 전체**: 메인(Hero/검색/인기목록)·글쓰기 선택·**중고거래/구인구직/방렌트**의 목록·상세·작성폼 + 공유 상수(`src/type/*`) 표시처
-- **검증**: 메시지 3파일 top-level 네임스페이스 15개 동일, `tsc`·`eslint` 0 오류, 주요 페이지 200, `MISSING_MESSAGE` 없음
+- **Batch 3 — 프로필/회원가입/약관**: `profile` 컴포넌트 8종 + 프로필 훅 3종(`useAlertSettings`/`useProfileSettings`/`useProfileInfo`의 라벨·토스트·에러)·`signup`(폼/동의/약관 모달)·`terms`(네비/헤더). `Profile`/`Signup`/`Terms` 네임스페이스 신설. `formatSellerInfoCreatedAt`를 `Time` 네임스페이스로 교체 후 util 제거. (`ta`는 초벌 번역 — 네이티브 검수 필요)
+- **Batch 4 — 찜/내 게시글/알림**: `favorites`·`myposts` 페이지(async 서버 → `getTranslations`)와 공유 `FavoritesTabs`, `notifications` 페이지. `Favorites` 네임스페이스 신설, 알림 페이지는 기존 `Notifications` 재사용.
+- **전체 감사(Batch 1~2 누락 보정)**: 전 영역 하드코딩 한국어 재점검 후, 이전 배치에서 빠졌던 사용자 대면 문자열을 보정. (`MISSING_MESSAGE` 점검은 하드코딩 잔류를 못 잡아 누락분이 남아 있었음)
+  - `LoginButton`(소셜/이메일 로그인 라벨 → `Auth.social` 신설), `SearchBar`(이미 있던 `Common.searchInputLabel`/`searchPlaceholder`/`search` 미연결분 연결), `ImageCarresel`(`alt` → `Common.carousel.image`)
+  - `useCreateUsedGoodsForm`(이미 있던 `UsedGoods.form.errorPost`/`errorImage`/`errorGoods` 미연결 `alert` 연결), `useCreateJobForm`(`Job.form`에 `errorRequired`/`errorLocationDetail`/`errorImage`/`errorEdit`/`errorPost`/`errorJob` 신설 후 `alert` 연결)
+- **검증**: 메시지 3파일 top-level 네임스페이스 19개 동일, 전체 키 546개 deep-parity 일치, i18n 변경 영역 `tsc`·`eslint` 0 오류, `MISSING_MESSAGE` 없음. `next build`는 **컴파일 성공**했으나 **기존 `(admin)` 타입 오류**(`DashboardClient.tsx`의 `DashboardData` export 누락 등 — i18n과 무관, 본 작업 전부터 존재)로 타입체크 단계에서 실패. admin은 i18n 범위 밖.
 
-### ⏳ 남은 작업
-- **Batch 3**: `profile`(7파일)·`signup`(form/agree/terms modal)·`terms`(_config/header)
-- **Batch 4**: `favorites`/`myposts`/`notifications` 페이지 + `formatSellerInfoCreatedAt` 정리 + en/ta 미채움 키 최종 점검 + `npm run build`
-
-> `formatSellerInfoCreatedAt`(`src/utils/formatTime.ts`)는 현재 `src/app/(user)/profile/_components/ProfileCard.tsx`에서만 사용 중. Batch 3에서 `Time` 네임스페이스로 교체한 뒤 해당 util을 제거하면 된다.
+### ⏳ 남은 작업 / 의도적 제외
+- **`(admin)` 타입 오류 수정**: `npm run build` 통과를 위해 필요(별도 이슈, i18n 무관).
+- **`ta` 네이티브 검수**: Batch 3·4 및 감사에서 추가한 타갈로그 초벌 번역 검수.
+- **서버/서비스 계층 `throw new Error` 메시지(6건)**: 채팅 액션(`actions.ts`/`leaveChatAction.ts`), 프로필 서비스(`profileInfo.ts`), 렌탈 서비스(`rental.ts`)의 예외 실패 경로 한국어. "정적 UI 틀"이 아니고 로케일 컨텍스트 주입이 필요해 **현재 범위에서 제외**(추후 `getTranslations`(서버) 또는 에러코드 방식으로 별도 처리). 단, `profileInfo` throw는 `useProfileInfo.handleSave`의 `alert(e.message)`로 노출될 수 있음에 유의.
+- **의도적 제외 영역**: `(admin)` 대시보드(운영자용), `src/app/page.tsx`(개발 환경 라우트 인덱스 스캐폴드), DB canonical 저장값(`src/type/*`의 `RENT_TYPES` 등 — 표시만 `Enums` 매핑), 코드 주석.
 
 ---
 
