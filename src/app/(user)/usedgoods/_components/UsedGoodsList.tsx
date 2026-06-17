@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { UsedGoodsWithPost } from "@/type/usedGoods";
 import { ContentCard } from "@/components/common/ContentCard";
 import { EmptyState } from "@/components/common/EmptyState";
@@ -11,10 +12,11 @@ interface Props {
 }
 
 export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId }: Props) {
+  const t = useTranslations("UsedGoods");
   const likedSet = new Set(initialLikedIds);
 
   if (initialPosts.length === 0) {
-    return <EmptyState message="등록된 상품이 없습니다" description="첫 번째 판매자가 되어보세요!" />;
+    return <EmptyState message={t("empty")} description={t("emptyDescription")} />;
   }
 
   return (

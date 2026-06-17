@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { SearchBar } from "@/components/common/SearchBar";
 import { FilterDropdown } from "@/components/common/FilterDropdown";
 import { PRODUCT_CATEGORIES } from "@/type/usedGoods";
@@ -12,7 +13,13 @@ interface Props {
 }
 
 export function UsedGoodsFilters({ givenSearch, defaultCategory, defaultLocation }: Props) {
+  const te = useTranslations("Enums");
   const { updateParams } = useUrlParams();
+
+  const categoryOptions = PRODUCT_CATEGORIES.map((c) => ({
+    id: c.id,
+    label: te(`productCategory.${c.id}`),
+  }));
 
   return (
     <SearchBar
@@ -22,7 +29,7 @@ export function UsedGoodsFilters({ givenSearch, defaultCategory, defaultLocation
       showLocation
     >
       <FilterDropdown
-        options={PRODUCT_CATEGORIES}
+        options={categoryOptions}
         value={defaultCategory}
         onChange={(v) => updateParams({ category: v })}
       />
