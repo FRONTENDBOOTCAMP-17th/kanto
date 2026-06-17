@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { SignupForm } from "./_components/SignupForm";
 import { AgreeSection } from "./_components/AgreeSection";
@@ -12,6 +13,7 @@ export default function SignupPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [requiredChecked, setRequiredChecked] = useState(false);
+  const t = useTranslations("Signup");
 
   const handleSignup = async ({
     name,
@@ -37,7 +39,7 @@ export default function SignupPage() {
       }
 
       if (data.user?.identities?.length === 0) {
-        setErrorMessage("이미 가입된 이메일입니다.");
+        setErrorMessage(t("emailExists"));
         return;
       }
 
@@ -51,7 +53,7 @@ export default function SignupPage() {
     <div className="min-h-screen min-w-97.5 bg-linear-to-br from-teal-50 to-teal-100 flex items-center justify-center p-4">
       <div className="w-full max-w-97.5 bg-white rounded-2xl shadow-md p-8 my-8">
         <Link href="/" className="text-sm text-teal-600 font-semibold">
-          홈으로 가기
+          {t("home")}
         </Link>
         <div className="flex justify-center mb-8 mt-4">
           <Image
@@ -77,9 +79,9 @@ export default function SignupPage() {
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
-            이미 계정이 있으신가요?{" "}
+            {t("haveAccount")}{" "}
             <Link href="/login" className="text-teal-500 hover:text-teal-600 font-semibold">
-              로그인
+              {t("login")}
             </Link>
           </p>
         </div>

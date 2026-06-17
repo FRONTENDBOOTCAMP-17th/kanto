@@ -1,15 +1,16 @@
 "use client";
 
 import { User, Star, Bell, UserX, Settings2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export type Tab = "info" | "reviews" | "alerts" | "blocked" | "settings";
 
-const TABS: { key: Tab; label: string; icon: React.ElementType }[] = [
-  { key: "info", label: "정보", icon: User },
-  { key: "reviews", label: "후기", icon: Star },
-  { key: "alerts", label: "알림", icon: Bell },
-  { key: "blocked", label: "차단", icon: UserX },
-  { key: "settings", label: "앱 설정", icon: Settings2 },
+const TABS: { key: Tab; icon: React.ElementType }[] = [
+  { key: "info", icon: User },
+  { key: "reviews", icon: Star },
+  { key: "alerts", icon: Bell },
+  { key: "blocked", icon: UserX },
+  { key: "settings", icon: Settings2 },
 ];
 
 export function ProfileAside({
@@ -19,10 +20,11 @@ export function ProfileAside({
   activeTab: Tab;
   onTabChange: (tab: Tab) => void;
 }) {
+  const t = useTranslations("Profile.menu");
   return (
     <aside className="hidden md:flex flex-col w-32 shrink-0 border-r border-gray-100 pr-3 pt-1 gap-1">
-      <nav role="tablist" aria-label="프로필 메뉴">
-        {TABS.map(({ key, label, icon: Icon }) => (
+      <nav role="tablist" aria-label={t("ariaMenu")}>
+        {TABS.map(({ key, icon: Icon }) => (
           <button
             key={key}
             role="tab"
@@ -34,7 +36,7 @@ export function ProfileAside({
                 : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"}`}
           >
             <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
-            {label}
+            {t(key)}
           </button>
         ))}
       </nav>
@@ -49,9 +51,10 @@ export function ProfileMobileTabs({
   activeTab: Tab;
   onTabChange: (tab: Tab) => void;
 }) {
+  const t = useTranslations("Profile.menu");
   return (
-    <nav role="tablist" aria-label="프로필 메뉴" className="flex md:hidden gap-1.5 overflow-x-auto border-b border-gray-100 px-5 py-3">
-      {TABS.map(({ key, label, icon: Icon }) => (
+    <nav role="tablist" aria-label={t("ariaMenu")} className="flex md:hidden gap-1.5 overflow-x-auto border-b border-gray-100 px-5 py-3">
+      {TABS.map(({ key, icon: Icon }) => (
         <button
           key={key}
           role="tab"
@@ -63,7 +66,7 @@ export function ProfileMobileTabs({
               : "text-gray-500 bg-gray-100 hover:bg-gray-200"}`}
         >
           <Icon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-          {label}
+          {t(key)}
         </button>
       ))}
     </nav>

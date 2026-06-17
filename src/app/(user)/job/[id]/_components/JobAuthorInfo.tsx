@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { UserCircle2, Phone, Mail } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import postChat from "@/services/chat/postChat";
 import { useChatStore } from "@/store/chatStore";
@@ -14,6 +15,7 @@ export default function JobAuthorInfo({
   job: JobDetail;
   userId: number | undefined;
 }) {
+  const t = useTranslations("Job");
   const name = job.posts.users?.name ?? job.manager_name;
   const isOwner = userId !== undefined && userId === job.posts.users?.id;
 
@@ -25,12 +27,12 @@ export default function JobAuthorInfo({
 
   return (
     <div className="p-6 flex flex-col gap-4">
-      <h2 className="font-semibold text-base md:text-lg">담당자 정보</h2>
+      <h2 className="font-semibold text-base md:text-lg">{t("managerInfo")}</h2>
       <div className="flex items-center gap-3">
         {job.posts.users?.avatar_url ? (
           <Image
             src={job.posts.users.avatar_url}
-            alt="프로필"
+            alt={t("profileAlt")}
             width={40}
             height={40}
             className="rounded-full object-cover w-10 h-10 shrink-0"
@@ -67,7 +69,7 @@ export default function JobAuthorInfo({
           className="cursor-pointer self-start min-w-72"
           onClick={handleChat}
         >
-          채팅하기
+          {t("chat")}
         </Button>
       )}
     </div>

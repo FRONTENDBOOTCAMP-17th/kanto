@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -76,28 +77,32 @@ export function CreateJobFormPageOne({
       preferredTags.includes(key) ? preferredTags.filter((t) => t !== key) : [...preferredTags, key],
     );
 
+  const t = useTranslations("Job");
+  const te = useTranslations("Enums");
+  const tc = useTranslations("Common");
   return (
     <div className="space-y-4">
-      <p className="text-gray-500">채용 공고의 기본 정보를 입력해주세요</p>
-      <h2 className="font-semibold text-gray-900">채용 정보</h2>
+      <p className="text-gray-500">{t("form.page1Subtitle")}</p>
+      <h2 className="font-semibold text-gray-900">{t("form.jobInfo")}</h2>
 
       <div className="space-y-2">
-        <Label htmlFor="title">공고 제목 *</Label>
-        <Input id="title" placeholder="예: 한식당 홀 서빙 직원 구합니다" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <Label htmlFor="title">{t("form.titleLabel")}</Label>
+        <Input id="title" placeholder={t("form.titlePlaceholder")} value={title} onChange={(e) => setTitle(e.target.value)} />
       </div>
 
       <div className="space-y-2">
-        <Label>고용 형태 *</Label>
-        <ResponsiveSelect
-          value={employeeType}
-          onValueChange={(v) => setEmployeeType(v as EmployeeType)}
-          options={EMPLOYEE_OPTIONS}
-          placeholder="고용 형태를 선택하세요"
-        />
+        <Label>{t("form.employeeTypeLabel")}</Label>
+
+<ResponsiveSelect
+  value={employeeType}
+  onValueChange={(v) => setEmployeeType(v as EmployeeType)}
+  options={EMPLOYEE_OPTIONS}
+  placeholder={t("form.employeeTypePlaceholder")}
+/>
       </div>
 
       <div className="space-y-2">
-        <Label>급여 *</Label>
+        <Label>{t("form.salaryLabel")}</Label>
         <div className="flex gap-2">
           <div className="relative flex-1">
             <Input
@@ -111,158 +116,205 @@ export function CreateJobFormPageOne({
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">PHP</span>
           </div>
           <ResponsiveSelect
-            value={salaryType}
-            onValueChange={(v) => setSalaryType(v as SalaryType)}
-            options={SALARY_OPTIONS}
-            placeholder="단위"
-            className="w-24"
-          />
+  value={salaryType}
+  onValueChange={(v) => setSalaryType(v as SalaryType)}
+  options={SALARY_OPTIONS}
+  placeholder={t("form.salaryUnitPlaceholder")}
+  className="w-24"
+/>
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label>근무 지역 *</Label>
-        <ResponsiveSelect
-          value={locationType}
-          onValueChange={(v) => setLocationType(v as TradeLocation)}
-          options={LOCATION_OPTIONS}
-          placeholder="지역을 선택하세요"
-        />
+        <Label>{t("form.locationLabel")}</Label>
+
+<ResponsiveSelect
+  value={locationType}
+  onValueChange={(v) => setLocationType(v as TradeLocation)}
+  options={LOCATION_OPTIONS}
+  placeholder={t("form.locationPlaceholder")}
+/>
         {locationType === "그 외 지역" && (
-          <Input placeholder="상세 지역을 입력하세요" value={locationCustom} onChange={(e) => setLocationCustom(e.target.value)} />
+          <Input placeholder={t("form.locationDetailPlaceholder")} value={locationCustom} onChange={(e) => setLocationCustom(e.target.value)} />
         )}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="deadline">마감일 *</Label>
+        <Label htmlFor="deadline">{t("form.deadlineLabel")}</Label>
         <Input id="deadline" type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
       </div>
 
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label>근무 시간 *</Label>
-          <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-            <Checkbox checked={isTimeNegotiable} onCheckedChange={(v) => setIsTimeNegotiable(v === true)} />
-            시간 협의
-          </label>
-        </div>
-        <div className="flex items-center gap-2">
-          <ResponsiveSelect
-            className="w-20"
-            disabled={isTimeNegotiable}
-            value={workHoursStart.split(":")[0] ?? ""}
-            onValueChange={(h) => setWorkHoursStart(`${h}:${workHoursStart.split(":")[1] ?? "00"}`)}
-            options={HOUR_OPTIONS}
-            placeholder="시"
-          />
-          <ResponsiveSelect
-            className="w-20"
-            disabled={isTimeNegotiable}
-            value={workHoursStart.split(":")[1] ?? ""}
-            onValueChange={(m) => setWorkHoursStart(`${workHoursStart.split(":")[0] ?? "00"}:${m}`)}
-            options={MINUTE_OPTIONS}
-            placeholder="분"
-          />
-          <span className="text-gray-500">~</span>
-          <ResponsiveSelect
-            className="w-20"
-            disabled={isTimeNegotiable}
-            value={workHoursEnd.split(":")[0] ?? ""}
-            onValueChange={(h) => setWorkHoursEnd(`${h}:${workHoursEnd.split(":")[1] ?? "00"}`)}
-            options={HOUR_OPTIONS}
-            placeholder="시"
-          />
-          <ResponsiveSelect
-            className="w-20"
-            disabled={isTimeNegotiable}
-            value={workHoursEnd.split(":")[1] ?? ""}
-            onValueChange={(m) => setWorkHoursEnd(`${workHoursEnd.split(":")[0] ?? "00"}:${m}`)}
-            options={MINUTE_OPTIONS}
-            placeholder="분"
-          />
-        </div>
-      </div>
+        <div className="space-y-2">
+  <div className="flex items-center justify-between">
+    <Label>{t("form.workHoursLabel")}</Label>
 
-      <div className="space-y-2">
-        <Label>근무 요일 *</Label>
-        <div className="flex flex-wrap gap-2">
-          {DAY_PRESETS.map((preset) => (
-            <button
-              key={preset.id}
-              type="button"
-              disabled={isTimeNegotiable}
-              onClick={() => setWorkDays([...preset.days])}
-              className="px-3 py-1 rounded-full border border-gray-300 text-sm text-gray-600 transition-colors hover:border-teal-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {preset.id}
-            </button>
-          ))}
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {WORK_DAYS.map((day) => {
-            const selected = workDays.includes(day);
-            return (
-              <button
-                key={day}
-                type="button"
-                disabled={isTimeNegotiable}
-                onClick={() => toggleDay(day)}
-                className={`w-9 h-9 rounded-full border text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-                  selected ? "bg-teal-600 text-white border-teal-600" : "bg-white text-gray-700 border-gray-300"
-                }`}
-              >
-                {day}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+    <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+      <Checkbox
+        checked={isTimeNegotiable}
+        onCheckedChange={(v) => setIsTimeNegotiable(v === true)}
+      />
+      {t("form.timeNegotiable")}
+    </label>
+  </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="mainTask">주요 업무 *</Label>
-        <Textarea id="mainTask" placeholder="주요 업무를 입력하세요" value={mainTask} onChange={(e) => setMainTask(e.target.value)} className="resize-none min-h-28" />
-      </div>
+  <div className="flex items-center gap-2">
+    <ResponsiveSelect
+      className="w-20"
+      disabled={isTimeNegotiable}
+      value={workHoursStart.split(":")[0] ?? ""}
+      onValueChange={(h) =>
+        setWorkHoursStart(
+          `${h}:${workHoursStart.split(":")[1] ?? "00"}`
+        )
+      }
+      options={HOUR_OPTIONS}
+      placeholder={t("form.hour")}
+    />
 
-      <div className="space-y-2">
-        <Label>우대 사항</Label>
-        <Button
+    <ResponsiveSelect
+      className="w-20"
+      disabled={isTimeNegotiable}
+      value={workHoursStart.split(":")[1] ?? ""}
+      onValueChange={(m) =>
+        setWorkHoursStart(
+          `${workHoursStart.split(":")[0] ?? "00"}:${m}`
+        )
+      }
+      options={MINUTE_OPTIONS}
+      placeholder={t("form.minute")}
+    />
+
+    <span className="text-gray-500">~</span>
+
+    <ResponsiveSelect
+      className="w-20"
+      disabled={isTimeNegotiable}
+      value={workHoursEnd.split(":")[0] ?? ""}
+      onValueChange={(h) =>
+        setWorkHoursEnd(
+          `${h}:${workHoursEnd.split(":")[1] ?? "00"}`
+        )
+      }
+      options={HOUR_OPTIONS}
+      placeholder={t("form.hour")}
+    />
+
+    <ResponsiveSelect
+      className="w-20"
+      disabled={isTimeNegotiable}
+      value={workHoursEnd.split(":")[1] ?? ""}
+      onValueChange={(m) =>
+        setWorkHoursEnd(
+          `${workHoursEnd.split(":")[0] ?? "00"}:${m}`
+        )
+      }
+      options={MINUTE_OPTIONS}
+      placeholder={t("form.minute")}
+    />
+  </div>
+</div>
+
+<div className="space-y-2">
+  <Label>{t("form.workDaysLabel")}</Label>
+
+  <div className="flex flex-wrap gap-2">
+    {DAY_PRESETS.map((preset) => (
+      <button
+        key={preset.id}
+        type="button"
+        disabled={isTimeNegotiable}
+        onClick={() => setWorkDays([...preset.days])}
+        className="px-3 py-1 rounded-full border border-gray-300 text-sm text-gray-600 transition-colors hover:border-teal-500 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {preset.id}
+      </button>
+    ))}
+  </div>
+
+  <div className="flex flex-wrap gap-2">
+    {WORK_DAYS.map((day) => {
+      const selected = workDays.includes(day);
+
+      return (
+        <button
+          key={day}
           type="button"
-          variant="outline"
-          onClick={() => setShowPreferredModal(true)}
-          className="w-full justify-start font-normal text-gray-600"
+          disabled={isTimeNegotiable}
+          onClick={() => toggleDay(day)}
+          className={`w-9 h-9 rounded-full border text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+            selected
+              ? "bg-teal-600 text-white border-teal-600"
+              : "bg-white text-gray-700 border-gray-300"
+          }`}
         >
-          {preferredTags.length > 0 ? `${preferredTags.length}개 선택됨` : "우대 사항 선택"}
-        </Button>
-        {preferredTags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {preferredTags.map((key) => (
-              <span
-                key={key}
-                className="flex items-center gap-1 rounded-full bg-teal-50 py-1 pl-3 pr-2 text-sm text-teal-700"
-              >
-                {PREFERRED_LABELS[key] ?? key}
-                <button
-                  type="button"
-                  onClick={() => toggleTag(key)}
-                  aria-label="제거"
-                  className="transition-colors hover:text-teal-900"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </span>
-            ))}
-          </div>
-        )}
-        <Input
-          placeholder="그 외 우대 사항을 직접 입력하세요"
-          value={preferred}
-          onChange={(e) => setPreferred(e.target.value)}
-        />
+          {day}
+        </button>
+      );
+    })}
+  </div>
+</div>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+<Label htmlFor="mainTask">{t("form.mainTaskLabel")}</Label>
+<Textarea
+  id="mainTask"
+  placeholder={t("form.mainTaskPlaceholder")}
+  value={mainTask}
+  onChange={(e) => setMainTask(e.target.value)}
+  className="resize-none min-h-28"
+/>
+</div>
+
+<div className="space-y-2">
+  <Label>{t("form.preferredLabel")}</Label>
+
+  <Button
+    type="button"
+    variant="outline"
+    onClick={() => setShowPreferredModal(true)}
+    className="w-full justify-start font-normal text-gray-600"
+  >
+    {preferredTags.length > 0
+      ? `${preferredTags.length}${t("form.selectedCount")}`
+      : t("form.preferredSelect")}
+  </Button>
+
+  {preferredTags.length > 0 && (
+    <div className="flex flex-wrap gap-2">
+      {preferredTags.map((key) => (
+        <span
+          key={key}
+          className="flex items-center gap-1 rounded-full bg-teal-50 py-1 pl-3 pr-2 text-sm text-teal-700"
+        >
+          {PREFERRED_LABELS[key] ?? key}
+
+          <button
+            type="button"
+            onClick={() => toggleTag(key)}
+            aria-label={t("common.remove")}
+            className="transition-colors hover:text-teal-900"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </span>
+      ))}
+    </div>
+  )}
+
+  <Input
+    placeholder={t("form.preferredPlaceholder")}
+    value={preferred}
+    onChange={(e) => setPreferred(e.target.value)}
+  />
+</div>
       </div>
 
       <div className="flex gap-3 pt-2">
-        <Button type="button" variant="outline" onClick={handleBack} className="flex-1">취소</Button>
-        <Button type="button" variant="teal" onClick={handleNextStep} className="flex-1">다음 단계</Button>
+        <Button type="button" variant="outline" onClick={handleBack} className="flex-1">{tc("cancel")}</Button>
+        <Button type="button" variant="teal" onClick={handleNextStep} className="flex-1">{t("form.next")}</Button>
       </div>
 
       <JobPreferredModal

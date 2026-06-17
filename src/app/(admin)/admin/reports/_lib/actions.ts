@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/utils/supabase/admin";
-import type { Sanction, ReportType } from "./constants";
+import type { Sanction, ReportType } from "@/type/admin";
 
 function calcExpiresAt(sanction: Sanction): string | null {
   if (sanction === "none") return null;
@@ -11,6 +11,12 @@ function calcExpiresAt(sanction: Sanction): string | null {
   const d = new Date();
   d.setDate(d.getDate() + days);
   return d.toISOString();
+}
+
+function getSanctionMessage(sanction: Sanction): string {
+  if (sanction === "7d") return "신고 처리로 인해 7일간 서비스 이용이 제한됩니다.";
+  if (sanction === "30d") return "신고 처리로 인해 30일간 서비스 이용이 제한됩니다.";
+  return "신고 처리로 인해 계정이 영구 정지되었습니다.";
 }
 
 function sanctionUserId(
@@ -56,6 +62,13 @@ export async function resolveReport(
       .from("users")
       .update({ suspended_until: expiresAt } as never)
       .eq("id", userId);
+
+    await admin.from("common_notifications").insert({
+      receiver_id: userId,
+      title: "계정이 정지되었습니다",
+      body: getSanctionMessage(opts.sanction),
+      type: "suspension",
+    } as never);
   }
 
   revalidatePath("/admin/reports");
@@ -121,6 +134,15 @@ export async function updateReportResolution(
         .from("users")
         .update({ suspended_until: expiresAt } as never)
         .eq("id", userId);
+
+      if (opts.sanction !== "none") {
+        await admin.from("common_notifications").insert({
+          receiver_id: userId,
+          title: "계정이 정지되었습니다",
+          body: getSanctionMessage(opts.sanction),
+          type: "suspension",
+        } as never);
+      }
     }
   }
 

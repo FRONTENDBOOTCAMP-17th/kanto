@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { EyeIcon } from "./EyeIcon";
 
 type FormValues = { name: string; email: string; password: string };
@@ -36,6 +37,7 @@ export function SignupForm({
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const t = useTranslations("Signup.form");
 
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -58,14 +60,14 @@ export function SignupForm({
     <div className="space-y-4">
       <div className="space-y-2">
         <label htmlFor="name" className="text-sm font-medium text-gray-700">
-          이름
+          {t("name")}
         </label>
         <input
           id="name"
           ref={nameRef}
           autoFocus
           type="text"
-          placeholder="한글 또는 영어 2자 이상 (예: 홍길동)"
+          placeholder={t("namePlaceholder")}
           value={name}
           onChange={(e) => { setName(e.target.value); onClearError(); }}
           onBlur={() => { if (name) setTouched((p) => ({ ...p, name: true })); }}
@@ -73,19 +75,19 @@ export function SignupForm({
           className={`w-full border rounded-md px-3 py-2 text-sm text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 ${touched.name && !nameValid ? "border-red-400" : "border-gray-300"}`}
         />
         {touched.name && !nameValid && (
-          <p className="text-xs text-red-500">한글 또는 영어로 2자 이상 입력해주세요.</p>
+          <p className="text-xs text-red-500">{t("nameError")}</p>
         )}
       </div>
 
       <div className="space-y-2">
         <label htmlFor="email" className="text-sm font-medium text-gray-700">
-          이메일
+          {t("email")}
         </label>
         <input
           id="email"
           ref={emailRef}
           type="email"
-          placeholder="example@email.com"
+          placeholder={t("emailPlaceholder")}
           value={email}
           onChange={(e) => { setEmail(e.target.value); onClearError(); }}
           onBlur={() => { if (email) setTouched((p) => ({ ...p, email: true })); }}
@@ -93,20 +95,20 @@ export function SignupForm({
           className={`w-full border rounded-md px-3 py-2 text-sm text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 ${touched.email && !emailValid ? "border-red-400" : "border-gray-300"}`}
         />
         {touched.email && !emailValid && (
-          <p className="text-xs text-red-500">올바른 이메일을 입력해주세요.</p>
+          <p className="text-xs text-red-500">{t("emailError")}</p>
         )}
       </div>
 
       <div className="space-y-2">
         <label htmlFor="password" className="text-sm font-medium text-gray-700">
-          비밀번호
+          {t("password")}
         </label>
         <div className="relative">
           <input
             id="password"
             ref={passwordRef}
             type={showPassword ? "text" : "password"}
-            placeholder="영문 + 숫자 포함 8자 이상"
+            placeholder={t("passwordPlaceholder")}
             value={password}
             onChange={(e) => { setPassword(e.target.value); onClearError(); }}
             onBlur={() => { if (password) setTouched((p) => ({ ...p, password: true })); }}
@@ -116,7 +118,7 @@ export function SignupForm({
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 표시"}
+            aria-label={showPassword ? t("hidePassword") : t("showPassword")}
             aria-pressed={showPassword}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
           >
@@ -124,20 +126,20 @@ export function SignupForm({
           </button>
         </div>
         {touched.password && !passwordValid && (
-          <p className="text-xs text-red-500">영문과 숫자를 포함하여 8자 이상 입력해주세요.</p>
+          <p className="text-xs text-red-500">{t("passwordError")}</p>
         )}
       </div>
 
       <div className="space-y-2">
         <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
-          비밀번호 확인
+          {t("confirmPassword")}
         </label>
         <div className="relative">
           <input
             id="confirmPassword"
             ref={confirmPasswordRef}
             type={showConfirmPassword ? "text" : "password"}
-            placeholder="비밀번호를 다시 입력하세요"
+            placeholder={t("confirmPlaceholder")}
             value={confirmPassword}
             onChange={(e) => { setConfirmPassword(e.target.value); onClearError(); }}
             onBlur={() => { if (confirmPassword) setTouched((p) => ({ ...p, confirmPassword: true })); }}
@@ -147,7 +149,7 @@ export function SignupForm({
           <button
             type="button"
             onClick={() => setShowConfirmPassword((v) => !v)}
-            aria-label={showConfirmPassword ? "비밀번호 숨기기" : "비밀번호 표시"}
+            aria-label={showConfirmPassword ? t("hidePassword") : t("showPassword")}
             aria-pressed={showConfirmPassword}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
           >
@@ -155,7 +157,7 @@ export function SignupForm({
           </button>
         </div>
         {touched.confirmPassword && !confirmPasswordValid && (
-          <p className="text-xs text-red-500">비밀번호가 일치하지 않습니다.</p>
+          <p className="text-xs text-red-500">{t("confirmError")}</p>
         )}
       </div>
 
@@ -167,7 +169,7 @@ export function SignupForm({
 
       {isSuccess && (
         <div className="text-sm text-teal-600 text-center bg-teal-50 rounded-md p-3">
-          가입 완료! 이메일을 확인해 인증을 완료해주세요.
+          {t("success")}
         </div>
       )}
 
@@ -176,7 +178,7 @@ export function SignupForm({
         disabled={!requiredChecked || isLoading || isSuccess}
         className="w-full btn-primary disabled:bg-gray-300 disabled:cursor-not-allowed font-medium py-2.5 rounded-md transition-colors"
       >
-        {isLoading ? "처리 중..." : "회원가입"}
+        {isLoading ? t("processing") : t("submit")}
       </button>
     </div>
   );

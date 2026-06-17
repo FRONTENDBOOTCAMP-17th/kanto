@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 
 type LoginButtonVariant = "kakao" | "google" | "facebook" | "email";
@@ -10,13 +11,11 @@ interface LoginButtonProps {
 const BUTTON_CONFIG: Record<
   LoginButtonVariant,
   {
-    label: string;
     className: string;
     icon: React.ReactNode;
   }
 > = {
   kakao: {
-    label: "카카오로 계속하기",
     className:
       "w-full flex items-center justify-center gap-3 h-11 bg-[#FEE500] hover:bg-[#FEE500]/90 border-[#FEE500]",
     icon: (
@@ -29,7 +28,6 @@ const BUTTON_CONFIG: Record<
     ),
   },
   google: {
-    label: "Google로 계속하기",
     className: "w-full flex items-center justify-center gap-3 h-11",
     icon: (
       <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -53,7 +51,6 @@ const BUTTON_CONFIG: Record<
     ),
   },
   facebook: {
-    label: "Facebook으로 계속하기",
     className: "w-full flex items-center justify-center gap-3 h-11",
     icon: (
       <svg className="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
@@ -62,14 +59,14 @@ const BUTTON_CONFIG: Record<
     ),
   },
   email: {
-    label: "이메일로 로그인",
     className: "w-full h-11 text-gray-700 bg-gray-100 hover:bg-gray-200",
     icon: null,
   },
 };
 
 export default function LoginButton({ variant, onClick }: LoginButtonProps) {
-  const { label, className, icon } = BUTTON_CONFIG[variant];
+  const t = useTranslations("Auth.social");
+  const { className, icon } = BUTTON_CONFIG[variant];
 
   return (
     <Button
@@ -80,7 +77,7 @@ export default function LoginButton({ variant, onClick }: LoginButtonProps) {
     >
       {icon}
       <span className={variant === "kakao" ? "text-black/85" : undefined}>
-        {label}
+        {t(variant)}
       </span>
     </Button>
   );

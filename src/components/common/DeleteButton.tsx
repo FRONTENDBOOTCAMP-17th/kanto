@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 
@@ -11,6 +12,7 @@ interface DeleteButtonProps {
 }
 
 export default function DeleteButton({ postId, redirectPath }: DeleteButtonProps) {
+  const t = useTranslations("Common");
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -26,12 +28,12 @@ export default function DeleteButton({ postId, redirectPath }: DeleteButtonProps
         onClick={() => setIsOpen(true)}
         className="cursor-pointer text-sm text-red-500 transition-colors hover:underline"
       >
-        삭제
+        {t("delete")}
       </button>
       <ConfirmModal
         isOpen={isOpen}
-        title="정말 삭제하시겠습니까?"
-        confirmLabel="삭제"
+        title={t("deleteConfirm")}
+        confirmLabel={t("delete")}
         onConfirm={handleDelete}
         onCancel={() => setIsOpen(false)}
       />

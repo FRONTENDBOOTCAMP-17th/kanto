@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
 import { useChatStore } from "@/store/chatStore";
+import { useSuspended } from "@/hooks/useSuspended";
 import { useChatListRealtime } from "@/hooks/chat/useChatListRealtime";
 import ChatBubbleButton from "./ChatBubbleButton";
 import ChatList from "./chatPanel/ChatList";
@@ -10,7 +12,9 @@ import ChatRoom from "./chatPanel/room/ChatRoom";
 import type { ChatWithUsers } from "@/type/chat/chat";
 
 export default function FloatingChatWidget() {
+  const t = useTranslations("Chat");
   const { isLoggedIn } = useAuthStore();
+  const { isSuspended, openModal } = useSuspended();
   const setUnreadCount = useChatStore((s) => s.setUnreadCount);
   const [isOpen, setIsOpen] = useState(false);
   const [view, setView] = useState<"list" | "room">("list");
@@ -84,7 +88,7 @@ export default function FloatingChatWidget() {
         >
           {!currentUserId ? (
             <div className="flex items-center justify-center h-full text-sm text-gray-400">
-              로딩중...
+              {t("loading")}
             </div>
           ) : view === "list" ? (
             <ChatList
@@ -111,6 +115,10 @@ export default function FloatingChatWidget() {
         <ChatBubbleButton
           isOpen={isOpen}
           onToggle={() => {
+            if (isSuspended) {
+              openModal();
+              return;
+            }
             if (isOpen) {
               setView("list");
               setSelectedChatId(null);

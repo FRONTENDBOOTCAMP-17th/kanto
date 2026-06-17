@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations, useLocale } from "next-intl";
 import { MapPin, Clock, Heart, ImageIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import { LikeButton } from "@/components/common/LikeButton";
 import { formatTimeAgo } from "@/utils/formatTime";
+import type { Locale } from "@/i18n/config";
 
 export interface ContentCardProps {
   href: string;
@@ -41,7 +43,10 @@ export function ContentCard({
   tags,
   listOnMobile = false,
 }: ContentCardProps) {
+  const t = useTranslations("Common");
+  const locale = useLocale() as Locale;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [count, setCount] = useState(likeCount);
   const hasImages = images.length > 0;
   const hasCarousel = images.length > 1;
 
@@ -96,7 +101,7 @@ export function ContentCard({
                             ? "bg-white w-4"
                             : "bg-white/60 hover:bg-white/80 w-1.5"
                         }`}
-                        aria-label={`이미지 ${idx + 1}로 이동`}
+                        aria-label={t("imageUpload.goToImage", { index: idx + 1 })}
                       />
                     ))}
                   </div>
@@ -121,7 +126,7 @@ export function ContentCard({
               {title}
             </h3>
             <p className="text-base font-bold text-gray-900 mb-1">
-              {price != null ? `₱${price.toLocaleString()}` : "가격 협의"}
+              {price != null ? `₱${price.toLocaleString()}` : t("priceNegotiable")}
             </p>
             {subtitle && (
               <p className="text-xs text-gray-400 mb-1 truncate">{subtitle}</p>
@@ -135,11 +140,11 @@ export function ContentCard({
             <div className="flex items-center justify-between text-xs text-gray-500 mt-auto pt-1">
               <div className="flex items-center gap-1">
                 <Clock className="w-3 h-3" />
-                <time dateTime={createdAt}>{formatTimeAgo(createdAt)}</time>
+                <time dateTime={createdAt}>{formatTimeAgo(createdAt, locale)}</time>
               </div>
               <div className="flex items-center gap-1">
                 <Heart className="w-3 h-3" />
-                <span>{likeCount}</span>
+                <span>{count}</span>
               </div>
             </div>
           </div>
@@ -150,6 +155,7 @@ export function ContentCard({
         postId={postId}
         initialIsLiked={initialIsLiked}
         currentUserId={currentUserId}
+        onLikeChange={(liked) => setCount((prev) => liked ? prev + 1 : Math.max(prev - 1, 0))}
         className={`card-like-btn bg-white/90 hover:bg-white z-10 ${
           listOnMobile ? "hidden md:flex" : "flex"
         }`}

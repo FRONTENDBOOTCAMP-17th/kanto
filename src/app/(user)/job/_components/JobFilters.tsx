@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { SearchBar } from "@/components/common/SearchBar";
 import { FilterDropdown } from "@/components/common/FilterDropdown";
 import { EMPLOYEE_TYPES } from "@/type/job/jobCreate";
@@ -13,8 +14,18 @@ interface Props {
 }
 
 export function JobFilters({ givenSearch, defaultType, defaultLocation }: Props) {
+  const t = useTranslations("Job");
+  const te = useTranslations("Enums");
   const { updateParams } = useUrlParams();
   const [pendingType, setPendingType] = useState(defaultType);
+
+  const typeOptions = [
+    { id: "all", label: t("allTypes") },
+    ...EMPLOYEE_TYPES.map((type) => ({
+      id: type.id,
+      label: te(`employeeType.${type.id}`),
+    })),
+  ];
 
   return (
     <SearchBar
@@ -26,10 +37,10 @@ export function JobFilters({ givenSearch, defaultType, defaultLocation }: Props)
       showLocation
     >
       <FilterDropdown
-        options={[{ id: "all", label: "전체" }, ...EMPLOYEE_TYPES]}
+        options={typeOptions}
         value={pendingType}
         onChange={setPendingType}
-        label="고용 형태 선택"
+        label={t("selectEmployeeType")}
       />
     </SearchBar>
   );

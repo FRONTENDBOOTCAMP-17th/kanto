@@ -1,4 +1,5 @@
 import { ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import MainCard, { type MainCardItem } from "../MainCard";
 import Link from "next/link";
 
@@ -9,12 +10,13 @@ interface PopularListProps {
 }
 
 export default function PopularList({ title, items, link }: PopularListProps) {
+  const t = useTranslations("Common");
   return (
     <section className="mb-10">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold">{title}</h2>
         <Link href={link}  className="flex gap-1 cursor-pointer items-center text-teal-500 font-medium text-sm">
-          전체보기
+          {t("viewAll")}
           <ChevronRight className="w-4 h-4" />
         </Link>
       </div>

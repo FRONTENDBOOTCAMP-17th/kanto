@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { TermsModal } from "./TermsModal";
 
 type ModalType = "terms" | "privacy" | "age";
@@ -14,36 +15,11 @@ type AgreedState = {
 };
 
 const AGREES = [
-  {
-    id: "terms",
-    label: "서비스 이용약관",
-    desc: "면책조항, 금지행위, 제재 기준에 동의합니다",
-    required: true,
-  },
-  {
-    id: "privacy",
-    label: "개인정보 처리방침",
-    desc: "가입 시 이메일, 이름 등 개인정보가 저장됩니다",
-    required: true,
-  },
-  {
-    id: "age",
-    label: "만 18세 이상 확인",
-    desc: "결제 및 거래 서비스 이용을 위해 필요합니다",
-    required: true,
-  },
-  {
-    id: "marketing",
-    label: "마케팅 수신 동의",
-    desc: "이벤트, 혜택 등 마케팅 정보를 받습니다",
-    required: false,
-  },
-  {
-    id: "push",
-    label: "푸시 알림 수신",
-    desc: "채팅, 새 게시글 등 알림을 받습니다",
-    required: false,
-  },
+  { id: "terms", required: true },
+  { id: "privacy", required: true },
+  { id: "age", required: true },
+  { id: "marketing", required: false },
+  { id: "push", required: false },
 ];
 
 interface AgreeSectionProps {
@@ -51,6 +27,7 @@ interface AgreeSectionProps {
 }
 
 export function AgreeSection({ onRequiredChange }: AgreeSectionProps) {
+  const t = useTranslations("Signup.agree");
   const [agreed, setAgreed] = useState<AgreedState>({
     terms: false,
     privacy: false,
@@ -128,7 +105,7 @@ export function AgreeSection({ onRequiredChange }: AgreeSectionProps) {
             onChange={handleToggleAll}
             className="w-4 h-4 accent-teal-500 shrink-0"
           />
-          <span className="text-sm font-medium text-gray-900">전체 동의하기</span>
+          <span className="text-sm font-medium text-gray-900">{t("all")}</span>
         </label>
         <div className="space-y-1">
           {AGREES.map((a) => (
@@ -144,14 +121,14 @@ export function AgreeSection({ onRequiredChange }: AgreeSectionProps) {
               />
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-900">{a.label}</span>
+                  <span className="text-sm text-gray-900">{t(`items.${a.id}.label`)}</span>
                   <span
                     className={`text-xs px-2 py-0.5 rounded-full font-medium ${a.required ? "bg-teal-100 text-teal-600" : "bg-gray-100 text-gray-500"}`}
                   >
-                    {a.required ? "필수" : "선택"}
+                    {a.required ? t("required") : t("optional")}
                   </span>
                 </div>
-                <p className="text-xs text-gray-500 mt-0.5">{a.desc}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{t(`items.${a.id}.desc`)}</p>
               </div>
             </label>
           ))}

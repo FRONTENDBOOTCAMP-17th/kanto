@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
 import type { User as UserType } from "@/type/user";
@@ -10,10 +11,13 @@ import { uploadAvatar, updateProfile, fetchRestoredUser } from "@/services/profi
 export function useProfileInfo(user: UserType, avatarFile: File | null) {
   const [name, setName] = useState(user.name ?? "");
   const [phone, setPhone] = useState(user.phone ?? "");
+  const [phoneSaved, setPhoneSaved] = useState(!!user.phone);
+  const [phoneEditing, setPhoneEditing] = useState(!user.phone);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const { setUser, clearUser } = useAuthStore();
   const router = useRouter();
+  const t = useTranslations("Profile.toast");
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -27,22 +31,27 @@ export function useProfileInfo(user: UserType, avatarFile: File | null) {
   }, [showDeleteModal, deleteLoading]);
 
   const handleSave = async () => {
+    const isFirstSave = !phoneSaved;
     try {
       const avatarUrl = avatarFile ? await uploadAvatar(user.id, avatarFile) : user.avatar_url;
       const updated = await updateProfile(user.id, { name, phone, avatar_url: avatarUrl });
       setUser(updated);
-      alert("저장되었습니다.");
+      setPhoneSaved(true);
+      setPhoneEditing(false);
+      alert(isFirstSave ? t("saved") : t("updated"));
     } catch (e) {
-      alert(e instanceof Error ? e.message : "저장에 실패했습니다.");
+      alert(e instanceof Error ? e.message : t("saveFailed"));
     }
   };
+
+  const handleEditPhone = () => setPhoneEditing(true);
 
   const handleDeleteAccount = async () => {
     setDeleteLoading(true);
     const res = await fetch("/api/user", { method: "DELETE" });
     if (!res.ok) {
       setDeleteLoading(false);
-      alert("계정 삭제에 실패했습니다. 다시 시도해주세요.");
+      alert(t("deleteFailed"));
       return;
     }
     await supabase.auth.signOut();
@@ -55,7 +64,7 @@ export function useProfileInfo(user: UserType, avatarFile: File | null) {
     const res = await fetch("/api/user", { method: "PATCH" });
     if (!res.ok) {
       setDeleteLoading(false);
-      alert("탈퇴 철회에 실패했습니다. 다시 시도해주세요.");
+      alert(t("restoreFailed"));
       return;
     }
     if (user.auth_id) {
@@ -68,6 +77,9 @@ export function useProfileInfo(user: UserType, avatarFile: File | null) {
   return {
     name, setName,
     phone, setPhone,
+    phoneSaved,
+    phoneEditing,
+    handleEditPhone,
     showDeleteModal, setShowDeleteModal,
     deleteLoading,
     cancelButtonRef,

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { JobCard } from "./JobCard";
 import { EmptyState } from "@/components/common/EmptyState";
 import type { JobWithPost } from "@/type/job/jobList";
@@ -11,11 +12,12 @@ interface Props {
   emptyMessage?: string;
 }
 
-export function JobList({ posts, likedIds, currentUserId, emptyMessage = "등록된 구인공고가 없습니다" }: Props) {
+export function JobList({ posts, likedIds, currentUserId, emptyMessage }: Props) {
+  const t = useTranslations("Job");
   const likedSet = new Set(likedIds);
 
   if (posts.length === 0) {
-    return <EmptyState message={emptyMessage} />;
+    return <EmptyState message={emptyMessage ?? t("empty")} />;
   }
 
   return (

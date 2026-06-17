@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale } from "next-intl/server";
 import { GlobalLayout } from "@/components/common/GlobalLayout";
 import { getSessionUser } from "@/services/user/user";
+import { BCP47_LOCALE, type Locale } from "@/i18n/config";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,14 +28,17 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const initialUser = await getSessionUser();
+  const locale = (await getLocale()) as Locale;
 
   return (
     <html
-      lang="ko"
+      lang={BCP47_LOCALE[locale]}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <GlobalLayout initialUser={initialUser}>{children}</GlobalLayout>
+        <NextIntlClientProvider>
+          <GlobalLayout initialUser={initialUser}>{children}</GlobalLayout>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

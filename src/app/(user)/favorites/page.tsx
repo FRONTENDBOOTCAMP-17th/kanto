@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { getLikeList } from "@/services/likes";
 import { getUsedGoodsList } from "@/services/usedGoods/usedGoods";
 import { getJobList } from "@/services/job/job";
@@ -25,10 +26,12 @@ export default async function FavoritesPage({
 
   if (currentUserId === null) redirect("/login");
 
+  const t = await getTranslations("Favorites");
+
   return (
     <div className="page-wrapper">
       <main className="flex-1 page-container w-full py-8">
-        <h1 className="page-title mb-6">찜 목록</h1>
+        <h1 className="page-title mb-6">{t("title")}</h1>
         <FavoritesTabs activeType={activeType} tabPath="/favorites" />
         <div className="border-t border-gray-200 my-6" />
 
