@@ -45,7 +45,7 @@ export default async function JobDetailPage({
         <JobTitle job={job} userId={userId} initialLiked={initialLiked} initialReported={initialReported} />
         <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
           <JobInfo job={job} />
-          <JobAuthorInfo job={job} />
+          <JobAuthorInfo job={job} userId={userId} />
         </div>
         {images.length > 0 && (
           <div className="p-6 space-y-2">

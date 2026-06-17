@@ -2,10 +2,25 @@
 
 import { UserCircle2, Phone, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import postChat from "@/services/chat/postChat";
+import { useChatStore } from "@/store/chatStore";
 import type { JobDetail } from "@/type/job/jobsDetail";
 
-export default function JobAuthorInfo({ job }: { job: JobDetail }) {
+export default function JobAuthorInfo({
+  job,
+  userId,
+}: {
+  job: JobDetail;
+  userId: number | undefined;
+}) {
   const name = job.manager_name ?? job.posts.users?.name;
+  const isOwner = userId !== undefined && userId === job.posts.users?.id;
+
+  const handleChat = async () => {
+    if (!userId || !job.posts.users) return;
+    const chatId = await postChat(userId, job.posts.users.id, job.post_id);
+    useChatStore.getState().openWidget(chatId);
+  };
 
   return (
     <div className="p-6 flex flex-col gap-4">
@@ -35,9 +50,15 @@ export default function JobAuthorInfo({ job }: { job: JobDetail }) {
           )}
         </div>
       )}
-      <Button variant="teal" className="w-full">
-        지원하기
-      </Button>
+      {!isOwner && (
+        <Button
+          variant="teal"
+          className="cursor-pointer w-full"
+          onClick={handleChat}
+        >
+          채팅하기
+        </Button>
+      )}
     </div>
   );
 }

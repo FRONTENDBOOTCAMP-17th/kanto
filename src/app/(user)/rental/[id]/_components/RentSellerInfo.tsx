@@ -1,10 +1,32 @@
+"use client";
+
 import { RentalWithPost } from "@/type/rental/rentalDetail";
 import Image from "next/image";
 import { formatSellerInfoCreatedAt } from "@/utils/formatTime";
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import postChat from "@/services/chat/postChat";
+import { useChatStore } from "@/store/chatStore";
 
-export default function RentSellorInfo({ rental }: { rental: RentalWithPost }) {
+export default function RentSellorInfo({
+  rental,
+  userId,
+}: {
+  rental: RentalWithPost;
+  userId: number | undefined;
+}) {
+  const isOwner = userId !== undefined && userId === rental.posts.users?.id;
+
+  const handleChat = async () => {
+    if (!userId || !rental.posts.users || rental.post_id === null) return;
+    const chatId = await postChat(
+      userId,
+      rental.posts.users.id,
+      rental.post_id,
+    );
+    useChatStore.getState().openWidget(chatId);
+  };
+
   return (
     <>
       <h2 className="text-xl font-medium">집주인 정보</h2>
@@ -30,9 +52,15 @@ export default function RentSellorInfo({ rental }: { rental: RentalWithPost }) {
         </div>
       </div>
 
-      <Button variant="teal" className="cursor-pointer">
-        문의하기
-      </Button>
+      {!isOwner && (
+        <Button
+          variant="teal"
+          className="cursor-pointer"
+          onClick={handleChat}
+        >
+          채팅하기
+        </Button>
+      )}
     </>
   );
 }
