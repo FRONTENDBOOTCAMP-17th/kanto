@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import postChat from "@/services/chat/postChat";
+import findChat from "@/services/chat/postChat";
 import { useChatStore } from "@/store/chatStore";
 
 export default function RentSellorInfo({
@@ -19,12 +19,24 @@ export default function RentSellorInfo({
 
   const handleChat = async () => {
     if (!userId || !rental.posts.users || rental.post_id === null) return;
-    const chatId = await postChat(
-      userId,
-      rental.posts.users.id,
-      rental.post_id,
-    );
-    useChatStore.getState().openWidget(chatId);
+    const chatId = await findChat(userId, rental.posts.users.id, rental.post_id);
+    if (chatId !== null) {
+      useChatStore.getState().openWidget(chatId);
+    } else {
+      useChatStore.getState().openNewChat({
+        buyerId: userId,
+        sellerId: rental.posts.users.id,
+        postId: rental.post_id,
+        postTitle: rental.posts.title ?? "",
+        postPrice: null,
+        partner: {
+          id: rental.posts.users.id,
+          name: rental.posts.users.name,
+          avatar_url: rental.posts.users.avatar_url,
+          created_at: rental.posts.users.created_at,
+        },
+      });
+    }
   };
 
   const t = useTranslations("Rental");

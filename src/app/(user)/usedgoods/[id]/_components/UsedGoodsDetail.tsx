@@ -10,7 +10,7 @@ import { formatTimeAgo } from "@/utils/formatTime";
 import type { Locale } from "@/i18n/config";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import VerifyAuthor from "@/components/common/VerifyAuthor";
-import postChat from "@/services/chat/postChat";
+import findChat from "@/services/chat/postChat";
 import { useAuthStore } from "@/store/authStore";
 import { useChatStore } from "@/store/chatStore";
 import InteractionButtons from "@/components/common/InteractionButtons";
@@ -52,8 +52,24 @@ export default function UsedGoodsDetail({
 
   const handleChat = async () => {
     if (!userId || !data.posts.users) return;
-    const chatId = await postChat(userId, data.posts.users.id, data.post_id);
-    useChatStore.getState().openWidget(chatId);
+    const chatId = await findChat(userId, data.posts.users.id, data.post_id);
+    if (chatId !== null) {
+      useChatStore.getState().openWidget(chatId);
+    } else {
+      useChatStore.getState().openNewChat({
+        buyerId: userId,
+        sellerId: data.posts.users.id,
+        postId: data.post_id,
+        postTitle: data.posts.title ?? "",
+        postPrice: data.price,
+        partner: {
+          id: data.posts.users.id,
+          name: data.posts.users.name,
+          avatar_url: data.posts.users.avatar_url,
+          created_at: data.posts.users.created_at,
+        },
+      });
+    }
   };
 
   return (
