@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { User, Camera } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useImageUpload } from "@/hooks/useImageUpload";
 
 export default function ProfileAvatar({
@@ -13,6 +14,7 @@ export default function ProfileAvatar({
   name: string | null;
   onFileChange: (file: File) => void;
 }) {
+  const t = useTranslations("Profile.avatar");
   const { fileInputRef, imagePreviews, handleImageUpload, handleImageSelect } = useImageUpload([], 1);
 
   const handleSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,7 +31,7 @@ export default function ProfileAvatar({
         {previewUrl ? (
           <Image
             src={previewUrl}
-            alt={name ?? "프로필"}
+            alt={name ?? t("alt")}
             sizes="80px"
             fill
             className="rounded-full object-cover"
@@ -48,14 +50,14 @@ export default function ProfileAvatar({
         />
         <button
           type="button"
-          aria-label="프로필 사진 변경"
+          aria-label={t("changeAria")}
           onClick={handleImageUpload}
           className="cursor-pointer absolute bottom-0 right-0 w-6 h-6 rounded-full bg-teal-500 border-2 border-white flex items-center justify-center"
         >
           <Camera className="w-3 h-3 text-white" />
         </button>
       </div>
-      <p className="text-xs text-gray-400 mt-2.5">사진을 클릭하여 변경</p>
+      <p className="text-xs text-gray-400 mt-2.5">{t("changeHint")}</p>
     </div>
   );
 }

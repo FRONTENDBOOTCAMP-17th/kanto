@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,6 +59,9 @@ export default function RentalCreateForm({
   userId: number;
   initialData?: InitialData;
 }) {
+  const t = useTranslations("Rental");
+  const te = useTranslations("Enums");
+  const tc = useTranslations("Common");
   const router = useRouter();
 
   const postId = initialData?.post_id;
@@ -169,7 +173,7 @@ export default function RentalCreateForm({
         .single();
 
       if (postError || !post) {
-        alert("게시글 등록에 실패했습니다.");
+        alert(t("form.errorPost"));
         setIsSubmitting(false);
         return;
       }
@@ -183,7 +187,7 @@ export default function RentalCreateForm({
 
         if (uploadError) {
           await supabase.from("posts").delete().eq("id", post.id);
-          alert("이미지 업로드에 실패했습니다.");
+          alert(t("form.errorImage"));
           setIsSubmitting(false);
           return;
         }
@@ -209,7 +213,7 @@ export default function RentalCreateForm({
       });
 
       if (rentalError) {
-        alert("방 정보 등록에 실패했습니다.");
+        alert(t("form.errorRental"));
         setIsSubmitting(false);
         return;
       }
@@ -229,21 +233,21 @@ export default function RentalCreateForm({
           className="mb-6"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          뒤로가기
+          {t("form.back")}
         </Button>
 
         <Card className="p-8">
           <h1 className="page-title-lg mb-2">
-            {initialData ? "방렌트 글 수정" : "방렌트 글쓰기"}
+            {initialData ? t("form.editTitle") : t("form.createTitle")}
           </h1>
-          <p className="text-gray-600 mb-8">필요한 정보를 입력해주세요</p>
+          <p className="text-gray-600 mb-8">{t("form.subtitle")}</p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="title">숙소명 *</Label>
+              <Label htmlFor="title">{t("form.titleLabel")}</Label>
               <Input
                 id="title"
-                placeholder="숙소명을 입력하세요"
+                placeholder={t("form.titlePlaceholder")}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
@@ -251,25 +255,25 @@ export default function RentalCreateForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="location">숙소 위치 *</Label>
+              <Label htmlFor="location">{t("form.locationLabel")}</Label>
               <Select
                 value={location}
                 onValueChange={(v) => setLocation(v as Location)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="지역을 선택하세요" />
+                  <SelectValue placeholder={t("form.locationPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
                   {LOCATIONS.map((loc) => (
                     <SelectItem key={loc} value={loc}>
-                      {loc}
+                      {loc === "그 외 지역" ? te("tradeLocation.otherAreas") : loc}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               {location === "그 외 지역" && (
                 <Input
-                  placeholder="상세 위치를 입력하세요"
+                  placeholder={t("form.locationDetailPlaceholder")}
                   value={locationDetail}
                   onChange={(e) => setLocationDetail(e.target.value)}
                   required
@@ -278,23 +282,23 @@ export default function RentalCreateForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="rentType">월세 / 매매 *</Label>
+              <Label htmlFor="rentType">{t("form.rentTypeLabel")}</Label>
               <Select
                 value={rentType}
                 onValueChange={(v) => setRentType(v as RentType)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="선택하세요" />
+                  <SelectValue placeholder={t("form.rentTypePlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="월세">월세</SelectItem>
-                  <SelectItem value="매매">매매</SelectItem>
+                  <SelectItem value="월세">{te("rentType.월세")}</SelectItem>
+                  <SelectItem value="매매">{te("rentType.매매")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="price">가격 *</Label>
+              <Label htmlFor="price">{t("form.priceLabel")}</Label>
               <div className="relative">
                 <Input
                   id="price"
@@ -312,7 +316,7 @@ export default function RentalCreateForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="deposit">보증금</Label>
+              <Label htmlFor="deposit">{t("form.depositLabel")}</Label>
               <div className="relative">
                 <Input
                   id="deposit"
@@ -329,25 +333,25 @@ export default function RentalCreateForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="roomType">방 타입 *</Label>
+              <Label htmlFor="roomType">{t("form.roomTypeLabel")}</Label>
               <Select
                 value={roomType}
                 onValueChange={(v) => setRoomType(v as RoomType)}
                 required
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="방 타입을 선택하세요" />
+                  <SelectValue placeholder={t("form.roomTypePlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="스튜디오">스튜디오</SelectItem>
-                  <SelectItem value="투룸">투룸</SelectItem>
-                  <SelectItem value="아파트">아파트</SelectItem>
+                  <SelectItem value="스튜디오">{te("roomType.스튜디오")}</SelectItem>
+                  <SelectItem value="투룸">{te("roomType.투룸")}</SelectItem>
+                  <SelectItem value="아파트">{te("roomType.아파트")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="maxOccupants">최대 인원 *</Label>
+              <Label htmlFor="maxOccupants">{t("form.maxOccupantsLabel")}</Label>
               <Input
                 id="maxOccupants"
                 type="number"
@@ -359,7 +363,7 @@ export default function RentalCreateForm({
             </div>
 
             <div className="space-y-2">
-              <Label>편의시설</Label>
+              <Label>{t("form.amenitiesLabel")}</Label>
               <div className="flex gap-2 flex-wrap">
                 {AMENITIES.map((item) => (
                   <button
@@ -372,7 +376,7 @@ export default function RentalCreateForm({
                         : "bg-white text-gray-700 border-gray-300 hover:border-teal-400"
                     }`}
                   >
-                    {item}
+                    {te(`amenities.${item}`)}
                   </button>
                 ))}
               </div>
@@ -387,10 +391,10 @@ export default function RentalCreateForm({
             />
 
             <div className="space-y-2">
-              <Label htmlFor="description">상세 설명</Label>
+              <Label htmlFor="description">{t("form.descriptionLabel")}</Label>
               <Textarea
                 id="description"
-                placeholder="숙소에 대한 상세 설명을 입력하세요"
+                placeholder={t("form.descriptionPlaceholder")}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={10}
@@ -407,7 +411,7 @@ export default function RentalCreateForm({
                 className="flex-1"
                 disabled={isSubmitting}
               >
-                취소
+                {tc("cancel")}
               </Button>
               <Button
                 type="submit"
@@ -417,11 +421,11 @@ export default function RentalCreateForm({
               >
                 {isSubmitting
                   ? initialData
-                    ? "수정 중..."
-                    : "등록 중..."
+                    ? t("form.editing")
+                    : t("form.submitting")
                   : initialData
-                    ? "수정 완료"
-                    : "작성 완료"}
+                    ? t("form.editDone")
+                    : t("form.submit")}
               </Button>
             </div>
           </form>

@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,6 +47,9 @@ export function CreateUsedGoodsForm({
   userId: number;
   initialData?: InitialData;
 }) {
+  const t = useTranslations("UsedGoods");
+  const te = useTranslations("Enums");
+  const tc = useTranslations("Common");
   const router = useRouter();
 
   const postId = initialData?.post_id;
@@ -134,7 +138,7 @@ export function CreateUsedGoodsForm({
         .single();
 
       if (postError || !post) {
-        alert("게시글 등록에 실패했습니다.");
+        alert(t("form.errorPost"));
         setIsSubmitting(false);
         return;
       }
@@ -148,7 +152,7 @@ export function CreateUsedGoodsForm({
 
         if (uploadError) {
           await supabase.from("posts").delete().eq("id", post.id);
-          alert("이미지 업로드에 실패했습니다.");
+          alert(t("form.errorImage"));
           setIsSubmitting(false);
           return;
         }
@@ -173,7 +177,7 @@ export function CreateUsedGoodsForm({
       });
 
       if (goodsError) {
-        alert("상품 정보 등록에 실패했습니다.");
+        alert(t("form.errorGoods"));
         setIsSubmitting(false);
         return;
       }
@@ -212,22 +216,22 @@ export function CreateUsedGoodsForm({
       <div className="max-w-3xl mx-auto">
         <Button variant="ghost" onClick={() => router.back()} className="mb-6">
           <ArrowLeft className="w-4 h-4 mr-2" />
-          뒤로가기
+          {t("form.back")}
         </Button>
 
         <Card className="p-8">
           <h1 className="page-title-lg mb-2">
-            {initialData ? "중고거래 수정" : "중고거래 글쓰기"}
+            {initialData ? t("form.editTitle") : t("form.createTitle")}
           </h1>
-          <p className="text-gray-600 mb-8">필요한 정보를 입력해주세요</p>
+          <p className="text-gray-600 mb-8">{t("form.subtitle")}</p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="title">제목 *</Label>
+              <Label htmlFor="title">{t("form.titleLabel")}</Label>
               <Input
                 maxLength={64}
                 id="title"
-                placeholder="상품명을 입력하세요"
+                placeholder={t("form.titlePlaceholder")}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
@@ -235,7 +239,7 @@ export function CreateUsedGoodsForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="price">가격 *</Label>
+              <Label htmlFor="price">{t("form.priceLabel")}</Label>
               <div className="relative">
                 <Input
                   id="price"
@@ -253,20 +257,20 @@ export function CreateUsedGoodsForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="productCategory">상품 카테고리 *</Label>
+              <Label htmlFor="productCategory">{t("form.categoryLabel")}</Label>
               <Select
                 value={productCategory}
                 onValueChange={(v) => setProductCategory(v as ProductCategory)}
                 required
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="카테고리를 선택하세요" />
+                  <SelectValue placeholder={t("form.categoryPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
                   {PRODUCT_CATEGORIES.filter((c) => c.id !== "all").map(
                     (cat) => (
                       <SelectItem key={cat.id} value={cat.id}>
-                        {cat.label}
+                        {te(`productCategory.${cat.id}`)}
                       </SelectItem>
                     ),
                   )}
@@ -275,19 +279,19 @@ export function CreateUsedGoodsForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="condition">상태 *</Label>
+              <Label htmlFor="condition">{t("form.conditionLabel")}</Label>
               <Select
                 value={condition}
                 onValueChange={(v) => setCondition(v as ProductCondition)}
                 required
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="상태를 선택하세요" />
+                  <SelectValue placeholder={t("form.conditionPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
                   {PRODUCT_CONDITIONS.map((cond) => (
                     <SelectItem key={cond.id} value={cond.id}>
-                      {cond.label}
+                      {te(`productCondition.${cond.id}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -295,26 +299,26 @@ export function CreateUsedGoodsForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="preferredLocation">거래 지역 *</Label>
+              <Label htmlFor="preferredLocation">{t("form.locationLabel")}</Label>
               <Select
                 value={preferredLocation}
                 onValueChange={(v) => setPreferredLocation(v as TradeLocation)}
                 required
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="지역을 선택하세요" />
+                  <SelectValue placeholder={t("form.locationPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
                   {TRADE_LOCATIONS.map((loc) => (
                     <SelectItem key={loc} value={loc}>
-                      {loc}
+                      {loc === "그 외 지역" ? te("tradeLocation.otherAreas") : loc}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               {preferredLocation === "그 외 지역" && (
                 <Input
-                  placeholder="상세 지역을 입력하세요"
+                  placeholder={t("form.locationDetailPlaceholder")}
                   value={preferredLocationDetail}
                   onChange={(e) => setPreferredLocationDetail(e.target.value)}
                   required
@@ -323,11 +327,11 @@ export function CreateUsedGoodsForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="content">내용 *</Label>
+              <Label htmlFor="content">{t("form.contentLabel")}</Label>
               <Textarea
                 className="resize-none min-h-48"
                 id="content"
-                placeholder="상품에 대한 설명을 입력하세요"
+                placeholder={t("form.contentPlaceholder")}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 rows={10}
@@ -352,7 +356,7 @@ export function CreateUsedGoodsForm({
                 className="w-4 h-4 rounded border-gray-300 bg-white text-teal-500 focus:ring-teal-500"
               />
               <Label htmlFor="safePayment" className="cursor-pointer">
-                안전 결제 사용
+                {t("form.safePaymentUse")}
               </Label>
             </div>
 
@@ -364,7 +368,7 @@ export function CreateUsedGoodsForm({
                 className="flex-1"
                 disabled={isSubmitting}
               >
-                취소
+                {tc("cancel")}
               </Button>
               <Button
                 type="submit"
@@ -372,7 +376,7 @@ export function CreateUsedGoodsForm({
                 className="flex-1"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "등록 중..." : "작성 완료"}
+                {isSubmitting ? t("form.submitting") : t("form.submit")}
               </Button>
             </div>
           </form>

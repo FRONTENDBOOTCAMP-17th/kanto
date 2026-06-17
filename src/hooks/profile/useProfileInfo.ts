@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
 import type { User as UserType } from "@/type/user";
@@ -16,6 +17,7 @@ export function useProfileInfo(user: UserType, avatarFile: File | null) {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const { setUser, clearUser } = useAuthStore();
   const router = useRouter();
+  const t = useTranslations("Profile.toast");
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -36,9 +38,9 @@ export function useProfileInfo(user: UserType, avatarFile: File | null) {
       setUser(updated);
       setPhoneSaved(true);
       setPhoneEditing(false);
-      alert(isFirstSave ? "저장되었습니다." : "수정되었습니다.");
+      alert(isFirstSave ? t("saved") : t("updated"));
     } catch (e) {
-      alert(e instanceof Error ? e.message : "저장에 실패했습니다.");
+      alert(e instanceof Error ? e.message : t("saveFailed"));
     }
   };
 
@@ -49,7 +51,7 @@ export function useProfileInfo(user: UserType, avatarFile: File | null) {
     const res = await fetch("/api/user", { method: "DELETE" });
     if (!res.ok) {
       setDeleteLoading(false);
-      alert("계정 삭제에 실패했습니다. 다시 시도해주세요.");
+      alert(t("deleteFailed"));
       return;
     }
     await supabase.auth.signOut();
@@ -62,7 +64,7 @@ export function useProfileInfo(user: UserType, avatarFile: File | null) {
     const res = await fetch("/api/user", { method: "PATCH" });
     if (!res.ok) {
       setDeleteLoading(false);
-      alert("탈퇴 철회에 실패했습니다. 다시 시도해주세요.");
+      alert(t("restoreFailed"));
       return;
     }
     if (user.auth_id) {

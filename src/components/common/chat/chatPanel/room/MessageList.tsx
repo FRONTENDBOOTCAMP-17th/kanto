@@ -1,8 +1,10 @@
 import { Fragment, type RefObject } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
 import { formatDateDivider, formatMessageTime } from "@/utils/formatTime";
+import type { Locale } from "@/i18n/config";
 import PaymentCard from "./PaymentCard";
 
 interface Props {
@@ -26,6 +28,8 @@ export default function MessageList({
   scrollContainerRef,
   onTransactionChange,
 }: Props) {
+  const t = useTranslations("Chat");
+  const locale = useLocale() as Locale;
   return (
     <div
       ref={scrollContainerRef}
@@ -38,7 +42,7 @@ export default function MessageList({
             disabled={isLoadingMore}
             className="cursor-pointer px-3 py-1 text-xs text-teal-600 bg-teal-50 rounded-full border border-teal-200 hover:bg-teal-100 transition-colors disabled:opacity-50"
           >
-            {isLoadingMore ? "불러오는 중..." : "이전 메시지 보기"}
+            {isLoadingMore ? t("loadingMore") : t("loadPrevious")}
           </button>
         </div>
       )}
@@ -55,7 +59,7 @@ export default function MessageList({
               <div className="flex items-center gap-2 my-1">
                 <div className="flex-1 h-px bg-gray-200" />
                 <time dateTime={msg.created_at} className="text-xs md:text-[10px] text-gray-400">
-                  {formatDateDivider(msg.created_at)}
+                  {formatDateDivider(msg.created_at, locale)}
                 </time>
                 <div className="flex-1 h-px bg-gray-200" />
               </div>
@@ -84,7 +88,7 @@ export default function MessageList({
                     <span className="text-xs md:text-[10px] text-teal-500 font-medium">1</span>
                   )}
                   <time dateTime={msg.created_at} className="text-xs md:text-[10px] text-gray-400">
-                    {formatMessageTime(msg.created_at)}
+                    {formatMessageTime(msg.created_at, locale)}
                   </time>
                 </div>
               </div>

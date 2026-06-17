@@ -4,8 +4,10 @@ import Link from "next/link";
 import { BadgeCheck, Heart, Clock, Eye, MoveLeft, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { Tables } from "@/type/supabase";
 import { formatTimeAgo } from "@/utils/formatTime";
+import type { Locale } from "@/i18n/config";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import VerifyAuthor from "@/components/common/VerifyAuthor";
 import postChat from "@/services/chat/postChat";
@@ -34,6 +36,10 @@ export default function UsedGoodsDetail({
   userId: number | undefined;
   initialReported: boolean;
 }) {
+  const t = useTranslations("UsedGoods");
+  const te = useTranslations("Enums");
+  const tt = useTranslations("Time");
+  const locale = useLocale() as Locale;
   const router = useRouter();
   const { user: storeUser } = useAuthStore();
   const isOwner = storeUser?.auth_id === data.posts.users?.auth_id;
@@ -56,7 +62,7 @@ export default function UsedGoodsDetail({
       <div className="flex items-center justify-between mt-4">
         <button onClick={() => router.push("/usedgoods")} className="flex gap-2 cursor-pointer">
           <MoveLeft />
-          목록으로
+          {t("backToList")}
         </button>
         <VerifyAuthor
           authorAuthId={data.posts.users?.auth_id}
@@ -73,21 +79,21 @@ export default function UsedGoodsDetail({
           <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-[450px]">
             {/* 상품 정보 */}
             <div>
-              <h2 className="text-xl font-semibold mb-3">상품 정보</h2>
+              <h2 className="text-xl font-semibold mb-3">{t("productInfo")}</h2>
               <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
-                <dt className="text-gray-500 font-medium">카테고리</dt>
-                <dd className="text-gray-700">· {data.category}</dd>
-                <dt className="text-gray-500 font-medium">상태</dt>
-                <dd className="text-gray-700">· {data.condition}</dd>
-                <dt className="text-gray-500 font-medium">가격</dt>
+                <dt className="text-gray-500 font-medium">{t("category")}</dt>
+                <dd className="text-gray-700">· {data.category ? te(`productCategory.${data.category}`) : ""}</dd>
+                <dt className="text-gray-500 font-medium">{t("condition")}</dt>
+                <dd className="text-gray-700">· {data.condition ? te(`productCondition.${data.condition}`) : ""}</dd>
+                <dt className="text-gray-500 font-medium">{t("price")}</dt>
                 <dd className="text-orange-500">· ₱ {data.price?.toLocaleString()}</dd>
-                <dt className="text-gray-500 font-medium">거래 장소</dt>
-                <dd className="text-gray-700">· {data.location_type}</dd>
+                <dt className="text-gray-500 font-medium">{t("tradeLocation")}</dt>
+                <dd className="text-gray-700">· {data.location_type === "그 외 지역" ? te("tradeLocation.otherAreas") : data.location_type}</dd>
                 {data.safe_payment !== null && (
                   <>
-                    <dt className="text-gray-500 font-medium">안전 결제</dt>
+                    <dt className="text-gray-500 font-medium">{t("safePayment")}</dt>
                     <dd className={data.safe_payment ? "text-teal-600" : "text-red-500"}>
-                      · {data.safe_payment ? "확인" : "미확인"}
+                      · {data.safe_payment ? t("confirmed") : t("unconfirmed")}
                     </dd>
                   </>
                 )}
@@ -96,12 +102,12 @@ export default function UsedGoodsDetail({
             <hr className="border-gray-200" />
             {/* 판매자 정보 */}
             <div className="flex flex-col gap-4">
-              <h2 className="text-xl font-semibold">판매자 정보</h2>
+              <h2 className="text-xl font-semibold">{t("sellerInfo")}</h2>
               <div className="flex items-center gap-3">
                 {data.posts.users?.avatar_url ? (
                   <ImageWithFallback
                     src={data.posts.users.avatar_url}
-                    alt="프로필"
+                    alt={t("profileAlt")}
                     width={48}
                     height={48}
                     className="rounded-full object-cover w-12 h-12 shrink-0"
@@ -115,14 +121,17 @@ export default function UsedGoodsDetail({
                   <p className="font-medium">{data.posts.users?.name}</p>
                   <p className="text-sm text-gray-500">
                     {accession
-                      ? `${accession.getFullYear()}년 ${accession.getMonth() + 1}월 가입`
-                      : "가입일 정보 없음"}
+                      ? tt("joinedYearMonth", {
+                          year: accession.getFullYear(),
+                          month: accession.getMonth() + 1,
+                        })
+                      : tt("joinDateUnknown")}
                   </p>
                 </div>
               </div>
               {!isOwner && (
                 <Button variant="teal" className="cursor-pointer w-full" onClick={handleChat}>
-                  채팅하기
+                  {t("chat")}
                 </Button>
               )}
             </div>
@@ -133,33 +142,33 @@ export default function UsedGoodsDetail({
         <div className="border border-gray-200 rounded-2xl overflow-hidden mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
             <div className="p-6">
-              <h2 className="text-xl font-semibold mb-3">상품 정보</h2>
+              <h2 className="text-xl font-semibold mb-3">{t("productInfo")}</h2>
               <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
-                <dt className="text-gray-500 font-medium">카테고리</dt>
-                <dd className="text-gray-700">· {data.category}</dd>
-                <dt className="text-gray-500 font-medium">상태</dt>
-                <dd className="text-gray-700">· {data.condition}</dd>
-                <dt className="text-gray-500 font-medium">가격</dt>
+                <dt className="text-gray-500 font-medium">{t("category")}</dt>
+                <dd className="text-gray-700">· {data.category ? te(`productCategory.${data.category}`) : ""}</dd>
+                <dt className="text-gray-500 font-medium">{t("condition")}</dt>
+                <dd className="text-gray-700">· {data.condition ? te(`productCondition.${data.condition}`) : ""}</dd>
+                <dt className="text-gray-500 font-medium">{t("price")}</dt>
                 <dd className="text-orange-500">· ₱ {data.price?.toLocaleString()}</dd>
-                <dt className="text-gray-500 font-medium">거래 장소</dt>
-                <dd className="text-gray-700">· {data.location_type}</dd>
+                <dt className="text-gray-500 font-medium">{t("tradeLocation")}</dt>
+                <dd className="text-gray-700">· {data.location_type === "그 외 지역" ? te("tradeLocation.otherAreas") : data.location_type}</dd>
                 {data.safe_payment !== null && (
                   <>
-                    <dt className="text-gray-500 font-medium">안전 결제</dt>
+                    <dt className="text-gray-500 font-medium">{t("safePayment")}</dt>
                     <dd className={data.safe_payment ? "text-teal-600" : "text-red-500"}>
-                      · {data.safe_payment ? "확인" : "미확인"}
+                      · {data.safe_payment ? t("confirmed") : t("unconfirmed")}
                     </dd>
                   </>
                 )}
               </dl>
             </div>
             <div className="p-6 flex flex-col gap-4">
-              <h2 className="text-xl font-semibold">판매자 정보</h2>
+              <h2 className="text-xl font-semibold">{t("sellerInfo")}</h2>
               <div className="flex items-center gap-3">
                 {data.posts.users?.avatar_url ? (
                   <ImageWithFallback
                     src={data.posts.users.avatar_url}
-                    alt="프로필"
+                    alt={t("profileAlt")}
                     width={48}
                     height={48}
                     className="rounded-full object-cover w-12 h-12 shrink-0"
@@ -173,14 +182,17 @@ export default function UsedGoodsDetail({
                   <p className="font-medium">{data.posts.users?.name}</p>
                   <p className="text-sm text-gray-500">
                     {accession
-                      ? `${accession.getFullYear()}년 ${accession.getMonth() + 1}월 가입`
-                      : "가입일 정보 없음"}
+                      ? tt("joinedYearMonth", {
+                          year: accession.getFullYear(),
+                          month: accession.getMonth() + 1,
+                        })
+                      : tt("joinDateUnknown")}
                   </p>
                 </div>
               </div>
               {!isOwner && (
                 <Button variant="teal" className="cursor-pointer w-full" onClick={handleChat}>
-                  채팅하기
+                  {t("chat")}
                 </Button>
               )}
             </div>
@@ -209,7 +221,7 @@ export default function UsedGoodsDetail({
         <div className="text-gray-400 text-sm flex items-center gap-4 mt-3">
           <span className="flex items-center gap-1">
             <Clock className="w-4 h-4" />
-            <time dateTime={data.posts.created_at}>{formatTimeAgo(data.posts.created_at)}</time>
+            <time dateTime={data.posts.created_at}>{formatTimeAgo(data.posts.created_at, locale)}</time>
           </span>
           <span className="flex items-center gap-1">
             <Eye className="w-4 h-4" />
@@ -232,14 +244,14 @@ export default function UsedGoodsDetail({
 
         <hr className="border-gray-200 my-4" />
 
-        <h2 className="text-xl font-semibold mb-3">상품 설명</h2>
+        <h2 className="text-xl font-semibold mb-3">{t("description")}</h2>
         <p className="text-gray-700 whitespace-pre-line">{data.content}</p>
       </div>
 
       {/* 관련 매물 */}
       {relatedData && relatedData.length > 0 && (
         <div className="mt-2 md:mt-4 border border-gray-200 rounded-2xl p-6">
-          <h2 className="text-xl font-semibold mb-4">관련 매물</h2>
+          <h2 className="text-xl font-semibold mb-4">{t("related")}</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {relatedData.map((item) => {
               const itemImages = (item.images as string[]) ?? [];
@@ -248,7 +260,7 @@ export default function UsedGoodsDetail({
                   <div className="relative w-full aspect-square overflow-hidden border rounded-xl">
                     <ImageWithFallback
                       src={itemImages[0] ?? "/fallback-image.svg"}
-                      alt={`${item.posts?.title} 상품 이미지`}
+                      alt={item.posts?.title ?? ""}
                       fill
                       sizes="(max-width: 768px) 50vw, 25vw"
                       className="object-cover"

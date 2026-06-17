@@ -1,0 +1,686 @@
+{
+  "Header": {
+    "nav": {
+      "usedgoods": "Palengke",
+      "jobs": "Trabaho",
+      "rental": "Paupahan",
+      "community": "Komunidad",
+      "dating": "Random na Chat"
+    },
+    "login": "Mag-log in",
+    "logout": "Mag-log out",
+    "logoutConfirm": "Sigurado ka bang gusto mong mag-log out?",
+    "openMenu": "Buksan ang menu",
+    "closeMenu": "Isara ang menu",
+    "profile": {
+      "menuLabel": "Menu ng aking profile",
+      "alt": "Profile",
+      "myInfo": "Aking Impormasyon",
+      "favorites": "Mga Paborito",
+      "myPosts": "Aking mga Post",
+      "favoritesShort": "Naka-save",
+      "myPostsShort": "Mga Post"
+    }
+  },
+  "Footer": {
+    "tagline": "Isang community platform<br></br>para sa mga Koreano sa Pilipinas",
+    "services": {
+      "title": "Mga Serbisyo",
+      "usedgoods": "Palengke",
+      "jobs": "Trabaho",
+      "rental": "Paupahan",
+      "community": "Komunidad ng Koreano"
+    },
+    "support": {
+      "title": "Suporta",
+      "report": "Makipag-ugnayan / Mag-ulat"
+    },
+    "contact": {
+      "title": "Kontak",
+      "email": "Email: support@kanto.ph",
+      "kakao": "KakaoTalk: @kanto"
+    },
+    "legal": {
+      "termsOfService": "Mga Tuntunin ng Serbisyo",
+      "privacyPolicy": "Patakaran sa Privacy",
+      "youthPolicy": "Patakaran sa Proteksyon ng Kabataan"
+    },
+    "copyright": "© 2026 Kanto. All rights reserved."
+  },
+  "Auth": {
+    "email": "Email",
+    "password": "Password",
+    "emailPlaceholder": "example@email.com",
+    "passwordPlaceholder": "Ilagay ang iyong password",
+    "loginButton": "Mag-log in",
+    "noAccountInline": "Wala ka pang account?",
+    "signup": "Mag-sign up",
+    "noAccount": "Wala ka pa rin bang account?",
+    "signupCta": "Pumunta sa pag-sign up",
+    "social": {
+      "kakao": "Magpatuloy gamit ang Kakao",
+      "google": "Magpatuloy gamit ang Google",
+      "facebook": "Magpatuloy gamit ang Facebook",
+      "email": "Mag-log in gamit ang email"
+    },
+    "errors": {
+      "tooManyAttempts": "Masyadong maraming pagtatangka sa pag-log in. Pakisubukan muli mamaya.",
+      "invalidCredentials": "Mali ang iyong email o password.",
+      "emailNotConfirmed": "Hindi pa na-verify ang iyong email. Pakitingnan ang iyong inbox.",
+      "generic": "Nabigo ang pag-log in. Pakisubukan muli."
+    }
+  },
+  "LanguageSwitcher": {
+    "label": "Wika",
+    "ko": "한국어",
+    "en": "English",
+    "ta": "Tagalog"
+  },
+  "Common": {
+    "confirm": "Kumpirmahin",
+    "cancel": "Kanselahin",
+    "delete": "Burahin",
+    "edit": "I-edit",
+    "close": "Isara",
+    "deleteConfirm": "Sigurado ka bang gusto mong burahin ito?",
+    "processing": "Pinoproseso...",
+    "loginRequired": "Mag-log in para magpatuloy",
+    "goToLogin": "Pumunta sa login",
+    "scrollTop": "Bumalik sa itaas",
+    "more": "Higit pa",
+    "viewAll": "Tingnan lahat",
+    "notFound": "Hindi nahanap.",
+    "search": "Maghanap",
+    "searchPlaceholder": "Maglagay ng hahanapin",
+    "searchInputLabel": "Search input",
+    "allRegions": "Lahat ng lugar",
+    "selectRegion": "Pumili ng lugar",
+    "closeRegionSelect": "Isara ang pagpili ng lugar",
+    "priceNegotiable": "Napag-uusapan",
+    "like": "Gusto",
+    "unlike": "Alisin ang gusto",
+    "favorite": "Idagdag sa paborito",
+    "unfavorite": "Alisin sa paborito",
+    "share": "Ibahagi",
+    "report": "Mag-ulat",
+    "urlCopied": "Nakopya ang URL.",
+    "imageUpload": {
+      "label": "Mga larawan (hanggang {maxCount})",
+      "add": "Magdagdag ng larawan",
+      "removeImage": "Alisin ang larawan {index}",
+      "goToImage": "Pumunta sa larawan {index}"
+    },
+    "carousel": {
+      "noImage": "Walang larawan",
+      "image": "Larawan",
+      "prevImage": "Nakaraang larawan",
+      "nextImage": "Susunod na larawan",
+      "goToImage": "Pumunta sa larawan {index}",
+      "thumbnail": "Thumbnail {index}"
+    },
+    "deletionBanner": {
+      "notice": "Ito ay isang <b>account na malapit nang burahin</b>.",
+      "daysLeft": "Permanenteng buburahin ang lahat ng data sa loob ng {days} araw.",
+      "today": "Naka-iskedyul na burahin ang iyong data ngayon.",
+      "restore": "Bawiin ang pagbura",
+      "restoreFailed": "Nabigo ang pagbawi. Pakisubukan muli."
+    },
+    "deletedAccount": {
+      "favorite": "Hindi maaaring gumamit ng paborito ang account na malapit nang burahin.",
+      "write": "Hindi makakagawa ng bagong post ang account na malapit nang burahin."
+    }
+  },
+  "Report": {
+    "title": "Mag-ulat",
+    "type": "Uri ng ulat",
+    "selectCategory": "Pumili ng kategorya",
+    "detail": "Mga detalye (opsyonal)",
+    "detailPlaceholder": "Ilagay ang mga detalye ng ulat.",
+    "submitError": "May naganap na error habang nag-uulat. Pakisubukan muli mamaya.",
+    "submit": "Mag-ulat",
+    "done": "Naisumite na ang iyong ulat.",
+    "already": "Naiulat mo na ang post na ito.",
+    "categories": {
+      "욕설": "Pang-aabusong salita",
+      "도배": "Spamming",
+      "사기": "Scam",
+      "허위 매물": "Pekeng listing",
+      "불법 게시물": "Ilegal na nilalaman",
+      "성 범죄(성희롱/성추행 등)": "Sekswal na paglabag (panliligalig, atbp.)"
+    }
+  },
+  "Chat": {
+    "title": "Chat",
+    "search": "Maghanap",
+    "empty": "Wala pang chat",
+    "unknownUser": "Hindi kilala",
+    "noMessage": "Walang mensahe",
+    "loading": "Naglo-load...",
+    "back": "Bumalik",
+    "report": "Mag-ulat",
+    "block": "I-block",
+    "leave": "Umalis sa chat",
+    "moreMenu": "Higit pang menu",
+    "messageInputLabel": "Message input",
+    "messageSend": "Ipadala ang mensahe",
+    "inputPlaceholder": "Mag-type ng mensahe...",
+    "cooldown": "Makakapag-type ka ulit sa {seconds}s",
+    "loadingMore": "Naglo-load...",
+    "loadPrevious": "Tingnan ang mga naunang mensahe",
+    "category": {
+      "used_goods": "Palengke",
+      "room_rent": "Paupahan",
+      "job": "Trabaho"
+    }
+  },
+  "Notifications": {
+    "title": "Mga Abiso",
+    "markAllRead": "Markahan lahat bilang nabasa",
+    "viewAll": "Tingnan lahat",
+    "empty": "Walang abiso",
+    "bell": "Mga Abiso"
+  },
+  "Enums": {
+    "productCategory": {
+      "all": "Lahat",
+      "가구": "Muwebles",
+      "의류": "Damit",
+      "전자기기": "Electronics",
+      "악세서리": "Accessories",
+      "유아용품": "Gamit ng sanggol",
+      "자동차": "Sasakyan",
+      "기타": "Iba pa"
+    },
+    "productCondition": {
+      "미개봉": "Hindi pa nabubuksan",
+      "가벼운 사용감": "Bahagyang nagamit",
+      "사용감 있음": "Nagamit na"
+    },
+    "employeeType": {
+      "정규직": "Full-time",
+      "계약직": "Kontrata",
+      "파트타임": "Part-time"
+    },
+    "salaryType": {
+      "시급": "Kada oras",
+      "주급": "Lingguhan",
+      "월급": "Buwanan"
+    },
+    "rentType": {
+      "월세": "Buwanang upa",
+      "매매": "Para ibenta"
+    },
+    "roomType": {
+      "아파트": "Apartment",
+      "스튜디오": "Studio",
+      "투룸": "Dalawang kwarto"
+    },
+    "rentalRoomType": {
+      "all": "Lahat",
+      "studio": "Studio",
+      "tworoom": "Dalawang kwarto",
+      "condo": "Condo"
+    },
+    "amenities": {
+      "주차": "Paradahan",
+      "엘리베이터": "Elevator",
+      "에어컨": "Air conditioning",
+      "세탁기": "Washing machine",
+      "냉장고": "Refrigerator",
+      "반려동물 허용": "Pinapayagan ang alagang hayop",
+      "금고": "Safe",
+      "TV": "TV",
+      "인터넷": "Internet",
+      "수영장": "Pool",
+      "헬스장": "Gym",
+      "보안요원": "Guwardiya"
+    },
+    "tradeLocation": {
+      "otherAreas": "Iba pang lugar"
+    }
+  },
+  "Create": {
+    "title": "Gumawa ng post",
+    "subtitle": "Anong gusto mong i-post?",
+    "categories": {
+      "usedgoods": { "name": "Palengke", "description": "Bumili at magbenta ng mga gamit" },
+      "jobs": { "name": "Trabaho", "description": "Maghanap ng trabaho o kumuha ng tauhan" },
+      "rental": { "name": "Paupahan", "description": "Maghanap o mag-post ng kwarto" },
+      "community": { "name": "Komunidad", "description": "Malayang makipag-usap sa iba" }
+    }
+  },
+  "Main": {
+    "tagline": "Palengke · Trabaho · Paupahan sa isang lugar",
+    "popularTitle": "Sikat",
+    "popularBadge": "Sikat",
+    "popularCategoriesAria": "Mga sikat na kategorya",
+    "categorySelect": "Pumili ng kategorya",
+    "categorySelectClose": "Isara ang pagpili ng kategorya",
+    "prevSlide": "Nakaraang slide",
+    "nextSlide": "Susunod na slide",
+    "slideIndicator": "Slide {index}",
+    "category": {
+      "usedgoods": "Palengke",
+      "jobs": "Trabaho",
+      "rental": "Paupahan",
+      "community": "Komunidad"
+    },
+    "hero": {
+      "usedgoods": { "title": "Bumili at magbenta sa Kanto!", "description": "Ligtas na palengke para sa mga Koreano sa Pilipinas", "button": "Pumunta sa Palengke" },
+      "jobs": { "title": "Naghahanap ng trabaho?", "description": "Mga trabaho para sa mga Koreano sa Pilipinas", "button": "Pumunta sa Trabaho" },
+      "rental": { "title": "Naghahanap ng murang kwarto?", "description": "Makatuwirang presyo ng paupahan", "button": "Pumunta sa Paupahan" },
+      "community": { "title": "Gustong makihalubilo sa mga Koreano?", "description": "Espasyo para sa mga Koreano sa Pilipinas", "button": "Pumunta sa Komunidad" },
+      "dating": { "title": "Gustong makakilala ng bago?", "description": "Magsimula ng bagong koneksyon sa pamamagitan ng filtered random matching", "button": "Pumunta sa Random na Chat" }
+    }
+  },
+  "Time": {
+    "joinedYearMonth": "Sumali noong {month}/{year}",
+    "joinDateUnknown": "Hindi alam ang petsa ng pagsali"
+  },
+  "UsedGoods": {
+    "title": "Palengke",
+    "subtitle": "Palengke para sa mga Koreano sa Pilipinas",
+    "searchResult": "Mga resulta para sa \"{query}\"",
+    "write": "Mag-post",
+    "empty": "Wala pang produkto",
+    "emptyDescription": "Maging unang nagbebenta!",
+    "backToList": "Bumalik sa listahan",
+    "productInfo": "Impormasyon ng produkto",
+    "category": "Kategorya",
+    "condition": "Kondisyon",
+    "price": "Presyo",
+    "tradeLocation": "Lugar ng transaksyon",
+    "safePayment": "Ligtas na bayad",
+    "confirmed": "Nakumpirma",
+    "unconfirmed": "Hindi nakumpirma",
+    "sellerInfo": "Impormasyon ng nagbebenta",
+    "chat": "Mag-chat",
+    "selectCategory": "Pumili ng kategorya",
+    "description": "Paglalarawan ng produkto",
+    "related": "Kaugnay na produkto",
+    "profileAlt": "Profile",
+    "form": {
+      "back": "Bumalik",
+      "editTitle": "I-edit ang listing",
+      "createTitle": "Gumawa ng listing",
+      "subtitle": "Pakilagay ang kinakailangang impormasyon",
+      "titleLabel": "Pamagat *",
+      "titlePlaceholder": "Ilagay ang pangalan ng produkto",
+      "priceLabel": "Presyo *",
+      "categoryLabel": "Kategorya *",
+      "categoryPlaceholder": "Pumili ng kategorya",
+      "conditionLabel": "Kondisyon *",
+      "conditionPlaceholder": "Pumili ng kondisyon",
+      "locationLabel": "Lugar ng transaksyon *",
+      "locationPlaceholder": "Pumili ng lugar",
+      "locationDetailPlaceholder": "Ilagay ang detalyadong lugar",
+      "contentLabel": "Nilalaman *",
+      "contentPlaceholder": "Ilagay ang paglalarawan ng produkto",
+      "safePaymentUse": "Gamitin ang ligtas na bayad",
+      "submitting": "Isinusumite...",
+      "submit": "Tapos na",
+      "errorPost": "Nabigo ang paggawa ng post.",
+      "errorImage": "Nabigo ang pag-upload ng mga larawan.",
+      "errorGoods": "Nabigo ang pagrehistro ng impormasyon ng produkto."
+    }
+  },
+  "Job": {
+    "title": "Trabaho",
+    "write": "Mag-post ng trabaho",
+    "emptySearch": "Walang resulta ng paghahanap",
+    "empty": "Wala pang job posting",
+    "allTypes": "Lahat",
+    "jobInfo": "Impormasyon ng trabaho",
+    "employeeType": "Uri ng trabaho",
+    "salary": "Sahod",
+    "workLocation": "Lugar ng trabaho",
+    "deadline": "Huling araw",
+    "companyInfo": "Impormasyon ng kumpanya",
+    "foundedYear": "Itinatag",
+    "yearSuffix": "{year}",
+    "employeeCount": "Mga empleyado",
+    "employeeCountValue": "{count}",
+    "address": "Address",
+    "website": "Website",
+    "details": "Mga detalye",
+    "mainTask": "Mga pangunahing gawain",
+    "preferred": "Mga gustong kwalipikasyon",
+    "viewCount": "Mga view: {count}",
+    "applicantCount": "Mga aplikante: {count}",
+    "managerInfo": "Taong makokontak",
+    "apply": "Mag-apply",
+    "chat": "Mag-chat",
+    "selectEmployeeType": "Pumili ng uri ng trabaho",
+    "profileAlt": "Profile",
+    "photos": "Mga larawan",
+    "optional": "(opsyonal)",
+    "popularTitle": "Mga sikat na posting",
+    "prev": "Nakaraan",
+    "next": "Susunod",
+    "form": {
+      "back": "Bumalik",
+      "createTitle": "Mag-post ng trabaho",
+      "page1Subtitle": "Pakilagay ang pangunahing impormasyon ng job posting",
+      "jobInfo": "Impormasyon ng trabaho",
+      "titleLabel": "Pamagat ng trabaho *",
+      "titlePlaceholder": "hal. Naghahanap ng hall staff para sa Korean restaurant",
+      "employeeTypeLabel": "Uri ng trabaho *",
+      "employeeTypePlaceholder": "Pumili ng uri ng trabaho",
+      "salaryLabel": "Sahod *",
+      "salaryUnitPlaceholder": "Yunit",
+      "locationLabel": "Lugar ng trabaho *",
+      "locationPlaceholder": "Pumili ng lugar",
+      "locationDetailPlaceholder": "Ilagay ang detalyadong lugar",
+      "deadlineLabel": "Huling araw *",
+      "workHoursLabel": "Oras ng trabaho *",
+      "hour": "Oras",
+      "minute": "Min",
+      "hourValue": "{value}",
+      "minuteValue": "{value}",
+      "mainTaskLabel": "Mga pangunahing gawain *",
+      "mainTaskPlaceholder": "Ilagay ang mga pangunahing gawain",
+      "preferredLabel": "Mga gustong kwalipikasyon",
+      "preferredPlaceholder": "Ilagay ang mga gustong kwalipikasyon",
+      "next": "Susunod na hakbang",
+      "prev": "Nakaraang hakbang",
+      "page2Subtitle": "Pakilagay ang impormasyon ng kumpanya at detalye ng kontak",
+      "companyInfo": "Impormasyon ng kumpanya",
+      "companyNameLabel": "Pangalan ng kumpanya *",
+      "companyNamePlaceholder": "Ilagay ang pangalan ng kumpanya",
+      "companyIntroLabel": "Panimula ng kumpanya *",
+      "companyIntroPlaceholder": "Ilagay ang panimula tungkol sa kumpanya",
+      "industryLabel": "Industriya",
+      "industryPlaceholder": "hal. Restawran",
+      "foundedYearLabel": "Itinatag",
+      "foundedYearPlaceholder": "hal. 2018",
+      "employeeCountLabel": "Mga empleyado",
+      "employeeCountPlaceholder": "hal. 10",
+      "addressLabel": "Address",
+      "addressPlaceholder": "Ilagay ang address ng kumpanya",
+      "websiteLabel": "Website",
+      "websitePlaceholder": "hal. https://company.com",
+      "websiteError": "Pakilagay ang tamang website address (hal. https://company.com)",
+      "managerInfo": "Taong makokontak",
+      "managerNameLabel": "Pangalan ng kontak *",
+      "managerNamePlaceholder": "hal. Juan dela Cruz",
+      "managerTitleLabel": "Titulo ng kontak",
+      "managerTitlePlaceholder": "hal. Manager, HR staff",
+      "managerPhoneLabel": "Numero ng telepono",
+      "managerPhonePlaceholder": "hal. +63 917 123 4567",
+      "managerEmailLabel": "Email",
+      "managerEmailPlaceholder": "hal. recruiter@company.com",
+      "photos": "Mga larawan",
+      "optional": "(opsyonal)",
+      "submitting": "Isinusumite...",
+      "submit": "Tapos na",
+      "errorRequired": "Pakipunan ang lahat ng kinakailangang field.",
+      "errorLocationDetail": "Pakilagay ang detalyadong lugar.",
+      "errorImage": "Nabigong i-upload ang larawan.",
+      "errorEdit": "Nabigong i-update.",
+      "errorPost": "Nabigong gumawa ng post.",
+      "errorJob": "Nabigong i-post ang trabaho."
+    }
+  },
+  "Rental": {
+    "title": "Paupahan",
+    "subtitle": "Impormasyon ng paupahan para sa mga Koreano sa Pilipinas",
+    "searchResult": "Mga resulta para sa \"{query}\"",
+    "write": "Mag-post",
+    "empty": "Wala pang listing",
+    "emptyDescription": "Maging una sa pag-post ng listing!",
+    "backToList": "Bumalik sa listahan",
+    "accommodationInfo": "Impormasyon ng tuluyan",
+    "deposit": "Deposito",
+    "roomType": "Uri ng kwarto",
+    "maxOccupants": "Max na tao",
+    "occupantsValue": "{count}",
+    "location": "Lokasyon",
+    "landlordInfo": "Impormasyon ng may-ari",
+    "profileAlt": "Profile",
+    "inquire": "Magtanong",
+    "chat": "Mag-chat",
+    "selectRoomType": "Pumili ng uri ng kuwarto",
+    "viewCount": "Mga view: {count}",
+    "description": "Paglalarawan ng tuluyan",
+    "form": {
+      "back": "Bumalik",
+      "editTitle": "I-edit ang paupahan",
+      "createTitle": "Gumawa ng paupahan",
+      "subtitle": "Pakilagay ang kinakailangang impormasyon",
+      "titleLabel": "Pangalan ng tuluyan *",
+      "titlePlaceholder": "Ilagay ang pangalan ng tuluyan",
+      "locationLabel": "Lokasyon *",
+      "locationPlaceholder": "Pumili ng lugar",
+      "locationDetailPlaceholder": "Ilagay ang detalyadong lokasyon",
+      "rentTypeLabel": "Buwanan / Benta *",
+      "rentTypePlaceholder": "Pumili",
+      "priceLabel": "Presyo *",
+      "depositLabel": "Deposito",
+      "roomTypeLabel": "Uri ng kwarto *",
+      "roomTypePlaceholder": "Pumili ng uri ng kwarto",
+      "maxOccupantsLabel": "Max na tao *",
+      "amenitiesLabel": "Mga amenity",
+      "descriptionLabel": "Mga detalye",
+      "descriptionPlaceholder": "Ilagay ang detalyadong paglalarawan ng tuluyan",
+      "editing": "Ina-update...",
+      "submitting": "Isinusumite...",
+      "editDone": "I-update",
+      "submit": "Tapos na",
+      "errorPost": "Nabigo ang paggawa ng post.",
+      "errorImage": "Nabigo ang pag-upload ng mga larawan.",
+      "errorRental": "Nabigo ang pagrehistro ng impormasyon ng tuluyan."
+    }
+  },
+  "Profile": {
+    "menu": {
+      "ariaMenu": "Menu ng profile",
+      "info": "Impormasyon",
+      "reviews": "Mga review",
+      "alerts": "Mga abiso",
+      "blocked": "Naka-block",
+      "settings": "Mga setting ng app"
+    },
+    "avatar": {
+      "alt": "Profile",
+      "changeAria": "Palitan ang larawan ng profile",
+      "changeHint": "I-click ang larawan upang palitan"
+    },
+    "card": {
+      "back": "Bumalik",
+      "title": "Aking Profile",
+      "stats": "Aktibidad",
+      "posts": "Mga post",
+      "favorites": "Mga paborito",
+      "reviews": "Mga review",
+      "account": "Impormasyon ng account",
+      "joinedAt": "Petsa ng pagsali",
+      "provider": "Paraan ng pag-sign up",
+      "verify": "Pagpapatunay ng pagkakakilanlan",
+      "verifyDesc": "Kailangan ng pagpapatunay upang makapag-post at sumali sa random chat.",
+      "verifyButton": "Patunayan ang pagkakakilanlan"
+    },
+    "providers": {
+      "google": "Google",
+      "kakao": "KakaoTalk",
+      "facebook": "Facebook",
+      "email": "Email"
+    },
+    "info": {
+      "editTitle": "I-edit ang Profile",
+      "name": "Pangalan",
+      "email": "Email",
+      "emailHint": "Hindi mababago ang email",
+      "phone": "Numero ng telepono",
+      "save": "I-save",
+      "edit": "I-edit",
+      "passwordTitle": "Palitan ang Password",
+      "currentPassword": "Kasalukuyang password",
+      "newPassword": "Bagong password",
+      "confirmPassword": "Kumpirmahin ang bagong password",
+      "passwordHint": "Maglagay ng hindi bababa sa 8 karakter",
+      "passwordChange": "Palitan ang password",
+      "deleteTitle": "Tanggalin ang Account",
+      "pendingDelete": "Naka-pending sa pagtanggal ang account na ito. Kung hindi makakansela sa loob ng 30 araw, permanenteng matatanggal ang lahat ng data.",
+      "processing": "Pinoproseso...",
+      "restore": "Kanselahin ang pagtanggal",
+      "deleteDesc": "Ang pagtanggal ng account ay magbubura sa lahat ng data at hindi na maibabalik.",
+      "delete": "Tanggalin ang account",
+      "confirmTitle": "Sigurado ka bang nais mong tanggalin ang account?",
+      "confirmDesc": "Ang pagtanggal ng account ay magbubura sa lahat ng data kabilang ang iyong mga post at kasaysayan ng chat, at hindi na maibabalik.",
+      "cancel": "Kanselahin",
+      "confirmDelete": "Tanggalin"
+    },
+    "alerts": {
+      "title": "Mga Setting ng Abiso",
+      "chatLabel": "Abiso sa chat",
+      "chatDesc": "Mga abiso para sa bagong mensahe sa chat",
+      "commentLabel": "Abiso sa komento",
+      "commentDesc": "Abiso kapag may nag-komento sa iyong post",
+      "postLabel": "Abiso sa bagong post",
+      "postDesc": "Mga abiso para sa bagong post sa iyong mga kategorya at keyword",
+      "categoryTitle": "Mga Kategoryang Interesado",
+      "categoryDesc": "Tumanggap ng abiso para sa bagong post sa mga napiling kategorya.",
+      "keywordTitle": "Abiso sa Keyword",
+      "keywordDesc": "Tumanggap ng abiso kapag may bagong post na naglalaman ng iyong keyword.",
+      "keywordPlaceholder": "Maglagay ng keyword (hal. MacBook)",
+      "keywordInputAria": "Maglagay ng keyword",
+      "keywordRemoveAria": "Alisin ang keyword na {keyword}",
+      "add": "Idagdag",
+      "cancel": "Kanselahin",
+      "addKeyword": "Magdagdag ng keyword",
+      "alertCategories": {
+        "usedgoods": "Mga Gamit na Bagay",
+        "jobs": "Mga Trabaho",
+        "rental": "Mga Paupahan",
+        "community": "Komunidad",
+        "dating": "Random Chat"
+      }
+    },
+    "blocked": {
+      "title": "Mga Naka-block na User",
+      "empty": "Walang naka-block na user"
+    },
+    "reviews": {
+      "title": "Mga Review ng Transaksyon",
+      "ratingAria": "Rating {rating} ({count})",
+      "count": "({count})",
+      "empty": "Wala pang review"
+    },
+    "settings": {
+      "regionTitle": "Rehiyon",
+      "regionDesc": "Ang rehiyong ginagamit bilang batayan kapag naghahanap ng mga post ng gamit na bagay at paupahan.",
+      "regionInputAria": "Maglagay ng rehiyon",
+      "regionSet": "Itakda",
+      "languageTitle": "Wika",
+      "languageSelectAria": "Pumili ng wika",
+      "linkTitle": "Mga Naka-link na Account",
+      "connected": "Nakakonekta",
+      "unlink": "I-unlink",
+      "unlinkAria": "I-unlink ang {provider}",
+      "link": "I-link",
+      "linkAria": "I-link ang {provider}"
+    },
+    "toast": {
+      "saved": "Na-save.",
+      "updated": "Na-update.",
+      "saveFailed": "Nabigong i-save.",
+      "deleteFailed": "Nabigong tanggalin ang account. Pakisubukan muli.",
+      "restoreFailed": "Nabigong kanselahin ang pagtanggal. Pakisubukan muli.",
+      "linkSuccess": "Na-link ang social account.",
+      "unlinkSuccess": "Na-unlink ang social account.",
+      "unlinkFailed": "Nabigong i-unlink.",
+      "linkFailedCode": "Nabigong i-link. ({code})",
+      "linkFailedMessage": "Nabigong i-link: {message}",
+      "identityAlreadyExists": "Naka-link na ang social account na ito sa ibang account.",
+      "sameIdentity": "Naka-link na ang social account na ito sa iyong account."
+    }
+  },
+  "Signup": {
+    "home": "Pumunta sa home",
+    "haveAccount": "May account ka na?",
+    "login": "Mag-log in",
+    "emailExists": "Nakarehistro na ang email na ito.",
+    "form": {
+      "name": "Pangalan",
+      "namePlaceholder": "2+ letrang Korean o English (hal. Juan)",
+      "nameError": "Maglagay ng hindi bababa sa 2 letrang Korean o English.",
+      "email": "Email",
+      "emailPlaceholder": "example@email.com",
+      "emailError": "Maglagay ng wastong email.",
+      "password": "Password",
+      "passwordPlaceholder": "8+ karakter na may letra at numero",
+      "passwordError": "Maglagay ng hindi bababa sa 8 karakter kasama ang letra at numero.",
+      "confirmPassword": "Kumpirmahin ang Password",
+      "confirmPlaceholder": "Muling ilagay ang iyong password",
+      "confirmError": "Hindi magkatugma ang mga password.",
+      "showPassword": "Ipakita ang password",
+      "hidePassword": "Itago ang password",
+      "success": "Tapos na ang pag-sign up! Tingnan ang iyong email upang kumpletuhin ang pagpapatunay.",
+      "processing": "Pinoproseso...",
+      "submit": "Mag-sign up"
+    },
+    "agree": {
+      "all": "Sumang-ayon sa lahat",
+      "required": "Kinakailangan",
+      "optional": "Opsyonal",
+      "items": {
+        "terms": {
+          "label": "Mga Tuntunin ng Serbisyo",
+          "desc": "Sumasang-ayon ka sa mga disclaimer, ipinagbabawal na gawain, at pamantayan ng parusa"
+        },
+        "privacy": {
+          "label": "Patakaran sa Privacy",
+          "desc": "Ang personal na impormasyon tulad ng email at pangalan ay iniimbak sa pag-sign up"
+        },
+        "age": {
+          "label": "Kumpirmasyon na 18+ taong gulang",
+          "desc": "Kinakailangan upang gamitin ang serbisyo ng pagbabayad at transaksyon"
+        },
+        "marketing": {
+          "label": "Pahintulot sa marketing",
+          "desc": "Tumanggap ng impormasyon sa marketing tulad ng mga event at benepisyo"
+        },
+        "push": {
+          "label": "Push notification",
+          "desc": "Tumanggap ng abiso para sa chat, bagong post, at iba pa"
+        }
+      }
+    },
+    "modal": {
+      "titles": {
+        "terms": "Mga Tuntunin ng Serbisyo",
+        "privacy": "Patakaran sa Privacy",
+        "age": "Kumpirmasyon na 18+ taong gulang"
+      },
+      "loading": "Naglo-load...",
+      "loadError": "Hindi ma-load ang nilalaman. Pakisubukan muli mamaya.",
+      "cancel": "Kanselahin",
+      "agree": "Sumasang-ayon ako",
+      "readToEnd": "Pakibasa hanggang dulo"
+    }
+  },
+  "Terms": {
+    "items": {
+      "policy": "Patakaran sa Operasyon",
+      "service": "Mga Tuntunin ng Serbisyo",
+      "privacy": "Patakaran sa Privacy",
+      "youth": "Patakaran sa Proteksyon ng Kabataan",
+      "age": "Patakaran sa Pagpapatunay ng Edad",
+      "payment": "Mga Tuntunin ng Ligtas na Pagbabayad"
+    },
+    "header": {
+      "support": "Suporta",
+      "home": "Pumunta sa home"
+    }
+  },
+  "Favorites": {
+    "title": "Mga Paborito",
+    "myPostsTitle": "Aking mga Post",
+    "tabsAria": "Kategorya ng paborito",
+    "tabs": {
+      "used_goods": "Mga Gamit na Bagay",
+      "jobs": "Mga Trabaho",
+      "rental": "Mga Paupahan"
+    }
+  }
+}

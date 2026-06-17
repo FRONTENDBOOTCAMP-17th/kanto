@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { Clock, Eye, Heart, Users } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 import { formatTimeAgo } from "@/utils/formatTime";
 import type { JobDetail } from "@/type/job/jobsDetail";
 import InteractionButtons from "@/components/common/InteractionButtons";
+import type { Locale } from "@/i18n/config";
 
 interface JobTitleProps {
   job: JobDetail;
@@ -14,6 +16,8 @@ interface JobTitleProps {
 }
 
 export default function JobTitle({ job, userId, initialLiked, initialReported }: JobTitleProps) {
+  const t = useTranslations("Job");
+  const locale = useLocale() as Locale;
   const [likeCount, setLikeCount] = useState(job.posts.like_count ?? 0);
 
   const handleLikeChange = (liked: boolean) =>
@@ -39,11 +43,11 @@ export default function JobTitle({ job, userId, initialLiked, initialReported }:
       <div className="flex gap-4 text-sm text-gray-400">
         <span className="flex items-center gap-1">
           <Clock className="w-4 h-4" />
-          <time dateTime={job.posts.created_at}>{formatTimeAgo(job.posts.created_at)}</time>
+          <time dateTime={job.posts.created_at}>{formatTimeAgo(job.posts.created_at, locale)}</time>
         </span>
         <span className="flex items-center gap-1">
           <Eye className="w-4 h-4" />
-          조회수: {job.posts.view_count}
+          {t("viewCount", { count: job.posts.view_count })}
         </span>
         <span className="flex items-center gap-1">
           <Heart className="w-4 h-4" />
@@ -52,7 +56,7 @@ export default function JobTitle({ job, userId, initialLiked, initialReported }:
         {job.applicant_count && (
           <span className="flex items-center gap-1">
             <Users className="w-4 h-4" />
-            지원자: {job.applicant_count}
+            {t("applicantCount", { count: job.applicant_count })}
           </span>
         )}
         <InteractionButtons

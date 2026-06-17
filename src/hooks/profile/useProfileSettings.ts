@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import type { UserIdentity } from "@supabase/supabase-js";
 import { linkSocialIdentity, unlinkSocialIdentity } from "@/services/profile/profileSettings";
 
@@ -10,20 +11,22 @@ export const LANGUAGES = [
   { value: "fil", label: "Filipino" },
 ];
 
-export const SOCIAL_PROVIDERS: { key: "google" | "kakao" | "facebook"; label: string }[] = [
-  { key: "google", label: "구글" },
-  { key: "kakao", label: "카카오톡" },
-  { key: "facebook", label: "페이스북" },
+export const SOCIAL_PROVIDERS: { key: "google" | "kakao" | "facebook" }[] = [
+  { key: "google" },
+  { key: "kakao" },
+  { key: "facebook" },
 ];
-
-const ERROR_MESSAGES: Record<string, string> = {
-  identity_already_exists: "이미 다른 계정에 연동된 소셜 계정입니다.",
-  same_identity: "현재 계정에 이미 연동된 소셜 계정입니다.",
-};
 
 type Notice = { type: "success" | "error"; text: string };
 
 export function useProfileSettings(initialIdentities: UserIdentity[]) {
+  const t = useTranslations("Profile.toast");
+  const errorMessageByCode = (code: string | null | undefined) => {
+    if (code === "identity_already_exists") return t("identityAlreadyExists");
+    if (code === "same_identity") return t("sameIdentity");
+    return null;
+  };
+
   const [region, setRegion] = useState("");
   const [language, setLanguage] = useState("ko");
   const [identities, setIdentities] = useState<UserIdentity[]>(initialIdentities);
@@ -32,12 +35,12 @@ export function useProfileSettings(initialIdentities: UserIdentity[]) {
     const params = new URLSearchParams(window.location.search);
     const errorCode = params.get("error_code");
     if (errorCode) {
-      return { type: "error", text: ERROR_MESSAGES[errorCode] ?? `연결에 실패했습니다. (${errorCode})` };
+      return { type: "error", text: errorMessageByCode(errorCode) ?? t("linkFailedCode", { code: errorCode }) };
     }
     const pending = sessionStorage.getItem("linkingProvider");
     if (pending && initialIdentities.some((i) => i.provider === pending)) {
       sessionStorage.removeItem("linkingProvider");
-      return { type: "success", text: "소셜 계정이 연결되었습니다." };
+      return { type: "success", text: t("linkSuccess") };
     }
     return null;
   });
@@ -55,7 +58,7 @@ export function useProfileSettings(initialIdentities: UserIdentity[]) {
       sessionStorage.removeItem("linkingProvider");
       setNotice({
         type: "error",
-        text: ERROR_MESSAGES[error.code ?? ""] ?? `연결에 실패했습니다: ${error.message}`,
+        text: errorMessageByCode(error.code) ?? t("linkFailedMessage", { message: error.message }),
       });
     }
   };
@@ -66,9 +69,9 @@ export function useProfileSettings(initialIdentities: UserIdentity[]) {
     const { error } = await unlinkSocialIdentity(identity);
     if (!error) {
       setIdentities((prev) => prev.filter((i) => i.provider !== provider));
-      setNotice({ type: "success", text: "소셜 계정 연결이 해제되었습니다." });
+      setNotice({ type: "success", text: t("unlinkSuccess") });
     } else {
-      setNotice({ type: "error", text: "연결 해제에 실패했습니다." });
+      setNotice({ type: "error", text: t("unlinkFailed") });
     }
   };
 

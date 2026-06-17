@@ -3,12 +3,14 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useCreateJobForm } from "@/hooks/useCreateJobForm";
 import { CreateJobFormPageOne } from "./CreateJobFormPage1";
 import { CreateJobFormPageTwo } from "./CreateJobFormPage2";
 import type { JobInitialData } from "@/type/job/jobCreate";
 
 export function CreateJobForm({ userId, userName, initialData }: { userId: number; userName: string; initialData?: JobInitialData }) {
+  const t = useTranslations("Job");
   const form = useCreateJobForm(userId, userName, initialData);
 
   return (
@@ -16,11 +18,11 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
       <div className="max-w-lg mx-auto">
         <Button variant="ghost" onClick={form.handleBack} className="mb-6">
           <ArrowLeft className="w-4 h-4 mr-2" />
-          뒤로가기
+          {t("form.back")}
         </Button>
         <Card className="p-8">
           <div className="flex items-center gap-3 mb-6">
-            <h1 className="page-title">구인구직 글쓰기</h1>
+            <h1 className="page-title">{t("form.createTitle")}</h1>
             <span className="text-sm font-medium bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full">
               {form.step}/2
             </span>

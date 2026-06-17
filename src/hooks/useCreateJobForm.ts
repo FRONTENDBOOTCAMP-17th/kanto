@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { useImageUpload } from "@/hooks/useImageUpload";
 import type { TradeLocation } from "@/type/location";
@@ -9,6 +10,7 @@ import type { EmployeeType, SalaryType, JobInitialData } from "@/type/job/jobCre
 
 export function useCreateJobForm(userId: number, userName: string, initialData?: JobInitialData) {
   const router = useRouter();
+  const t = useTranslations("Job.form");
   const [step, setStep] = useState<1 | 2>(1);
 
   // 1단계: 채용 정보
@@ -42,11 +44,11 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
 
   const handleNextStep = () => {
     if (!title || !employeeType || !salary || !locationType || !deadline || !workHoursStart || !workHoursEnd || !mainTask) {
-      alert("필수 항목을 모두 입력해주세요.");
+      alert(t("errorRequired"));
       return;
     }
     if (locationType === "그 외 지역" && !locationCustom) {
-      alert("상세 지역을 입력해주세요.");
+      alert(t("errorLocationDetail"));
       return;
     }
     setStep(2);
@@ -55,7 +57,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
 
   const handleSubmit = async () => {
     if (!companyName || !companyIntro || !managerName) {
-      alert("필수 항목을 모두 입력해주세요.");
+      alert(t("errorRequired"));
       return;
     }
     setIsSubmitting(true);
@@ -91,7 +93,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
         const filePath = `${userId}/${initialData.post_id}/${Date.now()}.${ext}`;
         const { error: uploadError } = await supabase.storage.from("images").upload(filePath, file);
         if (uploadError) {
-          alert("이미지 업로드에 실패했습니다.");
+          alert(t("errorImage"));
           setIsSubmitting(false);
           return;
         }
@@ -108,7 +110,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
         .eq("post_id", initialData.post_id);
 
       if (error) {
-        alert("수정에 실패했습니다.");
+        alert(t("errorEdit"));
         setIsSubmitting(false);
         return;
       }
@@ -125,7 +127,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       .single();
 
     if (postError || !post) {
-      alert("게시글 등록에 실패했습니다.");
+      alert(t("errorPost"));
       setIsSubmitting(false);
       return;
     }
@@ -137,7 +139,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       const { error: uploadError } = await supabase.storage.from("images").upload(filePath, file);
       if (uploadError) {
         await supabase.from("posts").delete().eq("id", post.id);
-        alert("이미지 업로드에 실패했습니다.");
+        alert(t("errorImage"));
         setIsSubmitting(false);
         return;
       }
@@ -153,7 +155,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
 
     if (jobError) {
       await supabase.from("posts").delete().eq("id", post.id);
-      alert("공고 등록에 실패했습니다.");
+      alert(t("errorJob"));
       setIsSubmitting(false);
       return;
     }
