@@ -40,12 +40,12 @@ export default function UsedGoodsDetail({
   const images = (data.images as string[]) ?? [];
   const [likeCount, setLikeCount] = useState(data.posts.like_count ?? 0);
 
-  const accession = data.posts.users.created_at
+  const accession = data.posts.users?.created_at
     ? new Date(data.posts.users.created_at)
     : null;
 
   const handleChat = async () => {
-    if (!userId) return;
+    if (!userId || !data.posts.users) return;
     const chatId = await postChat(userId, data.posts.users.id, data.post_id);
     useChatStore.getState().openWidget(chatId);
   };
@@ -100,7 +100,7 @@ export default function UsedGoodsDetail({
           <div className="flex flex-col gap-4">
             <h2 className="text-xl font-semibold">판매자 정보</h2>
             <div className="flex items-center gap-3">
-              {data.posts.users.avatar_url ? (
+              {data.posts.users?.avatar_url ? (
                 <ImageWithFallback
                   src={data.posts.users.avatar_url}
                   alt="프로필"
@@ -114,7 +114,7 @@ export default function UsedGoodsDetail({
                 </div>
               )}
               <div>
-                <p className="font-medium">{data.posts.users.name}</p>
+                <p className="font-medium">{data.posts.users?.name}</p>
                 <p className="text-sm text-gray-500">
                   {accession
                     ? `${accession.getFullYear()}년 ${accession.getMonth() + 1}월 가입`

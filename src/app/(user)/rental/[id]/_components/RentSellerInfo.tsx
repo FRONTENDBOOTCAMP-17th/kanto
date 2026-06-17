@@ -9,7 +9,7 @@ export default function RentSellorInfo({ rental }: { rental: RentalWithPost }) {
     <>
       <h2 className="text-xl font-medium">집주인 정보</h2>
       <div className="flex items-center gap-3">
-        {rental.posts.users.avatar_url ? (
+        {rental.posts.users?.avatar_url ? (
           <Image
             src={rental.posts.users.avatar_url}
             alt="프로필"
@@ -23,9 +23,9 @@ export default function RentSellorInfo({ rental }: { rental: RentalWithPost }) {
           </div>
         )}
         <div>
-          <p>{rental.posts.users.name}</p>
+          <p>{rental.posts.users?.name}</p>
           <p className="text-sm text-gray-500">
-            {formatSellerInfoCreatedAt(rental.posts.users.created_at)}
+            {formatSellerInfoCreatedAt(rental.posts.users?.created_at ?? null)}
           </p>
         </div>
       </div>
