@@ -6,6 +6,7 @@ import {
   createTransaction,
   getTransaction,
   updateTransaction,
+  postSystemMessage,
 } from "@/services/payment/transaction";
 import { createInvoice } from "@/lib/xendit";
 import type { MessageWithSender } from "@/type/chat/message";
@@ -166,10 +167,19 @@ export async function confirmReceiptAction(
     throw new Error("결제 완료된 거래만 수령 확인할 수 있습니다.");
   }
 
-  return updateTransaction(transaction.id, {
+  const released = await updateTransaction(transaction.id, {
     status: "released",
     released_at: new Date().toISOString(),
   });
+
+  // 시스템 메시지는 부가 UX — 삽입 실패가 거래완료 처리 자체를 깨지 않도록 격리
+  try {
+    await postSystemMessage(released, "거래가 완료되었습니다");
+  } catch (e) {
+    console.error("거래완료 시스템 메시지 발송 실패:", e);
+  }
+
+  return released;
 }
 
 /**
