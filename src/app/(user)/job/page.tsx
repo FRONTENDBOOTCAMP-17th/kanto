@@ -39,7 +39,7 @@ export default async function JobPage({
       <main className="flex-1 page-container w-full py-8">
         <div className="section-header">
           <h1 className="page-title">{t("title")}</h1>
-          <WriteButton href="/job/create" label={t("write")} />
+          <WriteButton href="/create" label={t("write")} />
         </div>
 
         <JobFilters

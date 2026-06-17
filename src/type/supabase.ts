@@ -38,6 +38,13 @@ export type Database = {
             foreignKeyName: "banned_keywords_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "banned_keywords_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -95,7 +102,21 @@ export type Database = {
             foreignKeyName: "chats_user_id_1_fkey"
             columns: ["user_id_1"]
             isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chats_user_id_1_fkey"
+            columns: ["user_id_1"]
+            isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chats_user_id_2_fkey"
+            columns: ["user_id_2"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -147,6 +168,13 @@ export type Database = {
             foreignKeyName: "comments_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -180,6 +208,13 @@ export type Database = {
             columns: ["target_id"]
             isOneToOne: false
             referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "common_likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -230,6 +265,13 @@ export type Database = {
             foreignKeyName: "common.notifications_receiver_id_fkey"
             columns: ["receiver_id"]
             isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "common.notifications_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -241,7 +283,10 @@ export type Database = {
           created_at: string
           description: string | null
           id: number
+          post_deactivated: boolean
           resolved_at: string | null
+          sanction_expires_at: string | null
+          sanction_type: string | null
           status: string | null
           target_id: number | null
           target_type: string | null
@@ -252,7 +297,10 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: number
+          post_deactivated?: boolean
           resolved_at?: string | null
+          sanction_expires_at?: string | null
+          sanction_type?: string | null
           status?: string | null
           target_id?: number | null
           target_type?: string | null
@@ -263,13 +311,23 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: number
+          post_deactivated?: boolean
           resolved_at?: string | null
+          sanction_expires_at?: string | null
+          sanction_type?: string | null
           status?: string | null
           target_id?: number | null
           target_type?: string | null
           user_id?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "common_reports_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "common_reports_user_id_fkey"
             columns: ["user_id"]
@@ -358,6 +416,13 @@ export type Database = {
           user_id?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "dating_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "dating_profiles_user_id_fkey"
             columns: ["user_id"]
@@ -486,7 +551,21 @@ export type Database = {
             foreignKeyName: "matches_user_id_1_fkey"
             columns: ["user_id_1"]
             isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_user_id_1_fkey"
+            columns: ["user_id_1"]
+            isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_user_id_2_fkey"
+            columns: ["user_id_2"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -507,6 +586,8 @@ export type Database = {
           is_read: boolean
           post_id: number | null
           sender_id: number
+          transaction_id: number | null
+          type: string
         }
         Insert: {
           chat_id: number
@@ -516,6 +597,8 @@ export type Database = {
           is_read?: boolean
           post_id?: number | null
           sender_id: number
+          transaction_id?: number | null
+          type?: string
         }
         Update: {
           chat_id?: number
@@ -525,6 +608,8 @@ export type Database = {
           is_read?: boolean
           post_id?: number | null
           sender_id?: number
+          transaction_id?: number | null
+          type?: string
         }
         Relationships: [
           {
@@ -545,7 +630,21 @@ export type Database = {
             foreignKeyName: "messages_sender_id_fkey"
             columns: ["sender_id"]
             isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
             referencedColumns: ["id"]
           },
         ]
@@ -585,6 +684,13 @@ export type Database = {
           view_count?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "posts_user_id_fkey"
             columns: ["user_id"]
@@ -705,12 +811,117 @@ export type Database = {
             foreignKeyName: "reviews_reviewee_id_fkey"
             columns: ["reviewee_id"]
             isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reviewee_id_fkey"
+            columns: ["reviewee_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "reviews_reviewer_id_fkey"
             columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transactions: {
+        Row: {
+          amount: number
+          buyer_id: number
+          chat_id: number
+          created_at: string
+          external_id: string
+          id: number
+          paid_at: string | null
+          post_id: number
+          released_at: string | null
+          seller_id: number
+          status: Database["public"]["Enums"]["transaction_status"]
+          xendit_invoice_id: string | null
+          xendit_invoice_url: string | null
+        }
+        Insert: {
+          amount: number
+          buyer_id: number
+          chat_id: number
+          created_at?: string
+          external_id: string
+          id?: never
+          paid_at?: string | null
+          post_id: number
+          released_at?: string | null
+          seller_id: number
+          status?: Database["public"]["Enums"]["transaction_status"]
+          xendit_invoice_id?: string | null
+          xendit_invoice_url?: string | null
+        }
+        Update: {
+          amount?: number
+          buyer_id?: number
+          chat_id?: number
+          created_at?: string
+          external_id?: string
+          id?: never
+          paid_at?: string | null
+          post_id?: number
+          released_at?: string | null
+          seller_id?: number
+          status?: Database["public"]["Enums"]["transaction_status"]
+          xendit_invoice_id?: string | null
+          xendit_invoice_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_seller_id_fkey"
+            columns: ["seller_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -784,6 +995,7 @@ export type Database = {
           post_count: number | null
           provider: string | null
           role: string
+          suspended_until: string | null
           updated_at: string | null
         }
         Insert: {
@@ -805,6 +1017,7 @@ export type Database = {
           post_count?: number | null
           provider?: string | null
           role?: string
+          suspended_until?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -826,13 +1039,49 @@ export type Database = {
           post_count?: number | null
           provider?: string | null
           role?: string
+          suspended_until?: string | null
           updated_at?: string | null
         }
         Relationships: []
       }
     }
     Views: {
-      [_ in never]: never
+      public_user_profiles: {
+        Row: {
+          auth_id: string | null
+          avatar_url: string | null
+          avg_rating: number | null
+          created_at: string | null
+          id: number | null
+          like_count: number | null
+          name: string | null
+          post_count: number | null
+          role: string | null
+        }
+        Insert: {
+          auth_id?: string | null
+          avatar_url?: string | null
+          avg_rating?: number | null
+          created_at?: string | null
+          id?: number | null
+          like_count?: number | null
+          name?: string | null
+          post_count?: number | null
+          role?: string | null
+        }
+        Update: {
+          auth_id?: string | null
+          avatar_url?: string | null
+          avg_rating?: number | null
+          created_at?: string | null
+          id?: number | null
+          like_count?: number | null
+          name?: string | null
+          post_count?: number | null
+          role?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       cleanup_deleted_users: { Args: never; Returns: undefined }
@@ -893,6 +1142,12 @@ export type Database = {
         | "Mandaluyong / Pasig"
         | "Pampanga"
         | "그 외 지역"
+      transaction_status:
+        | "pending"
+        | "paid"
+        | "released"
+        | "cancelled"
+        | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1029,6 +1284,13 @@ export const Constants = {
         "Mandaluyong / Pasig",
         "Pampanga",
         "그 외 지역",
+      ],
+      transaction_status: [
+        "pending",
+        "paid",
+        "released",
+        "cancelled",
+        "expired",
       ],
     },
   },

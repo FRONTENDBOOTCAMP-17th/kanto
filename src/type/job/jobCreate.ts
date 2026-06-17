@@ -16,6 +16,6 @@ export type JobInitialData = Pick<
   | "location_type" | "location_custom" | "deadline" | "work_hours"
   | "main_task" | "preferred" | "company_name" | "company_intro"
   | "industry" | "company_year" | "employee_count" | "company_address"
-  | "company_website" | "manager_name" | "manager_title"
+  | "company_website" | "manager_title"
   | "manager_phone" | "manager_email" | "images"
 > & { title: string };

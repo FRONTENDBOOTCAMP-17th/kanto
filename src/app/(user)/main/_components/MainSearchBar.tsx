@@ -6,8 +6,8 @@ import { useTranslations } from "next-intl";
 import { ArrowRight, ChevronDown, X } from "lucide-react";
 
 const CATEGORIES = [
-  { id: "job",       catKey: "jobs",      path: "/job" },
   { id: "usedgoods", catKey: "usedgoods", path: "/usedgoods" },
+  { id: "job",       catKey: "jobs",      path: "/job" },
   { id: "rental",    catKey: "rental",    path: "/rental" },
   { id: "community", catKey: "community", path: "/community" },
 ] as const;

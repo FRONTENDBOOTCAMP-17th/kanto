@@ -11,6 +11,8 @@ import { uploadAvatar, updateProfile, fetchRestoredUser } from "@/services/profi
 export function useProfileInfo(user: UserType, avatarFile: File | null) {
   const [name, setName] = useState(user.name ?? "");
   const [phone, setPhone] = useState(user.phone ?? "");
+  const [phoneSaved, setPhoneSaved] = useState(!!user.phone);
+  const [phoneEditing, setPhoneEditing] = useState(!user.phone);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const { setUser, clearUser } = useAuthStore();
@@ -29,15 +31,20 @@ export function useProfileInfo(user: UserType, avatarFile: File | null) {
   }, [showDeleteModal, deleteLoading]);
 
   const handleSave = async () => {
+    const isFirstSave = !phoneSaved;
     try {
       const avatarUrl = avatarFile ? await uploadAvatar(user.id, avatarFile) : user.avatar_url;
       const updated = await updateProfile(user.id, { name, phone, avatar_url: avatarUrl });
       setUser(updated);
-      alert(t("saved"));
+      setPhoneSaved(true);
+      setPhoneEditing(false);
+      alert(isFirstSave ? t("saved") : t("updated"));
     } catch (e) {
       alert(e instanceof Error ? e.message : t("saveFailed"));
     }
   };
+
+  const handleEditPhone = () => setPhoneEditing(true);
 
   const handleDeleteAccount = async () => {
     setDeleteLoading(true);
@@ -70,6 +77,9 @@ export function useProfileInfo(user: UserType, avatarFile: File | null) {
   return {
     name, setName,
     phone, setPhone,
+    phoneSaved,
+    phoneEditing,
+    handleEditPhone,
     showDeleteModal, setShowDeleteModal,
     deleteLoading,
     cancelButtonRef,

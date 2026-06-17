@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 
 type UsedGoods = Tables<"used_goods"> & {
   posts: Tables<"posts"> & {
-    users: Tables<"users">;
+    users: Pick<Tables<"users">, "id" | "name" | "avatar_url" | "auth_id" | "role" | "post_count" | "created_at">;
   };
 };
 
@@ -46,12 +46,12 @@ export default function UsedGoodsDetail({
   const images = (data.images as string[]) ?? [];
   const [likeCount, setLikeCount] = useState(data.posts.like_count ?? 0);
 
-  const accession = data.posts.users.created_at
+  const accession = data.posts.users?.created_at
     ? new Date(data.posts.users.created_at)
     : null;
 
   const handleChat = async () => {
-    if (!userId) return;
+    if (!userId || !data.posts.users) return;
     const chatId = await postChat(userId, data.posts.users.id, data.post_id);
     useChatStore.getState().openWidget(chatId);
   };
@@ -72,73 +72,133 @@ export default function UsedGoodsDetail({
         />
       </div>
 
-      {/* 이미지 + 상품/판매자 정보 그리드 */}
-      <div className={`grid grid-cols-1 ${images.length > 0 ? "md:grid-cols-2" : ""} items-stretch gap-2 md:gap-4 mt-4`}>
-        {images.length > 0 && <ImageCarousel images={images} />}
-
-        <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-[450px]">
-          {/* 상품 정보 */}
-          <div>
-            <h2 className="text-xl font-semibold mb-3">{t("productInfo")}</h2>
-            <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
-              <dt className="text-gray-500 font-medium">{t("category")}</dt>
-              <dd className="text-gray-700">· {data.category ? te(`productCategory.${data.category}`) : ""}</dd>
-              <dt className="text-gray-500 font-medium">{t("condition")}</dt>
-              <dd className="text-gray-700">· {data.condition ? te(`productCondition.${data.condition}`) : ""}</dd>
-              <dt className="text-gray-500 font-medium">{t("price")}</dt>
-              <dd className="text-orange-500">· ₱ {data.price?.toLocaleString()}</dd>
-              <dt className="text-gray-500 font-medium">{t("tradeLocation")}</dt>
-              <dd className="text-gray-700">· {data.location_type === "그 외 지역" ? te("tradeLocation.otherAreas") : data.location_type}</dd>
-              {data.safe_payment !== null && (
-                <>
-                  <dt className="text-gray-500 font-medium">{t("safePayment")}</dt>
-                  <dd className={data.safe_payment ? "text-teal-600" : "text-red-500"}>
-                    · {data.safe_payment ? t("confirmed") : t("unconfirmed")}
-                  </dd>
-                </>
-              )}
-            </dl>
-          </div>
-
-          <hr className="border-gray-200" />
-
-          {/* 판매자 정보 */}
-          <div className="flex flex-col gap-4">
-            <h2 className="text-xl font-semibold">{t("sellerInfo")}</h2>
-            <div className="flex items-center gap-3">
-              {data.posts.users.avatar_url ? (
-                <ImageWithFallback
-                  src={data.posts.users.avatar_url}
-                  alt={t("profileAlt")}
-                  width={48}
-                  height={48}
-                  className="rounded-full object-cover w-12 h-12 shrink-0"
-                />
-              ) : (
-                <div className="w-12 h-12 rounded-full bg-purple-400 flex items-center justify-center shrink-0">
-                  <User className="w-6 h-6 text-white" />
-                </div>
-              )}
-              <div>
-                <p className="font-medium">{data.posts.users.name}</p>
-                <p className="text-sm text-gray-500">
-                  {accession
-                    ? tt("joinedYearMonth", {
-                        year: accession.getFullYear(),
-                        month: accession.getMonth() + 1,
-                      })
-                    : tt("joinDateUnknown")}
-                </p>
-              </div>
+      {/* 이미지 + 상품/판매자 정보 */}
+      {images.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 items-stretch gap-2 md:gap-4 mt-4">
+          <ImageCarousel images={images} />
+          <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-[450px]">
+            {/* 상품 정보 */}
+            <div>
+              <h2 className="text-xl font-semibold mb-3">{t("productInfo")}</h2>
+              <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+                <dt className="text-gray-500 font-medium">{t("category")}</dt>
+                <dd className="text-gray-700">· {data.category ? te(`productCategory.${data.category}`) : ""}</dd>
+                <dt className="text-gray-500 font-medium">{t("condition")}</dt>
+                <dd className="text-gray-700">· {data.condition ? te(`productCondition.${data.condition}`) : ""}</dd>
+                <dt className="text-gray-500 font-medium">{t("price")}</dt>
+                <dd className="text-orange-500">· ₱ {data.price?.toLocaleString()}</dd>
+                <dt className="text-gray-500 font-medium">{t("tradeLocation")}</dt>
+                <dd className="text-gray-700">· {data.location_type === "그 외 지역" ? te("tradeLocation.otherAreas") : data.location_type}</dd>
+                {data.safe_payment !== null && (
+                  <>
+                    <dt className="text-gray-500 font-medium">{t("safePayment")}</dt>
+                    <dd className={data.safe_payment ? "text-teal-600" : "text-red-500"}>
+                      · {data.safe_payment ? t("confirmed") : t("unconfirmed")}
+                    </dd>
+                  </>
+                )}
+              </dl>
             </div>
-            {!isOwner && (
-              <Button variant="teal" className="cursor-pointer w-full" onClick={handleChat}>
-                {t("chat")}
-              </Button>
-            )}
+            <hr className="border-gray-200" />
+            {/* 판매자 정보 */}
+            <div className="flex flex-col gap-4">
+              <h2 className="text-xl font-semibold">{t("sellerInfo")}</h2>
+              <div className="flex items-center gap-3">
+                {data.posts.users?.avatar_url ? (
+                  <ImageWithFallback
+                    src={data.posts.users.avatar_url}
+                    alt={t("profileAlt")}
+                    width={48}
+                    height={48}
+                    className="rounded-full object-cover w-12 h-12 shrink-0"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-purple-400 flex items-center justify-center shrink-0">
+                    <User className="w-6 h-6 text-white" />
+                  </div>
+                )}
+                <div>
+                  <p className="font-medium">{data.posts.users?.name}</p>
+                  <p className="text-sm text-gray-500">
+                    {accession
+                      ? tt("joinedYearMonth", {
+                          year: accession.getFullYear(),
+                          month: accession.getMonth() + 1,
+                        })
+                      : tt("joinDateUnknown")}
+                  </p>
+                </div>
+              </div>
+              {!isOwner && (
+                <Button variant="teal" className="cursor-pointer w-full" onClick={handleChat}>
+                  {t("chat")}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        /* 이미지 없을 때: 구인구직처럼 2열 나란히 */
+        <div className="border border-gray-200 rounded-2xl overflow-hidden mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
+            <div className="p-6">
+              <h2 className="text-xl font-semibold mb-3">{t("productInfo")}</h2>
+              <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+                <dt className="text-gray-500 font-medium">{t("category")}</dt>
+                <dd className="text-gray-700">· {data.category ? te(`productCategory.${data.category}`) : ""}</dd>
+                <dt className="text-gray-500 font-medium">{t("condition")}</dt>
+                <dd className="text-gray-700">· {data.condition ? te(`productCondition.${data.condition}`) : ""}</dd>
+                <dt className="text-gray-500 font-medium">{t("price")}</dt>
+                <dd className="text-orange-500">· ₱ {data.price?.toLocaleString()}</dd>
+                <dt className="text-gray-500 font-medium">{t("tradeLocation")}</dt>
+                <dd className="text-gray-700">· {data.location_type === "그 외 지역" ? te("tradeLocation.otherAreas") : data.location_type}</dd>
+                {data.safe_payment !== null && (
+                  <>
+                    <dt className="text-gray-500 font-medium">{t("safePayment")}</dt>
+                    <dd className={data.safe_payment ? "text-teal-600" : "text-red-500"}>
+                      · {data.safe_payment ? t("confirmed") : t("unconfirmed")}
+                    </dd>
+                  </>
+                )}
+              </dl>
+            </div>
+            <div className="p-6 flex flex-col gap-4">
+              <h2 className="text-xl font-semibold">{t("sellerInfo")}</h2>
+              <div className="flex items-center gap-3">
+                {data.posts.users?.avatar_url ? (
+                  <ImageWithFallback
+                    src={data.posts.users.avatar_url}
+                    alt={t("profileAlt")}
+                    width={48}
+                    height={48}
+                    className="rounded-full object-cover w-12 h-12 shrink-0"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-purple-400 flex items-center justify-center shrink-0">
+                    <User className="w-6 h-6 text-white" />
+                  </div>
+                )}
+                <div>
+                  <p className="font-medium">{data.posts.users?.name}</p>
+                  <p className="text-sm text-gray-500">
+                    {accession
+                      ? tt("joinedYearMonth", {
+                          year: accession.getFullYear(),
+                          month: accession.getMonth() + 1,
+                        })
+                      : tt("joinDateUnknown")}
+                  </p>
+                </div>
+              </div>
+              {!isOwner && (
+                <Button variant="teal" className="cursor-pointer w-full" onClick={handleChat}>
+                  {t("chat")}
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 제목 + 설명 카드 */}
       <div className="mt-2 md:mt-4 border border-gray-200 rounded-2xl p-6">
@@ -152,7 +212,7 @@ export default function UsedGoodsDetail({
             userId={userId}
             initialLiked={initialLiked}
             initialReported={initialReported}
-            onLikeChange={(liked) => setLikeCount((prev) => liked ? prev + 1 : prev - 1)}
+            onLikeChange={(liked) => setLikeCount((prev) => liked ? prev + 1 : Math.max(prev - 1, 0))}
             size="lg"
             className="hidden md:flex shrink-0"
           />
@@ -176,7 +236,7 @@ export default function UsedGoodsDetail({
             userId={userId}
             initialLiked={initialLiked}
             initialReported={initialReported}
-            onLikeChange={(liked) => setLikeCount((prev) => liked ? prev + 1 : prev - 1)}
+            onLikeChange={(liked) => setLikeCount((prev) => liked ? prev + 1 : Math.max(prev - 1, 0))}
             size="sm"
             className="md:hidden ml-auto"
           />

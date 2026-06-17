@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { SearchBar } from "@/components/common/SearchBar";
 import { FilterDropdown } from "@/components/common/FilterDropdown";
@@ -13,8 +14,10 @@ interface Props {
 }
 
 export function UsedGoodsFilters({ givenSearch, defaultCategory, defaultLocation }: Props) {
+  const t = useTranslations("UsedGoods");
   const te = useTranslations("Enums");
   const { updateParams } = useUrlParams();
+  const [pendingCategory, setPendingCategory] = useState(defaultCategory);
 
   const categoryOptions = PRODUCT_CATEGORIES.map((c) => ({
     id: c.id,
@@ -25,13 +28,16 @@ export function UsedGoodsFilters({ givenSearch, defaultCategory, defaultLocation
     <SearchBar
       givenSearch={givenSearch}
       defaultLocation={defaultLocation}
-      onSearch={(query, location) => updateParams({ search: query, location })}
+      onSearch={(query, location) =>
+        updateParams({ search: query, location, category: pendingCategory })
+      }
       showLocation
     >
       <FilterDropdown
         options={categoryOptions}
-        value={defaultCategory}
-        onChange={(v) => updateParams({ category: v })}
+        value={pendingCategory}
+        onChange={setPendingCategory}
+        label={t("selectCategory")}
       />
     </SearchBar>
   );

@@ -15,4 +15,7 @@ export const ROUTES = {
   termsOfService: "/terms/policy",
   privacyPolicy: "/terms/privacy",
   youthPolicy: "/terms/youth",
+  admin: "/admin",
+  adminReports: "/admin/reports",
+  paymentReturn: "/payment/return",
 } as const;

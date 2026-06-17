@@ -52,7 +52,7 @@ export default async function RentalPage({
               ? t("searchResult", { query: params.search })
               : t("subtitle")}
           </p>
-          <Link href="/rental/create" className="absolute right-0 top-0">
+          <Link href="/create" className="absolute right-0 top-0">
             <Button variant="teal" className="cursor-pointer gap-1">
               <Plus className="w-4 h-4" />
               {t("write")}

@@ -16,7 +16,6 @@ import {
   Briefcase,
   Home,
   Heart,
-  Users,
   Settings,
   ThumbsUp,
   FileText,
@@ -25,16 +24,17 @@ import {
 import { ROUTES } from "@/constants/routes";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
+import { SuspendedBanner } from "@/components/common/SuspendedBanner";
 import { NotificationBell } from "./header/NotificationBell";
 import type { NotificationBellHandle } from "./header/NotificationBell";
 import { useTranslations } from "next-intl";
+
+const HEADER_HEIGHT = 48; // 모바일 헤더 높이(h-12)
 
 const NAV_ITEMS = [
   { key: "usedgoods", icon: ShoppingBag, href: ROUTES.usedgoods },
   { key: "jobs", icon: Briefcase, href: ROUTES.jobs },
   { key: "rental", icon: Home, href: ROUTES.rental },
-  { key: "community", icon: Users, href: ROUTES.community },
-  { key: "dating", icon: Heart, href: ROUTES.dating },
 ] as const;
 
 export function Header() {
@@ -46,9 +46,26 @@ export function Header() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
 
   const profileRef = useRef<HTMLDivElement>(null);
   const notificationBellRef = useRef<NotificationBellHandle>(null);
+  const prevScrollY = useRef(0);
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY <= HEADER_HEIGHT) {
+        setIsVisible(true); // 최상단 부근
+      } else if (currentScrollY > prevScrollY.current) {
+        setIsVisible(false); // 아래로 스크롤
+      } else if (currentScrollY < prevScrollY.current) {
+        setIsVisible(true); // 위로 스크롤
+      }
+      prevScrollY.current = currentScrollY;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLogoutClick = () => {
     setIsLogoutModalOpen(true);
@@ -73,7 +90,11 @@ export function Header() {
   }, [isProfileOpen]);
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <header
+      className={`fixed md:sticky top-0 z-50 w-full bg-white border-b border-gray-200 transition-transform duration-300 ${
+        isVisible || isMobileOpen ? "translate-y-0" : "-translate-y-full md:translate-y-0"
+      }`}
+    >
       <div className="page-container">
         <div className="flex items-center justify-between h-12 md:h-16">
           {/* 로고 */}
@@ -211,6 +232,20 @@ export function Header() {
           </div>
         </div>
 
+        {/* 데스크탑 네비게이션 */}
+        <nav className="hidden md:flex items-center justify-center gap-1 border-t border-gray-100 py-1">
+          {NAV_ITEMS.map(({ key, icon: Icon, href }) => (
+            <Link
+              key={href}
+              href={href}
+              className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 hover:text-teal-500 hover:bg-teal-50 rounded-lg transition-colors font-medium"
+            >
+              <Icon className="w-4 h-4" />
+              {t(`nav.${key}`)}
+            </Link>
+          ))}
+        </nav>
+
         {/* 모바일 메뉴 */}
         {isMobileOpen && (
           <div className="md:hidden border-t border-gray-200 py-3">
@@ -282,6 +317,7 @@ export function Header() {
           </div>
         )}
       </div>
+      <SuspendedBanner />
       <ConfirmModal
         isOpen={isLogoutModalOpen}
         title={t("logoutConfirm")}

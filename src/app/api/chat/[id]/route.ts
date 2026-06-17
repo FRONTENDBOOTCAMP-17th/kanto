@@ -34,6 +34,23 @@ export async function GET(
   const partner =
     chatRoom.user_id_1 === currentUser.id ? chatRoom.user2 : chatRoom.user1;
 
+  // 판매자(글 작성자) id 와 중고거래 가격 — 안전결제 요청 게이팅/금액 prefill 용
+  const { data: post } = await supabase
+    .from("posts")
+    .select("user_id")
+    .eq("id", chatRoom.post_id)
+    .single();
+
+  let postPrice: number | null = null;
+  if (chatRoom.posts?.post_type === "used_goods") {
+    const { data: usedGoods } = await supabase
+      .from("used_goods")
+      .select("price")
+      .eq("post_id", chatRoom.post_id)
+      .single();
+    postPrice = usedGoods?.price ?? null;
+  }
+
   return NextResponse.json({
     messages,
     currentUser,
@@ -41,5 +58,7 @@ export async function GET(
     postId: chatRoom.post_id,
     partner,
     postTitle: chatRoom.posts?.title ?? "",
+    sellerId: post?.user_id ?? null,
+    postPrice,
   });
 }

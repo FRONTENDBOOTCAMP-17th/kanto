@@ -3,14 +3,9 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Eye } from "lucide-react";
-import {
-  CATEGORY,
-  POST_TYPE_LABEL,
-  daysSince,
-  type Category,
-  type ReportedUser,
-  type ReportedPost,
-} from "../_lib/constants";
+import { CATEGORY, POST_TYPE_LABEL } from "../_lib/constants";
+import { daysSince } from "../_lib/utils";
+import type { Category, ReportedUser, ReportedPost } from "@/type/admin";
 import Card from "./Card";
 
 function reportStatusFromCount(count: number) {

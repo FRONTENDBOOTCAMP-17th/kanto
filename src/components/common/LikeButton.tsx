@@ -6,19 +6,22 @@ import { Heart } from "lucide-react";
 import { toggleLike } from "@/services/likeToggle";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import { useAuthStore } from "@/store/authStore";
+import { useSuspended } from "@/hooks/useSuspended";
 
 interface LikeButtonProps {
   postId: number;
   initialIsLiked: boolean;
   currentUserId: number | null;
   className?: string;
+  onLikeChange?: (liked: boolean) => void;
 }
 
-export function LikeButton({ postId, initialIsLiked, currentUserId, className }: LikeButtonProps) {
+export function LikeButton({ postId, initialIsLiked, currentUserId, className, onLikeChange }: LikeButtonProps) {
   const t = useTranslations("Common");
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [showModal, setShowModal] = useState(false);
   const { user } = useAuthStore();
+  const { isSuspended, openModal } = useSuspended();
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -29,6 +32,11 @@ export function LikeButton({ postId, initialIsLiked, currentUserId, className }:
       return;
     }
 
+    if (isSuspended) {
+      openModal();
+      return;
+    }
+
     if (user?.deleted_at) {
       alert(t("deletedAccount.favorite"));
       return;
@@ -36,9 +44,13 @@ export function LikeButton({ postId, initialIsLiked, currentUserId, className }:
 
     const wasLiked = isLiked;
     setIsLiked(!wasLiked);
+    onLikeChange?.(!wasLiked);
 
     const { error } = await toggleLike(postId, currentUserId, wasLiked);
-    if (error) setIsLiked(wasLiked);
+    if (error) {
+      setIsLiked(wasLiked);
+      onLikeChange?.(wasLiked);
+    }
   };
 
   return (

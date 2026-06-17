@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { SearchBar } from "@/components/common/SearchBar";
 import { FilterDropdown } from "@/components/common/FilterDropdown";
@@ -16,6 +17,7 @@ export function JobFilters({ givenSearch, defaultType, defaultLocation }: Props)
   const t = useTranslations("Job");
   const te = useTranslations("Enums");
   const { updateParams } = useUrlParams();
+  const [pendingType, setPendingType] = useState(defaultType);
 
   const typeOptions = [
     { id: "all", label: t("allTypes") },
@@ -29,13 +31,16 @@ export function JobFilters({ givenSearch, defaultType, defaultLocation }: Props)
     <SearchBar
       givenSearch={givenSearch}
       defaultLocation={defaultLocation}
-      onSearch={(query, location) => updateParams({ search: query, location })}
+      onSearch={(query, location) =>
+        updateParams({ search: query, location, type: pendingType })
+      }
       showLocation
     >
       <FilterDropdown
         options={typeOptions}
-        value={defaultType}
-        onChange={(v) => updateParams({ type: v })}
+        value={pendingType}
+        onChange={setPendingType}
+        label={t("selectEmployeeType")}
       />
     </SearchBar>
   );

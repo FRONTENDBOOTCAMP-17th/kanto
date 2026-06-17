@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { SearchBar } from "@/components/common/SearchBar";
 import { FilterDropdown } from "@/components/common/FilterDropdown";
@@ -13,8 +14,10 @@ interface Props {
 }
 
 export function RentalFilters({ givenSearch, defaultRoomType, defaultLocation }: Props) {
+  const t = useTranslations("Rental");
   const te = useTranslations("Enums");
   const { updateParams } = useUrlParams();
+  const [pendingRoomType, setPendingRoomType] = useState(defaultRoomType);
 
   const roomTypeOptions = RENTAL_ROOM_TYPES.map((r) => ({
     id: r.id,
@@ -25,13 +28,16 @@ export function RentalFilters({ givenSearch, defaultRoomType, defaultLocation }:
     <SearchBar
       givenSearch={givenSearch}
       defaultLocation={defaultLocation}
-      onSearch={(query, location) => updateParams({ search: query, location })}
+      onSearch={(query, location) =>
+        updateParams({ search: query, location, roomType: pendingRoomType })
+      }
       showLocation
     >
       <FilterDropdown
         options={roomTypeOptions}
-        value={defaultRoomType}
-        onChange={(v) => updateParams({ roomType: v })}
+        value={pendingRoomType}
+        onChange={setPendingRoomType}
+        label={t("selectRoomType")}
       />
     </SearchBar>
   );

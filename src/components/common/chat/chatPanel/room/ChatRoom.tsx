@@ -13,6 +13,8 @@ interface ChatRoomData {
   postId: number;
   partner: SellerInfo;
   postTitle: string;
+  sellerId: number | null;
+  postPrice: number | null;
 }
 
 export default function ChatRoom({

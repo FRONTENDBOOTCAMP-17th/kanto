@@ -19,7 +19,7 @@ interface CreateJobFormPageTwoProps {
   employeeCount: string; setEmployeeCount: (v: string) => void;
   companyAddress: string; setCompanyAddress: (v: string) => void;
   companyWebsite: string; setCompanyWebsite: (v: string) => void;
-  managerName: string; setManagerName: (v: string) => void;
+  managerName: string;
   managerTitle: string; setManagerTitle: (v: string) => void;
   managerPhone: string; setManagerPhone: (v: string) => void;
   managerEmail: string; setManagerEmail: (v: string) => void;
@@ -37,7 +37,7 @@ export function CreateJobFormPageTwo({
   employeeCount, setEmployeeCount,
   companyAddress, setCompanyAddress,
   companyWebsite, setCompanyWebsite,
-  managerName, setManagerName,
+  managerName,
   managerTitle, setManagerTitle,
   managerPhone, setManagerPhone,
   managerEmail, setManagerEmail,
@@ -106,7 +106,12 @@ export function CreateJobFormPageTwo({
         <h2 className="font-semibold text-gray-900">{t("form.managerInfo")}</h2>
         <div className="space-y-2">
           <Label htmlFor="managerName">{t("form.managerNameLabel")}</Label>
-          <Input id="managerName" placeholder={t("form.managerNamePlaceholder")} value={managerName} onChange={(e) => setManagerName(e.target.value)} />
+          <Input
+            id="managerName"
+            value={managerName}
+            readOnly
+            className="bg-gray-100 text-gray-500 cursor-not-allowed"
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="managerTitle">{t("form.managerTitleLabel")}</Label>

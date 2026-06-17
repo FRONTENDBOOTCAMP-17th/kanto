@@ -2,8 +2,10 @@ import { Fragment, type RefObject } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
+import type { Transaction } from "@/type/transaction";
 import { formatDateDivider, formatMessageTime } from "@/utils/formatTime";
 import type { Locale } from "@/i18n/config";
+import PaymentCard from "./PaymentCard";
 
 interface Props {
   messages: MessageWithSender[];
@@ -13,6 +15,7 @@ interface Props {
   onLoadMore: () => void;
   messagesEndRef: RefObject<HTMLDivElement | null>;
   scrollContainerRef: RefObject<HTMLDivElement | null>;
+  onTransactionChange: (transaction: Transaction) => void;
 }
 
 export default function MessageList({
@@ -23,6 +26,7 @@ export default function MessageList({
   onLoadMore,
   messagesEndRef,
   scrollContainerRef,
+  onTransactionChange,
 }: Props) {
   const t = useTranslations("Chat");
   const locale = useLocale() as Locale;
@@ -62,15 +66,23 @@ export default function MessageList({
             )}
             <div className={`flex flex-col gap-0.5 ${isMine ? "items-end" : "items-start"}`}>
               <div className={`flex items-end gap-1 ${isMine ? "flex-row-reverse" : ""}`}>
-                <div
-                  className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm md:text-xs leading-relaxed break-keep ${
-                    isMine
-                      ? "bg-teal-500 text-white rounded-tr-sm"
-                      : "bg-white text-gray-800 rounded-tl-sm shadow-sm"
-                  }`}
-                >
-                  {msg.content}
-                </div>
+                {msg.type === "payment" && msg.transaction ? (
+                  <PaymentCard
+                    transaction={msg.transaction}
+                    currentUser={currentUser}
+                    onTransactionChange={onTransactionChange}
+                  />
+                ) : (
+                  <div
+                    className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm md:text-xs leading-relaxed break-keep ${
+                      isMine
+                        ? "bg-teal-500 text-white rounded-tr-sm"
+                        : "bg-white text-gray-800 rounded-tl-sm shadow-sm"
+                    }`}
+                  >
+                    {msg.content}
+                  </div>
+                )}
                 <div className={`flex flex-col shrink-0 ${isMine ? "items-end" : "items-start"}`}>
                   {isMine && !msg.is_read && (
                     <span className="text-xs md:text-[10px] text-teal-500 font-medium">1</span>
