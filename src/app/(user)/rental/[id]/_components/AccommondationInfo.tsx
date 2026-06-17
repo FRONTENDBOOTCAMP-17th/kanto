@@ -14,6 +14,7 @@ import {
   ShieldUser,
 } from "lucide-react";
 import { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 
 const AMENITY_ICONS: Record<string, ReactNode> = {
   와이파이: <Wifi className="w-4 h-4" />,
@@ -32,11 +33,16 @@ const AMENITY_ICONS: Record<string, ReactNode> = {
 };
 
 export default function AccommondationInfo({ rental }: { rental: Rental }) {
+  const t = useTranslations("Rental");
+  const te = useTranslations("Enums");
   const amenities = (rental.amenities as string[]) ?? [];
+
+  const amenityLabel = (amenity: string) =>
+    te.has(`amenities.${amenity}`) ? te(`amenities.${amenity}`) : amenity;
 
   return (
     <>
-      <h2 className="text-xl font-medium">숙소 정보</h2>
+      <h2 className="text-xl font-medium">{t("accommodationInfo")}</h2>
 
       {amenities.length > 0 && (
         <div className="flex flex-wrap gap-2">
@@ -46,7 +52,7 @@ export default function AccommondationInfo({ rental }: { rental: Rental }) {
               className="flex items-center gap-1 bg-teal-50 text-teal-500 rounded-full px-3 py-1 text-sm"
             >
               {AMENITY_ICONS[amenity]}
-              <span className="text-gray-700">{amenity}</span>
+              <span className="text-gray-700">{amenityLabel(amenity)}</span>
             </span>
           ))}
         </div>
@@ -55,20 +61,20 @@ export default function AccommondationInfo({ rental }: { rental: Rental }) {
       <hr className="border-gray-200" />
 
       <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
-        <dt className="text-gray-500 font-medium">보증금</dt>
+        <dt className="text-gray-500 font-medium">{t("deposit")}</dt>
         <dd className="text-gray-700">
           · ₱ {rental.deposit?.toLocaleString()}
         </dd>
-        <dt className="text-gray-500 font-medium">{rental.rent_type}</dt>
+        <dt className="text-gray-500 font-medium">{rental.rent_type ? te(`rentType.${rental.rent_type}`) : ""}</dt>
         <dd className="text-orange-500">
           · ₱ {rental.price?.toLocaleString()}
         </dd>
-        <dt className="text-gray-500 font-medium">방 타입</dt>
-        <dd>· {rental.room_type}</dd>
-        <dt className="text-gray-500 font-medium">최대 인원</dt>
-        <dd>· {rental.max_occupants}명</dd>
-        <dt className="text-gray-500 font-medium">위치</dt>
-        <dd>· {rental.location}</dd>
+        <dt className="text-gray-500 font-medium">{t("roomType")}</dt>
+        <dd>· {rental.room_type ? te(`roomType.${rental.room_type}`) : ""}</dd>
+        <dt className="text-gray-500 font-medium">{t("maxOccupants")}</dt>
+        <dd>· {t("occupantsValue", { count: rental.max_occupants ?? 0 })}</dd>
+        <dt className="text-gray-500 font-medium">{t("location")}</dt>
+        <dd>· {rental.location === "그 외 지역" ? te("tradeLocation.otherAreas") : rental.location}</dd>
       </dl>
     </>
   );

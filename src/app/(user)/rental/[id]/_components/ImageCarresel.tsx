@@ -1,11 +1,13 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCarousel } from "@/hooks/useCarousel";
 
 export default function ImageCarousel({ images }: { images: string[] }) {
+  const t = useTranslations("Common");
   const { currentIndex, prevIndex, direction, isAnimating, navigate, dragHandlers } =
     useCarousel(images.length);
 
@@ -14,7 +16,7 @@ export default function ImageCarousel({ images }: { images: string[] }) {
       <div className="relative aspect-square md:aspect-auto md:h-full border-2 border-gray-200 rounded-2xl overflow-hidden">
         <ImageWithFallback
           src="/fallback-image.svg"
-          alt="이미지 없음"
+          alt={t("carousel.noImage")}
           fill
           className="object-contain"
         />
@@ -32,7 +34,7 @@ export default function ImageCarousel({ images }: { images: string[] }) {
           >
             <Image
               src={images[prevIndex]}
-              alt="숙소 이미지"
+              alt={t("carousel.image")}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-contain"
@@ -66,14 +68,14 @@ export default function ImageCarousel({ images }: { images: string[] }) {
         </p>
         <button
           onClick={() => navigate("left")}
-          aria-label="이전 이미지"
+          aria-label={t("carousel.prevImage")}
           className="absolute cursor-pointer left-2 top-1/2 -translate-y-1/2 rounded-full bg-white p-1.5 z-10"
         >
           <ChevronLeft />
         </button>
         <button
           onClick={() => navigate("right")}
-          aria-label="다음 이미지"
+          aria-label={t("carousel.nextImage")}
           className="absolute cursor-pointer right-2 top-1/2 -translate-y-1/2 rounded-full bg-white p-1.5 z-10"
         >
           <ChevronRight />
@@ -86,13 +88,13 @@ export default function ImageCarousel({ images }: { images: string[] }) {
             key={image}
             type="button"
             onClick={() => navigate(index > currentIndex ? "right" : "left", index)}
-            aria-label={`${index + 1}번째 이미지로 이동`}
+            aria-label={t("carousel.goToImage", { index: index + 1 })}
             aria-pressed={currentIndex === index}
             className="focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 rounded-xl"
           >
             <Image
               src={image}
-              alt={`썸네일 ${index + 1}`}
+              alt={t("carousel.thumbnail", { index: index + 1 })}
               width={64}
               height={64}
               className={

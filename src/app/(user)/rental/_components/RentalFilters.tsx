@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { SearchBar } from "@/components/common/SearchBar";
 import { FilterDropdown } from "@/components/common/FilterDropdown";
 import { RENTAL_ROOM_TYPES } from "@/type/rental/rentalList";
@@ -12,7 +13,13 @@ interface Props {
 }
 
 export function RentalFilters({ givenSearch, defaultRoomType, defaultLocation }: Props) {
+  const te = useTranslations("Enums");
   const { updateParams } = useUrlParams();
+
+  const roomTypeOptions = RENTAL_ROOM_TYPES.map((r) => ({
+    id: r.id,
+    label: te(`rentalRoomType.${r.id}`),
+  }));
 
   return (
     <SearchBar
@@ -22,7 +29,7 @@ export function RentalFilters({ givenSearch, defaultRoomType, defaultLocation }:
       showLocation
     >
       <FilterDropdown
-        options={RENTAL_ROOM_TYPES}
+        options={roomTypeOptions}
         value={defaultRoomType}
         onChange={(v) => updateParams({ roomType: v })}
       />

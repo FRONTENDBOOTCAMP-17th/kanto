@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { getRentalDetail } from "@/services/rental/rental";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
 import BackButton from "@/app/(user)/rental/[id]/_components/BackButton";
@@ -19,9 +20,10 @@ export default async function RentalDetail({
   try {
     rental = await getRentalDetail(id);
   } catch {
+    const t = await getTranslations("Common");
     return (
       <div className="p-8 text-center text-gray-500">
-        게시글을 찾을 수 없습니다.
+        {t("notFound")}
       </div>
     );
   }
