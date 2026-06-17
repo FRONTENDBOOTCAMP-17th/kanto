@@ -169,8 +169,8 @@
     "loadPrevious": "Tingnan ang mga naunang mensahe",
     "category": {
       "used_goods": "Palengke",
-      "room_rent": "Paupahan",
-      "job": "Trabaho"
+      "rental": "Paupahan",
+      "jobs": "Trabaho"
     }
   },
   "Notifications": {
@@ -243,10 +243,22 @@
     "title": "Gumawa ng post",
     "subtitle": "Anong gusto mong i-post?",
     "categories": {
-      "usedgoods": { "name": "Palengke", "description": "Bumili at magbenta ng mga gamit" },
-      "jobs": { "name": "Trabaho", "description": "Maghanap ng trabaho o kumuha ng tauhan" },
-      "rental": { "name": "Paupahan", "description": "Maghanap o mag-post ng kwarto" },
-      "community": { "name": "Komunidad", "description": "Malayang makipag-usap sa iba" }
+      "usedgoods": {
+        "name": "Palengke",
+        "description": "Bumili at magbenta ng mga gamit"
+      },
+      "jobs": {
+        "name": "Trabaho",
+        "description": "Maghanap ng trabaho o kumuha ng tauhan"
+      },
+      "rental": {
+        "name": "Paupahan",
+        "description": "Maghanap o mag-post ng kwarto"
+      },
+      "community": {
+        "name": "Komunidad",
+        "description": "Malayang makipag-usap sa iba"
+      }
     }
   },
   "Main": {
@@ -266,11 +278,31 @@
       "community": "Komunidad"
     },
     "hero": {
-      "usedgoods": { "title": "Bumili at magbenta sa Kanto!", "description": "Ligtas na palengke para sa mga Koreano sa Pilipinas", "button": "Pumunta sa Palengke" },
-      "jobs": { "title": "Naghahanap ng trabaho?", "description": "Mga trabaho para sa mga Koreano sa Pilipinas", "button": "Pumunta sa Trabaho" },
-      "rental": { "title": "Naghahanap ng murang kwarto?", "description": "Makatuwirang presyo ng paupahan", "button": "Pumunta sa Paupahan" },
-      "community": { "title": "Gustong makihalubilo sa mga Koreano?", "description": "Espasyo para sa mga Koreano sa Pilipinas", "button": "Pumunta sa Komunidad" },
-      "dating": { "title": "Gustong makakilala ng bago?", "description": "Magsimula ng bagong koneksyon sa pamamagitan ng filtered random matching", "button": "Pumunta sa Random na Chat" }
+      "usedgoods": {
+        "title": "Bumili at magbenta sa Kanto!",
+        "description": "Ligtas na palengke para sa mga Koreano sa Pilipinas",
+        "button": "Pumunta sa Palengke"
+      },
+      "jobs": {
+        "title": "Naghahanap ng trabaho?",
+        "description": "Mga trabaho para sa mga Koreano sa Pilipinas",
+        "button": "Pumunta sa Trabaho"
+      },
+      "rental": {
+        "title": "Naghahanap ng murang kwarto?",
+        "description": "Makatuwirang presyo ng paupahan",
+        "button": "Pumunta sa Paupahan"
+      },
+      "community": {
+        "title": "Gustong makihalubilo sa mga Koreano?",
+        "description": "Espasyo para sa mga Koreano sa Pilipinas",
+        "button": "Pumunta sa Komunidad"
+      },
+      "dating": {
+        "title": "Gustong makakilala ng bago?",
+        "description": "Magsimula ng bagong koneksyon sa pamamagitan ng filtered random matching",
+        "button": "Pumunta sa Random na Chat"
+      }
     }
   },
   "Time": {
@@ -373,6 +405,10 @@
       "locationDetailPlaceholder": "Ilagay ang detalyadong lugar",
       "deadlineLabel": "Huling araw *",
       "workHoursLabel": "Oras ng trabaho *",
+      "timeNegotiable": "Mapag-usapan ang oras",
+      "workDaysLabel": "Araw ng trabaho",
+      "selectedCount": "napili",
+      "preferredSelect": "Pumili ng mga kagustuhan",
       "hour": "Oras",
       "minute": "Min",
       "hourValue": "{value}",
