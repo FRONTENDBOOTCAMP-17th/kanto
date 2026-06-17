@@ -1,6 +1,7 @@
 "use client";
 
 import { MapPin, Globe, Link } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useProfileSettings, LANGUAGES, SOCIAL_PROVIDERS } from "@/hooks/profile/useProfileSettings";
 import type { UserIdentity } from "@supabase/supabase-js";
 
@@ -47,6 +48,8 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
     handleLink,
     handleUnlink,
   } = useProfileSettings(initialIdentities);
+  const t = useTranslations("Profile.settings");
+  const tp = useTranslations("Profile.providers");
 
   return (
     <div className="flex flex-col divide-y divide-gray-100">
@@ -55,10 +58,10 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-2 mb-5">
             <MapPin className="w-4 h-4 text-gray-500" aria-hidden="true" />
-            <h2 className="text-lg font-semibold text-gray-900">지역 설정</h2>
+            <h2 className="text-lg font-semibold text-gray-900">{t("regionTitle")}</h2>
           </div>
           <p className="text-sm text-gray-400 mb-4">
-            중고거래·방렌트 게시글 검색 시 기준이 되는 지역입니다.
+            {t("regionDesc")}
           </p>
           <div className="flex gap-2">
             <input
@@ -66,14 +69,14 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
               value={region}
               onChange={(e) => setRegion(e.target.value)}
               placeholder="e.g. BGC, Taguig"
-              aria-label="지역 입력"
+              aria-label={t("regionInputAria")}
               className="flex-1 px-3 py-2.5 text-sm text-gray-900 border border-gray-200 rounded-lg outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-200"
             />
             <button
               type="button"
               className="cursor-pointer px-4 py-2.5 rounded-lg bg-teal-500 text-white text-sm font-medium hover:bg-teal-600 transition-colors"
             >
-              설정
+              {t("regionSet")}
             </button>
           </div>
         </div>
@@ -84,12 +87,12 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-2 mb-5">
             <Globe className="w-4 h-4 text-gray-500" aria-hidden="true" />
-            <h2 className="text-lg font-semibold text-gray-900">언어 설정</h2>
+            <h2 className="text-lg font-semibold text-gray-900">{t("languageTitle")}</h2>
           </div>
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            aria-label="언어 선택"
+            aria-label={t("languageSelectAria")}
             className="w-full px-3 py-2.5 text-sm text-gray-900 border border-gray-200 rounded-lg outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-200 bg-white cursor-pointer"
           >
             {LANGUAGES.map(({ value, label }) => (
@@ -104,7 +107,7 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-2 mb-5">
             <Link className="w-4 h-4 text-gray-500" aria-hidden="true" />
-            <h2 className="text-lg font-semibold text-gray-900">계정 연동</h2>
+            <h2 className="text-lg font-semibold text-gray-900">{t("linkTitle")}</h2>
           </div>
           {notice && (
             <div
@@ -116,9 +119,10 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
             </div>
           )}
           <div className="flex flex-col gap-7">
-            {SOCIAL_PROVIDERS.map(({ key, label }) => {
+            {SOCIAL_PROVIDERS.map(({ key }) => {
               const connected = identities.some((i) => i.provider === key);
               const canUnlink = identities.length > 1;
+              const label = tp(key);
               return (
                 <div key={key} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -128,16 +132,16 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
                   {connected ? (
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-medium text-teal-600 bg-teal-50 px-2.5 py-1 rounded-2xl">
-                        연결됨
+                        {t("connected")}
                       </span>
                       {canUnlink && (
                         <button
                           type="button"
                           onClick={() => handleUnlink(key)}
-                          aria-label={`${label} 연결 해제`}
+                          aria-label={t("unlinkAria", { provider: label })}
                           className="cursor-pointer text-xs font-medium text-gray-400 hover:text-red-500 transition-colors"
                         >
-                          해제
+                          {t("unlink")}
                         </button>
                       )}
                     </div>
@@ -145,10 +149,10 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
                     <button
                       type="button"
                       onClick={() => handleLink(key)}
-                      aria-label={`${label} 연결하기`}
+                      aria-label={t("linkAria", { provider: label })}
                       className="cursor-pointer text-xs font-medium text-gray-500 border border-gray-200 px-2.5 py-1 rounded-2xl hover:bg-gray-50 transition-colors"
                     >
-                      연결하기
+                      {t("link")}
                     </button>
                   )}
                 </div>
