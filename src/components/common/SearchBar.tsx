@@ -169,15 +169,15 @@ export function SearchBar({ givenSearch = "", defaultLocation = "all", onSearch,
           <div className="w-px h-5 bg-gray-300 mx-1 shrink-0" />
           <input
             type="text"
-            aria-label="검색어 입력"
-            placeholder="검색어를 입력해주세요"
+            aria-label={t("searchInputLabel")}
+            placeholder={t("searchPlaceholder")}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="min-w-0 flex-1 h-full bg-transparent outline-none text-gray-700 placeholder-gray-400 px-2 text-sm"
           />
           <button
             type="submit"
-            aria-label="검색"
+            aria-label={t("search")}
             className="cursor-pointer shrink-0 w-8 h-8 bg-gray-800 hover:bg-teal-500 rounded-full flex items-center justify-center transition-colors mr-0.5"
           >
             <ArrowRight className="w-4 h-4 text-white" />
