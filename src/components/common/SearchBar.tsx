@@ -22,7 +22,6 @@ export function SearchBar({ givenSearch = "", defaultLocation = "all", onSearch,
   const [locationFilter, setLocationFilter] = useState(defaultLocation);
   const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
   const [mobileLocationOpen, setMobileLocationOpen] = useState(false);
-  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
   const locationDropdownRef = useRef<HTMLDivElement>(null);
 
   const selectedLocationLabel =
@@ -107,13 +106,7 @@ export function SearchBar({ givenSearch = "", defaultLocation = "all", onSearch,
           {showLocation && <div className="relative shrink-0" ref={locationDropdownRef}>
             <button
               type="button"
-              onClick={() => {
-                const rect =
-                  locationDropdownRef.current?.getBoundingClientRect();
-                if (rect)
-                  setDropdownPos({ top: rect.bottom + 8, left: rect.left });
-                setLocationDropdownOpen((v) => !v);
-              }}
+              onClick={() => setLocationDropdownOpen((v) => !v)}
               aria-expanded={locationDropdownOpen}
               aria-haspopup="listbox"
               className={`flex items-center gap-1 px-3 h-8 rounded-full font-semibold text-sm whitespace-nowrap transition-colors select-none ${
@@ -129,10 +122,7 @@ export function SearchBar({ givenSearch = "", defaultLocation = "all", onSearch,
               />
             </button>
             {locationDropdownOpen && (
-              <div
-                className="fixed w-52 bg-white rounded-2xl shadow-xl border border-gray-200 py-2 z-100"
-                style={{ top: dropdownPos.top, left: dropdownPos.left }}
-              >
+              <div className="absolute top-full left-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-200 py-2 z-50">
                 {LOCATION_OPTIONS.map((loc) => (
                   <button
                     key={loc.id}
