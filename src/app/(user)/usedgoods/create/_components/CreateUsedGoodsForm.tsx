@@ -225,6 +225,7 @@ export function CreateUsedGoodsForm({
             <div className="space-y-2">
               <Label htmlFor="title">제목 *</Label>
               <Input
+                maxLength={64}
                 id="title"
                 placeholder="상품명을 입력하세요"
                 value={title}
@@ -262,11 +263,13 @@ export function CreateUsedGoodsForm({
                   <SelectValue placeholder="카테고리를 선택하세요" />
                 </SelectTrigger>
                 <SelectContent>
-                  {PRODUCT_CATEGORIES.filter((c) => c.id !== "all").map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.label}
-                    </SelectItem>
-                  ))}
+                  {PRODUCT_CATEGORIES.filter((c) => c.id !== "all").map(
+                    (cat) => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {cat.label}
+                      </SelectItem>
+                    ),
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -322,6 +325,7 @@ export function CreateUsedGoodsForm({
             <div className="space-y-2">
               <Label htmlFor="content">내용 *</Label>
               <Textarea
+                className="resize-none min-h-48"
                 id="content"
                 placeholder="상품에 대한 설명을 입력하세요"
                 value={content}

@@ -86,9 +86,7 @@ export async function getUsedGoodsItem(postId: number) {
   return data;
 }
 
-export async function getUsedGoodsByCategory(
-  category: string,
-): Promise<UsedGoodsWithPost[]> {
+export async function getUsedGoodsByCategory() {
   const supabase = await createClient();
 
   const { data, error } = await supabase

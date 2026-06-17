@@ -48,7 +48,7 @@ export default async function RentalDetail({
       >
         {images.length > 0 && <ImageCarousel images={images} />}
 
-        <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-[450px]">
+        <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-112.5">
           <AccommondationInfo rental={rental} />
           <hr className="border-gray-200" />
           <RentSellerInfo rental={rental} />
