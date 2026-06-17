@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { WriteButton } from "@/components/common/WriteButton";
 import { getJobList, getPopularJobs } from "@/services/job/job";
 import { getLikeList } from "@/services/likes";
@@ -15,6 +16,7 @@ export default async function JobPage({
 }) {
   const params = await searchParams;
   const currentPage = Number(params.page ?? 1);
+  const t = await getTranslations("Job");
 
   const [posts, { likedIds, currentUserId }, popularPosts] = await Promise.all([
     getJobList({
@@ -36,8 +38,8 @@ export default async function JobPage({
     <div className="page-wrapper">
       <main className="flex-1 page-container w-full py-8">
         <div className="section-header">
-          <h1 className="page-title">구인구직</h1>
-          <WriteButton href="/job/create" label="공고 등록" />
+          <h1 className="page-title">{t("title")}</h1>
+          <WriteButton href="/job/create" label={t("write")} />
         </div>
 
         <JobFilters
@@ -54,7 +56,7 @@ export default async function JobPage({
           posts={pagedPosts}
           likedIds={likedIds}
           currentUserId={currentUserId}
-          emptyMessage={params.search ? "검색 결과가 없어요" : "등록된 구인공고가 없습니다"}
+          emptyMessage={params.search ? t("emptySearch") : t("empty")}
         />
 
         {totalPages > 1 && (
