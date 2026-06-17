@@ -55,7 +55,7 @@ export default function RentSellorInfo({
       {!isOwner && (
         <Button
           variant="teal"
-          className="cursor-pointer"
+          className="cursor-pointer self-start min-w-72"
           onClick={handleChat}
         >
           채팅하기

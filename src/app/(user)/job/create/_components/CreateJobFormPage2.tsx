@@ -18,7 +18,7 @@ interface CreateJobFormPageTwoProps {
   employeeCount: string; setEmployeeCount: (v: string) => void;
   companyAddress: string; setCompanyAddress: (v: string) => void;
   companyWebsite: string; setCompanyWebsite: (v: string) => void;
-  managerName: string; setManagerName: (v: string) => void;
+  managerName: string;
   managerTitle: string; setManagerTitle: (v: string) => void;
   managerPhone: string; setManagerPhone: (v: string) => void;
   managerEmail: string; setManagerEmail: (v: string) => void;
@@ -36,7 +36,7 @@ export function CreateJobFormPageTwo({
   employeeCount, setEmployeeCount,
   companyAddress, setCompanyAddress,
   companyWebsite, setCompanyWebsite,
-  managerName, setManagerName,
+  managerName,
   managerTitle, setManagerTitle,
   managerPhone, setManagerPhone,
   managerEmail, setManagerEmail,
@@ -104,7 +104,12 @@ export function CreateJobFormPageTwo({
         <h2 className="font-semibold text-gray-900">담당자 정보</h2>
         <div className="space-y-2">
           <Label htmlFor="managerName">담당자 이름 *</Label>
-          <Input id="managerName" placeholder="예: 김철수" value={managerName} onChange={(e) => setManagerName(e.target.value)} />
+          <Input
+            id="managerName"
+            value={managerName}
+            readOnly
+            className="bg-gray-100 text-gray-500 cursor-not-allowed"
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="managerTitle">담당자 직함</Label>

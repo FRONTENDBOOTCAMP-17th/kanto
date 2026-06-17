@@ -123,7 +123,7 @@ export default function UsedGoodsDetail({
               </div>
             </div>
             {!isOwner && (
-              <Button variant="teal" className="cursor-pointer w-full" onClick={handleChat}>
+              <Button variant="teal" className="cursor-pointer self-start min-w-72" onClick={handleChat}>
                 채팅하기
               </Button>
             )}

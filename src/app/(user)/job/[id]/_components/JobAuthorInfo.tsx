@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { UserCircle2, Phone, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import postChat from "@/services/chat/postChat";
@@ -13,7 +14,7 @@ export default function JobAuthorInfo({
   job: JobDetail;
   userId: number | undefined;
 }) {
-  const name = job.manager_name ?? job.posts.users?.name;
+  const name = job.posts.users?.name ?? job.manager_name;
   const isOwner = userId !== undefined && userId === job.posts.users?.id;
 
   const handleChat = async () => {
@@ -26,7 +27,17 @@ export default function JobAuthorInfo({
     <div className="p-6 flex flex-col gap-4">
       <h2 className="font-semibold text-base">담당자 정보</h2>
       <div className="flex items-center gap-3">
-        <UserCircle2 className="w-10 h-10 text-gray-400 shrink-0" />
+        {job.posts.users?.avatar_url ? (
+          <Image
+            src={job.posts.users.avatar_url}
+            alt="프로필"
+            width={40}
+            height={40}
+            className="rounded-full object-cover w-10 h-10 shrink-0"
+          />
+        ) : (
+          <UserCircle2 className="w-10 h-10 text-gray-400 shrink-0" />
+        )}
         <div>
           <p className="font-medium">{name}</p>
           {job.manager_title && (
@@ -53,7 +64,7 @@ export default function JobAuthorInfo({
       {!isOwner && (
         <Button
           variant="teal"
-          className="cursor-pointer w-full"
+          className="cursor-pointer self-start min-w-72"
           onClick={handleChat}
         >
           채팅하기
