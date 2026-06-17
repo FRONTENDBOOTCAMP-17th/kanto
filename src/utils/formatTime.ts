@@ -72,6 +72,21 @@ export function formatTimeAgo(
   return rtf.format(-years, "year");
 }
 
+/** 마감일까지 남은 기간을 D-7 / 오늘 마감 / 마감 형태로 포맷 */
+export function formatDeadline(deadline: string): string {
+  const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const diffDay = Math.round(
+    (startOfDay(new Date(deadline)).getTime() - startOfDay(new Date()).getTime()) /
+      (1000 * 60 * 60 * 24),
+  );
+
+  if (diffDay < 0) return "마감";
+  if (diffDay === 0) return "오늘 마감";
+  return `D-${diffDay}`;
+}
+
+export function formatDateDivider(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString("ko-KR", {
 export function formatDateDivider(
   dateStr: string,
   locale: Locale = defaultLocale,

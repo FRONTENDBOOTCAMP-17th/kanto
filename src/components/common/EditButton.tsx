@@ -14,7 +14,7 @@ export default function EditButton({ editPath }: EditButtonProps) {
   return (
     <button
       onClick={() => router.push(editPath)}
-      className="border-2 px-2 py-1 rounded-xl border-gray-400"
+      className="cursor-pointer text-sm text-gray-500 transition-colors hover:underline"
     >
       {t("edit")}
     </button>

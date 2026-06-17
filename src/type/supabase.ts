@@ -447,6 +447,7 @@ export type Database = {
           id: number
           images: Json | null
           industry: string | null
+          is_time_negotiable: boolean
           location_custom: string | null
           location_type: Database["public"]["Enums"]["trade_location"]
           main_task: string
@@ -457,9 +458,11 @@ export type Database = {
           popular_count: number | null
           post_id: number
           preferred: string | null
+          preferred_tags: string[] | null
           salary: number
           salary_type: string | null
-          work_hours: string
+          work_days: string[] | null
+          work_hours: string | null
         }
         Insert: {
           applicant_count?: string | null
@@ -475,6 +478,7 @@ export type Database = {
           id?: number
           images?: Json | null
           industry?: string | null
+          is_time_negotiable?: boolean
           location_custom?: string | null
           location_type: Database["public"]["Enums"]["trade_location"]
           main_task: string
@@ -485,9 +489,11 @@ export type Database = {
           popular_count?: number | null
           post_id: number
           preferred?: string | null
+          preferred_tags?: string[] | null
           salary: number
           salary_type?: string | null
-          work_hours: string
+          work_days?: string[] | null
+          work_hours?: string | null
         }
         Update: {
           applicant_count?: string | null
@@ -503,6 +509,7 @@ export type Database = {
           id?: number
           images?: Json | null
           industry?: string | null
+          is_time_negotiable?: boolean
           location_custom?: string | null
           location_type?: Database["public"]["Enums"]["trade_location"]
           main_task?: string
@@ -513,9 +520,11 @@ export type Database = {
           popular_count?: number | null
           post_id?: number
           preferred?: string | null
+          preferred_tags?: string[] | null
           salary?: number
           salary_type?: string | null
-          work_hours?: string
+          work_days?: string[] | null
+          work_hours?: string | null
         }
         Relationships: [
           {
