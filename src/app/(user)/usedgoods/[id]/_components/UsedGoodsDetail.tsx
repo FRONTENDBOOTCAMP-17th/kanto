@@ -54,7 +54,7 @@ export default function UsedGoodsDetail({
     <div className="page-container pb-12">
       {/* 네비게이션 */}
       <div className="flex items-center justify-between mt-4">
-        <button onClick={() => router.back()} className="flex gap-2 cursor-pointer">
+        <button onClick={() => router.push("/usedgoods")} className="flex gap-2 cursor-pointer">
           <MoveLeft />
           목록으로
         </button>

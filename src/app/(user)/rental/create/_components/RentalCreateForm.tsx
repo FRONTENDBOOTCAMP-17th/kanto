@@ -17,7 +17,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AMENITIES, type Amenity } from "@/type/rental/rentalDetail";
+import {
+  AMENITIES,
+  type Amenity,
+  type RentType,
+  type RoomType,
+} from "@/type/rental/rentalDetail";
 
 const LOCATIONS = [
   "BGC / Taguig",
@@ -31,27 +36,47 @@ const LOCATIONS = [
 
 type Location = (typeof LOCATIONS)[number];
 
-export default function RentalCreateForm({ userId }: { userId: number }) {
+interface InitialData {
+  post_id: number;
+  title: string | null;
+  price: number | null;
+  deposit: number | null;
+  rent_type: string | null;
+  room_type: string | null;
+  max_occupants: number | null;
+  description: string | null;
+  amenities: string[] | null;
+  images: string[] | null;
+  location: string | null;
+  location_detail: string | null;
+}
+
+export default function RentalCreateForm({
+  userId,
+  initialData,
+}: {
+  userId: number;
+  initialData?: InitialData;
+}) {
   const router = useRouter();
 
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState("");
-  const [deposit, setDeposit] = useState("");
-  const [rentType, setRentType] = useState<"월세" | "매매" | "">("");
-  const [roomType, setRoomType] = useState<"스튜디오" | "투룸" | "아파트" | "">(
-    "",
-  );
-  const [maxOccupants, setMaxOccupants] = useState("");
-  const [description, setDescription] = useState("");
-  const [amenities, setAmenities] = useState<Amenity[]>([]);
-  const [location, setLocation] = useState<Location | "">("");
-  const [locationDetail, setLocationDetail] = useState("");
+  const postId = initialData?.post_id;
+  const [title, setTitle] = useState(initialData?.title ?? "");
+  const [price, setPrice] = useState(initialData?.price?.toString() ?? "");
+  const [deposit, setDeposit] = useState(initialData?.deposit?.toString() ?? "");
+  const [rentType, setRentType] = useState<RentType | "">((initialData?.rent_type as RentType) ?? "");
+  const [roomType, setRoomType] = useState<RoomType | "">((initialData?.room_type as RoomType) ?? "");
+  const [maxOccupants, setMaxOccupants] = useState(initialData?.max_occupants?.toString() ?? "");
+  const [description, setDescription] = useState(initialData?.description ?? "");
+  const [amenities, setAmenities] = useState<Amenity[]>((initialData?.amenities as Amenity[]) ?? []);
+  const [location, setLocation] = useState<Location | "">((initialData?.location as Location) ?? "");
+  const [locationDetail, setLocationDetail] = useState(initialData?.location_detail ?? "");
   const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>(initialData?.images ?? []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const toggleAmenity = (item: "와이파이" | "에어컨" | "주차" | "주방") => {
+  const toggleAmenity = (item: Amenity) => {
     setAmenities((prev) =>
       prev.includes(item) ? prev.filter((a) => a !== item) : [...prev, item],
     );
@@ -83,83 +108,134 @@ export default function RentalCreateForm({ userId }: { userId: number }) {
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
     if (!rentType || !roomType || !location) return;
     setIsSubmitting(true);
 
-    const { data: post, error: postError } = await supabase
-      .from("posts")
-      .insert({
-        user_id: userId,
-        post_type: "rental",
-        title,
-        status: "active",
-        view_count: 0,
-        like_count: 0,
-      })
-      .select("id")
-      .single();
+    if (initialData) {
+      if (!postId) return;
 
-    if (postError || !post) {
-      alert("게시글 등록에 실패했습니다.");
-      setIsSubmitting(false);
-      return;
-    }
+      const uploadedUrls: string[] = [];
+      for (const file of imageFiles) {
+        const safeFileName = `${Date.now()}.${file.name.split(".").pop()}`;
+        const filePath = `${userId}/${postId}/${safeFileName}`;
+        const { error: uploadError } = await supabase.storage
+          .from("images")
+          .upload(filePath, file, { upsert: true });
 
-    const uploadedUrls: string[] = [];
-    for (const file of imageFiles) {
-      const filePath = `${userId}/${post.id}/${Date.now()}_${file.name}`;
-      const { error: uploadError } = await supabase.storage
-        .from("images")
-        .upload(filePath, file);
+        if (!uploadError) {
+          const { data: urlData } = supabase.storage
+            .from("images")
+            .getPublicUrl(filePath);
+          uploadedUrls.push(urlData.publicUrl);
+        }
+      }
 
-      if (uploadError) {
-        await supabase.from("posts").delete().eq("id", post.id);
-        alert("이미지 업로드에 실패했습니다.");
+      const existingUrls = imagePreviews.filter((url) => !url.startsWith("blob:"));
+      const finalImages = [...existingUrls, ...uploadedUrls];
+
+      await supabase.from("posts").update({ title }).eq("id", postId);
+
+      await supabase
+        .from("rentals")
+        .update({
+          price: Number(price),
+          deposit: deposit ? Number(deposit) : 0,
+          rent_type: rentType,
+          room_type: roomType,
+          max_occupants: Number(maxOccupants),
+          description,
+          amenities,
+          images: finalImages.length > 0 ? finalImages : null,
+          location,
+          location_detail: location === "그 외 지역" ? locationDetail : null,
+        })
+        .eq("post_id", postId);
+
+      router.replace(`/rental/${postId}`);
+    } else {
+      const { data: post, error: postError } = await supabase
+        .from("posts")
+        .insert({
+          user_id: userId,
+          post_type: "rental",
+          title,
+          status: "active",
+          view_count: 0,
+          like_count: 0,
+        })
+        .select("id")
+        .single();
+
+      if (postError || !post) {
+        alert("게시글 등록에 실패했습니다.");
         setIsSubmitting(false);
         return;
       }
 
-      const { data: urlData } = supabase.storage
-        .from("images")
-        .getPublicUrl(filePath);
-      uploadedUrls.push(urlData.publicUrl);
+      const uploadedUrls: string[] = [];
+      for (const file of imageFiles) {
+        const filePath = `${userId}/${post.id}/${Date.now()}_${file.name}`;
+        const { error: uploadError } = await supabase.storage
+          .from("images")
+          .upload(filePath, file);
+
+        if (uploadError) {
+          await supabase.from("posts").delete().eq("id", post.id);
+          alert("이미지 업로드에 실패했습니다.");
+          setIsSubmitting(false);
+          return;
+        }
+
+        const { data: urlData } = supabase.storage
+          .from("images")
+          .getPublicUrl(filePath);
+        uploadedUrls.push(urlData.publicUrl);
+      }
+
+      const { error: rentalError } = await supabase.from("rentals").insert({
+        post_id: post.id,
+        price: Number(price),
+        deposit: deposit ? Number(deposit) : 0,
+        rent_type: rentType,
+        room_type: roomType,
+        max_occupants: Number(maxOccupants),
+        description,
+        amenities,
+        images: uploadedUrls.length > 0 ? uploadedUrls : null,
+        location,
+        location_detail: location === "그 외 지역" ? locationDetail : null,
+      });
+
+      if (rentalError) {
+        alert("방 정보 등록에 실패했습니다.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      router.push("/rental");
     }
-
-    const { error: rentalError } = await supabase.from("rentals").insert({
-      post_id: post.id,
-      price: Number(price),
-      deposit: deposit ? Number(deposit) : 0,
-      rent_type: rentType,
-      room_type: roomType,
-      max_occupants: Number(maxOccupants),
-      description,
-      amenities,
-      images: uploadedUrls.length > 0 ? uploadedUrls : null,
-      location,
-      location_detail: location === "그 외 지역" ? locationDetail : null,
-    });
-
-    if (rentalError) {
-      alert("방 정보 등록에 실패했습니다.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    router.push("/rental");
   };
 
   return (
     <main className="flex-1 bg-gray-50 py-8 px-4">
       <div className="max-w-3xl mx-auto">
-        <Button variant="ghost" onClick={() => router.back()} className="mb-6">
+        <Button
+          variant="ghost"
+          onClick={() =>
+            router.push(initialData ? `/rental/${postId}` : "/rental")
+          }
+          className="mb-6"
+        >
           <ArrowLeft className="w-4 h-4 mr-2" />
           뒤로가기
         </Button>
 
         <Card className="p-8">
-          <h1 className="page-title-lg mb-2">방렌트 글쓰기</h1>
+          <h1 className="page-title-lg mb-2">
+            {initialData ? "방렌트 글 수정" : "방렌트 글쓰기"}
+          </h1>
           <p className="text-gray-600 mb-8">필요한 정보를 입력해주세요</p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -179,7 +255,6 @@ export default function RentalCreateForm({ userId }: { userId: number }) {
               <Select
                 value={location}
                 onValueChange={(v) => setLocation(v as Location)}
-                required
               >
                 <SelectTrigger>
                   <SelectValue placeholder="지역을 선택하세요" />
@@ -206,8 +281,7 @@ export default function RentalCreateForm({ userId }: { userId: number }) {
               <Label htmlFor="rentType">월세 / 매매 *</Label>
               <Select
                 value={rentType}
-                onValueChange={(v) => setRentType(v as "월세" | "매매")}
-                required
+                onValueChange={(v) => setRentType(v as RentType)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="선택하세요" />
@@ -258,9 +332,7 @@ export default function RentalCreateForm({ userId }: { userId: number }) {
               <Label htmlFor="roomType">방 타입 *</Label>
               <Select
                 value={roomType}
-                onValueChange={(v) =>
-                  setRoomType(v as "스튜디오" | "투룸" | "아파트")
-                }
+                onValueChange={(v) => setRoomType(v as RoomType)}
                 required
               >
                 <SelectTrigger>
@@ -289,22 +361,20 @@ export default function RentalCreateForm({ userId }: { userId: number }) {
             <div className="space-y-2">
               <Label>편의시설</Label>
               <div className="flex gap-2 flex-wrap">
-                {AMENITIES.map(
-                  (item) => (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() => toggleAmenity(item)}
-                      className={`px-4 py-2 rounded-lg border text-sm transition-colors ${
-                        amenities.includes(item)
-                          ? "bg-teal-500 text-white border-teal-500"
-                          : "bg-white text-gray-700 border-gray-300 hover:border-teal-400"
-                      }`}
-                    >
-                      {item}
-                    </button>
-                  ),
-                )}
+                {AMENITIES.map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => toggleAmenity(item)}
+                    className={`px-4 py-2 rounded-lg border text-sm transition-colors ${
+                      amenities.includes(item)
+                        ? "bg-teal-500 text-white border-teal-500"
+                        : "bg-white text-gray-700 border-gray-300 hover:border-teal-400"
+                    }`}
+                  >
+                    {item}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -331,7 +401,9 @@ export default function RentalCreateForm({ userId }: { userId: number }) {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => router.back()}
+                onClick={() =>
+                  router.push(initialData ? `/rental/${postId}` : "/rental")
+                }
                 className="flex-1"
                 disabled={isSubmitting}
               >
@@ -343,7 +415,13 @@ export default function RentalCreateForm({ userId }: { userId: number }) {
                 className="flex-1"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "등록 중..." : "작성 완료"}
+                {isSubmitting
+                  ? initialData
+                    ? "수정 중..."
+                    : "등록 중..."
+                  : initialData
+                    ? "수정 완료"
+                    : "작성 완료"}
               </Button>
             </div>
           </form>
