@@ -23,7 +23,10 @@ export async function getChatList(
     throw new Error(error.message);
   }
 
-  return data as ChatWithUsers[];
+  return (data ?? []).filter((chat) => {
+    if (chat.user_id_1 === currentUserId) return !chat.user_id_1_left;
+    return !chat.user_id_2_left;
+  }) as ChatWithUsers[];
 }
 
 export async function getChatDetail(
@@ -42,4 +45,3 @@ export async function getChatDetail(
 
   return data as ChatWithUsers;
 }
-

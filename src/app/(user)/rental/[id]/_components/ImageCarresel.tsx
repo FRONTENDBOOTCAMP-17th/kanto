@@ -11,18 +11,19 @@ export default function ImageCarousel({ images }: { images: string[] }) {
 
   if (images.length === 0)
     return (
-      <ImageWithFallback
-        src="/fallback-image.svg"
-        alt="이미지 없음"
-        width={400}
-        height={400}
-        className="w-full aspect-square object-contain rounded-2xl border-2 border-gray-200"
-      />
+      <div className="relative aspect-square md:aspect-auto md:h-full border-2 border-gray-200 rounded-2xl overflow-hidden">
+        <ImageWithFallback
+          src="/fallback-image.svg"
+          alt="이미지 없음"
+          fill
+          className="object-contain"
+        />
+      </div>
     );
 
   return (
-    <div className="border-2 border-gray-200 rounded-2xl overflow-hidden">
-      <div className="relative w-full aspect-square overflow-hidden" {...dragHandlers}>
+    <div className="border-2 border-gray-200 rounded-2xl overflow-hidden aspect-square md:aspect-auto md:h-full flex flex-col">
+      <div className="relative w-full flex-1 overflow-hidden" {...dragHandlers}>
         {prevIndex !== null && (
           <div
             className={`absolute inset-0 ${

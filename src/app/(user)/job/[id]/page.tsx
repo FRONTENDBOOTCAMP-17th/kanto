@@ -1,4 +1,5 @@
 import { getJobDetail } from "@/services/job/jobDetail";
+import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
 import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarresel";
 import JobTitle from "./_components/JobTitle";
 import JobInfo from "./_components/JobInfo";
@@ -6,6 +7,7 @@ import JobAuthorInfo from "./_components/JobAuthorInfo";
 import JobContent from "./_components/JobContent";
 import CompanyInfo from "./_components/CompanyInfo";
 import VerifyAuthor from "@/components/common/VerifyAuthor";
+import { viewCountUp } from "@/services/view";
 
 export default async function JobDetailPage({
   params,
@@ -26,6 +28,8 @@ export default async function JobDetailPage({
   }
 
   const images = (job.images as string[]) ?? [];
+  await viewCountUp(job.post_id);
+  const { userId, initialLiked, initialReported } = await getUserLikeReportStatus(job.post_id);
 
   return (
     <div className="page-container w-full py-6">
@@ -38,7 +42,7 @@ export default async function JobDetailPage({
         />
       </div>
       <div className="border border-gray-200 rounded-2xl overflow-hidden divide-y divide-gray-200">
-        <JobTitle job={job} />
+        <JobTitle job={job} userId={userId} initialLiked={initialLiked} initialReported={initialReported} />
         <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
           <JobInfo job={job} />
           <JobAuthorInfo job={job} />
@@ -46,7 +50,9 @@ export default async function JobDetailPage({
         {images.length > 0 && (
           <div className="p-6 space-y-2">
             <h2 className="font-semibold text-base">사진</h2>
-            <ImageCarousel images={images} />
+            <div className="aspect-4/3">
+              <ImageCarousel images={images} />
+            </div>
           </div>
         )}
         <JobContent job={job} />

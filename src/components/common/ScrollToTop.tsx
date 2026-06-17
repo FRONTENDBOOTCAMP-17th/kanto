@@ -1,16 +1,22 @@
 "use client";
+import { useAuthStore } from "@/store/authStore";
 import { ChevronUp, Plus } from "lucide-react";
-import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 export function ScrollToTop() {
+  const prevScrollY = useRef(0);
   const [isVisible, setIsVisible] = useState(false);
+  const router = useRouter();
+  const path = usePathname();
+  const { isLoggedIn } = useAuthStore();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsVisible(window.scrollY > 250);
-      // 높이를 얼마부터 동작하게 할것인가?
+      const currentScrollY = window.scrollY;
+      setIsVisible(prevScrollY.current > currentScrollY);
+      prevScrollY.current = currentScrollY;
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -20,18 +26,20 @@ export function ScrollToTop() {
   };
 
   const handlePlus = () => {
-    // user === ture일 경우에 (로그인이 되어있는 경우에)
-    // 글쓰기 위치로 이동되도록
+    router.push("/create");
   };
 
-  // user 로그인 로그아웃 구현을 위해 만든 상태
-  const [user, setUser] = useState(true);
+  const showPlus =
+    !path.includes("/create") &&
+    !path.startsWith("/profile") &&
+    !path.startsWith("/favorites") &&
+    !/\/(usedgoods|rental|job)\/\d/.test(path);
 
   if (!isVisible) return null;
 
   return (
-    <div className="flex md:hidden fixed bottom-6 right-6 z-50 flex-col items-center gap-3">
-      {user && (
+    <div className="flex md:hidden flex-col items-center gap-3">
+      {showPlus && isLoggedIn && (
         <button
           className="cursor-pointer w-12 h-12 bg-gray-100 hover:bg-gray-300 text-black rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"
           aria-label="더보기"

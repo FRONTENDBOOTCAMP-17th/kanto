@@ -30,17 +30,17 @@ export function useChatRoomRealtime({
         },
         (payload) => {
           const newMsg = payload.new as Message;
-          const sender =
-            newMsg.sender_id === currentUser.id ? currentUser : partner;
-          const msgWithSender: MessageWithSender = { ...newMsg, sender };
 
-          if (newMsg.sender_id !== currentUser.id) {
-            supabase
-              .from("messages")
-              .update({ is_read: true })
-              .eq("id", newMsg.id)
-              .then();
-          }
+          // 내 메시지는 낙관적 업데이트로 처리 — 리얼타임 중복 방지
+          if (newMsg.sender_id === currentUser.id) return;
+
+          const msgWithSender: MessageWithSender = { ...newMsg, sender: partner };
+
+          supabase
+            .from("messages")
+            .update({ is_read: true })
+            .eq("id", newMsg.id)
+            .then();
 
           setMessages((prev) => {
             if (prev.some((m) => m.id === newMsg.id)) return prev;

@@ -51,8 +51,10 @@ export type Database = {
           last_message_content: string | null
           post_id: number
           user_id_1: number | null
+          user_id_1_left: boolean | null
           user_id_1_unread: number | null
           user_id_2: number | null
+          user_id_2_left: boolean | null
           user_id_2_unread: number | null
         }
         Insert: {
@@ -62,8 +64,10 @@ export type Database = {
           last_message_content?: string | null
           post_id: number
           user_id_1?: number | null
+          user_id_1_left?: boolean | null
           user_id_1_unread?: number | null
           user_id_2?: number | null
+          user_id_2_left?: boolean | null
           user_id_2_unread?: number | null
         }
         Update: {
@@ -73,8 +77,10 @@ export type Database = {
           last_message_content?: string | null
           post_id?: number
           user_id_1?: number | null
+          user_id_1_left?: boolean | null
           user_id_1_unread?: number | null
           user_id_2?: number | null
+          user_id_2_left?: boolean | null
           user_id_2_unread?: number | null
         }
         Relationships: [
@@ -231,27 +237,33 @@ export type Database = {
       }
       common_reports: {
         Row: {
+          category: string | null
           created_at: string
+          description: string | null
           id: number
-          reason: string | null
+          resolved_at: string | null
           status: string | null
           target_id: number | null
           target_type: string | null
           user_id: number | null
         }
         Insert: {
+          category?: string | null
           created_at?: string
+          description?: string | null
           id?: number
-          reason?: string | null
+          resolved_at?: string | null
           status?: string | null
           target_id?: number | null
           target_type?: string | null
           user_id?: number | null
         }
         Update: {
+          category?: string | null
           created_at?: string
+          description?: string | null
           id?: number
-          reason?: string | null
+          resolved_at?: string | null
           status?: string | null
           target_id?: number | null
           target_type?: string | null
@@ -766,6 +778,7 @@ export type Database = {
           email: string | null
           id: number
           interest_categories: string[] | null
+          like_count: number
           name: string
           phone: string | null
           post_count: number | null
@@ -786,6 +799,7 @@ export type Database = {
           email?: string | null
           id?: number
           interest_categories?: string[] | null
+          like_count?: number
           name: string
           phone?: string | null
           post_count?: number | null
@@ -806,6 +820,7 @@ export type Database = {
           email?: string | null
           id?: number
           interest_categories?: string[] | null
+          like_count?: number
           name?: string
           phone?: string | null
           post_count?: number | null
@@ -821,6 +836,49 @@ export type Database = {
     }
     Functions: {
       cleanup_deleted_users: { Args: never; Returns: undefined }
+      get_active_users_count: {
+        Args: { days: number }
+        Returns: {
+          count: number
+        }[]
+      }
+      get_daily_signups: {
+        Args: { days: number }
+        Returns: {
+          count: number
+          day: string
+        }[]
+      }
+      get_region_post_counts: {
+        Args: { days: number }
+        Returns: {
+          count: number
+          location: string
+        }[]
+      }
+      get_reported_posts: {
+        Args: { limit_count?: number }
+        Returns: {
+          first_reported_at: string
+          latest_reason: string
+          post_id: number
+          post_type: string
+          report_count: number
+          title: string
+        }[]
+      }
+      get_reported_users: {
+        Args: { limit_count?: number }
+        Returns: {
+          avatar_url: string
+          first_reported_at: string
+          latest_reason: string
+          name: string
+          report_count: number
+          user_id: number
+        }[]
+      }
+      increment_view_count: { Args: { p_post_id: number }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
       my_role: { Args: never; Returns: string }
       my_user_id: { Args: never; Returns: number }

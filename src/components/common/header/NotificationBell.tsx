@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants/routes";
+import { useChatStore } from "@/store/chatStore";
 import { useNotifications } from "@/hooks/useNotifications";
 import { getNotificationHref } from "@/utils/notification";
 import { NotificationDropdown } from "./NotificationDropdown";
@@ -60,6 +61,10 @@ export const NotificationBell = forwardRef<NotificationBellHandle, Props>(
     const handleNotificationClick = async (n: Notification) => {
       await markAsRead(n);
       setIsOpen(false);
+      if (n.related_type === "chat" && n.related_id) {
+        useChatStore.getState().openWidget(n.related_id);
+        return;
+      }
       const href = getNotificationHref(n);
       if (href) router.push(href);
     };
@@ -86,7 +91,7 @@ export const NotificationBell = forwardRef<NotificationBellHandle, Props>(
         </Button>
         {isOpen && (
           <NotificationDropdown
-            notifications={notifications}
+            notifications={notifications.filter((n) => !n.is_read)}
             unreadCount={unreadCount}
             onNotificationClick={handleNotificationClick}
             onMarkAllRead={markAllRead}

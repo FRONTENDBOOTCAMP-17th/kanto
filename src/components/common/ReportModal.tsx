@@ -1,5 +1,17 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { checkReported, submitReport } from "@/services/report";
 
 interface report {
   isOpen: boolean;
@@ -29,94 +41,135 @@ export default function ReportModal({
   const [content, setContent] = useState("");
   const [isReported, setIsReported] = useState(initialReported);
   const [justReported, setJustReported] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    if (!isOpen || !userId) return;
+
+    document.body.style.overflow = "hidden";
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKeyDown);
+
+    checkReported(postId, userId).then((reported) => {
+      if (reported) setIsReported(true);
+    });
 
     return () => {
       document.body.style.overflow = "";
+      document.removeEventListener("keydown", onKeyDown);
     };
-  }, [isOpen]);
+  }, [isOpen, onClose, postId, userId]);
 
   if (!isOpen) return null;
 
   const handleReport = async () => {
     if (!category || !userId) return;
+    setSubmitError(false);
 
-    await supabase.from("common_reports").insert({
-      user_id: userId,
-      target_id: postId,
-      target_type: "post",
-      reason: content ? `${category} - ${content}` : category,
-      status: "pending",
-    });
+    const { error } = await submitReport(userId, postId, category, content);
+    if (error) {
+      console.error("[ReportModal] insert error:", error);
+      setSubmitError(true);
+      return;
+    }
     setJustReported(true);
     setIsReported(true);
   };
 
+  const handleClose = () => {
+    setJustReported(false);
+    setSubmitError(false);
+    onClose();
+  };
+
   if (isReported) {
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-xl px-4 py-8 w-80 text-center flex flex-col gap-6">
-          <p className="text-xl font-semibold">
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+        onClick={handleClose}
+      >
+        <div
+          className="w-full max-w-sm mx-4 bg-white rounded-2xl shadow-xl p-6 flex flex-col gap-5 text-center"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <p className="text-base font-semibold text-gray-800">
             {justReported
               ? "신고가 완료되었습니다."
               : "이미 신고가 완료된 게시글입니다."}
           </p>
-          <button
-            onClick={() => {
-              setJustReported(false);
-              onClose();
-            }}
-            className="border-2 px-3 py-1 rounded-xl bg-teal-500 text-white"
-          >
+          <Button variant="teal" onClick={handleClose}>
             확인
-          </button>
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-4 w-80 flex flex-col gap-5">
-        <h1 className="text-2xl font-bold">신고하기</h1>
-        <select
-          name="reportModal"
-          id="report"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="border-2 p-2 border-gray-400"
-        >
-          <option value="">카테고리 선택</option>
-          {REPORT_CATEGORIES.map((cate) => (
-            <option key={cate} value={cate}>
-              {cate}
-            </option>
-          ))}
-        </select>
-        <textarea
-          name="reportModal"
-          id="report"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="신고 내용을 입력해주세요."
-          className="w-full h-50 border-2 border-gray-400 p-2"
-        />
-        <div className="flex justify-evenly gap-4">
-          <button onClick={onClose} className="border-2 w-full rounded-xl">
-            취소
-          </button>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-sm mx-4 bg-white rounded-2xl shadow-xl p-6 flex flex-col gap-5"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-semibold text-gray-800">신고하기</h2>
           <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+            aria-label="닫기"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <p className="text-sm text-gray-500">신고 유형</p>
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger>
+              <SelectValue placeholder="카테고리를 선택해주세요" />
+            </SelectTrigger>
+            <SelectContent>
+              {REPORT_CATEGORIES.map((cate) => (
+                <SelectItem key={cate} value={cate}>
+                  {cate}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <p className="text-sm text-gray-500">상세 내용 (선택)</p>
+          <Textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="신고 내용을 입력해주세요."
+            className="resize-none min-h-20 max-h-30"
+          />
+        </div>
+
+        {submitError && (
+          <p className="text-sm text-red-500">
+            신고 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.
+          </p>
+        )}
+
+        <div className="flex gap-2 justify-end">
+          <Button variant="ghost" onClick={onClose}>
+            취소
+          </Button>
+          <Button
+            className="bg-red-500 hover:bg-red-600 text-white"
             onClick={handleReport}
-            className="border-2 w-full rounded-xl bg-red-400 text-white"
+            disabled={!category}
           >
             신고하기
-          </button>
+          </Button>
         </div>
       </div>
     </div>

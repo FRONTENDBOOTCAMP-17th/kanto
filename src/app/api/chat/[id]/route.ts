@@ -1,21 +1,20 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
 import { getChatDetail } from "@/services/chat/chat";
 import { getMessageList } from "@/services/chat/message";
-import ChatRoomClient from "./_components/ChatRoomClient";
+import { createClient } from "@/utils/supabase/server";
+import { NextResponse } from "next/server";
 
-export default async function ChatRoomPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
   const { id } = await params;
   const supabase = await createClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user)
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { data: currentUser } = await supabase
     .from("users")
@@ -23,7 +22,8 @@ export default async function ChatRoomPage({
     .eq("auth_id", user.id)
     .single();
 
-  if (!currentUser) redirect("/login");
+  if (!currentUser)
+    return NextResponse.json({ error: "not found" }, { status: 404 });
 
   const chatId = Number(id);
   const [chatRoom, messages] = await Promise.all([
@@ -34,14 +34,12 @@ export default async function ChatRoomPage({
   const partner =
     chatRoom.user_id_1 === currentUser.id ? chatRoom.user2 : chatRoom.user1;
 
-  return (
-    <ChatRoomClient
-      initialMessages={messages}
-      currentUser={currentUser}
-      chatId={chatId}
-      postId={chatRoom.post_id}
-      partner={partner}
-      postTitle={chatRoom.posts?.title ?? ""}
-    />
-  );
+  return NextResponse.json({
+    messages,
+    currentUser,
+    chatId,
+    postId: chatRoom.post_id,
+    partner,
+    postTitle: chatRoom.posts?.title ?? "",
+  });
 }

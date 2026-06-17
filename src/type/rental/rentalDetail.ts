@@ -15,6 +15,7 @@ export const AMENITIES = [
   "인터넷",
   "수영장",
   "헬스장",
+  "보안요원",
 ] as const;
 
 export type Amenity = (typeof AMENITIES)[number];

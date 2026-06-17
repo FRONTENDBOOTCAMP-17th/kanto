@@ -15,7 +15,9 @@ interface UsedGoodsListFilter {
   userId?: number;
 }
 
-export async function getUsedGoodsList(filter?: UsedGoodsListFilter): Promise<UsedGoodsWithPost[]> {
+export async function getUsedGoodsList(
+  filter?: UsedGoodsListFilter,
+): Promise<UsedGoodsWithPost[]> {
   const supabase = await createClient();
 
   let query = supabase
@@ -77,16 +79,14 @@ export async function getUsedGoodsItem(postId: number) {
 
   const { data } = await supabase
     .from("used_goods")
-    .select(`*, posts (*, users (id, auth_id, name, avatar_url, created_at, deleted_at, email, phone, post_count, provider, role, updated_at))`)
+    .select(`*, posts (*, users (*))`)
     .eq("post_id", postId)
     .single();
 
   return data;
 }
 
-export async function getUsedGoodsByCategory(
-  category: string,
-): Promise<UsedGoodsWithPost[]> {
+export async function getUsedGoodsByCategory() {
   const supabase = await createClient();
 
   const { data, error } = await supabase
