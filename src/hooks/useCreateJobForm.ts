@@ -113,7 +113,7 @@ export function useCreateJobForm(userId: number, initialData?: JobInitialData) {
         return;
       }
 
-      router.push(`/job/${initialData.post_id}`);
+      router.replace(`/job/${initialData.post_id}`);
       return;
     }
 
