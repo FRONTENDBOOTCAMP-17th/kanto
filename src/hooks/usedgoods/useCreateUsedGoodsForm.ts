@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { useImageUpload } from "@/hooks/useImageUpload";
 import {
@@ -12,6 +13,7 @@ import {
 
 export function useCreateUsedGoodsForm(userId: number) {
   const router = useRouter();
+  const t = useTranslations("UsedGoods.form");
 
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
@@ -43,7 +45,7 @@ export function useCreateUsedGoodsForm(userId: number) {
       .single();
 
     if (postError || !post) {
-      alert("게시글 등록에 실패했습니다.");
+      alert(t("errorPost"));
       setIsSubmitting(false);
       return;
     }
@@ -57,7 +59,7 @@ export function useCreateUsedGoodsForm(userId: number) {
 
       if (uploadError) {
         await supabase.from("posts").delete().eq("id", post.id);
-        alert("이미지 업로드에 실패했습니다.");
+        alert(t("errorImage"));
         setIsSubmitting(false);
         return;
       }
@@ -82,7 +84,7 @@ export function useCreateUsedGoodsForm(userId: number) {
     });
 
     if (goodsError) {
-      alert("상품 정보 등록에 실패했습니다.");
+      alert(t("errorGoods"));
       setIsSubmitting(false);
       return;
     }
