@@ -2,7 +2,11 @@ import { NextResponse } from "next/server";
 import {
   getTransactionByExternalId,
   updateTransaction,
+  postSystemMessage,
 } from "@/services/payment/transaction";
+
+const PAID_MESSAGE =
+  "결제가 완료되었습니다 · 상품 수령 후 결제 카드에서 '수령 확인'을 눌러주세요";
 
 // Xendit Invoice 콜백(webhook) 수신.
 // 대시보드 Settings → Webhooks 에서 Verification Token 을 등록하고
@@ -28,11 +32,17 @@ export async function POST(req: Request) {
   // 멱등 처리: pending 상태일 때만 전환
   if (transaction.status === "pending") {
     if (status === "PAID" || status === "SETTLED") {
-      await updateTransaction(transaction.id, {
+      const paid = await updateTransaction(transaction.id, {
         status: "paid",
         paid_at: new Date().toISOString(),
         xendit_invoice_id: body.id ?? transaction.xendit_invoice_id ?? undefined,
       });
+      // 시스템 메시지는 부가 UX — 실패해도 webhook은 200으로 응답(재전송 불필요)
+      try {
+        await postSystemMessage(paid, PAID_MESSAGE);
+      } catch (e) {
+        console.error("결제완료 시스템 메시지 발송 실패:", e);
+      }
     } else if (status === "EXPIRED") {
       await updateTransaction(transaction.id, { status: "expired" });
     }

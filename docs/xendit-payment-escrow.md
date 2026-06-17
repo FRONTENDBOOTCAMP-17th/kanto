@@ -1,4 +1,4 @@
-# Xendit 안전결제(에스크로) 연동 문서
+# Xendit 안전결제(에스크로) 연동 문서 - THLIMM
 
 ## 1. 작업 개요
 
@@ -68,22 +68,23 @@ docs/
 
 ### DB 스키마 (공유 Supabase DB에 직접 적용 — 레포에 마이그레이션 파일 없음)
 
-| 테이블/타입 | 내용 |
-|---|---|
-| `transaction_status` (enum) | `pending`/`paid`/`released`/`cancelled`/`expired` |
+| 테이블/타입                  | 내용                                                                                                                                                      |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `transaction_status` (enum)  | `pending`/`paid`/`released`/`cancelled`/`expired`                                                                                                         |
 | `transactions` (신규 테이블) | `id, post_id, chat_id, buyer_id, seller_id, amount, status, external_id(unique), xendit_invoice_id, xendit_invoice_url, created_at, paid_at, released_at` |
-| `messages` (컬럼 추가) | `type text default 'text'` (`'text' \| 'payment'`), `transaction_id bigint null → transactions.id` |
+| `messages` (컬럼 추가)       | `type text default 'text'` (`'text' \| 'payment'`), `transaction_id bigint null → transactions.id`                                                        |
 
 - `transactions`는 RLS 활성화 + "거래 당사자만 SELECT" 정책. 쓰기(insert/update)는 전부 서버 코드에서 `supabaseAdmin`(service role)으로 수행해 RLS를 우회한다.
 - Realtime publication(`supabase_realtime`)에 `transactions` 테이블 추가 — 카드 상태 변화를 양쪽에 실시간 반영하기 위함.
 - 스키마는 `supabase db query --linked -f xendit-schema.sql` 로 공유 원격 DB에 직접 적용했고, 적용 후 `npm run gen:types` 로 `src/type/supabase.ts` 를 재생성했다. SQL 파일 자체는 적용 후 삭제(레포에 커밋하지 않음).
 
 ### 환경변수 (`.env.local`)
-| 키 | 용도 |
-|---|---|
-| `XENDIT_SECRET_KEY` | Invoice 생성/조회용 서버 시크릿 키 (Test Mode, Money-in products: Write 권한) |
-| `XENDIT_CALLBACK_TOKEN` | webhook 검증용 토큰 (아직 미설정 — webhook 미사용 시 불필요) |
-| `NEXT_PUBLIC_BASE_URL` | Invoice의 success/failure redirect URL 구성에 사용 (`http://localhost:3000`) |
+
+| 키                      | 용도                                                                          |
+| ----------------------- | ----------------------------------------------------------------------------- |
+| `XENDIT_SECRET_KEY`     | Invoice 생성/조회용 서버 시크릿 키 (Test Mode, Money-in products: Write 권한) |
+| `XENDIT_CALLBACK_TOKEN` | webhook 검증용 토큰 (아직 미설정 — webhook 미사용 시 불필요)                  |
+| `NEXT_PUBLIC_BASE_URL`  | Invoice의 success/failure redirect URL 구성에 사용 (`http://localhost:3000`)  |
 
 ---
 

@@ -64,6 +64,13 @@ export default function MessageList({
                 <div className="flex-1 h-px bg-gray-200" />
               </div>
             )}
+            {msg.type === "system" ? (
+              <div className="flex justify-center my-1">
+                <span className="rounded-full bg-gray-200/70 px-3 py-1 text-center text-xs md:text-[11px] text-gray-500 break-keep">
+                  {msg.content}
+                </span>
+              </div>
+            ) : (
             <div className={`flex flex-col gap-0.5 ${isMine ? "items-end" : "items-start"}`}>
               <div className={`flex items-end gap-1 ${isMine ? "flex-row-reverse" : ""}`}>
                 {msg.type === "payment" && msg.transaction ? (
@@ -93,6 +100,7 @@ export default function MessageList({
                 </div>
               </div>
             </div>
+            )}
           </Fragment>
         );
       })}

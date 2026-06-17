@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { CheckCircle2, Clock, XCircle } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
-import { getTransaction, updateTransaction } from "@/services/payment/transaction";
+import {
+  getTransaction,
+  updateTransaction,
+  postSystemMessage,
+} from "@/services/payment/transaction";
 import { getInvoice, isInvoicePaid } from "@/lib/xendit";
 
 // Xendit 결제 후 success/failure redirect 도착 지점.
@@ -26,11 +30,22 @@ export default async function PaymentReturnPage({
         try {
           const invoice = await getInvoice(transaction.xendit_invoice_id);
           if (isInvoicePaid(invoice.status)) {
-            await updateTransaction(transaction.id, {
+            // webhook이 먼저 paid로 바꿨다면 위 status==='paid' 분기로 빠져 여기 도달 안 함(멱등).
+            // 드물게 webhook과 동시 실행되면 메시지가 중복될 수 있으나 테스트 범위에서 허용.
+            const updated = await updateTransaction(transaction.id, {
               status: "paid",
               paid_at: new Date().toISOString(),
             });
             paid = true;
+            // 시스템 메시지는 부가 UX — 실패해도 결제완료 표시(paid)는 유지
+            try {
+              await postSystemMessage(
+                updated,
+                "결제가 완료되었습니다 · 상품 수령 후 결제 카드에서 '수령 확인'을 눌러주세요",
+              );
+            } catch (e) {
+              console.error("결제완료 시스템 메시지 발송 실패:", e);
+            }
           }
         } catch {
           // 조회 실패 시 대기 상태로 안내 (webhook 이 추후 반영)

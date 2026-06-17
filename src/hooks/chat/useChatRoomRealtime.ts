@@ -32,6 +32,21 @@ export function useChatRoomRealtime({
         async (payload) => {
           const newMsg = payload.new as Message;
 
+          // 시스템 메시지는 낙관적 삽입이 없으므로 skip-own을 우회해 양쪽 모두 수신
+          if (newMsg.type === "system") {
+            const msgWithSender: MessageWithSender = {
+              ...newMsg,
+              sender: newMsg.sender_id === currentUser.id ? currentUser : partner,
+              transaction: null,
+            };
+            setMessages((prev) =>
+              prev.some((m) => m.id === newMsg.id)
+                ? prev
+                : [...prev, msgWithSender],
+            );
+            return;
+          }
+
           // 내 메시지는 낙관적 업데이트로 처리 — 리얼타임 중복 방지
           if (newMsg.sender_id === currentUser.id) return;
 
