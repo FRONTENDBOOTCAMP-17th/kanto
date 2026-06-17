@@ -54,7 +54,7 @@ export default function ImageCarousel({ images }: { images: string[] }) {
         >
           <Image
             src={images[currentIndex]}
-            alt="숙소 이미지"
+            alt={t("carousel.image")}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             priority={currentIndex === 0}
