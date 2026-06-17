@@ -51,7 +51,7 @@ export default async function RentalDetail({
         <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-112.5">
           <AccommondationInfo rental={rental} />
           <hr className="border-gray-200" />
-          <RentSellerInfo rental={rental} />
+          <RentSellerInfo rental={rental} userId={userId} />
         </div>
       </div>
       <PostInfo
