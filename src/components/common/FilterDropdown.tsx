@@ -12,15 +12,16 @@ interface FilterDropdownProps {
   options: readonly FilterOption[];
   value: string;
   onChange: (value: string) => void;
+  align?: "left" | "right";
 }
 
 export function FilterDropdown({
   options,
   value,
   onChange,
+  align = "left",
 }: FilterDropdownProps) {
   const [open, setOpen] = useState(false);
-  const [pos, setPos] = useState({ top: 0, left: 0 });
   const btnRef = useRef<HTMLDivElement>(null);
 
   const selectedLabel =
@@ -40,11 +41,7 @@ export function FilterDropdown({
     <div className="relative shrink-0" ref={btnRef}>
       <button
         type="button"
-        onClick={() => {
-          const rect = btnRef.current?.getBoundingClientRect();
-          if (rect) setPos({ top: rect.bottom + 8, left: rect.left });
-          setOpen((v) => !v);
-        }}
+        onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-haspopup="listbox"
         className="flex items-center gap-1 px-3 h-8 rounded-full font-semibold text-gray-800 hover:bg-gray-100 transition-colors whitespace-nowrap text-sm select-none"
@@ -57,8 +54,9 @@ export function FilterDropdown({
 
       {open && (
         <div
-          className="fixed w-40 bg-white rounded-2xl shadow-xl border border-gray-200 py-2 z-100"
-          style={{ top: pos.top, left: pos.left }}
+          className={`absolute top-full mt-2 w-40 bg-white rounded-2xl shadow-xl border border-gray-200 py-2 z-100 ${
+            align === "right" ? "right-0" : "left-0"
+          }`}
         >
           {options.map((option) => (
             <button
