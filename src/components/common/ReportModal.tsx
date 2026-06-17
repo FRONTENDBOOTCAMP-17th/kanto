@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -37,6 +38,8 @@ export default function ReportModal({
   userId,
   initialReported,
 }: report) {
+  const t = useTranslations("Report");
+  const tc = useTranslations("Common");
   const [category, setCategory] = useState("");
   const [content, setContent] = useState("");
   const [isReported, setIsReported] = useState(initialReported);
@@ -95,12 +98,10 @@ export default function ReportModal({
           onClick={(e) => e.stopPropagation()}
         >
           <p className="text-base font-semibold text-gray-800">
-            {justReported
-              ? "신고가 완료되었습니다."
-              : "이미 신고가 완료된 게시글입니다."}
+            {justReported ? t("done") : t("already")}
           </p>
           <Button variant="teal" onClick={handleClose}>
-            확인
+            {tc("confirm")}
           </Button>
         </div>
       </div>
@@ -117,26 +118,26 @@ export default function ReportModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold text-gray-800">신고하기</h2>
+          <h2 className="text-base font-semibold text-gray-800">{t("title")}</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
-            aria-label="닫기"
+            aria-label={tc("close")}
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="flex flex-col gap-2">
-          <p className="text-sm text-gray-500">신고 유형</p>
+          <p className="text-sm text-gray-500">{t("type")}</p>
           <Select value={category} onValueChange={setCategory}>
             <SelectTrigger>
-              <SelectValue placeholder="카테고리를 선택해주세요" />
+              <SelectValue placeholder={t("selectCategory")} />
             </SelectTrigger>
             <SelectContent>
               {REPORT_CATEGORIES.map((cate) => (
                 <SelectItem key={cate} value={cate}>
-                  {cate}
+                  {t(`categories.${cate}`)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -144,31 +145,29 @@ export default function ReportModal({
         </div>
 
         <div className="flex flex-col gap-2">
-          <p className="text-sm text-gray-500">상세 내용 (선택)</p>
+          <p className="text-sm text-gray-500">{t("detail")}</p>
           <Textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="신고 내용을 입력해주세요."
+            placeholder={t("detailPlaceholder")}
             className="resize-none min-h-20 max-h-30"
           />
         </div>
 
         {submitError && (
-          <p className="text-sm text-red-500">
-            신고 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.
-          </p>
+          <p className="text-sm text-red-500">{t("submitError")}</p>
         )}
 
         <div className="flex gap-2 justify-end">
           <Button variant="ghost" onClick={onClose}>
-            취소
+            {tc("cancel")}
           </Button>
           <Button
             className="bg-red-500 hover:bg-red-600 text-white"
             onClick={handleReport}
             disabled={!category}
           >
-            신고하기
+            {t("submit")}
           </Button>
         </div>
       </div>

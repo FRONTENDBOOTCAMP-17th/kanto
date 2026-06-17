@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/authStore";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 
 export function WriteButton({ href, label }: { href: string; label: string }) {
+  const t = useTranslations("Common");
   const { user } = useAuthStore();
   const router = useRouter();
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -18,7 +20,7 @@ export function WriteButton({ href, label }: { href: string; label: string }) {
       return;
     }
     if (user.deleted_at) {
-      alert("탈퇴 예정 계정은 새 글을 작성할 수 없습니다.");
+      alert(t("deletedAccount.write"));
       return;
     }
     router.push(href);

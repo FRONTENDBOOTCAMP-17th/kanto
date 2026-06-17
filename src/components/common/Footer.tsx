@@ -1,21 +1,24 @@
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { ROUTES } from "@/constants/routes";
 
 const SERVICES = [
-  { href: ROUTES.usedgoods, label: "중고거래" },
-  { href: ROUTES.jobs, label: "구인구직" },
-  { href: ROUTES.rental, label: "방렌트" },
-  { href: ROUTES.community, label: "한인 커뮤니티" },
-];
+  { href: ROUTES.usedgoods, key: "usedgoods" },
+  { href: ROUTES.jobs, key: "jobs" },
+  { href: ROUTES.rental, key: "rental" },
+  { href: ROUTES.community, key: "community" },
+] as const;
 
 const LEGAL_LINKS = [
-  { href: ROUTES.termsOfService, label: "이용약관" },
-  { href: ROUTES.privacyPolicy, label: "개인정보처리방침" },
-  { href: ROUTES.youthPolicy, label: "청소년 보호정책" },
-];
+  { href: ROUTES.termsOfService, key: "termsOfService" },
+  { href: ROUTES.privacyPolicy, key: "privacyPolicy" },
+  { href: ROUTES.youthPolicy, key: "youthPolicy" },
+] as const;
 
 export function Footer() {
+  const t = useTranslations("Footer");
+
   return (
     <footer className="bg-gray-900 text-gray-300 py-12">
       <div className="page-container">
@@ -31,19 +34,19 @@ export function Footer() {
               />
             </div>
             <p className="text-sm text-gray-400">
-              필리핀 한인을 위한
-              <br />
-              커뮤니티 플랫폼
+              {t.rich("tagline", { br: () => <br /> })}
             </p>
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-4">서비스</h4>
+            <h4 className="text-white font-semibold mb-4">
+              {t("services.title")}
+            </h4>
             <ul className="space-y-2 text-sm">
               {SERVICES.map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className="hover:text-teal-500 transition-colors">
-                    {item.label}
+                    {t(`services.${item.key}`)}
                   </Link>
                 </li>
               ))}
@@ -51,32 +54,36 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-4">고객지원</h4>
+            <h4 className="text-white font-semibold mb-4">
+              {t("support.title")}
+            </h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href={ROUTES.report} className="hover:text-teal-500 transition-colors">
-                  문의/신고하기
+                  {t("support.report")}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-4">연락처</h4>
+            <h4 className="text-white font-semibold mb-4">
+              {t("contact.title")}
+            </h4>
             <ul className="space-y-2 text-sm">
-              <li>이메일: support@kanto.ph</li>
-              <li>카카오톡: @kanto</li>
+              <li>{t("contact.email")}</li>
+              <li>{t("contact.kakao")}</li>
             </ul>
           </div>
         </div>
 
         <div className="pt-8 border-t border-gray-800">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-            <p>© 2026 Kanto. All rights reserved.</p>
+            <p>{t("copyright")}</p>
             <div className="flex gap-6">
               {LEGAL_LINKS.map((item) => (
                 <Link key={item.href} href={item.href} className="hover:text-teal-500 transition-colors">
-                  {item.label}
+                  {t(`legal.${item.key}`)}
                 </Link>
               ))}
             </div>
