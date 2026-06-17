@@ -1,67 +1,90 @@
 // 공통 시간 포맷 유틸 함수
+//
+// i18n 패턴: 로케일을 인자로 받아 Intl API로 포맷한다.
+// 컴포넌트에서는 next-intl의 useLocale()로 얻은 값을 넘기면 된다.
+//   const locale = useLocale();
+//   formatTimeAgo(iso, locale);
+// 인자를 생략하면 기존 동작(한국어)을 유지하므로 호출부를 점진적으로 교체할 수 있다.
+
+import { BCP47_LOCALE, defaultLocale, type Locale } from "@/i18n/config";
 
 /** 오전 10:00 와 같은 형태로 포맷 */
-export function formatMessageTime(dateStr: string): string {
+export function formatMessageTime(
+  dateStr: string,
+  locale: Locale = defaultLocale,
+): string {
   const date = new Date(dateStr);
-  return date.toLocaleTimeString("ko-KR", {
+  return date.toLocaleTimeString(BCP47_LOCALE[locale], {
     hour: "numeric",
     minute: "2-digit",
     hour12: true,
   });
 }
 
-/** 어제, 2일전, 3일전 / 1주전 2주전 / 1달전 2달전과 같은 형태로 포맷 */
-export function formatChatListTime(dateStr: string | null): string {
+/** 어제 / N일 전 / N주 전 / N달 전과 같은 형태로 포맷 (당일은 시각 표시) */
+export function formatChatListTime(
+  dateStr: string | null,
+  locale: Locale = defaultLocale,
+): string {
   if (!dateStr) return "";
   const date = new Date(dateStr);
   const now = new Date();
   const diffDay = Math.floor(
     (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24),
   );
+
+  if (diffDay === 0) return formatMessageTime(dateStr, locale);
+
+  const rtf = new Intl.RelativeTimeFormat(BCP47_LOCALE[locale], {
+    numeric: "auto",
+  });
   const diffWeeks = Math.floor(diffDay / 7);
   const diffMonths = Math.floor(diffDay / 30);
 
-  if (diffDay === 0) {
-    return date.toLocaleTimeString("ko-KR", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
-  }
-  if (diffDay === 1) return "어제";
-  if (diffDay < 7) return `${diffDay}일 전`;
-  if (diffMonths < 1) return `${diffWeeks}주 전`;
-  return `${diffMonths}달 전`;
+  if (diffDay < 7) return rtf.format(-diffDay, "day");
+  if (diffMonths < 1) return rtf.format(-diffWeeks, "week");
+  return rtf.format(-diffMonths, "month");
 }
 
-/** N분 전, N시간 전, N일 전 형태로 포맷 */
-export function formatTimeAgo(isoString: string): string {
+/** 방금 전 / N분 전 / N시간 전 / N일 전 ... 형태로 포맷 */
+export function formatTimeAgo(
+  isoString: string,
+  locale: Locale = defaultLocale,
+): string {
+  const rtf = new Intl.RelativeTimeFormat(BCP47_LOCALE[locale], {
+    numeric: "auto",
+  });
   const now = Date.now();
   const postCreated = new Date(isoString).getTime();
   const minutes = Math.floor((now - postCreated) / 60000);
 
-  if (minutes < 1) return "방금 전";
-  if (minutes < 60) return `${minutes}분 전`;
+  if (minutes < 1) return rtf.format(0, "second");
+  if (minutes < 60) return rtf.format(-minutes, "minute");
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}시간 전`;
+  if (hours < 24) return rtf.format(-hours, "hour");
   const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}일 전`;
+  if (days < 7) return rtf.format(-days, "day");
   const weeks = Math.floor(days / 7);
-  if (weeks < 5) return `${weeks}주 전`;
+  if (weeks < 5) return rtf.format(-weeks, "week");
   const months = Math.floor(days / 30);
-  if (months < 12) return `${months}달 전`;
+  if (months < 12) return rtf.format(-months, "month");
   const years = Math.floor(days / 365);
-  return `${years}년 전`;
+  return rtf.format(-years, "year");
 }
 
-export function formatDateDivider(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("ko-KR", {
+export function formatDateDivider(
+  dateStr: string,
+  locale: Locale = defaultLocale,
+): string {
+  return new Date(dateStr).toLocaleDateString(BCP47_LOCALE[locale], {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 }
 
+// TODO(i18n): 문장에 단어("가입")가 박혀 있어 메시지 카탈로그(Time 네임스페이스)로
+// 옮긴 뒤 컴포넌트에서 useTranslations로 조합해야 한다. 분담 대상 예시.
 export function formatSellerInfoCreatedAt(date: string | null): string {
   if (!date) {
     return `가입일 정보 없음`;
