@@ -32,6 +32,10 @@ export function JobList({ posts, likedIds, currentUserId, emptyMessage = "등록
             salary={job.salary}
             salaryType={job.salary_type}
             locationText={job.location_custom ?? job.location_type}
+            createdAt={post.created_at}
+            deadline={job.deadline}
+            employeeType={job.employee_type}
+            workHours={job.is_time_negotiable ? "시간협의" : (job.work_hours ?? "")}
             initialIsLiked={likedSet.has(post.id)}
             currentUserId={currentUserId}
           />
