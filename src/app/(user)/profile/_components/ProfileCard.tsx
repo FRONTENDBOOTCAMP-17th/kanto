@@ -15,6 +15,7 @@ import { ProfileBlockedSection } from "./sections/ProfileBlockedSection";
 import { ProfileSettingsSection } from "./sections/ProfileSettingsSection";
 import type { UserIdentity } from "@supabase/supabase-js";
 import { formatSellerInfoCreatedAt } from "@/utils/formatTime";
+import { IdentityVerificationModal } from "./IdentityVerificationModal";
 
 export function ProfileCard({ alertSettings, initialIdentities }: { alertSettings: AlertSettings; initialIdentities: UserIdentity[] }) {
   const { user } = useAuthStore();
@@ -25,6 +26,8 @@ export function ProfileCard({ alertSettings, initialIdentities }: { alertSetting
 function ProfileForm({ user, alertSettings, initialIdentities }: { user: UserType; alertSettings: AlertSettings; initialIdentities: UserIdentity[] }) {
   const [activeTab, setActiveTab] = useState<Tab>("info");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [isVerificationOpen, setIsVerificationOpen] = useState(false);
+  const [isIdentityVerified, setIsIdentityVerified] = useState(false);
   const router = useRouter();
 
   return (
@@ -112,10 +115,17 @@ function ProfileForm({ user, alertSettings, initialIdentities }: { user: UserTyp
                 <h2 className="text-sm font-semibold text-gray-700">본인인증</h2>
               </div>
               <p className="text-xs text-gray-500 leading-relaxed">
-                게시물 작성과 랜덤채팅 참여는 인증이 필요합니다.
+                {isIdentityVerified
+                  ? "본인인증이 완료되었습니다."
+                  : "게시물 작성과 랜덤채팅 참여는 인증이 필요합니다."}
               </p>
-              <button className="cursor-pointer w-full py-2.5 rounded-lg border border-teal-500 text-teal-500 text-sm font-medium bg-transparent hover:bg-teal-50 transition-colors">
-                본인인증 하기
+              <button
+                type="button"
+                onClick={() => setIsVerificationOpen(true)}
+                disabled={isIdentityVerified}
+                className="cursor-pointer w-full py-2.5 rounded-lg border border-teal-500 text-teal-500 text-sm font-medium bg-transparent hover:bg-teal-50 transition-colors disabled:cursor-default disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-400"
+              >
+                {isIdentityVerified ? "인증 완료" : "본인인증 하기"}
               </button>
             </div>
           </div>
@@ -130,6 +140,15 @@ function ProfileForm({ user, alertSettings, initialIdentities }: { user: UserTyp
           {activeTab === "settings" && <ProfileSettingsSection initialIdentities={initialIdentities} />}
         </div>
       </div>
+      {isVerificationOpen && (
+        <IdentityVerificationModal
+          isOpen={isVerificationOpen}
+          defaultName=""
+          defaultEmail=""
+          onClose={() => setIsVerificationOpen(false)}
+          onVerified={() => setIsIdentityVerified(true)}
+        />
+      )}
     </div>
   );
 }
