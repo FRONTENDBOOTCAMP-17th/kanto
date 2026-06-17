@@ -30,6 +30,7 @@ export function GlobalLayout({ children, initialUser }: Props) {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <div className="h-12 md:h-0" />
       {!isTerms && !isLogin && !isSignup && <Header />}
       {!isTerms && !isLogin && !isSignup && <DeletionPendingBanner />}
       {!isTerms && !isLogin && !isSignup && (
