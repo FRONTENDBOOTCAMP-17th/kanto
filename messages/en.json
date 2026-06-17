@@ -57,6 +57,12 @@
     "signup": "Sign up",
     "noAccount": "Don't have an account yet?",
     "signupCta": "Go to sign up",
+    "social": {
+      "kakao": "Continue with Kakao",
+      "google": "Continue with Google",
+      "facebook": "Continue with Facebook",
+      "email": "Log in with email"
+    },
     "errors": {
       "tooManyAttempts": "Too many login attempts. Please try again later.",
       "invalidCredentials": "Your email or password is incorrect.",
@@ -402,7 +408,13 @@
       "photos": "Photos",
       "optional": "(optional)",
       "submitting": "Submitting...",
-      "submit": "Done"
+      "submit": "Done",
+      "errorRequired": "Please fill in all required fields.",
+      "errorLocationDetail": "Please enter the detailed area.",
+      "errorImage": "Failed to upload image.",
+      "errorEdit": "Failed to update.",
+      "errorPost": "Failed to create post.",
+      "errorJob": "Failed to post job listing."
     }
   },
   "Rental": {
@@ -451,6 +463,216 @@
       "errorPost": "Failed to create the post.",
       "errorImage": "Failed to upload images.",
       "errorRental": "Failed to register accommodation info."
+    }
+  },
+  "Profile": {
+    "menu": {
+      "ariaMenu": "Profile menu",
+      "info": "Info",
+      "reviews": "Reviews",
+      "alerts": "Alerts",
+      "blocked": "Blocked",
+      "settings": "App Settings"
+    },
+    "avatar": {
+      "alt": "Profile",
+      "changeAria": "Change profile photo",
+      "changeHint": "Click the photo to change"
+    },
+    "card": {
+      "back": "Go back",
+      "title": "My Profile",
+      "stats": "Activity",
+      "posts": "Posts",
+      "favorites": "Favorites",
+      "reviews": "Reviews",
+      "account": "Account Info",
+      "joinedAt": "Joined",
+      "provider": "Sign-up method",
+      "verify": "Identity Verification",
+      "verifyDesc": "Verification is required to create posts and join random chats.",
+      "verifyButton": "Verify identity"
+    },
+    "providers": {
+      "google": "Google",
+      "kakao": "KakaoTalk",
+      "facebook": "Facebook",
+      "email": "Email"
+    },
+    "info": {
+      "editTitle": "Edit Profile",
+      "name": "Name",
+      "email": "Email",
+      "emailHint": "Email cannot be changed",
+      "phone": "Phone number",
+      "save": "Save",
+      "passwordTitle": "Change Password",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "passwordHint": "Enter at least 8 characters",
+      "passwordChange": "Change password",
+      "deleteTitle": "Delete Account",
+      "pendingDelete": "This account is pending deletion. If not canceled within 30 days, all data will be permanently deleted.",
+      "processing": "Processing...",
+      "restore": "Cancel deletion",
+      "deleteDesc": "Deleting your account erases all data and cannot be undone.",
+      "delete": "Delete account",
+      "confirmTitle": "Are you sure you want to delete your account?",
+      "confirmDesc": "Deleting your account erases all data including your posts and chat history, and cannot be undone.",
+      "cancel": "Cancel",
+      "confirmDelete": "Delete"
+    },
+    "alerts": {
+      "title": "Notification Settings",
+      "chatLabel": "Chat alerts",
+      "chatDesc": "Alerts for new chat messages",
+      "commentLabel": "Comment alerts",
+      "commentDesc": "Alerts when someone comments on your post",
+      "postLabel": "New post alerts",
+      "postDesc": "Alerts for new posts in your categories and keywords",
+      "categoryTitle": "Categories of Interest",
+      "categoryDesc": "Receive alerts for new posts in selected categories.",
+      "keywordTitle": "Keyword Alerts",
+      "keywordDesc": "Receive alerts when new posts contain your keywords.",
+      "keywordPlaceholder": "Enter keyword (e.g. MacBook)",
+      "keywordInputAria": "Enter keyword",
+      "keywordRemoveAria": "Remove keyword {keyword}",
+      "add": "Add",
+      "cancel": "Cancel",
+      "addKeyword": "Add keyword",
+      "alertCategories": {
+        "usedgoods": "Used Goods",
+        "jobs": "Jobs",
+        "rental": "Rentals",
+        "community": "Community",
+        "dating": "Random Chat"
+      }
+    },
+    "blocked": {
+      "title": "Blocked Users",
+      "empty": "No blocked users"
+    },
+    "reviews": {
+      "title": "Transaction Reviews",
+      "ratingAria": "Rating {rating} ({count})",
+      "count": "({count})",
+      "empty": "No reviews yet"
+    },
+    "settings": {
+      "regionTitle": "Region",
+      "regionDesc": "The region used as a reference when searching used goods and rental posts.",
+      "regionInputAria": "Enter region",
+      "regionSet": "Set",
+      "languageTitle": "Language",
+      "languageSelectAria": "Select language",
+      "linkTitle": "Linked Accounts",
+      "connected": "Connected",
+      "unlink": "Unlink",
+      "unlinkAria": "Unlink {provider}",
+      "link": "Link",
+      "linkAria": "Link {provider}"
+    },
+    "toast": {
+      "saved": "Saved.",
+      "saveFailed": "Failed to save.",
+      "deleteFailed": "Failed to delete account. Please try again.",
+      "restoreFailed": "Failed to cancel deletion. Please try again.",
+      "linkSuccess": "Social account linked.",
+      "unlinkSuccess": "Social account unlinked.",
+      "unlinkFailed": "Failed to unlink.",
+      "linkFailedCode": "Failed to link. ({code})",
+      "linkFailedMessage": "Failed to link: {message}",
+      "identityAlreadyExists": "This social account is already linked to another account.",
+      "sameIdentity": "This social account is already linked to your account."
+    }
+  },
+  "Signup": {
+    "home": "Go home",
+    "haveAccount": "Already have an account?",
+    "login": "Log in",
+    "emailExists": "This email is already registered.",
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "2+ Korean or English letters (e.g. John)",
+      "nameError": "Enter at least 2 Korean or English letters.",
+      "email": "Email",
+      "emailPlaceholder": "example@email.com",
+      "emailError": "Please enter a valid email.",
+      "password": "Password",
+      "passwordPlaceholder": "8+ characters with letters and numbers",
+      "passwordError": "Enter at least 8 characters including letters and numbers.",
+      "confirmPassword": "Confirm Password",
+      "confirmPlaceholder": "Re-enter your password",
+      "confirmError": "Passwords do not match.",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "success": "Sign-up complete! Check your email to finish verification.",
+      "processing": "Processing...",
+      "submit": "Sign up"
+    },
+    "agree": {
+      "all": "Agree to all",
+      "required": "Required",
+      "optional": "Optional",
+      "items": {
+        "terms": {
+          "label": "Terms of Service",
+          "desc": "You agree to the disclaimers, prohibited actions, and sanction criteria"
+        },
+        "privacy": {
+          "label": "Privacy Policy",
+          "desc": "Personal info such as email and name is stored at sign-up"
+        },
+        "age": {
+          "label": "Age 18+ confirmation",
+          "desc": "Required to use payment and transaction services"
+        },
+        "marketing": {
+          "label": "Marketing consent",
+          "desc": "Receive marketing info such as events and benefits"
+        },
+        "push": {
+          "label": "Push notifications",
+          "desc": "Receive alerts for chats, new posts, and more"
+        }
+      }
+    },
+    "modal": {
+      "titles": {
+        "terms": "Terms of Service",
+        "privacy": "Privacy Policy",
+        "age": "Age 18+ confirmation"
+      },
+      "loading": "Loading...",
+      "loadError": "Unable to load content. Please try again later.",
+      "cancel": "Cancel",
+      "agree": "I agree",
+      "readToEnd": "Please read to the end"
+    }
+  },
+  "Terms": {
+    "items": {
+      "policy": "Operating Policy",
+      "service": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "youth": "Youth Protection Policy",
+      "age": "Age Verification Policy",
+      "payment": "Safe Payment Terms"
+    },
+    "header": {
+      "support": "Support",
+      "home": "Go home"
+    }
+  },
+  "Favorites": {
+    "title": "Favorites",
+    "myPostsTitle": "My Posts",
+    "tabsAria": "Favorites category",
+    "tabs": {
+      "used_goods": "Used Goods",
+      "jobs": "Jobs",
+      "rental": "Rentals"
     }
   }
 }

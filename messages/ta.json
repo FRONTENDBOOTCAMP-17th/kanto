@@ -57,6 +57,12 @@
     "signup": "Mag-sign up",
     "noAccount": "Wala ka pa rin bang account?",
     "signupCta": "Pumunta sa pag-sign up",
+    "social": {
+      "kakao": "Magpatuloy gamit ang Kakao",
+      "google": "Magpatuloy gamit ang Google",
+      "facebook": "Magpatuloy gamit ang Facebook",
+      "email": "Mag-log in gamit ang email"
+    },
     "errors": {
       "tooManyAttempts": "Masyadong maraming pagtatangka sa pag-log in. Pakisubukan muli mamaya.",
       "invalidCredentials": "Mali ang iyong email o password.",
@@ -402,7 +408,13 @@
       "photos": "Mga larawan",
       "optional": "(opsyonal)",
       "submitting": "Isinusumite...",
-      "submit": "Tapos na"
+      "submit": "Tapos na",
+      "errorRequired": "Pakipunan ang lahat ng kinakailangang field.",
+      "errorLocationDetail": "Pakilagay ang detalyadong lugar.",
+      "errorImage": "Nabigong i-upload ang larawan.",
+      "errorEdit": "Nabigong i-update.",
+      "errorPost": "Nabigong gumawa ng post.",
+      "errorJob": "Nabigong i-post ang trabaho."
     }
   },
   "Rental": {
@@ -451,6 +463,216 @@
       "errorPost": "Nabigo ang paggawa ng post.",
       "errorImage": "Nabigo ang pag-upload ng mga larawan.",
       "errorRental": "Nabigo ang pagrehistro ng impormasyon ng tuluyan."
+    }
+  },
+  "Profile": {
+    "menu": {
+      "ariaMenu": "Menu ng profile",
+      "info": "Impormasyon",
+      "reviews": "Mga review",
+      "alerts": "Mga abiso",
+      "blocked": "Naka-block",
+      "settings": "Mga setting ng app"
+    },
+    "avatar": {
+      "alt": "Profile",
+      "changeAria": "Palitan ang larawan ng profile",
+      "changeHint": "I-click ang larawan upang palitan"
+    },
+    "card": {
+      "back": "Bumalik",
+      "title": "Aking Profile",
+      "stats": "Aktibidad",
+      "posts": "Mga post",
+      "favorites": "Mga paborito",
+      "reviews": "Mga review",
+      "account": "Impormasyon ng account",
+      "joinedAt": "Petsa ng pagsali",
+      "provider": "Paraan ng pag-sign up",
+      "verify": "Pagpapatunay ng pagkakakilanlan",
+      "verifyDesc": "Kailangan ng pagpapatunay upang makapag-post at sumali sa random chat.",
+      "verifyButton": "Patunayan ang pagkakakilanlan"
+    },
+    "providers": {
+      "google": "Google",
+      "kakao": "KakaoTalk",
+      "facebook": "Facebook",
+      "email": "Email"
+    },
+    "info": {
+      "editTitle": "I-edit ang Profile",
+      "name": "Pangalan",
+      "email": "Email",
+      "emailHint": "Hindi mababago ang email",
+      "phone": "Numero ng telepono",
+      "save": "I-save",
+      "passwordTitle": "Palitan ang Password",
+      "currentPassword": "Kasalukuyang password",
+      "newPassword": "Bagong password",
+      "confirmPassword": "Kumpirmahin ang bagong password",
+      "passwordHint": "Maglagay ng hindi bababa sa 8 karakter",
+      "passwordChange": "Palitan ang password",
+      "deleteTitle": "Tanggalin ang Account",
+      "pendingDelete": "Naka-pending sa pagtanggal ang account na ito. Kung hindi makakansela sa loob ng 30 araw, permanenteng matatanggal ang lahat ng data.",
+      "processing": "Pinoproseso...",
+      "restore": "Kanselahin ang pagtanggal",
+      "deleteDesc": "Ang pagtanggal ng account ay magbubura sa lahat ng data at hindi na maibabalik.",
+      "delete": "Tanggalin ang account",
+      "confirmTitle": "Sigurado ka bang nais mong tanggalin ang account?",
+      "confirmDesc": "Ang pagtanggal ng account ay magbubura sa lahat ng data kabilang ang iyong mga post at kasaysayan ng chat, at hindi na maibabalik.",
+      "cancel": "Kanselahin",
+      "confirmDelete": "Tanggalin"
+    },
+    "alerts": {
+      "title": "Mga Setting ng Abiso",
+      "chatLabel": "Abiso sa chat",
+      "chatDesc": "Mga abiso para sa bagong mensahe sa chat",
+      "commentLabel": "Abiso sa komento",
+      "commentDesc": "Abiso kapag may nag-komento sa iyong post",
+      "postLabel": "Abiso sa bagong post",
+      "postDesc": "Mga abiso para sa bagong post sa iyong mga kategorya at keyword",
+      "categoryTitle": "Mga Kategoryang Interesado",
+      "categoryDesc": "Tumanggap ng abiso para sa bagong post sa mga napiling kategorya.",
+      "keywordTitle": "Abiso sa Keyword",
+      "keywordDesc": "Tumanggap ng abiso kapag may bagong post na naglalaman ng iyong keyword.",
+      "keywordPlaceholder": "Maglagay ng keyword (hal. MacBook)",
+      "keywordInputAria": "Maglagay ng keyword",
+      "keywordRemoveAria": "Alisin ang keyword na {keyword}",
+      "add": "Idagdag",
+      "cancel": "Kanselahin",
+      "addKeyword": "Magdagdag ng keyword",
+      "alertCategories": {
+        "usedgoods": "Mga Gamit na Bagay",
+        "jobs": "Mga Trabaho",
+        "rental": "Mga Paupahan",
+        "community": "Komunidad",
+        "dating": "Random Chat"
+      }
+    },
+    "blocked": {
+      "title": "Mga Naka-block na User",
+      "empty": "Walang naka-block na user"
+    },
+    "reviews": {
+      "title": "Mga Review ng Transaksyon",
+      "ratingAria": "Rating {rating} ({count})",
+      "count": "({count})",
+      "empty": "Wala pang review"
+    },
+    "settings": {
+      "regionTitle": "Rehiyon",
+      "regionDesc": "Ang rehiyong ginagamit bilang batayan kapag naghahanap ng mga post ng gamit na bagay at paupahan.",
+      "regionInputAria": "Maglagay ng rehiyon",
+      "regionSet": "Itakda",
+      "languageTitle": "Wika",
+      "languageSelectAria": "Pumili ng wika",
+      "linkTitle": "Mga Naka-link na Account",
+      "connected": "Nakakonekta",
+      "unlink": "I-unlink",
+      "unlinkAria": "I-unlink ang {provider}",
+      "link": "I-link",
+      "linkAria": "I-link ang {provider}"
+    },
+    "toast": {
+      "saved": "Na-save.",
+      "saveFailed": "Nabigong i-save.",
+      "deleteFailed": "Nabigong tanggalin ang account. Pakisubukan muli.",
+      "restoreFailed": "Nabigong kanselahin ang pagtanggal. Pakisubukan muli.",
+      "linkSuccess": "Na-link ang social account.",
+      "unlinkSuccess": "Na-unlink ang social account.",
+      "unlinkFailed": "Nabigong i-unlink.",
+      "linkFailedCode": "Nabigong i-link. ({code})",
+      "linkFailedMessage": "Nabigong i-link: {message}",
+      "identityAlreadyExists": "Naka-link na ang social account na ito sa ibang account.",
+      "sameIdentity": "Naka-link na ang social account na ito sa iyong account."
+    }
+  },
+  "Signup": {
+    "home": "Pumunta sa home",
+    "haveAccount": "May account ka na?",
+    "login": "Mag-log in",
+    "emailExists": "Nakarehistro na ang email na ito.",
+    "form": {
+      "name": "Pangalan",
+      "namePlaceholder": "2+ letrang Korean o English (hal. Juan)",
+      "nameError": "Maglagay ng hindi bababa sa 2 letrang Korean o English.",
+      "email": "Email",
+      "emailPlaceholder": "example@email.com",
+      "emailError": "Maglagay ng wastong email.",
+      "password": "Password",
+      "passwordPlaceholder": "8+ karakter na may letra at numero",
+      "passwordError": "Maglagay ng hindi bababa sa 8 karakter kasama ang letra at numero.",
+      "confirmPassword": "Kumpirmahin ang Password",
+      "confirmPlaceholder": "Muling ilagay ang iyong password",
+      "confirmError": "Hindi magkatugma ang mga password.",
+      "showPassword": "Ipakita ang password",
+      "hidePassword": "Itago ang password",
+      "success": "Tapos na ang pag-sign up! Tingnan ang iyong email upang kumpletuhin ang pagpapatunay.",
+      "processing": "Pinoproseso...",
+      "submit": "Mag-sign up"
+    },
+    "agree": {
+      "all": "Sumang-ayon sa lahat",
+      "required": "Kinakailangan",
+      "optional": "Opsyonal",
+      "items": {
+        "terms": {
+          "label": "Mga Tuntunin ng Serbisyo",
+          "desc": "Sumasang-ayon ka sa mga disclaimer, ipinagbabawal na gawain, at pamantayan ng parusa"
+        },
+        "privacy": {
+          "label": "Patakaran sa Privacy",
+          "desc": "Ang personal na impormasyon tulad ng email at pangalan ay iniimbak sa pag-sign up"
+        },
+        "age": {
+          "label": "Kumpirmasyon na 18+ taong gulang",
+          "desc": "Kinakailangan upang gamitin ang serbisyo ng pagbabayad at transaksyon"
+        },
+        "marketing": {
+          "label": "Pahintulot sa marketing",
+          "desc": "Tumanggap ng impormasyon sa marketing tulad ng mga event at benepisyo"
+        },
+        "push": {
+          "label": "Push notification",
+          "desc": "Tumanggap ng abiso para sa chat, bagong post, at iba pa"
+        }
+      }
+    },
+    "modal": {
+      "titles": {
+        "terms": "Mga Tuntunin ng Serbisyo",
+        "privacy": "Patakaran sa Privacy",
+        "age": "Kumpirmasyon na 18+ taong gulang"
+      },
+      "loading": "Naglo-load...",
+      "loadError": "Hindi ma-load ang nilalaman. Pakisubukan muli mamaya.",
+      "cancel": "Kanselahin",
+      "agree": "Sumasang-ayon ako",
+      "readToEnd": "Pakibasa hanggang dulo"
+    }
+  },
+  "Terms": {
+    "items": {
+      "policy": "Patakaran sa Operasyon",
+      "service": "Mga Tuntunin ng Serbisyo",
+      "privacy": "Patakaran sa Privacy",
+      "youth": "Patakaran sa Proteksyon ng Kabataan",
+      "age": "Patakaran sa Pagpapatunay ng Edad",
+      "payment": "Mga Tuntunin ng Ligtas na Pagbabayad"
+    },
+    "header": {
+      "support": "Suporta",
+      "home": "Pumunta sa home"
+    }
+  },
+  "Favorites": {
+    "title": "Mga Paborito",
+    "myPostsTitle": "Aking mga Post",
+    "tabsAria": "Kategorya ng paborito",
+    "tabs": {
+      "used_goods": "Mga Gamit na Bagay",
+      "jobs": "Mga Trabaho",
+      "rental": "Mga Paupahan"
     }
   }
 }
