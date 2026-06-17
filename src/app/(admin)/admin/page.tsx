@@ -5,13 +5,9 @@ import {
   POST_TYPE_LABEL,
   CAT_ORDER,
   REPORT_COLORS,
-  normalizeReason,
-  fillDailyGaps,
-  daysSince,
-  type Category,
-  type ReportedUser,
-  type ReportedPost,
 } from "./_lib/constants";
+import { normalizeReason, fillDailyGaps, daysSince } from "./_lib/utils";
+import type { Category, ReportedUser, ReportedPost } from "@/type/admin";
 import HeaderSection from "./_components/HeaderSection";
 import UrgentReportBanner from "./_components/UrgentReportBanner";
 import KpiCards from "./_components/KpiCards";
@@ -93,7 +89,7 @@ export default async function DashboardPage() {
       .limit(5),
     admin.rpc("get_reported_users", { limit_count: 10 }),
     admin.rpc("get_reported_posts", { limit_count: 10 }),
-    admin.from("common_reports").select("reason").eq("status", "pending"),
+    admin.from("common_reports").select("category").eq("status", "pending"),
     admin.rpc("get_region_post_counts", { days: 7 }),
     admin
       .from("common_reports")
@@ -177,7 +173,7 @@ export default async function DashboardPage() {
   if (reportReasonsRes.data) {
     const counts: Record<string, number> = {};
     for (const row of reportReasonsRes.data) {
-      const key = normalizeReason(row.reason);
+      const key = normalizeReason(row.category);
       counts[key] = (counts[key] ?? 0) + 1;
     }
     const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);

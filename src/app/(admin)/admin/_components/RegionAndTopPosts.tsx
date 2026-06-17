@@ -1,5 +1,6 @@
 import { Eye } from "lucide-react";
-import { CATEGORY, type Category } from "../_lib/constants";
+import { CATEGORY } from "../_lib/constants";
+import type { Category } from "@/type/admin";
 import Card from "./Card";
 
 interface Props {
