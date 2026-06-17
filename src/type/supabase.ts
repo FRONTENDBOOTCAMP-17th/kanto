@@ -586,6 +586,8 @@ export type Database = {
           is_read: boolean
           post_id: number | null
           sender_id: number
+          transaction_id: number | null
+          type: string
         }
         Insert: {
           chat_id: number
@@ -595,6 +597,8 @@ export type Database = {
           is_read?: boolean
           post_id?: number | null
           sender_id: number
+          transaction_id?: number | null
+          type?: string
         }
         Update: {
           chat_id?: number
@@ -604,6 +608,8 @@ export type Database = {
           is_read?: boolean
           post_id?: number | null
           sender_id?: number
+          transaction_id?: number | null
+          type?: string
         }
         Relationships: [
           {
@@ -632,6 +638,13 @@ export type Database = {
             columns: ["sender_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
             referencedColumns: ["id"]
           },
         ]
@@ -818,6 +831,97 @@ export type Database = {
           {
             foreignKeyName: "reviews_reviewer_id_fkey"
             columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transactions: {
+        Row: {
+          amount: number
+          buyer_id: number
+          chat_id: number
+          created_at: string
+          external_id: string
+          id: number
+          paid_at: string | null
+          post_id: number
+          released_at: string | null
+          seller_id: number
+          status: Database["public"]["Enums"]["transaction_status"]
+          xendit_invoice_id: string | null
+          xendit_invoice_url: string | null
+        }
+        Insert: {
+          amount: number
+          buyer_id: number
+          chat_id: number
+          created_at?: string
+          external_id: string
+          id?: never
+          paid_at?: string | null
+          post_id: number
+          released_at?: string | null
+          seller_id: number
+          status?: Database["public"]["Enums"]["transaction_status"]
+          xendit_invoice_id?: string | null
+          xendit_invoice_url?: string | null
+        }
+        Update: {
+          amount?: number
+          buyer_id?: number
+          chat_id?: number
+          created_at?: string
+          external_id?: string
+          id?: never
+          paid_at?: string | null
+          post_id?: number
+          released_at?: string | null
+          seller_id?: number
+          status?: Database["public"]["Enums"]["transaction_status"]
+          xendit_invoice_id?: string | null
+          xendit_invoice_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_seller_id_fkey"
+            columns: ["seller_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -1038,6 +1142,12 @@ export type Database = {
         | "Mandaluyong / Pasig"
         | "Pampanga"
         | "그 외 지역"
+      transaction_status:
+        | "pending"
+        | "paid"
+        | "released"
+        | "cancelled"
+        | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1174,6 +1284,13 @@ export const Constants = {
         "Mandaluyong / Pasig",
         "Pampanga",
         "그 외 지역",
+      ],
+      transaction_status: [
+        "pending",
+        "paid",
+        "released",
+        "cancelled",
+        "expired",
       ],
     },
   },
