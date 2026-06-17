@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 
 type UsedGoods = Tables<"used_goods"> & {
   posts: Tables<"posts"> & {
-    users: Tables<"users">;
+    users: Pick<Tables<"users">, "id" | "name" | "avatar_url" | "auth_id" | "role" | "post_count" | "created_at">;
   };
 };
 
