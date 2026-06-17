@@ -14,6 +14,9 @@ export function ProfileInfoSection({
   const {
     name, setName,
     phone, setPhone,
+    phoneSaved,
+    phoneEditing,
+    handleEditPhone,
     showDeleteModal, setShowDeleteModal,
     deleteLoading,
     cancelButtonRef,
@@ -28,10 +31,7 @@ export function ProfileInfoSection({
       <div className="px-5 md:px-0 py-6">
         <div className="max-w-md mx-auto">
           <h2 className="text-lg font-semibold text-gray-900 mb-6">프로필 편집</h2>
-          <form
-            onSubmit={(e) => { e.preventDefault(); handleSave(); }}
-            className="flex flex-col gap-5"
-          >
+          <form className="flex flex-col gap-5">
             <ProfileField
               label="이름"
               type="text"
@@ -51,12 +51,14 @@ export function ProfileInfoSection({
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
+              disabled={phoneSaved && !phoneEditing}
             />
             <button
-              type="submit"
+              type="button"
+              onClick={phoneSaved && !phoneEditing ? handleEditPhone : handleSave}
               className="cursor-pointer w-full py-3.5 rounded-lg bg-teal-500 text-white text-sm font-medium hover:bg-teal-600 transition-colors mt-2"
             >
-              저장하기
+              {phoneSaved && !phoneEditing ? "수정하기" : "저장하기"}
             </button>
           </form>
         </div>

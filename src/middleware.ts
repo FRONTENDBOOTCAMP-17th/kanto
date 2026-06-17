@@ -34,6 +34,23 @@ export async function middleware(request: NextRequest) {
   const redirectResponse = redirectIfAuthenticated(user, request);
   if (redirectResponse) return redirectResponse;
 
+  if (user) {
+    const { data: userRow } = await supabase
+      .from("users")
+      .select("suspended_until")
+      .eq("auth_id", user.id)
+      .single();
+
+    const suspendedUntil = userRow?.suspended_until;
+    if (suspendedUntil && new Date(suspendedUntil) > new Date()) {
+      const { pathname } = request.nextUrl;
+      const BLOCKED_PATHS = ["/create", "/job/create", "/usedgoods/create", "/rental/create"];
+      if (BLOCKED_PATHS.some((p) => pathname.startsWith(p))) {
+        return NextResponse.redirect(new URL("/?suspended=1", request.url));
+      }
+    }
+  }
+
   return supabaseResponse;
 }
 

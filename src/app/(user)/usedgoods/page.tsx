@@ -50,7 +50,7 @@ export default async function UsedGoodsPage({
               ? `"${params.search}" 검색 결과`
               : "필리핀 한인들을 위한 중고거래"}
           </p>
-          <Link href="/usedgoods/create" className="absolute right-0 top-0">
+          <Link href="/create" className="absolute right-0 top-0">
             <Button variant="teal" className="cursor-pointer gap-1">
               <Plus className="w-4 h-4" />
               글쓰기

@@ -66,70 +66,127 @@ export default function UsedGoodsDetail({
         />
       </div>
 
-      {/* 이미지 + 상품/판매자 정보 그리드 */}
-      <div className={`grid grid-cols-1 ${images.length > 0 ? "md:grid-cols-2" : ""} items-stretch gap-2 md:gap-4 mt-4`}>
-        {images.length > 0 && <ImageCarousel images={images} />}
-
-        <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-[450px]">
-          {/* 상품 정보 */}
-          <div>
-            <h2 className="text-xl font-semibold mb-3">상품 정보</h2>
-            <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
-              <dt className="text-gray-500 font-medium">카테고리</dt>
-              <dd className="text-gray-700">· {data.category}</dd>
-              <dt className="text-gray-500 font-medium">상태</dt>
-              <dd className="text-gray-700">· {data.condition}</dd>
-              <dt className="text-gray-500 font-medium">가격</dt>
-              <dd className="text-orange-500">· ₱ {data.price?.toLocaleString()}</dd>
-              <dt className="text-gray-500 font-medium">거래 장소</dt>
-              <dd className="text-gray-700">· {data.location_type}</dd>
-              {data.safe_payment !== null && (
-                <>
-                  <dt className="text-gray-500 font-medium">안전 결제</dt>
-                  <dd className={data.safe_payment ? "text-teal-600" : "text-red-500"}>
-                    · {data.safe_payment ? "확인" : "미확인"}
-                  </dd>
-                </>
-              )}
-            </dl>
-          </div>
-
-          <hr className="border-gray-200" />
-
-          {/* 판매자 정보 */}
-          <div className="flex flex-col gap-4">
-            <h2 className="text-xl font-semibold">판매자 정보</h2>
-            <div className="flex items-center gap-3">
-              {data.posts.users?.avatar_url ? (
-                <ImageWithFallback
-                  src={data.posts.users.avatar_url}
-                  alt="프로필"
-                  width={48}
-                  height={48}
-                  className="rounded-full object-cover w-12 h-12 shrink-0"
-                />
-              ) : (
-                <div className="w-12 h-12 rounded-full bg-purple-400 flex items-center justify-center shrink-0">
-                  <User className="w-6 h-6 text-white" />
-                </div>
-              )}
-              <div>
-                <p className="font-medium">{data.posts.users?.name}</p>
-                <p className="text-sm text-gray-500">
-                  {accession
-                    ? `${accession.getFullYear()}년 ${accession.getMonth() + 1}월 가입`
-                    : "가입일 정보 없음"}
-                </p>
-              </div>
+      {/* 이미지 + 상품/판매자 정보 */}
+      {images.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 items-stretch gap-2 md:gap-4 mt-4">
+          <ImageCarousel images={images} />
+          <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-[450px]">
+            {/* 상품 정보 */}
+            <div>
+              <h2 className="text-xl font-semibold mb-3">상품 정보</h2>
+              <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+                <dt className="text-gray-500 font-medium">카테고리</dt>
+                <dd className="text-gray-700">· {data.category}</dd>
+                <dt className="text-gray-500 font-medium">상태</dt>
+                <dd className="text-gray-700">· {data.condition}</dd>
+                <dt className="text-gray-500 font-medium">가격</dt>
+                <dd className="text-orange-500">· ₱ {data.price?.toLocaleString()}</dd>
+                <dt className="text-gray-500 font-medium">거래 장소</dt>
+                <dd className="text-gray-700">· {data.location_type}</dd>
+                {data.safe_payment !== null && (
+                  <>
+                    <dt className="text-gray-500 font-medium">안전 결제</dt>
+                    <dd className={data.safe_payment ? "text-teal-600" : "text-red-500"}>
+                      · {data.safe_payment ? "확인" : "미확인"}
+                    </dd>
+                  </>
+                )}
+              </dl>
             </div>
-            {!isOwner && (
-              <Button variant="teal" className="cursor-pointer self-start min-w-72" onClick={handleChat}>
-                채팅하기
-              </Button>
-            )}
+            <hr className="border-gray-200" />
+            {/* 판매자 정보 */}
+            <div className="flex flex-col gap-4">
+              <h2 className="text-xl font-semibold">판매자 정보</h2>
+              <div className="flex items-center gap-3">
+                {data.posts.users?.avatar_url ? (
+                  <ImageWithFallback
+                    src={data.posts.users.avatar_url}
+                    alt="프로필"
+                    width={48}
+                    height={48}
+                    className="rounded-full object-cover w-12 h-12 shrink-0"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-purple-400 flex items-center justify-center shrink-0">
+                    <User className="w-6 h-6 text-white" />
+                  </div>
+                )}
+                <div>
+                  <p className="font-medium">{data.posts.users?.name}</p>
+                  <p className="text-sm text-gray-500">
+                    {accession
+                      ? `${accession.getFullYear()}년 ${accession.getMonth() + 1}월 가입`
+                      : "가입일 정보 없음"}
+                  </p>
+                </div>
+              </div>
+              {!isOwner && (
+                <Button variant="teal" className="cursor-pointer w-full" onClick={handleChat}>
+                  채팅하기
+                </Button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        /* 이미지 없을 때: 구인구직처럼 2열 나란히 */
+        <div className="border border-gray-200 rounded-2xl overflow-hidden mt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
+            <div className="p-6">
+              <h2 className="text-xl font-semibold mb-3">상품 정보</h2>
+              <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+                <dt className="text-gray-500 font-medium">카테고리</dt>
+                <dd className="text-gray-700">· {data.category}</dd>
+                <dt className="text-gray-500 font-medium">상태</dt>
+                <dd className="text-gray-700">· {data.condition}</dd>
+                <dt className="text-gray-500 font-medium">가격</dt>
+                <dd className="text-orange-500">· ₱ {data.price?.toLocaleString()}</dd>
+                <dt className="text-gray-500 font-medium">거래 장소</dt>
+                <dd className="text-gray-700">· {data.location_type}</dd>
+                {data.safe_payment !== null && (
+                  <>
+                    <dt className="text-gray-500 font-medium">안전 결제</dt>
+                    <dd className={data.safe_payment ? "text-teal-600" : "text-red-500"}>
+                      · {data.safe_payment ? "확인" : "미확인"}
+                    </dd>
+                  </>
+                )}
+              </dl>
+            </div>
+            <div className="p-6 flex flex-col gap-4">
+              <h2 className="text-xl font-semibold">판매자 정보</h2>
+              <div className="flex items-center gap-3">
+                {data.posts.users?.avatar_url ? (
+                  <ImageWithFallback
+                    src={data.posts.users.avatar_url}
+                    alt="프로필"
+                    width={48}
+                    height={48}
+                    className="rounded-full object-cover w-12 h-12 shrink-0"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-purple-400 flex items-center justify-center shrink-0">
+                    <User className="w-6 h-6 text-white" />
+                  </div>
+                )}
+                <div>
+                  <p className="font-medium">{data.posts.users?.name}</p>
+                  <p className="text-sm text-gray-500">
+                    {accession
+                      ? `${accession.getFullYear()}년 ${accession.getMonth() + 1}월 가입`
+                      : "가입일 정보 없음"}
+                  </p>
+                </div>
+              </div>
+              {!isOwner && (
+                <Button variant="teal" className="cursor-pointer w-full" onClick={handleChat}>
+                  채팅하기
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 제목 + 설명 카드 */}
       <div className="mt-2 md:mt-4 border border-gray-200 rounded-2xl p-6">
@@ -143,7 +200,7 @@ export default function UsedGoodsDetail({
             userId={userId}
             initialLiked={initialLiked}
             initialReported={initialReported}
-            onLikeChange={(liked) => setLikeCount((prev) => liked ? prev + 1 : prev - 1)}
+            onLikeChange={(liked) => setLikeCount((prev) => liked ? prev + 1 : Math.max(prev - 1, 0))}
             size="lg"
             className="hidden md:flex shrink-0"
           />
@@ -167,7 +224,7 @@ export default function UsedGoodsDetail({
             userId={userId}
             initialLiked={initialLiked}
             initialReported={initialReported}
-            onLikeChange={(liked) => setLikeCount((prev) => liked ? prev + 1 : prev - 1)}
+            onLikeChange={(liked) => setLikeCount((prev) => liked ? prev + 1 : Math.max(prev - 1, 0))}
             size="sm"
             className="md:hidden ml-auto"
           />
