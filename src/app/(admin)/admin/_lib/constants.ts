@@ -30,14 +30,13 @@ export const REPORT_COLORS: Record<string, string> = {
   기타: "#64748b",
 };
 
-export function normalizeReason(reason: string | null): string {
-  if (!reason) return "기타";
-  if (reason.includes("사기") || reason.includes("거래"))
-    return "사기 · 거래 분쟁";
-  if (reason.includes("욕설") || reason.includes("비방")) return "욕설 · 비방";
-  if (reason.includes("스팸") || reason.includes("광고")) return "스팸 · 광고";
-  if (reason.includes("허위")) return "허위 정보";
-  if (reason.includes("불법") || reason.includes("촬영")) return "불법 촬영물";
+export function normalizeReason(category: string | null): string {
+  if (!category) return "기타";
+  if (category.includes("사기") || category.includes("거래")) return "사기 · 거래 분쟁";
+  if (category.includes("욕설") || category.includes("비방")) return "욕설 · 비방";
+  if (category.includes("도배") || category.includes("스팸") || category.includes("광고")) return "스팸 · 광고";
+  if (category.includes("허위")) return "허위 정보";
+  if (category.includes("불법") || category.includes("촬영") || category.includes("성 범죄")) return "불법 촬영물";
   return "기타";
 }
 

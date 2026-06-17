@@ -51,7 +51,8 @@ export default function ReportModal({
       user_id: userId,
       target_id: postId,
       target_type: "post",
-      reason: content ? `${category} - ${content}` : category,
+      category,
+      description: content || null,
       status: "pending",
     });
     setJustReported(true);

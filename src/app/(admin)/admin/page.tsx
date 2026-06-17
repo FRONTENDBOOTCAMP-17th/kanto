@@ -93,7 +93,7 @@ export default async function DashboardPage() {
       .limit(5),
     admin.rpc("get_reported_users", { limit_count: 10 }),
     admin.rpc("get_reported_posts", { limit_count: 10 }),
-    admin.from("common_reports").select("reason").eq("status", "pending"),
+    admin.from("common_reports").select("category").eq("status", "pending"),
     admin.rpc("get_region_post_counts", { days: 7 }),
     admin
       .from("common_reports")
@@ -177,7 +177,7 @@ export default async function DashboardPage() {
   if (reportReasonsRes.data) {
     const counts: Record<string, number> = {};
     for (const row of reportReasonsRes.data) {
-      const key = normalizeReason(row.reason);
+      const key = normalizeReason(row.category);
       counts[key] = (counts[key] ?? 0) + 1;
     }
     const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
