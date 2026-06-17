@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { MapPin } from "lucide-react";
 import { LikeButton } from "@/components/common/LikeButton";
 
@@ -25,6 +26,7 @@ export function JobCard({
   initialIsLiked,
   currentUserId,
 }: JobCardProps) {
+  const te = useTranslations("Enums");
   const router = useRouter();
 
   return (
@@ -43,7 +45,7 @@ export function JobCard({
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-sm font-medium text-gray-800">
             ₱ {salary.toLocaleString()}
-            {salaryType && <span className="text-gray-400 font-normal ml-1">/ {salaryType}</span>}
+            {salaryType && <span className="text-gray-400 font-normal ml-1">/ {te(`salaryType.${salaryType}`)}</span>}
           </span>
           <span className="text-gray-300">·</span>
           <div className="flex items-center gap-1 text-xs text-gray-500">

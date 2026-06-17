@@ -1,15 +1,17 @@
 "use client";
 
 import { UserCircle2, Phone, Mail } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import type { JobDetail } from "@/type/job/jobsDetail";
 
 export default function JobAuthorInfo({ job }: { job: JobDetail }) {
+  const t = useTranslations("Job");
   const name = job.manager_name ?? job.posts.users.name;
 
   return (
     <div className="p-6 flex flex-col gap-4">
-      <h2 className="font-semibold text-base">담당자 정보</h2>
+      <h2 className="font-semibold text-base">{t("managerInfo")}</h2>
       <div className="flex items-center gap-3">
         <UserCircle2 className="w-10 h-10 text-gray-400 shrink-0" />
         <div>
@@ -36,7 +38,7 @@ export default function JobAuthorInfo({ job }: { job: JobDetail }) {
         </div>
       )}
       <Button variant="teal" className="w-full">
-        지원하기
+        {t("apply")}
       </Button>
     </div>
   );

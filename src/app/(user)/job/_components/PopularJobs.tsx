@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { MapPin, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { LikeButton } from "@/components/common/LikeButton";
 import type { JobWithPost } from "@/type/job/jobList";
@@ -19,6 +20,7 @@ interface CardProps {
 }
 
 function PopularJobCard({ post, initialIsLiked, currentUserId }: CardProps) {
+  const te = useTranslations("Enums");
   const job = post.jobs?.[0];
   if (!job) return null;
 
@@ -42,7 +44,7 @@ function PopularJobCard({ post, initialIsLiked, currentUserId }: CardProps) {
           <p className="text-xs font-medium text-teal-600">
             ₱ {job.salary.toLocaleString()}
             {job.salary_type && (
-              <span className="text-gray-400 font-normal ml-1">/ {job.salary_type}</span>
+              <span className="text-gray-400 font-normal ml-1">/ {te(`salaryType.${job.salary_type}`)}</span>
             )}
           </p>
           <div className="flex items-center gap-1 text-xs text-gray-400">
@@ -56,6 +58,7 @@ function PopularJobCard({ post, initialIsLiked, currentUserId }: CardProps) {
 }
 
 export function PopularJobs({ posts, likedIds, currentUserId }: Props) {
+  const t = useTranslations("Job");
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -91,7 +94,7 @@ export function PopularJobs({ posts, likedIds, currentUserId }: Props) {
   return (
     <section className="mb-6">
       <div className="flex items-center gap-1.5 mb-3">
-        <h2 className="text-xl font-black text-gray-700">인기 공고</h2>
+        <h2 className="text-xl font-black text-gray-700">{t("popularTitle")}</h2>
         <TrendingUp className="w-6 h-6 -mb-2 text-teal-500" />
       </div>
 
@@ -101,7 +104,7 @@ export function PopularJobs({ posts, likedIds, currentUserId }: Props) {
             type="button"
             onClick={() => scroll("left")}
             className="hidden cursor-pointer md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-colors"
-            aria-label="이전"
+            aria-label={t("prev")}
           >
             <ChevronLeft className="w-4 h-4 text-gray-600" />
           </button>
@@ -128,7 +131,7 @@ export function PopularJobs({ posts, likedIds, currentUserId }: Props) {
             type="button"
             onClick={() => scroll("right")}
             className="hidden cursor-pointer md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-colors"
-            aria-label="다음"
+            aria-label={t("next")}
           >
             <ChevronRight className="w-4 h-4 text-gray-600" />
           </button>
