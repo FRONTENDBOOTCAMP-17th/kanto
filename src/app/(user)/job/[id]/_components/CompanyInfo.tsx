@@ -19,7 +19,7 @@ export default function CompanyInfo({ job }: { job: JobDetail }) {
         {job.company_year && (
           <div>
             <p className="text-xs md:text-sm text-gray-400">{t("foundedYear")}</p>
-            <p className="text-sm md:text-base font-medium>{t("yearSuffix", { year: job.company_year })}</p>
+            <p className="text-sm md:text-base font-medium">{t("yearSuffix", { year: job.company_year })}</p>
           </div>
         )}
         {job.employee_count && (

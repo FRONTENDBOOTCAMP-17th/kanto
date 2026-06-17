@@ -243,10 +243,22 @@
     "title": "글쓰기",
     "subtitle": "어떤 글을 작성할까요?",
     "categories": {
-      "usedgoods": { "name": "중고거래", "description": "중고 물품을 사고 팔아요" },
-      "jobs": { "name": "구인구직", "description": "일자리를 구하거나 직원을 모집해요" },
-      "rental": { "name": "방렌트", "description": "방을 구하거나 방을 내놓아요" },
-      "community": { "name": "커뮤니티", "description": "자유롭게 이야기를 나눠요" }
+      "usedgoods": {
+        "name": "중고거래",
+        "description": "중고 물품을 사고 팔아요"
+      },
+      "jobs": {
+        "name": "구인구직",
+        "description": "일자리를 구하거나 직원을 모집해요"
+      },
+      "rental": {
+        "name": "방렌트",
+        "description": "방을 구하거나 방을 내놓아요"
+      },
+      "community": {
+        "name": "커뮤니티",
+        "description": "자유롭게 이야기를 나눠요"
+      }
     }
   },
   "Main": {
@@ -266,11 +278,31 @@
       "community": "커뮤니티"
     },
     "hero": {
-      "usedgoods": { "title": "중고거래는 칸토에서!", "description": "필리핀 한인들의 안전한 중고거래 플랫폼", "button": "중고거래 바로가기" },
-      "jobs": { "title": "일자리를 찾고 있다면", "description": "필리핀 한인 구인구직 정보", "button": "구인구직 바로가기" },
-      "rental": { "title": "초저가 방을 찾고 있다면", "description": "합리적인 가격의 방 렌트 정보", "button": "방렌트 바로가기" },
-      "community": { "title": "한인들과 소통하고 싶다면", "description": "필리핀 한인들의 소통 공간", "button": "커뮤니티 바로가기" },
-      "dating": { "title": "새로운 인연을 만나고 싶다면", "description": "필터링된 랜덤 매칭으로 새로운 인연을 시작하세요", "button": "랜덤채팅 바로가기" }
+      "usedgoods": {
+        "title": "중고거래는 칸토에서!",
+        "description": "필리핀 한인들의 안전한 중고거래 플랫폼",
+        "button": "중고거래 바로가기"
+      },
+      "jobs": {
+        "title": "일자리를 찾고 있다면",
+        "description": "필리핀 한인 구인구직 정보",
+        "button": "구인구직 바로가기"
+      },
+      "rental": {
+        "title": "초저가 방을 찾고 있다면",
+        "description": "합리적인 가격의 방 렌트 정보",
+        "button": "방렌트 바로가기"
+      },
+      "community": {
+        "title": "한인들과 소통하고 싶다면",
+        "description": "필리핀 한인들의 소통 공간",
+        "button": "커뮤니티 바로가기"
+      },
+      "dating": {
+        "title": "새로운 인연을 만나고 싶다면",
+        "description": "필터링된 랜덤 매칭으로 새로운 인연을 시작하세요",
+        "button": "랜덤채팅 바로가기"
+      }
     }
   },
   "Time": {
@@ -373,6 +405,12 @@
       "locationDetailPlaceholder": "상세 지역을 입력하세요",
       "deadlineLabel": "마감일 *",
       "workHoursLabel": "근무 시간 *",
+
+      "timeNegotiable": "시간 협의",
+      "workDaysLabel": "근무 요일",
+      "selectedCount": "개 선택됨",
+      "preferredSelect": "우대 사항 선택",
+
       "hour": "시",
       "minute": "분",
       "hourValue": "{value}시",
