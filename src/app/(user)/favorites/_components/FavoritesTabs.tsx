@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 const TABS = [
-  { key: "used_goods", label: "중고거래" },
-  { key: "jobs", label: "구인구직" },
-  { key: "rental", label: "방렌트" },
+  { key: "used_goods" },
+  { key: "jobs" },
+  { key: "rental" },
 ] as const;
 
 type TabKey = (typeof TABS)[number]["key"];
@@ -17,8 +18,9 @@ export function FavoritesTabs({
   activeType: TabKey;
   tabPath: string;
 }) {
+  const t = useTranslations("Favorites");
   return (
-    <div role="tablist" aria-label="찜 목록 카테고리" className="flex gap-6 items-end">
+    <div role="tablist" aria-label={t("tabsAria")} className="flex gap-6 items-end">
       {TABS.map((tab) => (
         <Link
           key={tab.key}
@@ -31,7 +33,7 @@ export function FavoritesTabs({
               : "text-gray-400 text-xl"
           }`}
         >
-          {tab.label}
+          {t(`tabs.${tab.key}`)}
         </Link>
       ))}
     </div>
