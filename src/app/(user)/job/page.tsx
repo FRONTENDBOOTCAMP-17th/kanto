@@ -37,7 +37,7 @@ export default async function JobPage({
       <main className="flex-1 page-container w-full py-8">
         <div className="section-header">
           <h1 className="page-title">구인구직</h1>
-          <WriteButton href="/job/create" label="공고 등록" />
+          <WriteButton href="/create" label="글쓰기" />
         </div>
 
         <JobFilters

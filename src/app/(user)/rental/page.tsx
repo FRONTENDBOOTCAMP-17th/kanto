@@ -50,7 +50,7 @@ export default async function RentalPage({
               ? `"${params.search}" 검색 결과`
               : "필리핀 한인을 위한 방 렌트 정보"}
           </p>
-          <Link href="/rental/create" className="absolute right-0 top-0">
+          <Link href="/create" className="absolute right-0 top-0">
             <Button variant="teal" className="cursor-pointer gap-1">
               <Plus className="w-4 h-4" />
               글쓰기

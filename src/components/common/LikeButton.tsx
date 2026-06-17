@@ -5,6 +5,7 @@ import { Heart } from "lucide-react";
 import { toggleLike } from "@/services/likeToggle";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import { useAuthStore } from "@/store/authStore";
+import { useSuspended } from "@/hooks/useSuspended";
 
 interface LikeButtonProps {
   postId: number;
@@ -18,6 +19,7 @@ export function LikeButton({ postId, initialIsLiked, currentUserId, className, o
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [showModal, setShowModal] = useState(false);
   const { user } = useAuthStore();
+  const { isSuspended, openModal } = useSuspended();
 
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -25,6 +27,11 @@ export function LikeButton({ postId, initialIsLiked, currentUserId, className, o
 
     if (currentUserId === null) {
       setShowModal(true);
+      return;
+    }
+
+    if (isSuspended) {
+      openModal();
       return;
     }
 

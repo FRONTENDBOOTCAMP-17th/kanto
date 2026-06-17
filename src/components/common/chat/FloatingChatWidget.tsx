@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { useChatStore } from "@/store/chatStore";
+import { useSuspended } from "@/hooks/useSuspended";
 import { useChatListRealtime } from "@/hooks/chat/useChatListRealtime";
 import ChatBubbleButton from "./ChatBubbleButton";
 import ChatList from "./chatPanel/ChatList";
@@ -11,6 +12,7 @@ import type { ChatWithUsers } from "@/type/chat/chat";
 
 export default function FloatingChatWidget() {
   const { isLoggedIn } = useAuthStore();
+  const { isSuspended, openModal } = useSuspended();
   const setUnreadCount = useChatStore((s) => s.setUnreadCount);
   const [isOpen, setIsOpen] = useState(false);
   const [view, setView] = useState<"list" | "room">("list");
@@ -111,6 +113,10 @@ export default function FloatingChatWidget() {
         <ChatBubbleButton
           isOpen={isOpen}
           onToggle={() => {
+            if (isSuspended) {
+              openModal();
+              return;
+            }
             if (isOpen) {
               setView("list");
               setSelectedChatId(null);

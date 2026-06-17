@@ -68,14 +68,6 @@ export default function ReportModal({
     if (!category || !userId) return;
     setSubmitError(false);
 
-    await supabase.from("common_reports").insert({
-      user_id: userId,
-      target_id: postId,
-      target_type: "post",
-      category,
-      description: content || null,
-      status: "pending",
-    });
     const { error } = await submitReport(userId, postId, category, content);
     if (error) {
       console.error("[ReportModal] insert error:", error);

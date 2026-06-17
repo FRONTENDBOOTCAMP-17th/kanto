@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
+import { SuspendedBanner } from "@/components/common/SuspendedBanner";
 import { NotificationBell } from "./header/NotificationBell";
 import type { NotificationBellHandle } from "./header/NotificationBell";
 
@@ -276,6 +277,7 @@ export function Header() {
           </div>
         )}
       </div>
+      <SuspendedBanner />
       <ConfirmModal
         isOpen={isLogoutModalOpen}
         title="로그아웃 하시겠습니까?"
