@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import type { JobDetail } from "@/type/job/jobsDetail";
 
 export default function JobAuthorInfo({ job }: { job: JobDetail }) {
-  const name = job.manager_name ?? job.posts.users.name;
+  const name = job.manager_name ?? job.posts.users?.name;
 
   return (
     <div className="p-6 flex flex-col gap-4">

@@ -8,6 +8,6 @@ export type JobSellerInfo = SellerInfo & { auth_id: string | null };
 
 export type JobDetail = Job & {
   posts: Post & {
-    users: JobSellerInfo;
+    users: JobSellerInfo | null;
   };
 };

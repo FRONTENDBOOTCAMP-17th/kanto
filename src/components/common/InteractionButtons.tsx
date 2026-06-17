@@ -7,6 +7,7 @@ import { toggleLike } from "@/services/likeToggle";
 import { useAuthStore } from "@/store/authStore";
 import Toast from "@/components/common/Toast";
 import ReportModal from "@/components/common/ReportModal";
+import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 
 interface InteractionButtonsProps {
   postId: number;
@@ -32,9 +33,13 @@ export default function InteractionButtons({
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const handleLike = async () => {
-    if (!userId) return;
+    if (!userId) {
+      setShowLoginModal(true);
+      return;
+    }
     if (storeUser?.deleted_at) {
       alert("탈퇴 예정 계정은 찜하기를 이용할 수 없습니다.");
       return;
@@ -88,6 +93,7 @@ export default function InteractionButtons({
         </Button>
       </div>
       <Toast message={toastMessage} showMessage={showToast} />
+      <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <ReportModal
         isOpen={showReportModal}
         onClose={() => setShowReportModal(false)}

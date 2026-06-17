@@ -31,6 +31,6 @@ export type RentSellerInfo = Pick<
 
 export type RentalWithPost = Rental & {
   posts: Post & {
-    users: RentSellerInfo;
+    users: RentSellerInfo | null;
   };
 };

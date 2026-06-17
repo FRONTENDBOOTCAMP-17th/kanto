@@ -35,7 +35,7 @@ export default async function JobDetailPage({
     <div className="page-container w-full py-6">
       <div className="flex justify-end mb-4">
         <VerifyAuthor
-          authorAuthId={job.posts.users.auth_id}
+          authorAuthId={job.posts.users?.auth_id}
           editPath={`/job/${id}/edit`}
           postId={job.post_id}
           redirectPath="/job"

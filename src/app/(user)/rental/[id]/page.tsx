@@ -37,7 +37,7 @@ export default async function RentalDetail({
       <div className="flex items-center justify-between">
         <BackButton />
         <VerifyAuthor
-          authorAuthId={rental.posts.users.auth_id}
+          authorAuthId={rental.posts.users?.auth_id}
           editPath={`/rental/${id}/edit`}
           postId={postId}
           redirectPath="/rental"

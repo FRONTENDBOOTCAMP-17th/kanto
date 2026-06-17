@@ -12,7 +12,7 @@ export default async function EditJobPage({
   return (
     <div className="page-wrapper">
       <CreateJobForm
-        userId={job.posts.users.id}
+        userId={job.posts.users?.id ?? 0}
         initialData={{
           post_id: job.post_id,
           title: job.posts.title,
