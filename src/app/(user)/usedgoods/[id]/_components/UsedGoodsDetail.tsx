@@ -103,7 +103,7 @@ export default function UsedGoodsDetail({
               </div>
             ) : data.posts.is_reserved ? (
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-2xl bg-black/40 z-10">
-                <span className="rounded-lg bg-orange-500 px-4 py-2 text-lg font-bold text-white">
+                <span className="rounded-lg bg-teal-400 px-4 py-2 text-lg font-bold text-white">
                   {t("reserved")}
                 </span>
               </div>
