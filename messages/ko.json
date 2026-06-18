@@ -131,7 +131,8 @@
     "deletedAccount": {
       "favorite": "탈퇴 예정 계정은 찜하기를 이용할 수 없습니다.",
       "write": "탈퇴 예정 계정은 새 글을 작성할 수 없습니다."
-    }
+    },
+    "soldOut": "판매완료"
   },
   "Report": {
     "title": "신고하기",
@@ -182,6 +183,27 @@
       "used_goods": "중고거래",
       "rental": "방렌트",
       "jobs": "구인구직"
+    },
+    "payment": {
+      "safePayment": "안전결제",
+      "requestTitle": "안전결제 요청",
+      "requestAmountLabel": "결제 금액 (PHP)",
+      "requestSubmit": "결제 요청 보내기",
+      "requesting": "요청 중...",
+      "requestFailed": "요청에 실패했습니다.",
+      "invalidAmount": "올바른 금액을 입력해주세요.",
+      "proceed": "안전결제 진행하기",
+      "proceeding": "이동 중...",
+      "waitingBuyer": "구매자 결제 대기 중",
+      "cancelRequest": "요청 취소",
+      "escrow": "결제 완료 · 에스크로 보관중",
+      "receiptGuide": "상품을 받으셨다면 수령 확인을 눌러주세요",
+      "confirmReceipt": "수령 확인",
+      "waitingReceipt": "구매자 수령확인 대기 중",
+      "completed": "거래 완료",
+      "cancelledStatus": "거래가 취소되었습니다",
+      "expiredStatus": "결제 시간이 만료되었습니다",
+      "close": "닫기"
     }
   },
   "Notifications": {
@@ -352,6 +374,8 @@
     "price": "가격",
     "tradeLocation": "거래 장소",
     "safePayment": "안전 결제",
+    "reserved": "예약중",
+    "soldOut": "판매완료",
     "confirmed": "확인",
     "unconfirmed": "미확인",
     "sellerInfo": "판매자 정보",

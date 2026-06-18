@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ShieldCheck, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
 import {
@@ -23,6 +24,7 @@ export default function PaymentCard({
 }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const t = useTranslations("Chat.payment");
 
   const isBuyer = currentUser.id === transaction.buyer_id;
   const isSeller = currentUser.id === transaction.seller_id;
@@ -72,7 +74,7 @@ export default function PaymentCard({
           <>
             <StatusLine
               icon={<ShieldCheck className="w-4 h-4 text-teal-500" />}
-              text="안전결제 요청"
+              text={t("requestTitle")}
             />
             {isBuyer && (
               <button
@@ -80,12 +82,12 @@ export default function PaymentCard({
                 disabled={isLoading}
                 className={primaryBtn}
               >
-                {isLoading ? "이동 중..." : "안전결제 진행하기"}
+                {isLoading ? t("proceeding") : t("proceed")}
               </button>
             )}
             {isSeller && (
               <p className="text-center text-xs text-gray-400">
-                구매자 결제 대기 중
+                {t("waitingBuyer")}
               </p>
             )}
             <button
@@ -93,7 +95,7 @@ export default function PaymentCard({
               disabled={isLoading}
               className={ghostBtn}
             >
-              요청 취소
+              {t("cancelRequest")}
             </button>
           </>
         );
@@ -102,24 +104,24 @@ export default function PaymentCard({
           <>
             <StatusLine
               icon={<CheckCircle2 className="w-4 h-4 text-teal-500" />}
-              text="결제 완료 · 에스크로 보관중"
+              text={t("escrow")}
             />
             {isBuyer ? (
               <>
                 <p className="text-center text-xs text-gray-400">
-                  상품을 받으셨다면 수령 확인을 눌러주세요
+                  {t("receiptGuide")}
                 </p>
                 <button
                   onClick={handleConfirm}
                   disabled={isLoading}
                   className={primaryBtn}
                 >
-                  {isLoading ? "처리 중..." : "수령 확인"}
+                  {isLoading ? t("proceeding") : t("confirmReceipt")}
                 </button>
               </>
             ) : (
               <p className="text-center text-xs text-gray-400">
-                구매자 수령확인 대기 중
+                {t("waitingReceipt")}
               </p>
             )}
           </>
@@ -128,14 +130,14 @@ export default function PaymentCard({
         return (
           <StatusLine
             icon={<CheckCircle2 className="w-4 h-4 text-teal-500" />}
-            text="거래 완료"
+            text={t("completed")}
           />
         );
       case "cancelled":
         return (
           <StatusLine
             icon={<XCircle className="w-4 h-4 text-gray-400" />}
-            text="거래가 취소되었습니다"
+            text={t("cancelledStatus")}
             muted
           />
         );
@@ -143,7 +145,7 @@ export default function PaymentCard({
         return (
           <StatusLine
             icon={<Clock className="w-4 h-4 text-gray-400" />}
-            text="결제 시간이 만료되었습니다"
+            text={t("expiredStatus")}
             muted
           />
         );
@@ -153,7 +155,7 @@ export default function PaymentCard({
   return (
     <div className="max-w-[75%] w-56 rounded-2xl border border-teal-100 bg-white p-3 shadow-sm flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <span className="text-xs text-gray-500">안전결제</span>
+        <span className="text-xs text-gray-500">{t("safePayment")}</span>
         <span className="text-sm font-semibold text-gray-800">{amount}</span>
       </div>
       <hr className="border-gray-100" />

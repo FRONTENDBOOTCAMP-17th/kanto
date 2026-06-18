@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { X, ShieldCheck } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { MessageWithSender } from "@/type/chat/message";
 import { createPaymentRequestAction } from "./paymentActions";
 
@@ -20,6 +21,7 @@ export default function PaymentRequestModal({
   onClose,
   onRequested,
 }: Props) {
+  const t = useTranslations("Chat.payment");
   const [amount, setAmount] = useState(String(defaultAmount));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +29,7 @@ export default function PaymentRequestModal({
   const handleSubmit = async () => {
     const value = Number(amount);
     if (!Number.isInteger(value) || value <= 0) {
-      setError("올바른 금액을 입력해주세요.");
+      setError(t("invalidAmount"));
       return;
     }
 
@@ -42,7 +44,7 @@ export default function PaymentRequestModal({
       onRequested(message);
       onClose();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "요청에 실패했습니다.");
+      setError(e instanceof Error ? e.message : t("requestFailed"));
       setIsSubmitting(false);
     }
   };
@@ -59,15 +61,15 @@ export default function PaymentRequestModal({
         <div className="mb-3 flex items-center justify-between">
           <h3 className="flex items-center gap-1.5 text-base font-semibold text-gray-800">
             <ShieldCheck className="w-5 h-5 text-teal-500" />
-            안전결제 요청
+            {t("requestTitle")}
           </h3>
-          <button onClick={onClose} aria-label="닫기" className="cursor-pointer text-gray-400 hover:text-gray-600">
+          <button onClick={onClose} aria-label={t("close")} className="cursor-pointer text-gray-400 hover:text-gray-600">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <label htmlFor="payment-amount" className="text-sm text-gray-500">
-          결제 금액 (PHP)
+          {t("requestAmountLabel")}
         </label>
         <div className="mt-1 flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 focus-within:border-teal-400">
           <span className="text-gray-500">₱</span>
@@ -88,7 +90,7 @@ export default function PaymentRequestModal({
           disabled={isSubmitting}
           className="mt-4 w-full rounded-full bg-teal-500 py-2.5 text-sm font-medium text-white hover:bg-teal-600 transition-colors disabled:opacity-50 cursor-pointer"
         >
-          {isSubmitting ? "요청 중..." : "결제 요청 보내기"}
+          {isSubmitting ? t("requesting") : t("requestSubmit")}
         </button>
       </div>
     </div>
