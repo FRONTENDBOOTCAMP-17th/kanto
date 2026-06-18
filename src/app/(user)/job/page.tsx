@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { WriteButton } from "@/components/common/WriteButton";
 import { getJobList, getPopularJobs } from "@/services/job/job";
 import { getLikeList } from "@/services/likes";
+import { getSessionUser } from "@/services/user/user";
 import { JobFilters } from "@/app/(user)/job/_components/JobFilters";
 import { JobList } from "@/app/(user)/job/_components/JobList";
 import { PopularJobs } from "@/app/(user)/job/_components/PopularJobs";
@@ -18,7 +19,7 @@ export default async function JobPage({
   const currentPage = Number(params.page ?? 1);
   const t = await getTranslations("Job");
 
-  const [posts, { likedIds, currentUserId }, popularPosts] = await Promise.all([
+  const [posts, { likedIds, currentUserId }, popularPosts, sessionUser] = await Promise.all([
     getJobList({
       search: params.search,
       employeeType: params.type,
@@ -26,6 +27,7 @@ export default async function JobPage({
     }),
     getLikeList("jobs"),
     getPopularJobs(),
+    getSessionUser(),
   ]);
 
   const totalPages = Math.ceil(posts.length / ITEMS_PER_PAGE);
@@ -45,7 +47,7 @@ export default async function JobPage({
         <JobFilters
           givenSearch={params.search ?? ""}
           defaultType={params.type ?? "all"}
-          defaultLocation={params.location ?? "all"}
+          defaultLocation={params.location ?? sessionUser?.region ?? "all"}
         />
 
         <div className="border-t border-gray-200 my-6" />

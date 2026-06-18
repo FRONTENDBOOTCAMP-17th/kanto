@@ -216,6 +216,7 @@
     "roomType": {
       "아파트": "Apartment",
       "스튜디오": "Studio",
+      "원룸": "Isang kwarto",
       "투룸": "Dalawang kwarto"
     },
     "rentalRoomType": {
@@ -613,6 +614,7 @@
       "regionDesc": "Ang rehiyong ginagamit bilang batayan kapag naghahanap ng mga post ng gamit na bagay at paupahan.",
       "regionInputAria": "Maglagay ng rehiyon",
       "regionSet": "Itakda",
+      "regionPlaceholder": "Pumili ng rehiyon",
       "languageTitle": "Wika",
       "languageSelectAria": "Pumili ng wika",
       "linkTitle": "Mga Naka-link na Account",
@@ -624,6 +626,7 @@
     },
     "toast": {
       "saved": "Na-save.",
+      "regionSaved": "Na-save ang setting ng rehiyon.",
       "updated": "Na-update.",
       "saveFailed": "Nabigong i-save.",
       "deleteFailed": "Nabigong tanggalin ang account. Pakisubukan muli.",

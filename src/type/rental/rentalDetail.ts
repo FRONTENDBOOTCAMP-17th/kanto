@@ -2,7 +2,7 @@ import type { Database } from "@/type/supabase";
 import type { Post } from "@/type/post";
 
 export const RENT_TYPES = ["월세", "매매"] as const;
-export const ROOM_TYPES = ["아파트", "스튜디오", "투룸"] as const;
+export const ROOM_TYPES = ["아파트", "스튜디오", "원룸", "투룸"] as const;
 export const AMENITIES = [
   "주차",
   "엘리베이터",
