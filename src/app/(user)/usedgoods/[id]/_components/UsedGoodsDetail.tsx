@@ -13,6 +13,7 @@ import VerifyAuthor from "@/components/common/VerifyAuthor";
 import findChat from "@/services/chat/postChat";
 import { useAuthStore } from "@/store/authStore";
 import { useChatStore } from "@/store/chatStore";
+import { useSuspended } from "@/hooks/useSuspended";
 import InteractionButtons from "@/components/common/InteractionButtons";
 import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarresel";
 import { Button } from "@/components/ui/button";
@@ -45,12 +46,14 @@ export default function UsedGoodsDetail({
   const isOwner = storeUser?.auth_id === data.posts.users?.auth_id;
   const images = (data.images as string[]) ?? [];
   const [likeCount, setLikeCount] = useState(data.posts.like_count ?? 0);
+  const { isSuspended, openModal } = useSuspended();
 
   const accession = data.posts.users?.created_at
     ? new Date(data.posts.users.created_at)
     : null;
 
   const handleChat = async () => {
+    if (isSuspended) { openModal(); return; }
     if (!userId || !data.posts.users) return;
     const chatId = await findChat(userId, data.posts.users.id, data.post_id);
     if (chatId !== null) {
