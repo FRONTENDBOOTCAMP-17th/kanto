@@ -1,8 +1,19 @@
 import { create } from "zustand";
 import type { ChatWithUsers } from "@/type/chat/chat";
 import type { MessageWithSender } from "@/type/chat/message";
+import type { SellerInfo } from "@/type/user";
 import { useAuthStore } from "@/store/authStore";
 import { useSuspendedModalStore } from "@/hooks/useSuspended";
+
+export interface PendingNewChat {
+  buyerId: number;
+  sellerId: number;
+  postId: number;
+  postTitle: string;
+  postType: string;
+  postPrice: number | null;
+  partner: SellerInfo;
+}
 
 interface ChatState {
   chatList: ChatWithUsers[];

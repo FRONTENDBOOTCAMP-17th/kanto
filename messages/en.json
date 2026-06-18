@@ -157,6 +157,8 @@
     "noMessage": "No messages",
     "loading": "Loading...",
     "back": "Go back",
+    "setReserve": "Mark as Reserved",
+    "cancelReserve": "Cancel Reservation",
     "report": "Report",
     "block": "Block",
     "leave": "Leave chat",

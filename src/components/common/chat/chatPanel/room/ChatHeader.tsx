@@ -14,6 +14,8 @@ interface Props {
   chatId: number;
   onBack: () => void;
   onLeave?: () => void;
+  isReserved?: boolean;
+  onToggleReserve?: () => void;
 }
 
 export default function ChatHeader({
@@ -21,7 +23,9 @@ export default function ChatHeader({
   postTitle,
   chatId,
   onBack,
-  onLeave
+  onLeave,
+  isReserved,
+  onToggleReserve,
 }: Props) {
   const t = useTranslations("Chat");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -80,7 +84,15 @@ export default function ChatHeader({
 
         {menuOpen && (
           <div className="absolute right-0 top-9 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden w-36 z-10">
-            <button className="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-gray-50 transition-colors">
+            {onToggleReserve !== undefined && (
+              <button
+                onClick={() => { onToggleReserve(); setMenuOpen(false); }}
+                className="w-full text-left px-4 py-3 text-sm text-teal-600 hover:bg-gray-50 transition-colors"
+              >
+                {isReserved ? t("cancelReserve") : t("setReserve")}
+              </button>
+            )}
+            <button className={`w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-gray-50 transition-colors ${onToggleReserve !== undefined ? "border-t border-gray-100" : ""}`}>
               {t("report")}
             </button>
             <button className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors border-t border-gray-100">

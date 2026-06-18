@@ -662,6 +662,7 @@ export type Database = {
         Row: {
           created_at: string
           id: number
+          is_reserved: boolean
           like_count: number
           post_type: string
           status: string
@@ -673,6 +674,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: number
+          is_reserved?: boolean
           like_count?: number
           post_type: string
           status?: string
@@ -684,6 +686,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: number
+          is_reserved?: boolean
           like_count?: number
           post_type?: string
           status?: string

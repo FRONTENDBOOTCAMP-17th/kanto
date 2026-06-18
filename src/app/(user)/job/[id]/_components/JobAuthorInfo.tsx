@@ -33,6 +33,7 @@ export default function JobAuthorInfo({
         sellerId: job.posts.users.id,
         postId: job.post_id,
         postTitle: job.posts.title ?? "",
+        postType: "jobs",
         postPrice: null,
         partner: {
           id: job.posts.users.id,

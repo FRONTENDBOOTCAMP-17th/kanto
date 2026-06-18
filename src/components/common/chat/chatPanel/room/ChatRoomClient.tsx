@@ -14,6 +14,7 @@ import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList";
 import ChatInput from "./ChatInput";
 import PaymentRequestModal from "./PaymentRequestModal";
+import { toggleReserveAction } from "./toggleReserveAction";
 
 interface Props {
   initialMessages: MessageWithSender[];
@@ -22,8 +23,10 @@ interface Props {
   postId: number;
   partner: SellerInfo;
   postTitle: string;
+  postType: string;
   sellerId: number | null;
   postPrice: number | null;
+  isReserved: boolean;
   onBack?: () => void;
   onLeave?: () => void;
   onChatCreated?: (chatId: number) => void;
@@ -36,8 +39,10 @@ export default function ChatRoomClient({
   postId,
   partner,
   postTitle,
+  postType,
   sellerId,
   postPrice,
+  isReserved: initialIsReserved,
   onBack,
   onLeave,
   onChatCreated,
@@ -46,6 +51,15 @@ export default function ChatRoomClient({
   const [activeChatId, setActiveChatId] = useState<number | null>(chatIdProp);
   const [input, setInput] = useState("");
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [isReserved, setIsReserved] = useState(initialIsReserved);
+
+  const isSeller = sellerId !== null && currentUser.id === sellerId;
+
+  const handleToggleReserve = async () => {
+    const next = !isReserved;
+    setIsReserved(next);
+    await toggleReserveAction(postId, next);
+  };
 
   const canRequestPayment = sellerId !== null && currentUser.id === sellerId && postPrice !== null;
 
@@ -146,6 +160,8 @@ export default function ChatRoomClient({
         chatId={activeChatId ?? 0}
         onBack={onBack ?? (() => router.back())}
         onLeave={onLeave}
+        isReserved={postType === "used_goods" && isSeller ? isReserved : undefined}
+        onToggleReserve={postType === "used_goods" && isSeller ? handleToggleReserve : undefined}
       />
       <MessageList
         messages={messages}

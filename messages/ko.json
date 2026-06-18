@@ -157,6 +157,8 @@
     "noMessage": "메시지가 없습니다",
     "loading": "로딩중...",
     "back": "뒤로 가기",
+    "setReserve": "예약중으로 변경",
+    "cancelReserve": "예약 취소",
     "report": "신고하기",
     "block": "차단하기",
     "leave": "채팅방 나가기",

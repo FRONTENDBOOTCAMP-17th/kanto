@@ -14,8 +14,10 @@ interface ChatRoomData {
   postId: number;
   partner: SellerInfo;
   postTitle: string;
+  postType: string;
   sellerId: number | null;
   postPrice: number | null;
+  isReserved: boolean;
 }
 
 export default function ChatRoom({
@@ -46,8 +48,10 @@ export default function ChatRoom({
         postId: newChatMeta.postId,
         partner: newChatMeta.partner,
         postTitle: newChatMeta.postTitle,
+        postType: newChatMeta.postType ?? "",
         sellerId: newChatMeta.sellerId,
         postPrice: newChatMeta.postPrice,
+        isReserved: false,
       });
       return;
     }
