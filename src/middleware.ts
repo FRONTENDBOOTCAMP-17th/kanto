@@ -3,7 +3,6 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { User } from "@supabase/supabase-js";
 
 export async function middleware(request: NextRequest) {
-  console.log("[middleware] HIT:", request.nextUrl.pathname);
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -43,7 +42,6 @@ export async function middleware(request: NextRequest) {
       .single();
 
     const suspendedUntil = userRow?.suspended_until;
-    console.log("[middleware] suspended_until:", suspendedUntil, "pathname:", request.nextUrl.pathname);
     if (suspendedUntil && new Date(suspendedUntil) > new Date()) {
       const { pathname } = request.nextUrl;
       const BLOCKED_PATHS = ["/create", "/job/create", "/usedgoods/create", "/rental/create"];

@@ -44,7 +44,7 @@ export default function ChatRoom({
         currentUser: currentUserOverride,
         chatId: null,
         postId: newChatMeta.postId,
-        partner: newChatMeta.partner,
+        partner: { ...newChatMeta.partner, name: newChatMeta.partner.name ?? "" },
         postTitle: newChatMeta.postTitle,
         sellerId: newChatMeta.sellerId,
         postPrice: newChatMeta.postPrice,
@@ -55,7 +55,11 @@ export default function ChatRoom({
       .then((r) => r.json())
       .then((json) => {
         if (json.error) return;
-        setData(json);
+        setData({
+          ...json,
+          currentUser: { ...json.currentUser, name: json.currentUser.name ?? "" },
+          partner: { ...json.partner, name: json.partner.name ?? "" },
+        });
       });
   }, [chatId, newChatMeta, currentUserOverride]);
 
