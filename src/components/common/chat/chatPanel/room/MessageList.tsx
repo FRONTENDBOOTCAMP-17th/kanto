@@ -1,4 +1,4 @@
-import { Fragment, type RefObject } from "react";
+import { Fragment, useEffect, useState, type RefObject } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
@@ -16,6 +16,18 @@ interface Props {
   messagesEndRef: RefObject<HTMLDivElement | null>;
   scrollContainerRef: RefObject<HTMLDivElement | null>;
   onTransactionChange: (transaction: Transaction) => void;
+  partnerOnline: boolean;
+}
+
+function UnreadMark({ partnerOnline }: { partnerOnline: boolean }) {
+  const [visible, setVisible] = useState(!partnerOnline);
+  useEffect(() => {
+    const delay = partnerOnline ? 1000 : 0;
+    const t = setTimeout(() => setVisible(true), delay);
+    return () => clearTimeout(t);
+  }, [partnerOnline]);
+  if (!visible) return null;
+  return <span className="text-xs md:text-[10px] text-teal-500 font-medium">1</span>;
 }
 
 export default function MessageList({
@@ -27,6 +39,7 @@ export default function MessageList({
   messagesEndRef,
   scrollContainerRef,
   onTransactionChange,
+  partnerOnline,
 }: Props) {
   const t = useTranslations("Chat");
   const locale = useLocale() as Locale;
@@ -91,9 +104,7 @@ export default function MessageList({
                   </div>
                 )}
                 <div className={`flex flex-col shrink-0 ${isMine ? "items-end" : "items-start"}`}>
-                  {isMine && !msg.is_read && (
-                    <span className="text-xs md:text-[10px] text-teal-500 font-medium">1</span>
-                  )}
+                  {isMine && !msg.is_read && <UnreadMark partnerOnline={partnerOnline} />}
                   <time dateTime={msg.created_at} className="text-xs md:text-[10px] text-gray-400">
                     {formatMessageTime(msg.created_at, locale)}
                   </time>

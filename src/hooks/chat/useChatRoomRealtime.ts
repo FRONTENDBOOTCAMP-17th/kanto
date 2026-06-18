@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { Message, MessageWithSender } from "@/type/chat/message";
 import { SellerInfo } from "@/type/user";
 import { Transaction } from "@/type/transaction";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface Props {
   chatId: number | null;
@@ -18,10 +18,18 @@ export function useChatRoomRealtime({
   partner,
   setMessages,
 }: Props) {
+  const [partnerOnline, setPartnerOnline] = useState(false);
+
   useEffect(() => {
     if (chatId === null) return;
     const channel = supabase
-      .channel(`chat-room-${chatId}`)
+      .channel(`chat-room-${chatId}`, {
+        config: { presence: { key: String(currentUser.id) } },
+      })
+      .on("presence", { event: "sync" }, () => {
+        const state = channel.presenceState();
+        setPartnerOnline(String(partner.id) in state);
+      })
       .on(
         "postgres_changes",
         {
@@ -115,10 +123,17 @@ export function useChatRoomRealtime({
           );
         },
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          channel.track({ online_at: new Date().toISOString() });
+        }
+      });
     return () => {
+      setPartnerOnline(false);
       supabase.removeChannel(channel);
     };
   // currentUser·partner 객체 전체 대신 .id만 사용 — 참조 변경 시 채널 재구독 방지
   }, [chatId, currentUser.id, partner.id, setMessages]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return { partnerOnline };
 }
