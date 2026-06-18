@@ -1155,6 +1155,10 @@ export type Database = {
           user_id: number
         }[]
       }
+      increment_unread: {
+        Args: { p_chat_id: number; p_for_user1: boolean }
+        Returns: undefined
+      }
       increment_view_count: { Args: { p_post_id: number }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
       my_role: { Args: never; Returns: string }
