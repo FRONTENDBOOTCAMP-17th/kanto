@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { ProfileCard } from "@/app/(user)/profile/_components/ProfileCard";
+import { getReviewsForUser } from "@/services/review/review";
 import type { AlertSettings } from "@/hooks/profile/useAlertSettings";
 
 export default async function ProfilePage() {
@@ -10,7 +11,7 @@ export default async function ProfilePage() {
 
   const { data } = await supabase
     .from("users")
-    .select("alert_chat, alert_comment, alert_post, interest_categories, alert_keywords")
+    .select("id, alert_chat, alert_comment, alert_post, interest_categories, alert_keywords")
     .eq("auth_id", user.id)
     .single();
 
@@ -22,12 +23,15 @@ export default async function ProfilePage() {
     alert_keywords: data?.alert_keywords ?? null,
   };
 
+  const reviews = data?.id ? await getReviewsForUser(data.id) : [];
+
   return (
     <div className="bg-white md:bg-teal-50">
       <div className="max-w-lg md:max-w-5xl mx-auto py-8">
         <ProfileCard
           alertSettings={alertSettings}
           initialIdentities={user.identities ?? []}
+          reviews={reviews}
         />
       </div>
     </div>
