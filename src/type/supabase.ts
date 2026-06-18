@@ -1019,6 +1019,7 @@ export type Database = {
           phone: string | null
           post_count: number | null
           provider: string | null
+          region: string | null
           role: string
           suspended_until: string | null
           updated_at: string | null
@@ -1041,6 +1042,7 @@ export type Database = {
           phone?: string | null
           post_count?: number | null
           provider?: string | null
+          region?: string | null
           role?: string
           suspended_until?: string | null
           updated_at?: string | null
@@ -1063,6 +1065,7 @@ export type Database = {
           phone?: string | null
           post_count?: number | null
           provider?: string | null
+          region?: string | null
           role?: string
           suspended_until?: string | null
           updated_at?: string | null

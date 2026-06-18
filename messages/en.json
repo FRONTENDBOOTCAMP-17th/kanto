@@ -606,6 +606,7 @@
       "regionDesc": "The region used as a reference when searching used goods and rental posts.",
       "regionInputAria": "Enter region",
       "regionSet": "Set",
+      "regionPlaceholder": "Select a region",
       "languageTitle": "Language",
       "languageSelectAria": "Select language",
       "linkTitle": "Linked Accounts",
@@ -617,6 +618,7 @@
     },
     "toast": {
       "saved": "Saved.",
+      "regionSaved": "Region setting has been saved.",
       "updated": "Updated.",
       "saveFailed": "Failed to save.",
       "deleteFailed": "Failed to delete account. Please try again.",

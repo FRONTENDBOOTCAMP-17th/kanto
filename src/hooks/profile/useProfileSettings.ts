@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { UserIdentity } from "@supabase/supabase-js";
 import { linkSocialIdentity, unlinkSocialIdentity } from "@/services/profile/profileSettings";
+import { useAuthStore } from "@/store/authStore";
+import { supabase } from "@/lib/supabase";
 
 export const LANGUAGES = [
   { value: "ko", label: "한국어" },
@@ -21,13 +23,15 @@ type Notice = { type: "success" | "error"; text: string };
 
 export function useProfileSettings(initialIdentities: UserIdentity[]) {
   const t = useTranslations("Profile.toast");
+  const { user, setUser } = useAuthStore();
+
   const errorMessageByCode = (code: string | null | undefined) => {
     if (code === "identity_already_exists") return t("identityAlreadyExists");
     if (code === "same_identity") return t("sameIdentity");
     return null;
   };
 
-  const [region, setRegion] = useState("");
+  const [region, setRegion] = useState(user?.region ?? "");
   const [language, setLanguage] = useState("ko");
   const [identities, setIdentities] = useState<UserIdentity[]>(initialIdentities);
   const [notice, setNotice] = useState<Notice | null>(() => {
@@ -50,6 +54,22 @@ export function useProfileSettings(initialIdentities: UserIdentity[]) {
       window.history.replaceState({}, "", window.location.pathname);
     }
   }, []);
+
+  const handleSaveRegion = async () => {
+    if (!user) return;
+    const { data, error } = await supabase
+      .from("users")
+      .update({ region: region || null })
+      .eq("id", user.id)
+      .select()
+      .single();
+    if (!error && data) {
+      setUser(data);
+      alert(t("regionSaved"));
+    } else {
+      alert(t("saveFailed"));
+    }
+  };
 
   const handleLink = async (provider: "google" | "kakao" | "facebook") => {
     sessionStorage.setItem("linkingProvider", provider);
@@ -77,6 +97,7 @@ export function useProfileSettings(initialIdentities: UserIdentity[]) {
 
   return {
     region, setRegion,
+    handleSaveRegion,
     language, setLanguage,
     identities,
     notice,

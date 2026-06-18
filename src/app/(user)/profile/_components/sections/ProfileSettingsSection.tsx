@@ -3,7 +3,15 @@
 import { MapPin, Globe, Link } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useProfileSettings, LANGUAGES, SOCIAL_PROVIDERS } from "@/hooks/profile/useProfileSettings";
+import { TRADE_LOCATIONS } from "@/type/location";
 import type { UserIdentity } from "@supabase/supabase-js";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function SocialIcon({ provider }: { provider: string }) {
   if (provider === "google") {
@@ -42,6 +50,7 @@ function SocialIcon({ provider }: { provider: string }) {
 export function ProfileSettingsSection({ initialIdentities }: { initialIdentities: UserIdentity[] }) {
   const {
     region, setRegion,
+    handleSaveRegion,
     language, setLanguage,
     identities,
     notice,
@@ -64,16 +73,19 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
             {t("regionDesc")}
           </p>
           <div className="flex gap-2">
-            <input
-              type="text"
-              value={region}
-              onChange={(e) => setRegion(e.target.value)}
-              placeholder="e.g. BGC, Taguig"
-              aria-label={t("regionInputAria")}
-              className="flex-1 px-3 py-2.5 text-sm text-gray-900 border border-gray-200 rounded-lg outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-200"
-            />
+            <Select value={region} onValueChange={setRegion}>
+              <SelectTrigger className="flex-1">
+                <SelectValue placeholder={t("regionPlaceholder")} />
+              </SelectTrigger>
+              <SelectContent>
+                {TRADE_LOCATIONS.map((loc) => (
+                  <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <button
               type="button"
+              onClick={handleSaveRegion}
               className="cursor-pointer px-4 py-2.5 rounded-lg bg-teal-500 text-white text-sm font-medium hover:bg-teal-600 transition-colors"
             >
               {t("regionSet")}

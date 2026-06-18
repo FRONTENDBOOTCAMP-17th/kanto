@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 
 import { getRentalList } from "@/services/rental/rental";
 import { getLikeList } from "@/services/likes";
+import { getSessionUser } from "@/services/user/user";
 import { RentalList } from "./_components/RentalList";
 import { RentalFilters } from "./_components/RentalFilters";
 import { PaginationUrl } from "@/components/common/PaginationUrl";
@@ -27,13 +28,14 @@ export default async function RentalPage({
   const currentPage = Number(params.page ?? 1);
   const t = await getTranslations("Rental");
 
-  const [posts, { likedIds, currentUserId }] = await Promise.all([
+  const [posts, { likedIds, currentUserId }, sessionUser] = await Promise.all([
     getRentalList({
       search: params.search,
       roomType: params.roomType,
       location: params.location,
     }),
     getLikeList("rental"),
+    getSessionUser(),
   ]);
 
   const totalPages = Math.ceil(posts.length / ITEMS_PER_PAGE);
@@ -63,7 +65,7 @@ export default async function RentalPage({
         <RentalFilters
           givenSearch={params.search ?? ""}
           defaultRoomType={params.roomType ?? "all"}
-          defaultLocation={params.location ?? "all"}
+          defaultLocation={params.location ?? sessionUser?.region ?? "all"}
         />
 
         <div className="border-t border-gray-200 mb-8" />
