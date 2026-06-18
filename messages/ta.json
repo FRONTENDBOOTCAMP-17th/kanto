@@ -748,6 +748,12 @@
       "used_goods": "Mga Gamit na Bagay",
       "jobs": "Mga Trabaho",
       "rental": "Mga Paupahan"
+    },
+    "empty": "Walang mga paborito.",
+    "goTo": {
+      "used_goods": "Pumunta sa Marketplace",
+      "jobs": "Pumunta sa Mga Trabaho",
+      "rental": "Pumunta sa Mga Paupahan"
     }
   }
 }

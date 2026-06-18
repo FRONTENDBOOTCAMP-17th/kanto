@@ -742,6 +742,12 @@
       "used_goods": "Used Goods",
       "jobs": "Jobs",
       "rental": "Rentals"
+    },
+    "empty": "No favorites yet.",
+    "goTo": {
+      "used_goods": "Browse Marketplace",
+      "jobs": "Browse Jobs",
+      "rental": "Browse Rentals"
     }
   }
 }
