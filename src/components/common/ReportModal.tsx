@@ -20,9 +20,11 @@ interface report {
   postId: number;
   userId: number | undefined;
   initialReported: boolean;
+  categories?: readonly string[];
+  targetType?: "post" | "user";
 }
 
-const REPORT_CATEGORIES = [
+export const POST_REPORT_CATEGORIES = [
   "욕설",
   "도배",
   "사기",
@@ -37,6 +39,8 @@ export default function ReportModal({
   postId,
   userId,
   initialReported,
+  categories = POST_REPORT_CATEGORIES,
+  targetType = "post",
 }: report) {
   const t = useTranslations("Report");
   const tc = useTranslations("Common");
@@ -55,7 +59,7 @@ export default function ReportModal({
     };
     document.addEventListener("keydown", onKeyDown);
 
-    checkReported(postId, userId).then((reported) => {
+    checkReported(postId, userId, targetType).then((reported) => {
       if (reported) setIsReported(true);
     });
 
@@ -63,7 +67,7 @@ export default function ReportModal({
       document.body.style.overflow = "";
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [isOpen, onClose, postId, userId]);
+  }, [isOpen, onClose, postId, userId, targetType]);
 
   if (!isOpen) return null;
 
@@ -71,7 +75,7 @@ export default function ReportModal({
     if (!category || !userId) return;
     setSubmitError(false);
 
-    const { error } = await submitReport(userId, postId, category, content);
+    const { error } = await submitReport(userId, postId, category, content, targetType);
     if (error) {
       console.error("[ReportModal] insert error:", error);
       setSubmitError(true);
@@ -135,7 +139,7 @@ export default function ReportModal({
               <SelectValue placeholder={t("selectCategory")} />
             </SelectTrigger>
             <SelectContent>
-              {REPORT_CATEGORIES.map((cate) => (
+              {categories.map((cate) => (
                 <SelectItem key={cate} value={cate}>
                   {t(`categories.${cate}`)}
                 </SelectItem>

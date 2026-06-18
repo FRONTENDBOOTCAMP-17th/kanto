@@ -8,7 +8,7 @@ import { toggleLike } from "@/services/likeToggle";
 import { useAuthStore } from "@/store/authStore";
 import { useSuspended } from "@/hooks/useSuspended";
 import Toast from "@/components/common/Toast";
-import ReportModal from "@/components/common/ReportModal";
+import ReportModal, { POST_REPORT_CATEGORIES } from "@/components/common/ReportModal";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 
 interface InteractionButtonsProps {
@@ -108,6 +108,8 @@ export default function InteractionButtons({
         postId={postId}
         userId={userId}
         initialReported={initialReported}
+        categories={POST_REPORT_CATEGORIES}
+        targetType="post"
       />
     </>
   );

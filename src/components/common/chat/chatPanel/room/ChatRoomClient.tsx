@@ -6,7 +6,7 @@ import { ShieldCheck } from "lucide-react";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
-import { createChatAndSendAction, markChatReadAction, sendMessageAction } from "./actions";
+import { checkBlockedAction, createChatAndSendAction, markChatReadAction, sendMessageAction } from "./actions";
 import { getChatBannerStateAction } from "./paymentActions";
 import { useSpamPrevention } from "@/hooks/chat/useSpamPrevention";
 import { useChatRoomRealtime } from "@/hooks/chat/useChatRoomRealtime";
@@ -17,6 +17,7 @@ import ChatInput from "./ChatInput";
 import PaymentRequestModal from "./PaymentRequestModal";
 import { toggleReserveAction } from "./toggleReserveAction";
 import ReviewBanner from "./ReviewBanner";
+import Toast from "@/components/common/Toast";
 
 interface Props {
   initialMessages: MessageWithSender[];
@@ -54,6 +55,7 @@ export default function ChatRoomClient({
   const [input, setInput] = useState("");
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [isReserved, setIsReserved] = useState(initialIsReserved);
+  const [sendError, setSendError] = useState("");
 
   const isSeller = sellerId !== null && currentUser.id === sellerId;
 
@@ -100,6 +102,12 @@ export default function ChatRoomClient({
     const content = input.trim();
     setInput("");
 
+    if (await checkBlockedAction(partner.id)) {
+      setSendError("차단된 사용자와는 메시지를 주고받을 수 없습니다.");
+      setTimeout(() => setSendError(""), 3000);
+      return;
+    }
+
     const tempId = Date.now();
     const optimistic: MessageWithSender = {
       id: tempId,
@@ -140,8 +148,10 @@ export default function ChatRoomClient({
           ),
         );
       }
-    } catch {
+    } catch (e) {
       setMessages((prev) => prev.filter((m) => m.tempId !== tempId));
+      setSendError(e instanceof Error ? e.message : "메시지를 보낼 수 없습니다.");
+      setTimeout(() => setSendError(""), 3000);
     }
   };
 
@@ -189,6 +199,7 @@ export default function ChatRoomClient({
         partner={partner}
         postTitle={postTitle}
         chatId={activeChatId ?? 0}
+        currentUserId={currentUser.id}
         onBack={onBack ?? (() => router.back())}
         onLeave={onLeave}
         isReserved={postType === "used_goods" && isSeller ? isReserved : undefined}
@@ -239,6 +250,7 @@ export default function ChatRoomClient({
           onRequested={handlePaymentRequested}
         />
       )}
+      <Toast message={sendError} showMessage={!!sendError} />
     </div>
   );
 }
