@@ -7,6 +7,7 @@ import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import findChat from "@/services/chat/postChat";
 import { useChatStore } from "@/store/chatStore";
+import { useSuspended } from "@/hooks/useSuspended";
 
 export default function RentSellorInfo({
   rental,
@@ -16,8 +17,10 @@ export default function RentSellorInfo({
   userId: number | undefined;
 }) {
   const isOwner = userId !== undefined && userId === rental.posts.users?.id;
+  const { isSuspended, openModal } = useSuspended();
 
   const handleChat = async () => {
+    if (isSuspended) { openModal(); return; }
     if (!userId || !rental.posts.users || rental.post_id === null) return;
     const chatId = await findChat(userId, rental.posts.users.id, rental.post_id);
     if (chatId !== null) {

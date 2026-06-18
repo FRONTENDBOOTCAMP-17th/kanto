@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import findChat from "@/services/chat/postChat";
 import { useChatStore } from "@/store/chatStore";
+import { useSuspended } from "@/hooks/useSuspended";
 import type { JobDetail } from "@/type/job/jobsDetail";
 
 export default function JobAuthorInfo({
@@ -18,8 +19,10 @@ export default function JobAuthorInfo({
   const t = useTranslations("Job");
   const name = job.posts.users?.name ?? job.manager_name;
   const isOwner = userId !== undefined && userId === job.posts.users?.id;
+  const { isSuspended, openModal } = useSuspended();
 
   const handleChat = async () => {
+    if (isSuspended) { openModal(); return; }
     if (!userId || !job.posts.users) return;
     const chatId = await findChat(userId, job.posts.users.id, job.post_id);
     if (chatId !== null) {
