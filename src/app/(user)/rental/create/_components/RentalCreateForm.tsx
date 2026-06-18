@@ -228,7 +228,7 @@ export default function RentalCreateForm({
         <Button
           variant="ghost"
           onClick={() =>
-            router.push(initialData ? `/rental/${postId}` : "/rental")
+            router.push(initialData ? `/rental/${postId}` : "/create")
           }
           className="mb-6"
         >
@@ -406,7 +406,7 @@ export default function RentalCreateForm({
                 type="button"
                 variant="outline"
                 onClick={() =>
-                  router.push(initialData ? `/rental/${postId}` : "/rental")
+                  router.push(initialData ? `/rental/${postId}` : "/create")
                 }
                 className="flex-1"
                 disabled={isSubmitting}
