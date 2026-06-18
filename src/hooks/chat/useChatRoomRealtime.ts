@@ -126,10 +126,32 @@ export function useChatRoomRealtime({
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
           channel.track({ online_at: new Date().toISOString() });
+          supabase.rpc("set_chat_active", {
+            p_chat_id: chatId,
+            p_user_id: currentUser.id,
+            p_active: true,
+          });
         }
       });
+
+    // 비정상 종료(탭 닫기 등) 시에도 열람중 플래그를 해제
+    const handlePageHide = () => {
+      supabase.rpc("set_chat_active", {
+        p_chat_id: chatId,
+        p_user_id: currentUser.id,
+        p_active: false,
+      });
+    };
+    window.addEventListener("pagehide", handlePageHide);
+
     return () => {
+      window.removeEventListener("pagehide", handlePageHide);
       setPartnerOnline(false);
+      supabase.rpc("set_chat_active", {
+        p_chat_id: chatId,
+        p_user_id: currentUser.id,
+        p_active: false,
+      });
       supabase.removeChannel(channel);
     };
   // currentUser·partner 객체 전체 대신 .id만 사용 — 참조 변경 시 채널 재구독 방지

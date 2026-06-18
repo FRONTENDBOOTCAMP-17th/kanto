@@ -58,9 +58,11 @@ export type Database = {
           last_message_content: string | null
           post_id: number
           user_id_1: number | null
+          user_id_1_active: boolean
           user_id_1_left: boolean | null
           user_id_1_unread: number | null
           user_id_2: number | null
+          user_id_2_active: boolean
           user_id_2_left: boolean | null
           user_id_2_unread: number | null
         }
@@ -71,9 +73,11 @@ export type Database = {
           last_message_content?: string | null
           post_id: number
           user_id_1?: number | null
+          user_id_1_active?: boolean
           user_id_1_left?: boolean | null
           user_id_1_unread?: number | null
           user_id_2?: number | null
+          user_id_2_active?: boolean
           user_id_2_left?: boolean | null
           user_id_2_unread?: number | null
         }
@@ -84,9 +88,11 @@ export type Database = {
           last_message_content?: string | null
           post_id?: number
           user_id_1?: number | null
+          user_id_1_active?: boolean
           user_id_1_left?: boolean | null
           user_id_1_unread?: number | null
           user_id_2?: number | null
+          user_id_2_active?: boolean
           user_id_2_left?: boolean | null
           user_id_2_unread?: number | null
         }
@@ -1159,6 +1165,10 @@ export type Database = {
       is_admin: { Args: never; Returns: boolean }
       my_role: { Args: never; Returns: string }
       my_user_id: { Args: never; Returns: number }
+      set_chat_active: {
+        Args: { p_active: boolean; p_chat_id: number; p_user_id: number }
+        Returns: undefined
+      }
     }
     Enums: {
       product_condition: "미개봉" | "가벼운 사용감" | "사용감 있음"
