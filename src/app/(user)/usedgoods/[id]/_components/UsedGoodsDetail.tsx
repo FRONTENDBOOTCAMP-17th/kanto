@@ -99,12 +99,12 @@ export default function UsedGoodsDetail({
             <ImageCarousel images={images} />
             {data.posts.is_sold ? (
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-2xl bg-black/50 z-10">
-                <span className="text-2xl md:text-4xl font-bold text-white">판매완료</span>
+                <span className="text-2xl md:text-4xl font-bold text-white">{t("soldOut")}</span>
               </div>
             ) : data.posts.is_reserved ? (
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-2xl bg-black/40 z-10">
                 <span className="rounded-lg bg-orange-500 px-4 py-2 text-lg font-bold text-white">
-                  예약중
+                  {t("reserved")}
                 </span>
               </div>
             ) : null}

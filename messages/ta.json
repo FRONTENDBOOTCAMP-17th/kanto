@@ -129,7 +129,8 @@
     "deletedAccount": {
       "favorite": "Hindi maaaring gumamit ng paborito ang account na malapit nang burahin.",
       "write": "Hindi makakagawa ng bagong post ang account na malapit nang burahin."
-    }
+    },
+    "soldOut": "Nabenta Na"
   },
   "Report": {
     "title": "Mag-ulat",
@@ -174,6 +175,27 @@
       "used_goods": "Palengke",
       "rental": "Paupahan",
       "jobs": "Trabaho"
+    },
+    "payment": {
+      "safePayment": "Ligtas na Bayad",
+      "requestTitle": "Kahilingan sa Ligtas na Bayad",
+      "requestAmountLabel": "Halaga (PHP)",
+      "requestSubmit": "Ipadala ang Kahilingan",
+      "requesting": "Nagpapadala...",
+      "requestFailed": "Nabigo ang kahilingan.",
+      "invalidAmount": "Maglagay ng tamang halaga.",
+      "proceed": "Magpatuloy sa Ligtas na Bayad",
+      "proceeding": "Inililipat...",
+      "waitingBuyer": "Naghihintay sa bayad ng mamimili",
+      "cancelRequest": "Kanselahin ang Kahilingan",
+      "escrow": "Nabayaran · Nakaimbak sa escrow",
+      "receiptGuide": "Pagkatanggap ng item, kumpirmahin ang resibo",
+      "confirmReceipt": "Kumpirmahin ang Resibo",
+      "waitingReceipt": "Naghihintay sa kumpirmasyon ng mamimili",
+      "completed": "Nakumpleto ang Transaksyon",
+      "cancelledStatus": "Nakansela ang transaksyon",
+      "expiredStatus": "Nag-expire ang oras ng bayad",
+      "close": "Isara"
     }
   },
   "Notifications": {
@@ -344,6 +366,8 @@
     "price": "Presyo",
     "tradeLocation": "Lugar ng transaksyon",
     "safePayment": "Ligtas na bayad",
+    "reserved": "Nakalaan",
+    "soldOut": "Nabenta na",
     "confirmed": "Nakumpirma",
     "unconfirmed": "Hindi nakumpirma",
     "sellerInfo": "Impormasyon ng nagbebenta",

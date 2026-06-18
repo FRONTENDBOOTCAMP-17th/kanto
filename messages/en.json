@@ -129,7 +129,8 @@
     "deletedAccount": {
       "favorite": "Accounts pending deletion cannot use favorites.",
       "write": "Accounts pending deletion cannot create new posts."
-    }
+    },
+    "soldOut": "Sold Out"
   },
   "Report": {
     "title": "Report",
@@ -174,6 +175,27 @@
       "used_goods": "Marketplace",
       "rental": "Rentals",
       "jobs": "Jobs"
+    },
+    "payment": {
+      "safePayment": "Safe Payment",
+      "requestTitle": "Safe Payment Request",
+      "requestAmountLabel": "Amount (PHP)",
+      "requestSubmit": "Send Payment Request",
+      "requesting": "Requesting...",
+      "requestFailed": "Request failed.",
+      "invalidAmount": "Please enter a valid amount.",
+      "proceed": "Proceed to Safe Payment",
+      "proceeding": "Redirecting...",
+      "waitingBuyer": "Waiting for buyer's payment",
+      "cancelRequest": "Cancel Request",
+      "escrow": "Paid · Held in escrow",
+      "receiptGuide": "Once you receive the item, please confirm receipt",
+      "confirmReceipt": "Confirm Receipt",
+      "waitingReceipt": "Waiting for buyer's confirmation",
+      "completed": "Transaction Complete",
+      "cancelledStatus": "Transaction has been cancelled",
+      "expiredStatus": "Payment time has expired",
+      "close": "Close"
     }
   },
   "Notifications": {
@@ -338,6 +360,8 @@
     "price": "Price",
     "tradeLocation": "Trade location",
     "safePayment": "Safe payment",
+    "reserved": "Reserved",
+    "soldOut": "Sold",
     "confirmed": "Confirmed",
     "unconfirmed": "Unconfirmed",
     "sellerInfo": "Seller info",
