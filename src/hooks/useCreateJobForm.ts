@@ -7,7 +7,7 @@ import { useImageUpload } from "@/hooks/useImageUpload";
 import type { TradeLocation } from "@/type/location";
 import type { EmployeeType, SalaryType, JobInitialData } from "@/type/job/jobCreate";
 
-export function useCreateJobForm(userId: number, initialData?: JobInitialData) {
+export function useCreateJobForm(userId: number, userName: string, initialData?: JobInitialData) {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2>(1);
 
@@ -32,7 +32,7 @@ export function useCreateJobForm(userId: number, initialData?: JobInitialData) {
   const [employeeCount, setEmployeeCount] = useState(initialData?.employee_count?.toString() ?? "");
   const [companyAddress, setCompanyAddress] = useState(initialData?.company_address ?? "");
   const [companyWebsite, setCompanyWebsite] = useState(initialData?.company_website ?? "");
-  const [managerName, setManagerName] = useState(initialData?.manager_name ?? "");
+  const [managerName, setManagerName] = useState(userName);
   const [managerTitle, setManagerTitle] = useState(initialData?.manager_title ?? "");
   const [managerPhone, setManagerPhone] = useState(initialData?.manager_phone ?? "");
   const [managerEmail, setManagerEmail] = useState(initialData?.manager_email ?? "");

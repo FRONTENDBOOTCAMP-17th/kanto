@@ -60,7 +60,7 @@ export function ContentCard({
           <div
             className={`relative overflow-hidden bg-gray-100 shrink-0 ${
               listOnMobile
-                ? "w-20 h-20 rounded-lg md:w-full md:h-auto md:aspect-square md:rounded-none"
+                ? "w-24 h-24 self-center rounded-lg md:w-full md:h-auto md:self-stretch md:aspect-square md:rounded-none"
                 : "aspect-square"
             }`}
           >
