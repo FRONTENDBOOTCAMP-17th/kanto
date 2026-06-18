@@ -1,12 +1,13 @@
 "use client";
 
 import { Bell, Tag, Plus, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useAlertSettings, CATEGORIES, MAX_KEYWORDS, type AlertSettings } from "@/hooks/profile/useAlertSettings";
 
 const ALERT_ITEMS = [
-  { label: "채팅 알림", desc: "새 채팅 메시지 알림", field: "alert_chat" as const },
-  { label: "댓글 알림", desc: "내 게시글에 댓글이 달리면 알림", field: "alert_comment" as const },
-  { label: "새 게시글 알림", desc: "관심 카테고리·키워드 새 게시글 알림", field: "alert_post" as const },
+  { key: "chat", field: "alert_chat" as const },
+  { key: "comment", field: "alert_comment" as const },
+  { key: "post", field: "alert_post" as const },
 ];
 
 export function ProfileAlertsSection({ initialSettings }: { initialSettings: AlertSettings }) {
@@ -19,6 +20,7 @@ export function ProfileAlertsSection({ initialSettings }: { initialSettings: Ale
     addKeyword, removeKeyword,
     handleShowInput, handleCancelInput,
   } = useAlertSettings(initialSettings);
+  const t = useTranslations("Profile.alerts");
 
   const alertValues = { alert_chat: chatAlert, alert_comment: commentAlert, alert_post: postAlert };
 
@@ -29,14 +31,14 @@ export function ProfileAlertsSection({ initialSettings }: { initialSettings: Ale
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-2 mb-5">
             <Bell className="w-4 h-4 text-gray-500" />
-            <h2 className="text-lg font-semibold text-gray-900">알림 설정</h2>
+            <h2 className="text-lg font-semibold text-gray-900">{t("title")}</h2>
           </div>
           <div className="flex flex-col gap-5">
-            {ALERT_ITEMS.map(({ label, desc, field }) => (
+            {ALERT_ITEMS.map(({ key, field }) => (
               <div key={field} className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{label}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">{desc}</p>
+                  <p className="text-sm font-medium text-gray-900">{t(`${key}Label`)}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{t(`${key}Desc`)}</p>
                 </div>
                 <button
                   type="button"
@@ -62,13 +64,13 @@ export function ProfileAlertsSection({ initialSettings }: { initialSettings: Ale
             <div className="max-w-md mx-auto">
               <div className="flex items-center gap-2 mb-2">
                 <Tag className="w-4 h-4 text-gray-500" />
-                <h2 className="text-lg font-semibold text-gray-900">관심 카테고리</h2>
+                <h2 className="text-lg font-semibold text-gray-900">{t("categoryTitle")}</h2>
               </div>
-              <p className="text-sm text-gray-400 mb-5">선택한 카테고리의 새 게시글 알림을 받습니다.</p>
+              <p className="text-sm text-gray-400 mb-5">{t("categoryDesc")}</p>
               <div className="flex flex-col gap-3">
-                {CATEGORIES.map(({ key, label }) => (
+                {CATEGORIES.map(({ key }) => (
                   <label key={key} className="flex items-center justify-between cursor-pointer">
-                    <span className="text-sm font-medium text-gray-900">{label}</span>
+                    <span className="text-sm font-medium text-gray-900">{t(`alertCategories.${key}`)}</span>
                     <input
                       type="checkbox"
                       checked={selectedCategories.includes(key)}
@@ -87,18 +89,18 @@ export function ProfileAlertsSection({ initialSettings }: { initialSettings: Ale
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <Tag className="w-4 h-4 text-gray-500" />
-                  <h2 className="text-lg font-semibold text-gray-900">키워드 알림</h2>
+                  <h2 className="text-lg font-semibold text-gray-900">{t("keywordTitle")}</h2>
                 </div>
                 <span className="text-xs text-gray-400">{keywords.length} / {MAX_KEYWORDS}</span>
               </div>
-              <p className="text-sm text-gray-400 mb-4">키워드가 포함된 새 게시글이 올라오면 알림을 받습니다.</p>
+              <p className="text-sm text-gray-400 mb-4">{t("keywordDesc")}</p>
 
               {keywords.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-4">
                   {keywords.map((kw) => (
                     <span key={kw} className="flex items-center gap-1 px-3 py-1 bg-teal-50 text-teal-700 text-sm rounded-full">
                       {kw}
-                      <button type="button" onClick={() => removeKeyword(kw)} aria-label={`${kw} 키워드 삭제`} className="text-teal-400 hover:text-teal-600 cursor-pointer">
+                      <button type="button" onClick={() => removeKeyword(kw)} aria-label={t("keywordRemoveAria", { keyword: kw })} className="text-teal-400 hover:text-teal-600 cursor-pointer">
                         <X className="w-3 h-3" aria-hidden="true" />
                       </button>
                     </span>
@@ -115,21 +117,21 @@ export function ProfileAlertsSection({ initialSettings }: { initialSettings: Ale
                       value={keywordInput}
                       onChange={(e) => setKeywordInput(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && addKeyword()}
-                      placeholder="키워드 입력 (예: 맥북)"
-                      aria-label="키워드 입력"
+                      placeholder={t("keywordPlaceholder")}
+                      aria-label={t("keywordInputAria")}
                       className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-teal-400"
                     />
                     <button type="button" onClick={addKeyword} disabled={!keywordInput.trim()} className="px-3 py-2 bg-teal-500 text-white text-sm rounded-lg hover:bg-teal-600 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer">
-                      추가
+                      {t("add")}
                     </button>
                     <button type="button" onClick={handleCancelInput} className="px-3 py-2 text-gray-400 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                      취소
+                      {t("cancel")}
                     </button>
                   </div>
                 ) : (
                   <button type="button" onClick={handleShowInput} className="flex items-center gap-1.5 text-sm text-teal-600 hover:text-teal-700 cursor-pointer">
                     <Plus className="w-4 h-4" />
-                    키워드 추가
+                    {t("addKeyword")}
                   </button>
                 )
               )}

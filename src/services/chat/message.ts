@@ -2,7 +2,8 @@ import { createClient } from "@/utils/supabase/server";
 import { MessageWithSender } from "@/type/chat/message";
 
 const MESSAGE_SELECT = `*,
-    sender:users!messages_sender_id_fkey(id, name, avatar_url, created_at)`;
+    sender:users!messages_sender_id_fkey(id, name, avatar_url, created_at),
+    transaction:transactions!messages_transaction_id_fkey(*)`;
 
 // 메시지 조회
 export async function getMessageList(
@@ -39,6 +40,8 @@ export async function postMessage(
     senderId: number;
     postId: number;
     content: string;
+    type?: string;
+    transactionId?: number;
   },
   supabase: Awaited<ReturnType<typeof createClient>>,
 ) {
@@ -50,6 +53,8 @@ export async function postMessage(
       post_id: params.postId,
       content: params.content,
       is_read: false,
+      type: params.type ?? "text",
+      transaction_id: params.transactionId ?? null,
     })
     .select()
     .single();

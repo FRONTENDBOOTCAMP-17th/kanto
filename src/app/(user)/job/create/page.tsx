@@ -14,7 +14,7 @@ export default async function CreateJobPage() {
 
   const { data: dbUser } = await supabase
     .from("users")
-    .select("id, deleted_at")
+    .select("id, name, deleted_at")
     .eq("auth_id", user.id)
     .single();
 
@@ -23,7 +23,7 @@ export default async function CreateJobPage() {
 
   return (
     <div className="page-wrapper">
-      <CreateJobForm userId={dbUser.id} />
+      <CreateJobForm userId={dbUser.id} userName={dbUser.name ?? ""} />
     </div>
   );
 }

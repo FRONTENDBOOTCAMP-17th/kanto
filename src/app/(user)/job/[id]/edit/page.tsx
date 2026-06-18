@@ -13,6 +13,7 @@ export default async function EditJobPage({
     <div className="page-wrapper">
       <CreateJobForm
         userId={job.posts.users?.id ?? 0}
+        userName={job.posts.users?.name ?? ""}
         initialData={{
           post_id: job.post_id,
           title: job.posts.title,
@@ -23,8 +24,11 @@ export default async function EditJobPage({
           location_custom: job.location_custom,
           deadline: job.deadline,
           work_hours: job.work_hours,
+          work_days: job.work_days,
+          is_time_negotiable: job.is_time_negotiable,
           main_task: job.main_task,
           preferred: job.preferred,
+          preferred_tags: job.preferred_tags,
           company_name: job.company_name,
           company_intro: job.company_intro,
           industry: job.industry,
@@ -32,7 +36,6 @@ export default async function EditJobPage({
           employee_count: job.employee_count,
           company_address: job.company_address,
           company_website: job.company_website,
-          manager_name: job.manager_name,
           manager_title: job.manager_title,
           manager_phone: job.manager_phone,
           manager_email: job.manager_email,

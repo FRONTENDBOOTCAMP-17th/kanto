@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Heart, Share2, Siren } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toggleLike } from "@/services/likeToggle";
@@ -28,6 +29,7 @@ export default function InteractionButtons({
   size = "lg",
   className = "",
 }: InteractionButtonsProps) {
+  const t = useTranslations("Common");
   const { user: storeUser } = useAuthStore();
   const [isLiked, setIsLiked] = useState(initialLiked);
   const [showToast, setShowToast] = useState(false);
@@ -41,7 +43,7 @@ export default function InteractionButtons({
       return;
     }
     if (storeUser?.deleted_at) {
-      alert("탈퇴 예정 계정은 찜하기를 이용할 수 없습니다.");
+      alert(t("deletedAccount.favorite"));
       return;
     }
     const wasLiked = isLiked;
@@ -58,7 +60,7 @@ export default function InteractionButtons({
   const handleShare = async () => {
     const url = window.location.href;
     await navigator.clipboard.writeText(url);
-    setToastMessage(`URL이 복사되었습니다.\n${url}`);
+    setToastMessage(`${t("urlCopied")}\n${url}`);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
@@ -68,7 +70,7 @@ export default function InteractionButtons({
       <div className={`flex gap-2 ${className}`}>
         <Button
           size={size}
-          aria-label={isLiked ? "좋아요 취소" : "좋아요"}
+          aria-label={isLiked ? t("unlike") : t("like")}
           aria-pressed={isLiked}
           onClick={handleLike}
           className="cursor-pointer border rounded-lg bg-white hover:bg-black/10 border-gray-200"
@@ -77,7 +79,7 @@ export default function InteractionButtons({
         </Button>
         <Button
           size={size}
-          aria-label="공유하기"
+          aria-label={t("share")}
           onClick={handleShare}
           className="cursor-pointer border rounded-lg bg-white hover:bg-black/10 border-gray-200"
         >
@@ -85,7 +87,7 @@ export default function InteractionButtons({
         </Button>
         <Button
           size={size}
-          aria-label="신고하기"
+          aria-label={t("report")}
           onClick={() => setShowReportModal(true)}
           className="cursor-pointer border rounded-lg bg-white hover:bg-red-300/50 border-gray-200"
         >

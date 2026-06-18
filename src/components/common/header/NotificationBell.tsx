@@ -8,6 +8,7 @@ import {
   useImperativeHandle,
 } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants/routes";
@@ -27,6 +28,7 @@ export interface NotificationBellHandle {
 
 export const NotificationBell = forwardRef<NotificationBellHandle, Props>(
   ({ onOpen }, ref) => {
+    const t = useTranslations("Notifications");
     const router = useRouter();
     const { notifications, unreadCount, markAsRead, markAllRead } =
       useNotifications();
@@ -76,7 +78,7 @@ export const NotificationBell = forwardRef<NotificationBellHandle, Props>(
           size="icon"
           className="w-10 h-10"
           onClick={handleToggle}
-          aria-label="알림"
+          aria-label={t("bell")}
           aria-expanded={isOpen}
           aria-haspopup="true"
         >

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +12,7 @@ import { supabase } from "@/lib/supabase";
 import LoginButton from "./LoginButton";
 
 export default function LoginForm() {
+  const t = useTranslations("Auth");
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,13 +35,13 @@ export default function LoginForm() {
     if (!res.ok) {
       const { code } = await res.json();
       if (res.status === 429) {
-        setErrorMsg("로그인 시도가 너무 많습니다. 잠시 후 다시 시도해주세요.");
+        setErrorMsg(t("errors.tooManyAttempts"));
       } else if (code === "invalid_credentials") {
-        setErrorMsg("이메일 또는 비밀번호가 올바르지 않습니다.");
+        setErrorMsg(t("errors.invalidCredentials"));
       } else if (code === "email_not_confirmed") {
-        setErrorMsg("이메일 인증이 완료되지 않았습니다. 메일함을 확인해주세요.");
+        setErrorMsg(t("errors.emailNotConfirmed"));
       } else {
-        setErrorMsg("로그인에 실패했어요. 다시 시도해주세요.");
+        setErrorMsg(t("errors.generic"));
       }
       setPassword("");
       return;
@@ -59,7 +61,7 @@ export default function LoginForm() {
     });
 
     if (error) {
-      setErrorMsg("로그인에 실패했어요. 다시 시도해주세요.");
+      setErrorMsg(t("errors.generic"));
       return;
     }
   };
@@ -101,21 +103,21 @@ export default function LoginForm() {
           className="space-y-4 mt-6"
         >
           <div className="space-y-2">
-            <Label htmlFor="email">이메일</Label>
+            <Label htmlFor="email">{t("email")}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="example@email.com"
+              placeholder={t("emailPlaceholder")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">비밀번호</Label>
+            <Label htmlFor="password">{t("password")}</Label>
             <Input
               id="password"
               type="password"
-              placeholder="비밀번호를 입력하세요"
+              placeholder={t("passwordPlaceholder")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -127,16 +129,16 @@ export default function LoginForm() {
             disabled={isLoading}
             className="w-full"
           >
-            로그인
+            {t("loginButton")}
           </Button>
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              계정이 없으신가요?{" "}
+              {t("noAccountInline")}{" "}
               <Link
                 href="/signup"
                 className="text-teal-500 hover:text-teal-600 font-semibold"
               >
-                회원가입
+                {t("signup")}
               </Link>
             </p>
           </div>
@@ -146,12 +148,12 @@ export default function LoginForm() {
       {!showEmailForm && (
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
-            아직 계정이 없으신가요?{" "}
+            {t("noAccount")}{" "}
             <Link
               href="/signup"
               className="text-teal-500 hover:text-teal-600 font-semibold underline"
             >
-              회원가입 하러가기
+              {t("signupCta")}
             </Link>
           </p>
         </div>

@@ -1,0 +1,724 @@
+{
+  "Header": {
+    "nav": {
+      "usedgoods": "중고거래",
+      "jobs": "구인구직",
+      "rental": "방렌트",
+      "community": "커뮤니티",
+      "dating": "랜덤채팅"
+    },
+    "login": "로그인",
+    "logout": "로그아웃",
+    "logoutConfirm": "로그아웃 하시겠습니까?",
+    "openMenu": "메뉴 열기",
+    "closeMenu": "메뉴 닫기",
+    "profile": {
+      "menuLabel": "내 프로필 메뉴",
+      "alt": "프로필",
+      "myInfo": "내 정보",
+      "favorites": "찜 목록",
+      "myPosts": "내 게시글",
+      "favoritesShort": "찜",
+      "myPostsShort": "내 글"
+    }
+  },
+  "Footer": {
+    "tagline": "필리핀 한인을 위한<br></br>커뮤니티 플랫폼",
+    "services": {
+      "title": "서비스",
+      "usedgoods": "중고거래",
+      "jobs": "구인구직",
+      "rental": "방렌트",
+      "community": "한인 커뮤니티"
+    },
+    "support": {
+      "title": "고객지원",
+      "report": "문의/신고하기"
+    },
+    "contact": {
+      "title": "연락처",
+      "email": "이메일: support@kanto.ph",
+      "kakao": "카카오톡: @kanto"
+    },
+    "legal": {
+      "termsOfService": "이용약관",
+      "privacyPolicy": "개인정보처리방침",
+      "youthPolicy": "청소년 보호정책"
+    },
+    "copyright": "© 2026 Kanto. All rights reserved."
+  },
+  "Auth": {
+    "email": "이메일",
+    "password": "비밀번호",
+    "emailPlaceholder": "example@email.com",
+    "passwordPlaceholder": "비밀번호를 입력하세요",
+    "loginButton": "로그인",
+    "noAccountInline": "계정이 없으신가요?",
+    "signup": "회원가입",
+    "noAccount": "아직 계정이 없으신가요?",
+    "signupCta": "회원가입 하러가기",
+    "social": {
+      "kakao": "카카오로 계속하기",
+      "google": "Google로 계속하기",
+      "facebook": "Facebook으로 계속하기",
+      "email": "이메일로 로그인"
+    },
+    "errors": {
+      "tooManyAttempts": "로그인 시도가 너무 많습니다. 잠시 후 다시 시도해주세요.",
+      "invalidCredentials": "이메일 또는 비밀번호가 올바르지 않습니다.",
+      "emailNotConfirmed": "이메일 인증이 완료되지 않았습니다. 메일함을 확인해주세요.",
+      "generic": "로그인에 실패했어요. 다시 시도해주세요."
+    }
+  },
+  "LanguageSwitcher": {
+    "label": "언어",
+    "ko": "한국어",
+    "en": "English",
+    "ta": "Tagalog"
+  },
+  "Common": {
+    "confirm": "확인",
+    "cancel": "취소",
+    "delete": "삭제",
+    "edit": "수정",
+    "close": "닫기",
+    "deleteConfirm": "정말 삭제하시겠습니까?",
+    "processing": "처리 중...",
+    "loginRequired": "로그인 이후 이용 가능합니다",
+    "goToLogin": "로그인 하러 가기",
+    "scrollTop": "맨 위로 이동",
+    "more": "더보기",
+    "viewAll": "전체보기",
+    "notFound": "찾을 수 없습니다.",
+    "search": "검색",
+    "searchPlaceholder": "검색어를 입력해주세요",
+    "searchInputLabel": "검색어 입력",
+    "allRegions": "전체 지역",
+    "selectRegion": "지역 선택",
+    "closeRegionSelect": "지역 선택 닫기",
+    "priceNegotiable": "가격 협의",
+    "like": "좋아요",
+    "unlike": "좋아요 취소",
+    "favorite": "찜하기",
+    "unfavorite": "찜 해제",
+    "share": "공유하기",
+    "report": "신고하기",
+    "urlCopied": "URL이 복사되었습니다.",
+    "imageUpload": {
+      "label": "사진 (최대 {maxCount}장)",
+      "add": "사진 추가하기",
+      "removeImage": "이미지 {index} 삭제",
+      "goToImage": "이미지 {index}로 이동"
+    },
+    "carousel": {
+      "noImage": "이미지 없음",
+      "image": "이미지",
+      "prevImage": "이전 이미지",
+      "nextImage": "다음 이미지",
+      "goToImage": "{index}번째 이미지로 이동",
+      "thumbnail": "썸네일 {index}"
+    },
+    "deletionBanner": {
+      "notice": "<b>탈퇴 예정 계정</b>입니다.",
+      "daysLeft": "{days}일 후 모든 데이터가 영구 삭제됩니다.",
+      "today": "오늘 데이터가 삭제될 예정입니다.",
+      "restore": "탈퇴 철회",
+      "restoreFailed": "탈퇴 철회에 실패했습니다. 다시 시도해주세요."
+    },
+    "deletedAccount": {
+      "favorite": "탈퇴 예정 계정은 찜하기를 이용할 수 없습니다.",
+      "write": "탈퇴 예정 계정은 새 글을 작성할 수 없습니다."
+    }
+  },
+  "Report": {
+    "title": "신고하기",
+    "type": "신고 유형",
+    "selectCategory": "카테고리를 선택해주세요",
+    "detail": "상세 내용 (선택)",
+    "detailPlaceholder": "신고 내용을 입력해주세요.",
+    "submitError": "신고 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+    "submit": "신고하기",
+    "done": "신고가 완료되었습니다.",
+    "already": "이미 신고가 완료된 게시글입니다.",
+    "categories": {
+      "욕설": "욕설",
+      "도배": "도배",
+      "사기": "사기",
+      "허위 매물": "허위 매물",
+      "불법 게시물": "불법 게시물",
+      "성 범죄(성희롱/성추행 등)": "성 범죄(성희롱/성추행 등)"
+    }
+  },
+  "Chat": {
+    "title": "채팅",
+    "search": "검색",
+    "empty": "채팅 내역이 없습니다",
+    "unknownUser": "알 수 없음",
+    "noMessage": "메시지가 없습니다",
+    "loading": "로딩중...",
+    "back": "뒤로 가기",
+    "report": "신고하기",
+    "block": "차단하기",
+    "leave": "채팅방 나가기",
+    "moreMenu": "더보기 메뉴",
+    "messageInputLabel": "메시지 입력",
+    "messageSend": "메시지 전송",
+    "inputPlaceholder": "메시지를 입력하세요...",
+    "cooldown": "{seconds}초 후 다시 입력 가능합니다",
+    "loadingMore": "불러오는 중...",
+    "loadPrevious": "이전 메시지 보기",
+    "category": {
+      "used_goods": "중고거래",
+      "rental": "방렌트",
+      "jobs": "구인구직"
+    }
+  },
+  "Notifications": {
+    "title": "알림",
+    "markAllRead": "모두 읽음",
+    "viewAll": "전체보기",
+    "empty": "알림이 없습니다",
+    "bell": "알림"
+  },
+  "Enums": {
+    "productCategory": {
+      "all": "전체",
+      "가구": "가구",
+      "의류": "의류",
+      "전자기기": "전자기기",
+      "악세서리": "악세서리",
+      "유아용품": "유아용품",
+      "자동차": "자동차",
+      "기타": "기타"
+    },
+    "productCondition": {
+      "미개봉": "미개봉",
+      "가벼운 사용감": "가벼운 사용감",
+      "사용감 있음": "사용감 있음"
+    },
+    "employeeType": {
+      "정규직": "정규직",
+      "계약직": "계약직",
+      "파트타임": "파트타임"
+    },
+    "salaryType": {
+      "시급": "시급",
+      "주급": "주급",
+      "월급": "월급"
+    },
+    "rentType": {
+      "월세": "월세",
+      "매매": "매매"
+    },
+    "roomType": {
+      "아파트": "아파트",
+      "스튜디오": "스튜디오",
+      "투룸": "투룸"
+    },
+    "rentalRoomType": {
+      "all": "전체",
+      "studio": "원룸",
+      "tworoom": "투룸",
+      "condo": "콘도"
+    },
+    "amenities": {
+      "주차": "주차",
+      "엘리베이터": "엘리베이터",
+      "에어컨": "에어컨",
+      "세탁기": "세탁기",
+      "냉장고": "냉장고",
+      "반려동물 허용": "반려동물 허용",
+      "금고": "금고",
+      "TV": "TV",
+      "인터넷": "인터넷",
+      "수영장": "수영장",
+      "헬스장": "헬스장",
+      "보안요원": "보안요원"
+    },
+    "tradeLocation": {
+      "otherAreas": "그 외 지역"
+    }
+  },
+  "Create": {
+    "title": "글쓰기",
+    "subtitle": "어떤 글을 작성할까요?",
+    "categories": {
+      "usedgoods": {
+        "name": "중고거래",
+        "description": "중고 물품을 사고 팔아요"
+      },
+      "jobs": {
+        "name": "구인구직",
+        "description": "일자리를 구하거나 직원을 모집해요"
+      },
+      "rental": {
+        "name": "방렌트",
+        "description": "방을 구하거나 방을 내놓아요"
+      },
+      "community": {
+        "name": "커뮤니티",
+        "description": "자유롭게 이야기를 나눠요"
+      }
+    }
+  },
+  "Main": {
+    "tagline": "중고거래 · 구인구직 · 방렌트를 한곳에서",
+    "popularTitle": "인기 목록",
+    "popularBadge": "인기",
+    "popularCategoriesAria": "인기 카테고리",
+    "categorySelect": "카테고리 선택",
+    "categorySelectClose": "카테고리 선택 닫기",
+    "prevSlide": "이전 슬라이드",
+    "nextSlide": "다음 슬라이드",
+    "slideIndicator": "{index}번 슬라이드",
+    "category": {
+      "usedgoods": "중고거래",
+      "jobs": "구인구직",
+      "rental": "방렌트",
+      "community": "커뮤니티"
+    },
+    "hero": {
+      "usedgoods": {
+        "title": "중고거래는 칸토에서!",
+        "description": "필리핀 한인들의 안전한 중고거래 플랫폼",
+        "button": "중고거래 바로가기"
+      },
+      "jobs": {
+        "title": "일자리를 찾고 있다면",
+        "description": "필리핀 한인 구인구직 정보",
+        "button": "구인구직 바로가기"
+      },
+      "rental": {
+        "title": "초저가 방을 찾고 있다면",
+        "description": "합리적인 가격의 방 렌트 정보",
+        "button": "방렌트 바로가기"
+      },
+      "community": {
+        "title": "한인들과 소통하고 싶다면",
+        "description": "필리핀 한인들의 소통 공간",
+        "button": "커뮤니티 바로가기"
+      },
+      "dating": {
+        "title": "새로운 인연을 만나고 싶다면",
+        "description": "필터링된 랜덤 매칭으로 새로운 인연을 시작하세요",
+        "button": "랜덤채팅 바로가기"
+      }
+    }
+  },
+  "Time": {
+    "joinedYearMonth": "{year}년 {month}월 가입",
+    "joinDateUnknown": "가입일 정보 없음"
+  },
+  "UsedGoods": {
+    "title": "중고거래",
+    "subtitle": "필리핀 한인들을 위한 중고거래",
+    "searchResult": "\"{query}\" 검색 결과",
+    "write": "글쓰기",
+    "empty": "등록된 상품이 없습니다",
+    "emptyDescription": "첫 번째 판매자가 되어보세요!",
+    "backToList": "목록으로",
+    "productInfo": "상품 정보",
+    "category": "카테고리",
+    "condition": "상태",
+    "price": "가격",
+    "tradeLocation": "거래 장소",
+    "safePayment": "안전 결제",
+    "confirmed": "확인",
+    "unconfirmed": "미확인",
+    "sellerInfo": "판매자 정보",
+    "chat": "채팅하기",
+    "selectCategory": "카테고리 선택",
+    "description": "상품 설명",
+    "related": "관련 매물",
+    "profileAlt": "프로필",
+    "form": {
+      "back": "뒤로가기",
+      "editTitle": "중고거래 수정",
+      "createTitle": "중고거래 글쓰기",
+      "subtitle": "필요한 정보를 입력해주세요",
+      "titleLabel": "제목 *",
+      "titlePlaceholder": "상품명을 입력하세요",
+      "priceLabel": "가격 *",
+      "categoryLabel": "상품 카테고리 *",
+      "categoryPlaceholder": "카테고리를 선택하세요",
+      "conditionLabel": "상태 *",
+      "conditionPlaceholder": "상태를 선택하세요",
+      "locationLabel": "거래 지역 *",
+      "locationPlaceholder": "지역을 선택하세요",
+      "locationDetailPlaceholder": "상세 지역을 입력하세요",
+      "contentLabel": "내용 *",
+      "contentPlaceholder": "상품에 대한 설명을 입력하세요",
+      "safePaymentUse": "안전 결제 사용",
+      "submitting": "등록 중...",
+      "submit": "작성 완료",
+      "errorPost": "게시글 등록에 실패했습니다.",
+      "errorImage": "이미지 업로드에 실패했습니다.",
+      "errorGoods": "상품 정보 등록에 실패했습니다."
+    }
+  },
+  "Job": {
+    "title": "구인구직",
+    "write": "공고 등록",
+    "emptySearch": "검색 결과가 없어요",
+    "empty": "등록된 구인공고가 없습니다",
+    "allTypes": "전체",
+    "jobInfo": "채용 정보",
+    "employeeType": "고용 형태",
+    "salary": "월급",
+    "workLocation": "근무 지역",
+    "deadline": "마감일",
+    "companyInfo": "회사 정보",
+    "foundedYear": "설립연도",
+    "yearSuffix": "{year}년",
+    "employeeCount": "직원 수",
+    "employeeCountValue": "{count}명",
+    "address": "주소",
+    "website": "웹사이트",
+    "details": "상세 내용",
+    "mainTask": "주요 업무",
+    "preferred": "우대 사항",
+    "viewCount": "조회수: {count}",
+    "applicantCount": "지원자: {count}",
+    "managerInfo": "담당자 정보",
+    "apply": "지원하기",
+    "chat": "채팅하기",
+    "selectEmployeeType": "고용 형태 선택",
+    "profileAlt": "프로필",
+    "photos": "사진",
+    "optional": "(선택사항)",
+    "popularTitle": "인기 공고",
+    "prev": "이전",
+    "next": "다음",
+    "form": {
+      "back": "뒤로가기",
+      "createTitle": "구인구직 글쓰기",
+      "page1Subtitle": "채용 공고의 기본 정보를 입력해주세요",
+      "jobInfo": "채용 정보",
+      "titleLabel": "공고 제목 *",
+      "titlePlaceholder": "예: 한식당 홀 서빙 직원 구합니다",
+      "employeeTypeLabel": "고용 형태 *",
+      "employeeTypePlaceholder": "고용 형태를 선택하세요",
+      "salaryLabel": "급여 *",
+      "salaryUnitPlaceholder": "단위",
+      "locationLabel": "근무 지역 *",
+      "locationPlaceholder": "지역을 선택하세요",
+      "locationDetailPlaceholder": "상세 지역을 입력하세요",
+      "deadlineLabel": "마감일 *",
+      "workHoursLabel": "근무 시간 *",
+
+      "timeNegotiable": "시간 협의",
+      "workDaysLabel": "근무 요일",
+      "selectedCount": "개 선택됨",
+      "preferredSelect": "우대 사항 선택",
+
+      "hour": "시",
+      "minute": "분",
+      "hourValue": "{value}시",
+      "minuteValue": "{value}분",
+      "mainTaskLabel": "주요 업무 *",
+      "mainTaskPlaceholder": "주요 업무를 입력하세요",
+      "preferredLabel": "우대 사항",
+      "preferredPlaceholder": "우대 사항을 입력하세요",
+      "next": "다음 단계",
+      "prev": "이전 단계",
+      "page2Subtitle": "회사 정보와 담당자 연락처를 입력해주세요",
+      "companyInfo": "회사 정보",
+      "companyNameLabel": "회사명 *",
+      "companyNamePlaceholder": "회사명을 입력하세요",
+      "companyIntroLabel": "회사 소개 *",
+      "companyIntroPlaceholder": "회사에 대한 소개를 입력하세요",
+      "industryLabel": "업종",
+      "industryPlaceholder": "예: 음식점업",
+      "foundedYearLabel": "설립연도",
+      "foundedYearPlaceholder": "예: 2018",
+      "employeeCountLabel": "직원 수",
+      "employeeCountPlaceholder": "예: 10",
+      "addressLabel": "주소",
+      "addressPlaceholder": "회사 주소를 입력하세요",
+      "websiteLabel": "웹사이트",
+      "websitePlaceholder": "예: https://company.com",
+      "websiteError": "올바른 웹사이트 주소를 입력해주세요 (예: https://company.com)",
+      "managerInfo": "담당자 정보",
+      "managerNameLabel": "담당자 이름 *",
+      "managerNamePlaceholder": "예: 김철수",
+      "managerTitleLabel": "담당자 직함",
+      "managerTitlePlaceholder": "예: 매니저, HR 담당자",
+      "managerPhoneLabel": "전화번호",
+      "managerPhonePlaceholder": "예: +63 917 123 4567",
+      "managerEmailLabel": "이메일",
+      "managerEmailPlaceholder": "예: recruiter@company.com",
+      "photos": "사진",
+      "optional": "(선택사항)",
+      "submitting": "등록 중...",
+      "submit": "작성 완료",
+      "errorRequired": "필수 항목을 모두 입력해주세요.",
+      "errorLocationDetail": "상세 지역을 입력해주세요.",
+      "errorImage": "이미지 업로드에 실패했습니다.",
+      "errorEdit": "수정에 실패했습니다.",
+      "errorPost": "게시글 등록에 실패했습니다.",
+      "errorJob": "공고 등록에 실패했습니다."
+    }
+  },
+  "Rental": {
+    "title": "방렌트",
+    "subtitle": "필리핀 한인을 위한 방 렌트 정보",
+    "searchResult": "\"{query}\" 검색 결과",
+    "write": "글쓰기",
+    "empty": "등록된 매물이 없습니다",
+    "emptyDescription": "첫 번째 매물을 등록해보세요!",
+    "backToList": "목록으로",
+    "accommodationInfo": "숙소 정보",
+    "deposit": "보증금",
+    "roomType": "방 타입",
+    "maxOccupants": "최대 인원",
+    "occupantsValue": "{count}명",
+    "location": "위치",
+    "landlordInfo": "집주인 정보",
+    "profileAlt": "프로필",
+    "inquire": "문의하기",
+    "chat": "채팅하기",
+    "selectRoomType": "방 종류 선택",
+    "viewCount": "조회수 : {count}",
+    "description": "숙소 설명",
+    "form": {
+      "back": "뒤로가기",
+      "editTitle": "방렌트 글 수정",
+      "createTitle": "방렌트 글쓰기",
+      "subtitle": "필요한 정보를 입력해주세요",
+      "titleLabel": "숙소명 *",
+      "titlePlaceholder": "숙소명을 입력하세요",
+      "locationLabel": "숙소 위치 *",
+      "locationPlaceholder": "지역을 선택하세요",
+      "locationDetailPlaceholder": "상세 위치를 입력하세요",
+      "rentTypeLabel": "월세 / 매매 *",
+      "rentTypePlaceholder": "선택하세요",
+      "priceLabel": "가격 *",
+      "depositLabel": "보증금",
+      "roomTypeLabel": "방 타입 *",
+      "roomTypePlaceholder": "방 타입을 선택하세요",
+      "maxOccupantsLabel": "최대 인원 *",
+      "amenitiesLabel": "편의시설",
+      "descriptionLabel": "상세 설명",
+      "descriptionPlaceholder": "숙소에 대한 상세 설명을 입력하세요",
+      "editing": "수정 중...",
+      "submitting": "등록 중...",
+      "editDone": "수정 완료",
+      "submit": "작성 완료",
+      "errorPost": "게시글 등록에 실패했습니다.",
+      "errorImage": "이미지 업로드에 실패했습니다.",
+      "errorRental": "방 정보 등록에 실패했습니다."
+    }
+  },
+  "Profile": {
+    "menu": {
+      "ariaMenu": "프로필 메뉴",
+      "info": "정보",
+      "reviews": "후기",
+      "alerts": "알림",
+      "blocked": "차단",
+      "settings": "앱 설정"
+    },
+    "avatar": {
+      "alt": "프로필",
+      "changeAria": "프로필 사진 변경",
+      "changeHint": "사진을 클릭하여 변경"
+    },
+    "card": {
+      "back": "뒤로 가기",
+      "title": "내 프로필",
+      "stats": "활동 통계",
+      "posts": "게시글",
+      "favorites": "찜 목록",
+      "reviews": "받은 후기",
+      "account": "계정 정보",
+      "joinedAt": "가입일",
+      "provider": "가입경로",
+      "verify": "본인인증",
+      "verifyDesc": "게시물 작성과 랜덤채팅 참여는 인증이 필요합니다.",
+      "verifyButton": "본인인증 하기"
+    },
+    "providers": {
+      "google": "구글",
+      "kakao": "카카오톡",
+      "facebook": "페이스북",
+      "email": "이메일"
+    },
+    "info": {
+      "editTitle": "프로필 편집",
+      "name": "이름",
+      "email": "이메일",
+      "emailHint": "이메일은 변경할 수 없습니다",
+      "phone": "전화번호",
+      "save": "저장하기",
+      "edit": "수정하기",
+      "passwordTitle": "비밀번호 변경",
+      "currentPassword": "현재 비밀번호",
+      "newPassword": "새 비밀번호",
+      "confirmPassword": "새 비밀번호 확인",
+      "passwordHint": "8자 이상 입력해주세요",
+      "passwordChange": "비밀번호 변경",
+      "deleteTitle": "계정 삭제",
+      "pendingDelete": "탈퇴 신청된 계정입니다. 30일 이내에 철회하지 않으면 모든 데이터가 영구 삭제됩니다.",
+      "processing": "처리 중...",
+      "restore": "탈퇴 철회",
+      "deleteDesc": "탈퇴 시 모든 데이터가 삭제되며 복구할 수 없습니다.",
+      "delete": "회원 탈퇴",
+      "confirmTitle": "정말 탈퇴하시겠습니까?",
+      "confirmDesc": "탈퇴 시 작성하신 게시글, 채팅 내역 등 모든 데이터가 삭제되며 복구할 수 없습니다.",
+      "cancel": "취소",
+      "confirmDelete": "탈퇴하기"
+    },
+    "alerts": {
+      "title": "알림 설정",
+      "chatLabel": "채팅 알림",
+      "chatDesc": "새 채팅 메시지 알림",
+      "commentLabel": "댓글 알림",
+      "commentDesc": "내 게시글에 댓글이 달리면 알림",
+      "postLabel": "새 게시글 알림",
+      "postDesc": "관심 카테고리·키워드 새 게시글 알림",
+      "categoryTitle": "관심 카테고리",
+      "categoryDesc": "선택한 카테고리의 새 게시글 알림을 받습니다.",
+      "keywordTitle": "키워드 알림",
+      "keywordDesc": "키워드가 포함된 새 게시글이 올라오면 알림을 받습니다.",
+      "keywordPlaceholder": "키워드 입력 (예: 맥북)",
+      "keywordInputAria": "키워드 입력",
+      "keywordRemoveAria": "{keyword} 키워드 삭제",
+      "add": "추가",
+      "cancel": "취소",
+      "addKeyword": "키워드 추가",
+      "alertCategories": {
+        "usedgoods": "중고거래",
+        "jobs": "구인구직",
+        "rental": "방렌트",
+        "community": "커뮤니티",
+        "dating": "랜덤채팅"
+      }
+    },
+    "blocked": {
+      "title": "차단한 사용자",
+      "empty": "차단한 사용자가 없습니다"
+    },
+    "reviews": {
+      "title": "거래 후기",
+      "ratingAria": "평점 {rating}점 ({count}건)",
+      "count": "({count}건)",
+      "empty": "아직 받은 후기가 없습니다"
+    },
+    "settings": {
+      "regionTitle": "지역 설정",
+      "regionDesc": "중고거래·방렌트 게시글 검색 시 기준이 되는 지역입니다.",
+      "regionInputAria": "지역 입력",
+      "regionSet": "설정",
+      "languageTitle": "언어 설정",
+      "languageSelectAria": "언어 선택",
+      "linkTitle": "계정 연동",
+      "connected": "연결됨",
+      "unlink": "해제",
+      "unlinkAria": "{provider} 연결 해제",
+      "link": "연결하기",
+      "linkAria": "{provider} 연결하기"
+    },
+    "toast": {
+      "saved": "저장되었습니다.",
+      "updated": "수정되었습니다.",
+      "saveFailed": "저장에 실패했습니다.",
+      "deleteFailed": "계정 삭제에 실패했습니다. 다시 시도해주세요.",
+      "restoreFailed": "탈퇴 철회에 실패했습니다. 다시 시도해주세요.",
+      "linkSuccess": "소셜 계정이 연결되었습니다.",
+      "unlinkSuccess": "소셜 계정 연결이 해제되었습니다.",
+      "unlinkFailed": "연결 해제에 실패했습니다.",
+      "linkFailedCode": "연결에 실패했습니다. ({code})",
+      "linkFailedMessage": "연결에 실패했습니다: {message}",
+      "identityAlreadyExists": "이미 다른 계정에 연동된 소셜 계정입니다.",
+      "sameIdentity": "현재 계정에 이미 연동된 소셜 계정입니다."
+    }
+  },
+  "Signup": {
+    "home": "홈으로 가기",
+    "haveAccount": "이미 계정이 있으신가요?",
+    "login": "로그인",
+    "emailExists": "이미 가입된 이메일입니다.",
+    "form": {
+      "name": "이름",
+      "namePlaceholder": "한글 또는 영어 2자 이상 (예: 홍길동)",
+      "nameError": "한글 또는 영어로 2자 이상 입력해주세요.",
+      "email": "이메일",
+      "emailPlaceholder": "example@email.com",
+      "emailError": "올바른 이메일을 입력해주세요.",
+      "password": "비밀번호",
+      "passwordPlaceholder": "영문 + 숫자 포함 8자 이상",
+      "passwordError": "영문과 숫자를 포함하여 8자 이상 입력해주세요.",
+      "confirmPassword": "비밀번호 확인",
+      "confirmPlaceholder": "비밀번호를 다시 입력하세요",
+      "confirmError": "비밀번호가 일치하지 않습니다.",
+      "showPassword": "비밀번호 표시",
+      "hidePassword": "비밀번호 숨기기",
+      "success": "가입 완료! 이메일을 확인해 인증을 완료해주세요.",
+      "processing": "처리 중...",
+      "submit": "회원가입"
+    },
+    "agree": {
+      "all": "전체 동의하기",
+      "required": "필수",
+      "optional": "선택",
+      "items": {
+        "terms": {
+          "label": "서비스 이용약관",
+          "desc": "면책조항, 금지행위, 제재 기준에 동의합니다"
+        },
+        "privacy": {
+          "label": "개인정보 처리방침",
+          "desc": "가입 시 이메일, 이름 등 개인정보가 저장됩니다"
+        },
+        "age": {
+          "label": "만 18세 이상 확인",
+          "desc": "결제 및 거래 서비스 이용을 위해 필요합니다"
+        },
+        "marketing": {
+          "label": "마케팅 수신 동의",
+          "desc": "이벤트, 혜택 등 마케팅 정보를 받습니다"
+        },
+        "push": {
+          "label": "푸시 알림 수신",
+          "desc": "채팅, 새 게시글 등 알림을 받습니다"
+        }
+      }
+    },
+    "modal": {
+      "titles": {
+        "terms": "서비스 이용약관",
+        "privacy": "개인정보 처리방침",
+        "age": "만 18세 이상 확인"
+      },
+      "loading": "불러오는 중...",
+      "loadError": "내용을 불러올 수 없습니다. 잠시 후 다시 시도해주세요.",
+      "cancel": "취소",
+      "agree": "동의합니다",
+      "readToEnd": "끝까지 읽어주세요"
+    }
+  },
+  "Terms": {
+    "items": {
+      "policy": "운영정책",
+      "service": "서비스 이용약관",
+      "privacy": "개인정보 처리방침",
+      "youth": "청소년 보호정책",
+      "age": "연령 확인 정책",
+      "payment": "안전결제 약관"
+    },
+    "header": {
+      "support": "고객지원",
+      "home": "홈으로 이동"
+    }
+  },
+  "Favorites": {
+    "title": "찜 목록",
+    "myPostsTitle": "내 게시글",
+    "tabsAria": "찜 목록 카테고리",
+    "tabs": {
+      "used_goods": "중고거래",
+      "jobs": "구인구직",
+      "rental": "방렌트"
+    }
+  }
+}

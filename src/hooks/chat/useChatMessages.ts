@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 interface Props {
   initialMessages: MessageWithSender[];
   currentUser: SellerInfo;
-  chatId: number;
+  chatId: number | null;
   partner: SellerInfo;
 }
 
@@ -28,6 +28,7 @@ export function useChatMessages({
   const isInitialScroll = useRef(true);
 
   useEffect(() => {
+    if (chatId === null) return;
     (async () => {
       await supabase
         .from("messages")
@@ -50,7 +51,7 @@ export function useChatMessages({
   }, [messages]);
 
   const loadMore = async () => {
-    if (!hasMore || isLoadingMore || messages.length === 0) return;
+    if (!hasMore || isLoadingMore || messages.length === 0 || chatId === null) return;
     setIsLoadingMore(true);
 
     const oldest = messages[0].created_at;

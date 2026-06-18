@@ -1,8 +1,10 @@
+import { getTranslations } from "next-intl/server";
 import { getPopularList } from "@/services/main/main";
 import { getLikeList } from "@/services/likes";
 import PopularTabs from "./PopularTabs";
 
 export default async function Popular() {
+  const t = await getTranslations("Main");
   const [{ usedGoods, rentals, jobs }, { likedIds, currentUserId }] = await Promise.all([
     getPopularList(),
     getLikeList(),
@@ -62,7 +64,7 @@ export default async function Popular() {
   return (
     <>
       <div className="mt-8">
-        <h1 className="page-title-lg mb-6 md:mb-10">인기 목록</h1>
+        <h1 className="page-title-lg mb-6 md:mb-10">{t("popularTitle")}</h1>
       </div>
       <PopularTabs
         usedGoodsItems={usedGoodsItems}

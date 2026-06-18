@@ -16,7 +16,6 @@ import {
   Briefcase,
   Home,
   Heart,
-  Users,
   Settings,
   ThumbsUp,
   FileText,
@@ -24,20 +23,22 @@ import {
 } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
+import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
+import { SuspendedBanner } from "@/components/common/SuspendedBanner";
 import { NotificationBell } from "./header/NotificationBell";
 import type { NotificationBellHandle } from "./header/NotificationBell";
+import { useTranslations } from "next-intl";
 
 const HEADER_HEIGHT = 48; // 모바일 헤더 높이(h-12)
 
 const NAV_ITEMS = [
-  { name: "중고거래", icon: ShoppingBag, href: ROUTES.usedgoods },
-  { name: "구인구직", icon: Briefcase, href: ROUTES.jobs },
-  { name: "방렌트", icon: Home, href: ROUTES.rental },
-  { name: "커뮤니티", icon: Users, href: ROUTES.community },
-  { name: "랜덤채팅", icon: Heart, href: ROUTES.dating },
-];
+  { key: "usedgoods", icon: ShoppingBag, href: ROUTES.usedgoods },
+  { key: "jobs", icon: Briefcase, href: ROUTES.jobs },
+  { key: "rental", icon: Home, href: ROUTES.rental },
+] as const;
 
 export function Header() {
+  const t = useTranslations("Header");
   const router = useRouter();
   const { user } = useAuthStore();
   useAuthInit();
@@ -121,7 +122,9 @@ export function Header() {
 
           {/* 우측 액션 버튼 */}
           <div className="flex items-center shrink-0">
-            {/* 글쓰기 */}
+            {/* 언어 전환 */}
+            <LanguageSwitcher />
+
             {/* 알림 */}
             {user && (
               <NotificationBell
@@ -137,7 +140,7 @@ export function Header() {
                   variant="ghost"
                   size="icon"
                   className="w-12 h-12"
-                  aria-label="내 프로필 메뉴"
+                  aria-label={t("profile.menuLabel")}
                   aria-expanded={isProfileOpen}
                   aria-haspopup="menu"
                   onClick={() => {
@@ -148,7 +151,7 @@ export function Header() {
                   {user.avatar_url ? (
                     <Image
                       src={user.avatar_url}
-                      alt={user.name ?? "프로필"}
+                      alt={user.name ?? t("profile.alt")}
                       width={36}
                       height={36}
                       className="w-9 h-9 rounded-full object-cover"
@@ -164,17 +167,17 @@ export function Header() {
                   <div className="absolute right-0 top-12 w-40 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                     {[
                       {
-                        label: "내 정보",
+                        label: t("profile.myInfo"),
                         icon: Settings,
                         href: ROUTES.myProfile,
                       },
                       {
-                        label: "찜 목록",
+                        label: t("profile.favorites"),
                         icon: ThumbsUp,
                         href: ROUTES.favorites,
                       },
                       {
-                        label: "내 게시글",
+                        label: t("profile.myPosts"),
                         icon: FileText,
                         href: ROUTES.myPosts,
                       },
@@ -197,7 +200,7 @@ export function Header() {
                       className="w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
                     >
                       <LogOut className="w-4 h-4" />
-                      로그아웃
+                      {t("logout")}
                     </button>
                   </div>
                 )}
@@ -207,7 +210,7 @@ export function Header() {
                 className="hidden md:flex bg-teal-500 hover:bg-teal-600 text-white"
                 onClick={() => router.push(ROUTES.login)}
               >
-                로그인
+                {t("login")}
               </Button>
             )}
 
@@ -216,7 +219,7 @@ export function Header() {
               variant="ghost"
               size="icon"
               className="md:hidden w-10 h-10"
-              aria-label={isMobileOpen ? "메뉴 닫기" : "메뉴 열기"}
+              aria-label={isMobileOpen ? t("closeMenu") : t("openMenu")}
               aria-expanded={isMobileOpen}
               onClick={() => setIsMobileOpen((v) => !v)}
             >
@@ -229,11 +232,25 @@ export function Header() {
           </div>
         </div>
 
+        {/* 데스크탑 네비게이션 */}
+        <nav className="hidden md:flex items-center justify-center gap-1 border-t border-gray-100 py-1">
+          {NAV_ITEMS.map(({ key, icon: Icon, href }) => (
+            <Link
+              key={href}
+              href={href}
+              className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 hover:text-teal-500 hover:bg-teal-50 rounded-lg transition-colors font-medium"
+            >
+              <Icon className="w-4 h-4" />
+              {t(`nav.${key}`)}
+            </Link>
+          ))}
+        </nav>
+
         {/* 모바일 메뉴 */}
         {isMobileOpen && (
           <div className="md:hidden border-t border-gray-200 py-3">
             <nav className="space-y-0.5">
-              {NAV_ITEMS.map(({ name, icon: Icon, href }) => (
+              {NAV_ITEMS.map(({ key, icon: Icon, href }) => (
                 <Link
                   key={href}
                   href={href}
@@ -241,7 +258,7 @@ export function Header() {
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-500 rounded-lg transition-colors"
                 >
                   <Icon className="w-5 h-5" />
-                  <span className="font-medium text-sm">{name}</span>
+                  <span className="font-medium text-sm">{t(`nav.${key}`)}</span>
                 </Link>
               ))}
             </nav>
@@ -250,9 +267,21 @@ export function Header() {
               {user ? (
                 <div className="flex items-center justify-around">
                   {[
-                    { icon: User, href: ROUTES.myProfile, label: "내 정보" },
-                    { icon: Heart, href: ROUTES.favorites, label: "찜" },
-                    { icon: FileText, href: ROUTES.myPosts, label: "내 글" },
+                    {
+                      icon: User,
+                      href: ROUTES.myProfile,
+                      label: t("profile.myInfo"),
+                    },
+                    {
+                      icon: Heart,
+                      href: ROUTES.favorites,
+                      label: t("profile.favoritesShort"),
+                    },
+                    {
+                      icon: FileText,
+                      href: ROUTES.myPosts,
+                      label: t("profile.myPostsShort"),
+                    },
                   ].map(({ icon: Icon, href, label }) => (
                     <Link
                       key={href}
@@ -269,7 +298,7 @@ export function Header() {
                     className="flex flex-col items-center gap-1 p-2 text-red-500 hover:text-red-600 transition-colors"
                   >
                     <LogOut className="w-6 h-6" />
-                    <span className="text-xs">로그아웃</span>
+                    <span className="text-xs">{t("logout")}</span>
                   </button>
                 </div>
               ) : (
@@ -281,17 +310,18 @@ export function Header() {
                     setIsMobileOpen(false);
                   }}
                 >
-                  로그인
+                  {t("login")}
                 </Button>
               )}
             </div>
           </div>
         )}
       </div>
+      <SuspendedBanner />
       <ConfirmModal
         isOpen={isLogoutModalOpen}
-        title="로그아웃 하시겠습니까?"
-        confirmLabel="로그아웃"
+        title={t("logoutConfirm")}
+        confirmLabel={t("logout")}
         onConfirm={handleLogoutConfirm}
         onCancel={() => setIsLogoutModalOpen(false)}
       />

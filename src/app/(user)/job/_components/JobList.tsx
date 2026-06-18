@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { JobCard } from "./JobCard";
 import { EmptyState } from "@/components/common/EmptyState";
 import type { JobWithPost } from "@/type/job/jobList";
@@ -11,11 +12,12 @@ interface Props {
   emptyMessage?: string;
 }
 
-export function JobList({ posts, likedIds, currentUserId, emptyMessage = "등록된 구인공고가 없습니다" }: Props) {
+export function JobList({ posts, likedIds, currentUserId, emptyMessage }: Props) {
+  const t = useTranslations("Job");
   const likedSet = new Set(likedIds);
 
   if (posts.length === 0) {
-    return <EmptyState message={emptyMessage} />;
+    return <EmptyState message={emptyMessage ?? t("empty")} />;
   }
 
   return (
@@ -32,6 +34,10 @@ export function JobList({ posts, likedIds, currentUserId, emptyMessage = "등록
             salary={job.salary}
             salaryType={job.salary_type}
             locationText={job.location_custom ?? job.location_type}
+            createdAt={post.created_at}
+            deadline={job.deadline}
+            employeeType={job.employee_type}
+            workHours={job.is_time_negotiable ? "시간협의" : (job.work_hours ?? "")}
             initialIsLiked={likedSet.has(post.id)}
             currentUserId={currentUserId}
           />

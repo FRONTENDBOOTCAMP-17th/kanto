@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ChevronRight } from "lucide-react";
 import MainCard, { type MainCardItem } from "../MainCard";
 import PopularList from "./PopularList";
@@ -14,13 +15,15 @@ interface Props {
   rentalItems: MainCardItem[];
 }
 
-const TABS: { key: TabKey; label: string; link: string }[] = [
-  { key: "usedGoods", label: "중고거래", link: "/usedgoods" },
-  { key: "jobs", label: "구인구직", link: "/job" },
-  { key: "rentals", label: "방렌트", link: "/rental" },
+const TABS: { key: TabKey; catKey: string; link: string }[] = [
+  { key: "usedGoods", catKey: "usedgoods", link: "/usedgoods" },
+  { key: "jobs", catKey: "jobs", link: "/job" },
+  { key: "rentals", catKey: "rental", link: "/rental" },
 ];
 
 export default function PopularTabs({ usedGoodsItems, jobItems, rentalItems }: Props) {
+  const t = useTranslations("Main");
+  const tc = useTranslations("Common");
   const [activeTab, setActiveTab] = useState<TabKey>("usedGoods");
 
   const itemsMap: Record<TabKey, { items: MainCardItem[]; link: string }> = {
@@ -34,14 +37,14 @@ export default function PopularTabs({ usedGoodsItems, jobItems, rentalItems }: P
   return (
     <>
       <div className="md:hidden">
-        <PopularList title="중고거래" items={usedGoodsItems} link="/usedgoods" />
-        <PopularList title="구인구직" items={jobItems} link="/job" />
-        <PopularList title="방렌트" items={rentalItems} link="/rental" />
+        <PopularList title={t("category.usedgoods")} items={usedGoodsItems} link="/usedgoods" />
+        <PopularList title={t("category.jobs")} items={jobItems} link="/job" />
+        <PopularList title={t("category.rental")} items={rentalItems} link="/rental" />
       </div>
 
       <div className="hidden md:block">
         <div className="section-header">
-          <div role="tablist" aria-label="인기 카테고리" className="flex gap-6 items-end">
+          <div role="tablist" aria-label={t("popularCategoriesAria")} className="flex gap-6 items-end">
             {TABS.map((tab) => (
               <button
                 key={tab.key}
@@ -56,7 +59,7 @@ export default function PopularTabs({ usedGoodsItems, jobItems, rentalItems }: P
                     : "text-gray-400 text-xl"
                 }`}
               >
-                {tab.label}
+                {t(`category.${tab.catKey}`)}
               </button>
             ))}
           </div>
@@ -64,7 +67,7 @@ export default function PopularTabs({ usedGoodsItems, jobItems, rentalItems }: P
             href={activeLink}
             className="flex gap-1 items-center text-teal-500 font-medium text-sm"
           >
-            전체보기
+            {tc("viewAll")}
             <ChevronRight className="w-4 h-4" />
           </Link>
         </div>

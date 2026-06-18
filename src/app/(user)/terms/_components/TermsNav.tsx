@@ -4,16 +4,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { TERMS_LIST } from "../_config";
 
-const termsNavigationList = TERMS_LIST.map(({ type, label }) => ({
-  label,
+const termsNavigationList = TERMS_LIST.map(({ type }) => ({
+  type,
   href: `/terms/${type}`,
 }));
 
 export default function TermsNav() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const t = useTranslations("Terms.items");
 
   const current = termsNavigationList.find(({ href }) => href === pathname);
 
@@ -27,13 +29,13 @@ export default function TermsNav() {
             onClick={() => setIsOpen((v) => !v)}
             className="w-full flex items-center justify-between py-3 text-sm font-medium text-teal-400"
           >
-            <span>{current?.label}</span>
+            <span>{current ? t(current.type) : ""}</span>
             <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
           </button>
 
           {isOpen && (
             <ul className="absolute top-full left-0 right-0 bg-gray-800 border border-gray-700 rounded-b-lg z-10 overflow-hidden">
-              {termsNavigationList.map(({ label, href }) => (
+              {termsNavigationList.map(({ type, href }) => (
                 <li key={href}>
                   <Link
                     href={href}
@@ -44,7 +46,7 @@ export default function TermsNav() {
                         : "text-gray-400 hover:text-teal-400 hover:bg-gray-700"
                     }`}
                   >
-                    {label}
+                    {t(type)}
                   </Link>
                 </li>
               ))}
@@ -54,7 +56,7 @@ export default function TermsNav() {
 
         {/* 데스크탑 탭 */}
         <ul className="hidden md:flex gap-6">
-          {termsNavigationList.map(({ label, href }) => (
+          {termsNavigationList.map(({ type, href }) => (
             <li key={href}>
               <Link
                 href={href}
@@ -64,7 +66,7 @@ export default function TermsNav() {
                     : "border-transparent text-gray-400 hover:text-teal-400"
                 }`}
               >
-                {label}
+                {t(type)}
               </Link>
             </li>
           ))}

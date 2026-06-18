@@ -8,6 +8,7 @@ import { ScrollToTop } from "@/components/common/ScrollToTop";
 import { useAuthStore } from "@/store/authStore";
 import type { User } from "@/type/user";
 import { DeletionPendingBanner } from "@/components/common/DeletionPendingBanner";
+import { SuspendedModal } from "@/components/common/SuspendedModal";
 import FloatingChatWidget from "@/components/common/chat/FloatingChatWidget";
 
 interface Props {
@@ -41,6 +42,7 @@ export function GlobalLayout({ children, initialUser }: Props) {
           <FloatingChatWidget />
         </div>
       )}
+      <SuspendedModal />
       <main className="flex-1">{children}</main>
       {!hideGlobalUI && <Footer />}
     </div>
