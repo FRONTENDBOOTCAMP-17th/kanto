@@ -66,32 +66,6 @@ export function ProfileInfoSection({
         </div>
       </div>
 
-      {/* 비밀번호 변경 — 이메일 로그인 전용 */}
-      {(!user.provider || user.provider === "email") && (
-        <div className="px-5 md:px-0 py-6">
-          <div className="max-w-md mx-auto">
-            <h2 className="text-lg font-semibold text-gray-900 mb-6">{t("passwordTitle")}</h2>
-            <div className="flex flex-col gap-5">
-              <ProfileField label={t("currentPassword")} type="password" value="" onChange={() => {}} />
-              <ProfileField label={t("newPassword")} type="password" value="" onChange={() => {}} />
-              <ProfileField
-                label={t("confirmPassword")}
-                type="password"
-                value=""
-                onChange={() => {}}
-                hint={t("passwordHint")}
-              />
-              <button
-                type="button"
-                className="cursor-pointer w-full py-3.5 rounded-lg bg-gray-800 text-white text-sm font-medium hover:bg-gray-900 transition-colors mt-2"
-              >
-                {t("passwordChange")}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* 계정 삭제 */}
       <div className="px-5 md:px-0 py-6">
         <div className="max-w-md mx-auto">

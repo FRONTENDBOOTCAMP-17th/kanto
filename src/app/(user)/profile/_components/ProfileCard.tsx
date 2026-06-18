@@ -188,7 +188,10 @@ function ProfileForm({
           defaultName=""
           defaultEmail=""
           onClose={() => setIsVerificationOpen(false)}
-          onVerified={() => setIsIdentityVerified(true)}
+          onVerified={() => {
+            setIsIdentityVerified(true);
+            router.refresh();
+          }}
         />
       )}
     </div>

@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import LoginButton from "./LoginButton";
+import { FindPasswordModal } from "./FindPasswordModal";
 
 export default function LoginForm() {
   const t = useTranslations("Auth");
@@ -19,6 +20,7 @@ export default function LoginForm() {
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFindPasswordOpen, setIsFindPasswordOpen] = useState(false);
 
   const handleSubmit = async () => {
     setIsLoading(true);
@@ -122,7 +124,21 @@ export default function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
+          {errorMsg && (
+            <>
+              <p className="text-red-500 text-sm">{errorMsg}</p>
+              <div className="flex items-center justify-center gap-1.5 text-sm">
+                <span className="text-gray-500">{t("forgotPassword")}</span>
+                <button
+                  type="button"
+                  onClick={() => setIsFindPasswordOpen(true)}
+                  className="font-semibold text-teal-500 hover:text-teal-600"
+                >
+                  {t("findPassword")}
+                </button>
+              </div>
+            </>
+          )}
           <Button
             variant="teal"
             type="submit"
@@ -158,6 +174,11 @@ export default function LoginForm() {
           </p>
         </div>
       )}
+
+      <FindPasswordModal
+        isOpen={isFindPasswordOpen}
+        onClose={() => setIsFindPasswordOpen(false)}
+      />
     </>
   );
 }

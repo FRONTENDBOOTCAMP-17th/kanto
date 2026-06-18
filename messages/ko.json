@@ -53,6 +53,8 @@
     "emailPlaceholder": "example@email.com",
     "passwordPlaceholder": "비밀번호를 입력하세요",
     "loginButton": "로그인",
+    "forgotPassword": "비밀번호를 분실하셨나요?",
+    "findPassword": "비밀번호 찾기",
     "noAccountInline": "계정이 없으신가요?",
     "signup": "회원가입",
     "noAccount": "아직 계정이 없으신가요?",
