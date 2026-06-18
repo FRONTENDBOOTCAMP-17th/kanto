@@ -106,6 +106,7 @@
     "urlCopied": "Nakopya ang URL.",
     "imageUpload": {
       "label": "Mga larawan (hanggang {maxCount})",
+      "labelWithMin": "Mga larawan (min {minCount}, max {maxCount})",
       "add": "Magdagdag ng larawan",
       "removeImage": "Alisin ang larawan {index}",
       "goToImage": "Pumunta sa larawan {index}"
@@ -355,7 +356,8 @@
       "submit": "Tapos na",
       "errorPost": "Nabigo ang paggawa ng post.",
       "errorImage": "Nabigo ang pag-upload ng mga larawan.",
-      "errorGoods": "Nabigo ang pagrehistro ng impormasyon ng produkto."
+      "errorGoods": "Nabigo ang pagrehistro ng impormasyon ng produkto.",
+      "errorNoImage": "Mangyaring mag-upload ng hindi bababa sa isang larawan."
     }
   },
   "Job": {

@@ -106,6 +106,7 @@
     "urlCopied": "URL이 복사되었습니다.",
     "imageUpload": {
       "label": "사진 (최대 {maxCount}장)",
+      "labelWithMin": "사진 (최소 {minCount}장, 최대 {maxCount}장)",
       "add": "사진 추가하기",
       "removeImage": "이미지 {index} 삭제",
       "goToImage": "이미지 {index}로 이동"
@@ -355,7 +356,8 @@
       "submit": "작성 완료",
       "errorPost": "게시글 등록에 실패했습니다.",
       "errorImage": "이미지 업로드에 실패했습니다.",
-      "errorGoods": "상품 정보 등록에 실패했습니다."
+      "errorGoods": "상품 정보 등록에 실패했습니다.",
+      "errorNoImage": "이미지를 최소 1장 이상 등록해주세요."
     }
   },
   "Job": {
