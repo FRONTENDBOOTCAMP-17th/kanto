@@ -279,15 +279,14 @@
       "평일": "Weekdays", "주말": "Weekend", "매일": "Every day"
     },
     "preferredGroup": {
-      "어학": "Language", "체류": "Residence", "경력": "Experience", "자격": "Qualifications", "직군": "Role", "기타": "Other"
+      "어학": "Language", "체류": "Residence", "경력": "Experience", "직군": "Role", "기타": "Other"
     },
     "preferredItem": {
-      "korean": "Korean", "english": "English", "tagalog": "Tagalog", "interpretation": "Interpretation",
-      "local_resident": "Local resident", "work_visa": "Work visa", "immediate_start": "Immediate start", "long_term": "Long-term",
-      "same_industry": "Same industry", "job_experience": "Work experience", "beginner_ok": "Beginners welcome", "korean_company_exp": "Korean company exp.",
-      "drivers_license": "Driver's license", "certificate": "Certified", "computer_skill": "Computer skills",
-      "driving": "Driving", "cooking": "Cooking", "teaching": "Teaching", "customer_service": "Customer service",
-      "local_family": "Local family", "referral": "Referral"
+      "korean": "Korean", "english": "English", "tagalog": "Tagalog", "chinese": "Chinese", "japanese": "Japanese", "interpretation": "Interpretation",
+      "local_resident": "Local resident", "nine_g_visa": "9G Visa", "ph_permanent_resident": "PH Permanent Resident", "spouse_visa": "Spouse Visa", "immediate_start": "Immediate start", "long_term": "Long-term",
+      "entry_level": "Entry / Any level", "one_to_three": "1–3 years", "three_to_five": "3–5 years", "five_plus": "5+ years",
+      "office_admin": "Office/Admin", "sales_marketing": "Sales/Marketing", "it_dev": "IT/Development", "design": "Design", "translation": "Translation", "customer_service_cs": "Customer Service/CS", "casino_gaming": "Casino/Gaming", "logistics_trade": "Logistics/Trade", "food_service": "Food/Service", "job_other": "Other",
+      "drivers_license": "Driver's license", "remote_hybrid": "Remote/Hybrid available", "local_family": "Local family", "referral": "Referral"
     }
   },
   "Create": {

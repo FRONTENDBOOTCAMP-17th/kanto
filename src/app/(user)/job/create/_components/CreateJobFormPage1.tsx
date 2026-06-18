@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
+import { X, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -350,16 +350,16 @@ export function CreateJobFormPageOne({
       {/* 우대 사항 */}
       <div className="space-y-2">
         <Label>{t("form.preferredLabel")}</Label>
-        <Button
+        <button
           type="button"
-          variant="outline"
           onClick={() => setShowPreferredModal(true)}
-          className="w-full justify-start font-normal text-gray-600"
+          className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-dashed border-teal-400 py-2.5 text-sm font-medium text-teal-600 transition-colors hover:border-teal-500 hover:bg-teal-50"
         >
+          <Plus className="h-4 w-4" />
           {preferredTags.length > 0
             ? `${preferredTags.length}${t("form.selectedCount")}`
             : t("form.preferredSelect")}
-        </Button>
+        </button>
 
         {/* 선택된 태그 리스트 */}
         {preferredTags.length > 0 && (

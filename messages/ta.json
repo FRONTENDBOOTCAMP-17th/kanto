@@ -279,15 +279,14 @@
       "평일": "Araw ng trabaho", "주말": "Weekend", "매일": "Araw-araw"
     },
     "preferredGroup": {
-      "어학": "Wika", "체류": "Tirahan", "경력": "Karanasan", "자격": "Kwalipikasyon", "직군": "Trabaho", "기타": "Iba pa"
+      "어학": "Wika", "체류": "Tirahan", "경력": "Karanasan", "직군": "Trabaho", "기타": "Iba pa"
     },
     "preferredItem": {
-      "korean": "Korean", "english": "Ingles", "tagalog": "Tagalog", "interpretation": "Interpretasyon",
-      "local_resident": "Lokal na residente", "work_visa": "Work visa", "immediate_start": "Agad magsimula", "long_term": "Pangmatagalan",
-      "same_industry": "Parehong industriya", "job_experience": "Karanasan sa trabaho", "beginner_ok": "OK para sa baguhan", "korean_company_exp": "May karanasan sa Korean na kumpanya",
-      "drivers_license": "Driver's license", "certificate": "May sertipiko", "computer_skill": "Computer skills",
-      "driving": "Pagmamaneho", "cooking": "Pagluluto", "teaching": "Pagtuturo", "customer_service": "Serbisyo sa customer",
-      "local_family": "Lokal na pamilya", "referral": "Rekomendasyon"
+      "korean": "Korean", "english": "Ingles", "tagalog": "Tagalog", "chinese": "Tsino", "japanese": "Hapon", "interpretation": "Interpretasyon",
+      "local_resident": "Lokal na residente", "nine_g_visa": "9G Visa", "ph_permanent_resident": "Permanenteng Residente ng PH", "spouse_visa": "Spouse Visa", "immediate_start": "Agad magsimula", "long_term": "Pangmatagalan",
+      "entry_level": "Baguhan / Kahit sino", "one_to_three": "1–3 taon", "three_to_five": "3–5 taon", "five_plus": "5+ taon",
+      "office_admin": "Opisina/Admin", "sales_marketing": "Benta/Marketing", "it_dev": "IT/Development", "design": "Disenyo", "translation": "Pagsasalin", "customer_service_cs": "Serbisyo sa Customer/CS", "casino_gaming": "Casino/Gaming", "logistics_trade": "Logistics/Kalakalan", "food_service": "Pagkain/Serbisyo", "job_other": "Iba pa",
+      "drivers_license": "Driver's license", "remote_hybrid": "Remote/Hybrid na posible", "local_family": "Lokal na pamilya", "referral": "Rekomendasyon"
     }
   },
   "Create": {
