@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import type { ChatWithUsers } from "@/type/chat/chat";
 import type { MessageWithSender } from "@/type/chat/message";
+import { useAuthStore } from "@/store/authStore";
+import { useSuspendedModalStore } from "@/hooks/useSuspended";
 
 interface ChatState {
   chatList: ChatWithUsers[];
@@ -32,6 +34,13 @@ export const useChatStore = create<ChatState>((set) => ({
     set((state) => ({
       unreadCount: Math.max(0, state.unreadCount - 1),
     })),
-  openWidget: (chatId) => set({ pendingChatId: chatId }),
+  openWidget: (chatId) => {
+    const until = useAuthStore.getState().user?.suspended_until;
+    if (until && new Date(until) > new Date()) {
+      useSuspendedModalStore.getState().open();
+      return;
+    }
+    set({ pendingChatId: chatId });
+  },
   clearPendingChat: () => set({ pendingChatId: null }),
 }));
