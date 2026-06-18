@@ -175,6 +175,7 @@ function ProfileForm({
                   onClick={async () => {
                     await fetch("/api/profile/verification", { method: "DELETE" });
                     setIsIdentityVerified(false);
+                    router.refresh();
                   }}
                   className="cursor-pointer w-full py-2 rounded-lg border border-dashed border-gray-300 text-gray-500 text-xs font-medium bg-transparent hover:bg-gray-50 transition-colors"
                 >
@@ -201,7 +202,10 @@ function ProfileForm({
           defaultName=""
           defaultEmail=""
           onClose={() => setIsVerificationOpen(false)}
-          onVerified={() => setIsIdentityVerified(true)}
+          onVerified={() => {
+            setIsIdentityVerified(true);
+            router.refresh();
+          }}
         />
       )}
     </div>
