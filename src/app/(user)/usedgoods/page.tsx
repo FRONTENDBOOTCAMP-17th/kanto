@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 
 import { getUsedGoodsList } from "@/services/usedGoods/usedGoods";
@@ -24,6 +25,7 @@ export default async function UsedGoodsPage({
 }) {
   const params = await searchParams;
   const currentPage = Number(params.page ?? 1);
+  const t = await getTranslations("UsedGoods");
 
   const [posts, { likedIds, currentUserId }] = await Promise.all([
     getUsedGoodsList({
@@ -44,16 +46,16 @@ export default async function UsedGoodsPage({
     <div className="page-wrapper">
       <main className="flex-1 page-container w-full py-8">
         <div className="relative flex flex-col items-center text-center mb-6">
-          <h1 className="page-title-lg">중고거래</h1>
+          <h1 className="page-title-lg">{t("title")}</h1>
           <p className="text-gray-600 mt-1">
             {params.search
-              ? `"${params.search}" 검색 결과`
-              : "필리핀 한인들을 위한 중고거래"}
+              ? t("searchResult", { query: params.search })
+              : t("subtitle")}
           </p>
           <Link href="/create" className="absolute right-0 top-0">
             <Button variant="teal" className="cursor-pointer gap-1">
               <Plus className="w-4 h-4" />
-              글쓰기
+              {t("write")}
             </Button>
           </Link>
         </div>

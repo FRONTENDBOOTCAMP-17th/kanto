@@ -1,16 +1,12 @@
+import { useTranslations, useLocale } from "next-intl";
 import type { ChatWithUsers } from "@/type/chat/chat";
 import { formatChatListTime } from "@/utils/formatTime";
-
-const categoryLabel: Record<string, string> = {
-  used_goods: "중고거래",
-  room_rent: "방렌트",
-  job: "구인구직",
-};
+import type { Locale } from "@/i18n/config";
 
 const categoryStyle: Record<string, string> = {
-  중고거래: "bg-teal-50 text-teal-600",
-  방렌트: "bg-cyan-50 text-cyan-600",
-  구인구직: "bg-green-50 text-green-600",
+  used_goods: "bg-teal-50 text-teal-600",
+  rental: "bg-cyan-50 text-cyan-600",
+  jobs: "bg-green-50 text-green-600",
 };
 
 interface Props {
@@ -26,14 +22,16 @@ export default function ChatListItem({
   isLast,
   onClick,
 }: Props) {
+  const t = useTranslations("Chat");
+  const locale = useLocale() as Locale;
   const otherUser = chat.user_id_1 === currentUserId ? chat.user2 : chat.user1;
   const lastMessage = chat.last_message_content;
   const unreadCount =
     currentUserId === chat.user_id_1
       ? (chat.user_id_1_unread ?? 0)
       : (chat.user_id_2_unread ?? 0);
-  const category =
-    categoryLabel[chat.posts?.post_type ?? ""] ?? chat.posts?.post_type ?? "";
+  const postType = chat.posts?.post_type ?? "";
+  const hasCategory = postType in categoryStyle;
 
   return (
     <div
@@ -52,21 +50,21 @@ export default function ChatListItem({
         <div className="flex items-center justify-between gap-1 mb-0.5">
           <div className="flex items-center gap-1.5 min-w-0">
             <span className="font-medium text-gray-900 text-sm md:text-xs truncate">
-              {otherUser?.name ?? "알 수 없음"}
+              {otherUser?.name ?? t("unknownUser")}
             </span>
-            {category && (
-              <span className={`text-xs md:text-[10px] px-1.5 py-0.5 rounded-full font-medium shrink-0 ${categoryStyle[category] ?? "bg-gray-100 text-gray-500"}`}>
-                {category}
+            {hasCategory && (
+              <span className={`text-xs md:text-[10px] px-1.5 py-0.5 rounded-full font-medium shrink-0 ${categoryStyle[postType]}`}>
+                {t(`category.${postType}`)}
               </span>
             )}
           </div>
           <span className="text-xs md:text-[10px] text-gray-400 shrink-0">
-            {formatChatListTime(chat.last_message_at)}
+            {formatChatListTime(chat.last_message_at, locale)}
           </span>
         </div>
         <div className="flex items-center justify-between gap-1">
           <p className={`text-sm md:text-xs truncate ${unreadCount > 0 ? "font-medium text-gray-700" : "text-gray-400"}`}>
-            {lastMessage ?? "메시지가 없습니다"}
+            {lastMessage ?? t("noMessage")}
           </p>
           {unreadCount > 0 && (
             <span className="w-5 h-5 md:w-4 md:h-4 rounded-full bg-teal-500 text-white text-xs md:text-[10px] flex items-center justify-center font-medium shrink-0">

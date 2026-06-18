@@ -1,10 +1,10 @@
 import { supabase } from "@/lib/supabase";
 
-export default async function postChat(
+export default async function findChat(
   currentUserId: number,
   sellerId: number,
   postId: number,
-): Promise<number> {
+): Promise<number | null> {
   const { data: existing } = await supabase
     .from("chats")
     .select("id")
@@ -14,21 +14,5 @@ export default async function postChat(
     .eq("post_id", postId)
     .maybeSingle();
 
-  if (existing) {
-    return existing.id;
-  } else {
-    const { data, error } = await supabase
-      .from("chats")
-      .insert({
-        user_id_1: currentUserId,
-        user_id_2: sellerId,
-        post_id: postId,
-      })
-      .select("id")
-      .single();
-
-    if (error) throw new Error(error.message);
-
-    return data.id;
-  }
+  return existing?.id ?? null;
 }

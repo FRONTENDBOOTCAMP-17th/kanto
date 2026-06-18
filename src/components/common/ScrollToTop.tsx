@@ -4,8 +4,10 @@ import { useSuspended } from "@/hooks/useSuspended";
 import { ChevronUp, Plus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 
 export function ScrollToTop() {
+  const t = useTranslations("Common");
   const prevScrollY = useRef(0);
   const [isVisible, setIsVisible] = useState(false);
   const router = useRouter();
@@ -45,7 +47,7 @@ export function ScrollToTop() {
       {showPlus && isLoggedIn && (
         <button
           className="cursor-pointer w-12 h-12 bg-gray-100 hover:bg-gray-300 text-black rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"
-          aria-label="더보기"
+          aria-label={t("more")}
           onClick={handlePlus}
         >
           <Plus className="w-6 h-6" />
@@ -53,7 +55,7 @@ export function ScrollToTop() {
       )}
       <button
         className="cursor-pointer w-12 h-12 btn-primary rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"
-        aria-label="맨 위로 이동"
+        aria-label={t("scrollTop")}
         onClick={handleScrollToTop}
       >
         <ChevronUp className="w-6 h-6" />

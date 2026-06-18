@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { getRentalDetail } from "@/services/rental/rental";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
 import BackButton from "@/app/(user)/rental/[id]/_components/BackButton";
@@ -19,9 +20,10 @@ export default async function RentalDetail({
   try {
     rental = await getRentalDetail(id);
   } catch {
+    const t = await getTranslations("Common");
     return (
       <div className="p-8 text-center text-gray-500">
-        게시글을 찾을 수 없습니다.
+        {t("notFound")}
       </div>
     );
   }
@@ -49,7 +51,7 @@ export default async function RentalDetail({
           <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-112.5">
             <AccommondationInfo rental={rental} />
             <hr className="border-gray-200" />
-            <RentSellerInfo rental={rental} />
+            <RentSellerInfo rental={rental} userId={userId} />
           </div>
         </div>
       ) : (
@@ -60,7 +62,7 @@ export default async function RentalDetail({
               <AccommondationInfo rental={rental} />
             </div>
             <div className="p-6 flex flex-col gap-4">
-              <RentSellerInfo rental={rental} />
+              <RentSellerInfo rental={rental} userId={userId} />
             </div>
           </div>
         </div>

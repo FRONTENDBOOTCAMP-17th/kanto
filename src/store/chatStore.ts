@@ -9,6 +9,7 @@ interface ChatState {
   messages: MessageWithSender[];
   unreadCount: number;
   pendingChatId: number | null;
+  pendingNewChat: PendingNewChat | null;
 
   setChatList: (chats: ChatWithUsers[]) => void;
   setMessages: (messages: MessageWithSender[]) => void;
@@ -17,6 +18,8 @@ interface ChatState {
   decreaseUnreadCount: () => void;
   openWidget: (chatId: number) => void;
   clearPendingChat: () => void;
+  openNewChat: (meta: PendingNewChat) => void;
+  clearNewChat: () => void;
 }
 
 export const useChatStore = create<ChatState>((set) => ({
@@ -24,6 +27,7 @@ export const useChatStore = create<ChatState>((set) => ({
   messages: [],
   unreadCount: 0,
   pendingChatId: null,
+  pendingNewChat: null,
 
   setChatList: (chats) => set({ chatList: chats }),
   setMessages: (messages) => set({ messages }),
@@ -43,4 +47,6 @@ export const useChatStore = create<ChatState>((set) => ({
     set({ pendingChatId: chatId });
   },
   clearPendingChat: () => set({ pendingChatId: null }),
+  openNewChat: (meta) => set({ pendingNewChat: meta }),
+  clearNewChat: () => set({ pendingNewChat: null }),
 }));

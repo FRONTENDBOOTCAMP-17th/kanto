@@ -2,12 +2,10 @@
 
 import { useState, useRef, useEffect } from "react";
 import { MapPin, ChevronDown, ArrowRight, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { TRADE_LOCATIONS } from "@/type/location";
 
-const LOCATION_OPTIONS = [
-  { id: "all", label: "전체 지역" },
-  ...TRADE_LOCATIONS.map((loc) => ({ id: loc, label: loc })),
-];
+const LOCATION_IDS = ["all", ...TRADE_LOCATIONS] as const;
 
 interface SearchBarProps {
   givenSearch?: string;
@@ -18,15 +16,22 @@ interface SearchBarProps {
 }
 
 export function SearchBar({ givenSearch = "", defaultLocation = "all", onSearch, showLocation = false, children }: SearchBarProps) {
+  const t = useTranslations("Common");
+  const te = useTranslations("Enums");
   const [searchInput, setSearchInput] = useState(givenSearch);
   const [locationFilter, setLocationFilter] = useState(defaultLocation);
   const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
   const [mobileLocationOpen, setMobileLocationOpen] = useState(false);
   const locationDropdownRef = useRef<HTMLDivElement>(null);
 
-  const selectedLocationLabel =
-    LOCATION_OPTIONS.find((loc) => loc.id === locationFilter)?.label ??
-    "전체 지역";
+  const locationLabel = (id: string) =>
+    id === "all"
+      ? t("allRegions")
+      : id === "그 외 지역"
+        ? te("tradeLocation.otherAreas")
+        : id;
+
+  const selectedLocationLabel = locationLabel(locationFilter);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -85,15 +90,15 @@ export function SearchBar({ givenSearch = "", defaultLocation = "all", onSearch,
             )}
             <input
               type="text"
-              aria-label="검색어 입력"
-              placeholder="검색어를 입력해주세요"
+              aria-label={t("searchInputLabel")}
+              placeholder={t("searchPlaceholder")}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               className="min-w-0 flex-1 h-full bg-transparent outline-none text-gray-700 placeholder-gray-400 px-2 text-sm"
             />
             <button
               type="submit"
-              aria-label="검색"
+              aria-label={t("search")}
               className="cursor-pointer shrink-0 w-7 h-7 bg-gray-800 hover:bg-teal-500 rounded-full flex items-center justify-center transition-colors mr-0.5"
             >
               <ArrowRight className="w-3.5 h-3.5 text-white" />
@@ -123,21 +128,21 @@ export function SearchBar({ givenSearch = "", defaultLocation = "all", onSearch,
             </button>
             {locationDropdownOpen && (
               <div className="absolute top-full left-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-200 py-2 z-50">
-                {LOCATION_OPTIONS.map((loc) => (
+                {LOCATION_IDS.map((id) => (
                   <button
-                    key={loc.id}
+                    key={id}
                     type="button"
                     onClick={() => {
-                      setLocationFilter(loc.id);
+                      setLocationFilter(id);
                       setLocationDropdownOpen(false);
                     }}
                     className={`dropdown-item ${
-                      locationFilter === loc.id
+                      locationFilter === id
                         ? "bg-teal-50 text-teal-600 font-semibold"
                         : "text-gray-700"
                     }`}
                   >
-                    {loc.label}
+                    {locationLabel(id)}
                   </button>
                 ))}
               </div>
@@ -154,15 +159,15 @@ export function SearchBar({ givenSearch = "", defaultLocation = "all", onSearch,
           <div className="w-px h-5 bg-gray-300 mx-1 shrink-0" />
           <input
             type="text"
-            aria-label="검색어 입력"
-            placeholder="검색어를 입력해주세요"
+            aria-label={t("searchInputLabel")}
+            placeholder={t("searchPlaceholder")}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="min-w-0 flex-1 h-full bg-transparent outline-none text-gray-700 placeholder-gray-400 px-2 text-sm"
           />
           <button
             type="submit"
-            aria-label="검색"
+            aria-label={t("search")}
             className="cursor-pointer shrink-0 w-8 h-8 bg-gray-800 hover:bg-teal-500 rounded-full flex items-center justify-center transition-colors mr-0.5"
           >
             <ArrowRight className="w-4 h-4 text-white" />
@@ -182,37 +187,37 @@ export function SearchBar({ givenSearch = "", defaultLocation = "all", onSearch,
               <div className="w-10 h-1 rounded-full bg-gray-300" />
             </div>
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <span className="font-bold text-gray-900 text-lg">지역 선택</span>
+              <span className="font-bold text-gray-900 text-lg">{t("selectRegion")}</span>
               <button
                 type="button"
                 onClick={() => setMobileLocationOpen(false)}
-                aria-label="지역 선택 닫기"
+                aria-label={t("closeRegionSelect")}
                 className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
               >
                 <X className="w-5 h-5 text-gray-500" />
               </button>
             </div>
             <div className="px-4 py-3">
-              {LOCATION_OPTIONS.map((loc) => (
+              {LOCATION_IDS.map((id) => (
                 <button
-                  key={loc.id}
+                  key={id}
                   type="button"
                   onClick={() => {
-                    setLocationFilter(loc.id);
+                    setLocationFilter(id);
                     setMobileLocationOpen(false);
                   }}
                   className={`w-full flex items-center justify-between px-5 py-4 rounded-xl mb-2 transition-colors ${
-                    locationFilter === loc.id
+                    locationFilter === id
                       ? "bg-teal-50 text-teal-600"
                       : "text-gray-700 hover:bg-gray-50"
                   }`}
                 >
                   <span
-                    className={`text-base ${locationFilter === loc.id ? "font-semibold" : ""}`}
+                    className={`text-base ${locationFilter === id ? "font-semibold" : ""}`}
                   >
-                    {loc.label}
+                    {locationLabel(id)}
                   </span>
-                  {locationFilter === loc.id && (
+                  {locationFilter === id && (
                     <div className="w-5 h-5 rounded-full bg-teal-500 flex items-center justify-center">
                       <svg
                         className="w-3 h-3 text-white"

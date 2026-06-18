@@ -1,17 +1,39 @@
+import { useTranslations } from "next-intl";
 import type { JobDetail } from "@/type/job/jobsDetail";
+import { PREFERRED_LABELS } from "@/type/job/jobCreate";
 
 export default function JobContent({ job }: { job: JobDetail }) {
+  const hasTags = !!job.preferred_tags && job.preferred_tags.length > 0;
+  const t = useTranslations("Job");
   return (
     <div className="p-6 space-y-6">
-      <h2 className="font-semibold text-base">상세 내용</h2>
+      <h2 className="font-semibold text-base md:text-lg">{t("details")}</h2>
       <div className="space-y-2">
-        <h3 className="font-medium text-gray-700">주요 업무</h3>
-        <p className="text-sm text-gray-600 whitespace-pre-line">{job.main_task}</p>
+        <h3 className="font-medium text-gray-700 md:text-lg">{t("mainTask")}</h3>
+        <p className="text-sm md:text-base text-gray-600 whitespace-pre-line">{job.main_task}</p>
       </div>
-      {job.preferred && (
+      {(hasTags || job.preferred) && (
         <div className="space-y-2">
-          <h3 className="font-medium text-gray-700">우대 사항</h3>
-          <p className="text-sm text-gray-600 whitespace-pre-line">{job.preferred}</p>
+<h3 className="font-medium text-gray-700 md:text-lg">
+  {t("preferred")}
+</h3>
+
+<div className="flex flex-wrap gap-2">
+  {job.preferred_tags?.map((tag) => (
+    <span
+      key={tag}
+      className="text-xs md:text-sm bg-gray-100 text-gray-600 rounded-full px-2.5 py-1"
+    >
+      {PREFERRED_LABELS[tag] ?? tag}
+    </span>
+  ))}
+
+  {job.preferred && (
+    <span className="text-xs md:text-sm bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">
+      {job.preferred}
+    </span>
+  )}
+</div>
         </div>
       )}
     </div>

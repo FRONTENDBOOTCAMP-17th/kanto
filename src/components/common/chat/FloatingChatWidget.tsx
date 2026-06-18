@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
-import { useChatStore } from "@/store/chatStore";
+import { useChatStore, type PendingNewChat } from "@/store/chatStore";
 import { useSuspended } from "@/hooks/useSuspended";
 import { useChatListRealtime } from "@/hooks/chat/useChatListRealtime";
 import ChatBubbleButton from "./ChatBubbleButton";
@@ -11,12 +12,14 @@ import ChatRoom from "./chatPanel/room/ChatRoom";
 import type { ChatWithUsers } from "@/type/chat/chat";
 
 export default function FloatingChatWidget() {
-  const { isLoggedIn } = useAuthStore();
+  const t = useTranslations("Chat");
+  const { isLoggedIn, user: authUser } = useAuthStore();
   const { isSuspended, openModal } = useSuspended();
   const setUnreadCount = useChatStore((s) => s.setUnreadCount);
   const [isOpen, setIsOpen] = useState(false);
   const [view, setView] = useState<"list" | "room">("list");
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
+  const [pendingNewChatMeta, setPendingNewChatMeta] = useState<PendingNewChat | null>(null);
   const [chats, setChats] = useState<ChatWithUsers[]>([]);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
@@ -26,12 +29,20 @@ export default function FloatingChatWidget() {
         setIsOpen(true);
         setView("room");
         setSelectedChatId(state.pendingChatId);
+        setPendingNewChatMeta(null);
         useChatStore.getState().clearPendingChat();
         fetch("/api/chat/list")
           .then((r) => r.json())
           .then((json) => {
             if (!json.error) setChats(json.chatList);
           });
+      }
+      if (state.pendingNewChat && state.pendingNewChat !== prev.pendingNewChat) {
+        setIsOpen(true);
+        setView("room");
+        setSelectedChatId(null);
+        setPendingNewChatMeta(state.pendingNewChat);
+        useChatStore.getState().clearNewChat();
       }
     });
   }, []);
@@ -74,6 +85,15 @@ export default function FloatingChatWidget() {
 
   if (!isLoggedIn) return null;
 
+  const currentUserForRoom = authUser
+    ? {
+        id: authUser.id,
+        name: authUser.name,
+        avatar_url: authUser.avatar_url,
+        created_at: authUser.created_at,
+      }
+    : null;
+
   return (
     <div className="flex flex-col items-end gap-2">
       {isOpen && (
@@ -86,7 +106,7 @@ export default function FloatingChatWidget() {
         >
           {!currentUserId ? (
             <div className="flex items-center justify-center h-full text-sm text-gray-400">
-              로딩중...
+              {t("loading")}
             </div>
           ) : view === "list" ? (
             <ChatList
@@ -94,16 +114,39 @@ export default function FloatingChatWidget() {
               currentUserId={currentUserId}
               onChatSelect={(id) => {
                 setSelectedChatId(id);
+                setPendingNewChatMeta(null);
                 setView("room");
               }}
             />
-          ) : view === "room" && selectedChatId !== null ? (
+          ) : view === "room" && (selectedChatId !== null || pendingNewChatMeta !== null) ? (
             <ChatRoom
               chatId={selectedChatId}
-              onBack={() => setView("list")}
+              newChatMeta={pendingNewChatMeta ?? undefined}
+              currentUserOverride={currentUserForRoom ?? undefined}
+              onBack={() => {
+                if (selectedChatId !== null) {
+                  setChats((prev) =>
+                    prev.map((c) => {
+                      if (c.id !== selectedChatId) return c;
+                      return {
+                        ...c,
+                        user_id_1_unread: c.user_id_1 === currentUserId ? 0 : c.user_id_1_unread,
+                        user_id_2_unread: c.user_id_2 === currentUserId ? 0 : c.user_id_2_unread,
+                      };
+                    })
+                  );
+                }
+                setPendingNewChatMeta(null);
+                setView("list");
+              }}
               onLeave={() => {
                 setChats((prev) => prev.filter((c) => c.id !== selectedChatId));
-                setView("list")
+                setPendingNewChatMeta(null);
+                setView("list");
+              }}
+              onChatCreated={(newId) => {
+                setSelectedChatId(newId);
+                setPendingNewChatMeta(null);
               }}
             />
           ) : null}
@@ -120,6 +163,7 @@ export default function FloatingChatWidget() {
             if (isOpen) {
               setView("list");
               setSelectedChatId(null);
+              setPendingNewChatMeta(null);
             }
             setIsOpen((v) => !v);
           }}

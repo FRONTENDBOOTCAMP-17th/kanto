@@ -2,18 +2,21 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ArrowRight, ChevronDown, X } from "lucide-react";
 
 const CATEGORIES = [
-  { id: "usedgoods", label: "중고거래", path: "/usedgoods" },
-  { id: "job",       label: "구인구직", path: "/job" },
-  { id: "rental",    label: "방렌트",   path: "/rental" },
-  { id: "community", label: "커뮤니티", path: "/community" },
+  { id: "usedgoods", catKey: "usedgoods", path: "/usedgoods" },
+  { id: "job",       catKey: "jobs",      path: "/job" },
+  { id: "rental",    catKey: "rental",    path: "/rental" },
+  { id: "community", catKey: "community", path: "/community" },
 ] as const;
 
 type Category = (typeof CATEGORIES)[number];
 
 export default function MainSearchBar() {
+  const t = useTranslations("Main");
+  const tc = useTranslations("Common");
   const [searchInput, setSearchInput] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<Category>(CATEGORIES[0]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -55,7 +58,7 @@ export default function MainSearchBar() {
             aria-haspopup="dialog"
             className="md:hidden flex items-center gap-1 px-3 h-8 rounded-full font-semibold text-sm whitespace-nowrap transition-colors select-none hover:bg-gray-100"
           >
-            <span>{selectedCategory.label}</span>
+            <span>{t(`category.${selectedCategory.catKey}`)}</span>
             <ChevronDown className="w-3.5 h-3.5 text-gray-500" />
           </button>
 
@@ -68,7 +71,7 @@ export default function MainSearchBar() {
               aria-haspopup="listbox"
               className="flex items-center gap-1 px-3 h-8 rounded-full font-semibold text-sm whitespace-nowrap transition-colors select-none hover:bg-gray-100"
             >
-              <span>{selectedCategory.label}</span>
+              <span>{t(`category.${selectedCategory.catKey}`)}</span>
               <ChevronDown className={`w-3.5 h-3.5 text-gray-500 transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`} />
             </button>
 
@@ -83,7 +86,7 @@ export default function MainSearchBar() {
                       selectedCategory.id === cat.id ? "bg-teal-50 text-teal-600 font-semibold" : "text-gray-700"
                     }`}
                   >
-                    {cat.label}
+                    {t(`category.${cat.catKey}`)}
                   </button>
                 ))}
               </div>
@@ -93,15 +96,15 @@ export default function MainSearchBar() {
           <div className="w-px h-5 bg-gray-300 mx-1 shrink-0" />
           <input
             type="text"
-            aria-label="검색어 입력"
-            placeholder="검색어를 입력해주세요"
+            aria-label={tc("searchInputLabel")}
+            placeholder={tc("searchPlaceholder")}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="min-w-0 flex-1 h-full bg-transparent outline-none text-gray-700 placeholder-gray-400 px-2 text-sm"
           />
           <button
             type="submit"
-            aria-label="검색"
+            aria-label={tc("search")}
             className="cursor-pointer shrink-0 w-7 h-7 md:w-8 md:h-8 bg-gray-800 hover:bg-teal-500 rounded-full flex items-center justify-center transition-colors mr-0.5"
           >
             <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" />
@@ -118,11 +121,11 @@ export default function MainSearchBar() {
               <div className="w-10 h-1 rounded-full bg-gray-300" />
             </div>
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <span className="font-bold text-gray-900 text-lg">카테고리 선택</span>
+              <span className="font-bold text-gray-900 text-lg">{t("categorySelect")}</span>
               <button
                 type="button"
                 onClick={() => setBottomSheetOpen(false)}
-                aria-label="카테고리 선택 닫기"
+                aria-label={t("categorySelectClose")}
                 className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
               >
                 <X className="w-5 h-5 text-gray-500" />
@@ -139,7 +142,7 @@ export default function MainSearchBar() {
                   }`}
                 >
                   <span className={`text-base ${selectedCategory.id === cat.id ? "font-semibold" : ""}`}>
-                    {cat.label}
+                    {t(`category.${cat.catKey}`)}
                   </span>
                   {selectedCategory.id === cat.id && (
                     <div className="w-5 h-5 rounded-full bg-teal-500 flex items-center justify-center">

@@ -2,8 +2,10 @@
 
 import { MoveLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function BackButton() {
+  const t = useTranslations("Rental");
   const router = useRouter();
   return (
     <button
@@ -11,7 +13,7 @@ export default function BackButton() {
       className="flex mx-2 my-4 gap-2 cursor-pointer"
     >
       <MoveLeft />
-      목록으로
+      {t("backToList")}
     </button>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { ArrowLeft, MoreVertical } from "lucide-react";
 import type { SellerInfo } from "@/type/user";
 import { useClickOutside } from "@/hooks/useClickOutside";
@@ -22,6 +23,7 @@ export default function ChatHeader({
   onBack,
   onLeave
 }: Props) {
+  const t = useTranslations("Chat");
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -36,7 +38,7 @@ export default function ChatHeader({
     <div className="bg-teal-500 px-4 py-3 md:px-3 md:py-2.5 flex items-center gap-2 relative shrink-0">
       <button
         onClick={onBack}
-        aria-label="뒤로 가기"
+        aria-label={t("back")}
         className="text-white p-1 rounded-full hover:bg-teal-600 transition-colors shrink-0"
       >
         <ArrowLeft className="w-5 h-5 md:w-4 md:h-4" />
@@ -68,7 +70,7 @@ export default function ChatHeader({
       <div ref={menuRef} className="relative">
         <button
           onClick={() => setMenuOpen((prev) => !prev)}
-          aria-label="더보기 메뉴"
+          aria-label={t("moreMenu")}
           aria-expanded={menuOpen}
           aria-haspopup="menu"
           className="text-white p-1 rounded-full hover:bg-teal-600 transition-colors"
@@ -79,16 +81,16 @@ export default function ChatHeader({
         {menuOpen && (
           <div className="absolute right-0 top-9 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden w-36 z-10">
             <button className="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-gray-50 transition-colors">
-              신고하기
+              {t("report")}
             </button>
             <button className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors border-t border-gray-100">
-              차단하기
+              {t("block")}
             </button>
             <button
               onClick={handleLeave}
               className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors border-t border-gray-100"
             >
-              채팅방 나가기
+              {t("leave")}
             </button>
           </div>
         )}

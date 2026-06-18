@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { RentalCard } from "./RentalCard";
 import { EmptyState } from "@/components/common/EmptyState";
 import type { RentalWithPost } from "@/type/rental/rentalList";
@@ -11,10 +12,11 @@ interface Props {
 }
 
 export function RentalList({ initialPosts, initialLikedIds, currentUserId }: Props) {
+  const t = useTranslations("Rental");
   const likedSet = new Set(initialLikedIds);
 
   if (initialPosts.length === 0) {
-    return <EmptyState message="등록된 매물이 없습니다" description="첫 번째 매물을 등록해보세요!" />;
+    return <EmptyState message={t("empty")} description={t("emptyDescription")} />;
   }
 
   return (

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { useImageUpload } from "@/hooks/useImageUpload";
 import type { TradeLocation } from "@/type/location";
@@ -9,6 +10,7 @@ import type { EmployeeType, SalaryType, JobInitialData } from "@/type/job/jobCre
 
 export function useCreateJobForm(userId: number, userName: string, initialData?: JobInitialData) {
   const router = useRouter();
+  const t = useTranslations("Job.form");
   const [step, setStep] = useState<1 | 2>(1);
 
   // 1단계: 채용 정보
@@ -21,8 +23,11 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   const [deadline, setDeadline] = useState(initialData?.deadline ?? "");
   const [workHoursStart, setWorkHoursStart] = useState(() => (initialData?.work_hours ?? "").split(" - ")[0] ?? "");
   const [workHoursEnd, setWorkHoursEnd] = useState(() => (initialData?.work_hours ?? "").split(" - ")[1] ?? "");
+  const [workDays, setWorkDays] = useState<string[]>(initialData?.work_days ?? []);
+  const [isTimeNegotiable, setIsTimeNegotiable] = useState(initialData?.is_time_negotiable ?? false);
   const [mainTask, setMainTask] = useState(initialData?.main_task ?? "");
   const [preferred, setPreferred] = useState(initialData?.preferred ?? "");
+  const [preferredTags, setPreferredTags] = useState<string[]>(initialData?.preferred_tags ?? []);
 
   // 2단계: 회사 및 담당자 정보
   const [companyName, setCompanyName] = useState(initialData?.company_name ?? "");
@@ -41,12 +46,16 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
 
 
   const handleNextStep = () => {
-    if (!title || !employeeType || !salary || !locationType || !deadline || !workHoursStart || !workHoursEnd || !mainTask) {
-      alert("필수 항목을 모두 입력해주세요.");
+    if (!title || !employeeType || !salary || !locationType || !deadline || !mainTask) {
+      alert(t("errorRequired"));
+      return;
+    }
+    if (!isTimeNegotiable && (!workHoursStart || !workHoursEnd || workDays.length === 0)) {
+      alert("근무 시간과 근무 요일을 입력하거나 시간 협의를 선택해주세요.");
       return;
     }
     if (locationType === "그 외 지역" && !locationCustom) {
-      alert("상세 지역을 입력해주세요.");
+      alert(t("errorLocationDetail"));
       return;
     }
     setStep(2);
@@ -55,7 +64,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
 
   const handleSubmit = async () => {
     if (!companyName || !companyIntro || !managerName) {
-      alert("필수 항목을 모두 입력해주세요.");
+      alert(t("errorRequired"));
       return;
     }
     setIsSubmitting(true);
@@ -70,12 +79,15 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       employee_type: employeeType as EmployeeType,
       salary: Number(salary),
       salary_type: salaryType || null,
-      work_hours: `${workHoursStart} - ${workHoursEnd}`,
+      work_hours: isTimeNegotiable ? null : `${workHoursStart} - ${workHoursEnd}`,
+      work_days: isTimeNegotiable ? null : workDays,
+      is_time_negotiable: isTimeNegotiable,
       company_year: companyYear ? Number(companyYear) : null,
       employee_count: employeeCount ? Number(employeeCount) : null,
       company_address: companyAddress || null,
       company_website: companyWebsite || null,
       preferred: preferred || null,
+      preferred_tags: preferredTags.length > 0 ? preferredTags : null,
       deadline,
       manager_name: managerName,
       manager_title: managerTitle || null,
@@ -91,7 +103,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
         const filePath = `${userId}/${initialData.post_id}/${Date.now()}.${ext}`;
         const { error: uploadError } = await supabase.storage.from("images").upload(filePath, file);
         if (uploadError) {
-          alert("이미지 업로드에 실패했습니다.");
+          alert(t("errorImage"));
           setIsSubmitting(false);
           return;
         }
@@ -108,7 +120,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
         .eq("post_id", initialData.post_id);
 
       if (error) {
-        alert("수정에 실패했습니다.");
+        alert(t("errorEdit"));
         setIsSubmitting(false);
         return;
       }
@@ -125,7 +137,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       .single();
 
     if (postError || !post) {
-      alert("게시글 등록에 실패했습니다.");
+      alert(t("errorPost"));
       setIsSubmitting(false);
       return;
     }
@@ -137,7 +149,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       const { error: uploadError } = await supabase.storage.from("images").upload(filePath, file);
       if (uploadError) {
         await supabase.from("posts").delete().eq("id", post.id);
-        alert("이미지 업로드에 실패했습니다.");
+        alert(t("errorImage"));
         setIsSubmitting(false);
         return;
       }
@@ -153,7 +165,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
 
     if (jobError) {
       await supabase.from("posts").delete().eq("id", post.id);
-      alert("공고 등록에 실패했습니다.");
+      alert(t("errorJob"));
       setIsSubmitting(false);
       return;
     }
@@ -173,8 +185,11 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     deadline, setDeadline,
     workHoursStart, setWorkHoursStart,
     workHoursEnd, setWorkHoursEnd,
+    workDays, setWorkDays,
+    isTimeNegotiable, setIsTimeNegotiable,
     mainTask, setMainTask,
     preferred, setPreferred,
+    preferredTags, setPreferredTags,
     handleNextStep,
     // 2단계
     companyName, setCompanyName,

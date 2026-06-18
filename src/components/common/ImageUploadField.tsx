@@ -1,6 +1,7 @@
 "use client";
 
 import { ImagePlus, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Label } from "@/components/ui/label";
 
 interface ImageUploadFieldProps {
@@ -20,9 +21,10 @@ export function ImageUploadField({
   onSelect,
   onRemove,
 }: ImageUploadFieldProps) {
+  const t = useTranslations("Common");
   return (
     <div className="space-y-2">
-      <Label>사진 (최대 {maxCount}장)</Label>
+      <Label>{t("imageUpload.label", { maxCount })}</Label>
       <input
         ref={fileInputRef}
         type="file"
@@ -44,7 +46,7 @@ export function ImageUploadField({
                 <button
                   type="button"
                   onClick={() => onRemove(index)}
-                  aria-label={`이미지 ${index + 1} 삭제`}
+                  aria-label={t("imageUpload.removeImage", { index: index + 1 })}
                   className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600"
                 >
                   <X className="w-4 h-4" />
@@ -61,7 +63,7 @@ export function ImageUploadField({
           >
             <div className="flex flex-col items-center gap-2 text-gray-500">
               <ImagePlus className="w-8 h-8" />
-              <span className="text-sm">사진 추가하기</span>
+              <span className="text-sm">{t("imageUpload.add")}</span>
               <span className="text-xs">({imagePreviews.length}/{maxCount})</span>
             </div>
           </button>

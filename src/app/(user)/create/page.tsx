@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { ShoppingBag, Briefcase, Home, Users } from "lucide-react";
 import { createClient } from "@/utils/supabase/server";
 
 const CATEGORIES = [
   {
-    name: "중고거래",
-    description: "중고 물품을 사고 팔아요",
+    key: "usedgoods",
     icon: ShoppingBag,
     href: "/usedgoods/create",
     color: "text-orange-500",
@@ -14,8 +14,7 @@ const CATEGORIES = [
     available: true,
   },
   {
-    name: "구인구직",
-    description: "일자리를 구하거나 직원을 모집해요",
+    key: "jobs",
     icon: Briefcase,
     href: "/job/create",
     color: "text-blue-500",
@@ -23,8 +22,7 @@ const CATEGORIES = [
     available: true,
   },
   {
-    name: "방렌트",
-    description: "방을 구하거나 방을 내놓아요",
+    key: "rental",
     icon: Home,
     href: "/rental/create",
     color: "text-teal-500",
@@ -32,8 +30,7 @@ const CATEGORIES = [
     available: true,
   },
   {
-    name: "커뮤니티",
-    description: "자유롭게 이야기를 나눠요",
+    key: "community",
     icon: Users,
     href: "/community/create",
     color: "text-purple-500",
@@ -50,17 +47,19 @@ export default async function CreatePage() {
 
   if (!user) redirect("/login");
 
+  const t = await getTranslations("Create");
+
   return (
     <div className="flex flex-col items-center py-10 px-4">
       <div className="w-full max-w-sm md:max-w-xl">
-        <h1 className="page-title mb-2">글쓰기</h1>
-        <p className="text-sm text-gray-500 mb-8">어떤 글을 작성할까요?</p>
+        <h1 className="page-title mb-2">{t("title")}</h1>
+        <p className="text-sm text-gray-500 mb-8">{t("subtitle")}</p>
         <div className="grid grid-cols-2 gap-4">
           {CATEGORIES.map(
-            ({ name, description, icon: Icon, href, color, bg, available }) =>
+            ({ key, icon: Icon, href, color, bg, available }) =>
               available ? (
                 <Link
-                  key={name}
+                  key={key}
                   href={href}
                   className="flex flex-col gap-4 rounded-2xl border border-gray-200 p-5 md:p-8 hover:border-teal-400 hover:shadow-sm transition-all"
                 >
@@ -71,16 +70,16 @@ export default async function CreatePage() {
                   </div>
                   <div>
                     <p className="font-semibold text-gray-800 text-sm md:text-base">
-                      {name}
+                      {t(`categories.${key}.name`)}
                     </p>
                     <p className="text-xs md:text-sm text-gray-400 mt-0.5">
-                      {description}
+                      {t(`categories.${key}.description`)}
                     </p>
                   </div>
                 </Link>
               ) : (
                 <div
-                  key={name}
+                  key={key}
                   className="flex flex-col gap-4 rounded-2xl border border-gray-100 p-5 md:p-8 opacity-50 cursor-not-allowed"
                 >
                   <div
@@ -91,11 +90,11 @@ export default async function CreatePage() {
                   <div>
                     <div className="flex items-center gap-1.5">
                       <p className="font-semibold text-gray-800 text-sm md:text-base">
-                        {name}
+                        {t(`categories.${key}.name`)}
                       </p>
                     </div>
                     <p className="text-xs md:text-sm text-gray-400 mt-0.5">
-                      {description}
+                      {t(`categories.${key}.description`)}
                     </p>
                   </div>
                 </div>

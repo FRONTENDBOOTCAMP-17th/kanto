@@ -9,11 +9,11 @@ import {
 } from "@/services/profile/profileAlert";
 
 export const CATEGORIES = [
-  { key: "usedgoods", label: "중고거래" },
-  { key: "jobs", label: "구인구직" },
-  { key: "rental", label: "방렌트" },
-  { key: "community", label: "커뮤니티" },
-  { key: "dating", label: "랜덤채팅" },
+  { key: "usedgoods" },
+  { key: "jobs" },
+  { key: "rental" },
+  { key: "community" },
+  { key: "dating" },
 ];
 
 export const ALL_KEYS = CATEGORIES.map((c) => c.key);
