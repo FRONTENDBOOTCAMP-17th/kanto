@@ -35,6 +35,7 @@ export function GlobalLayout({ children, initialUser }: Props) {
   return (
     <div className="min-h-screen flex flex-col">
       {!hideGlobalUI && <Header />}
+      {!hideGlobalUI && <div className="h-12 md:h-0" aria-hidden="true" />}
       {!hideGlobalUI && <DeletionPendingBanner />}
       {!hideGlobalUI && (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
