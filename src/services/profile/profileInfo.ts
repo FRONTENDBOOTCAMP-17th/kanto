@@ -11,7 +11,7 @@ export async function uploadAvatar(userId: number, avatarFile: File): Promise<st
 
 export async function updateProfile(
   userId: number,
-  payload: { name: string; phone: string; avatar_url: string | null },
+  payload: { name: string; phone: string; region?: string | null; avatar_url: string | null },
 ): Promise<User> {
   const { data, error } = await supabase.from("users").update(payload).eq("id", userId).select().single();
   if (error) throw new Error("저장에 실패했습니다.");

@@ -7,7 +7,7 @@ export async function checkReported(postId: number, userId: number) {
     .eq("target_id", postId)
     .eq("target_type", "post")
     .eq("user_id", userId)
-    .single();
+    .maybeSingle();
   return !!data;
 }
 

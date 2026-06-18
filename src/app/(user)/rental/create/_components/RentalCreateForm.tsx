@@ -343,9 +343,10 @@ export default function RentalCreateForm({
                   <SelectValue placeholder={t("form.roomTypePlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="스튜디오">{te("roomType.스튜디오")}</SelectItem>
-                  <SelectItem value="투룸">{te("roomType.투룸")}</SelectItem>
                   <SelectItem value="아파트">{te("roomType.아파트")}</SelectItem>
+                  <SelectItem value="스튜디오">{te("roomType.스튜디오")}</SelectItem>
+                  <SelectItem value="원룸">{te("roomType.원룸")}</SelectItem>
+                  <SelectItem value="투룸">{te("roomType.투룸")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

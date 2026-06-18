@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
@@ -73,11 +73,18 @@ export function Header() {
     setIsMobileOpen(false);
   };
 
+  const pathname = usePathname();
+  const PROTECTED_PATHS = ["/create", "/myposts", "/favorites", "/profile"];
+
   const handleLogoutConfirm = async () => {
     setIsLogoutModalOpen(false);
     await supabase.auth.signOut();
-    router.refresh();
-    router.push(ROUTES.home);
+    const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
+    if (isProtected) {
+      router.push(ROUTES.login);
+    } else {
+      router.refresh();
+    }
   };
 
   useEffect(() => {

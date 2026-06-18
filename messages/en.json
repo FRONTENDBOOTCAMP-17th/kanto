@@ -108,6 +108,7 @@
     "urlCopied": "URL copied.",
     "imageUpload": {
       "label": "Photos (up to {maxCount})",
+      "labelWithMin": "Photos (min {minCount}, max {maxCount})",
       "add": "Add photos",
       "removeImage": "Remove image {index}",
       "goToImage": "Go to image {index}"
@@ -217,6 +218,7 @@
     "roomType": {
       "아파트": "Apartment",
       "스튜디오": "Studio",
+      "원룸": "One-room",
       "투룸": "Two-room"
     },
     "rentalRoomType": {
@@ -241,6 +243,23 @@
     },
     "tradeLocation": {
       "otherAreas": "Other areas"
+    },
+    "workDay": {
+      "월": "Mon", "화": "Tue", "수": "Wed", "목": "Thu", "금": "Fri", "토": "Sat", "일": "Sun"
+    },
+    "dayPreset": {
+      "평일": "Weekdays", "주말": "Weekend", "매일": "Every day"
+    },
+    "preferredGroup": {
+      "어학": "Language", "체류": "Residence", "경력": "Experience", "자격": "Qualifications", "직군": "Role", "기타": "Other"
+    },
+    "preferredItem": {
+      "korean": "Korean", "english": "English", "tagalog": "Tagalog", "interpretation": "Interpretation",
+      "local_resident": "Local resident", "work_visa": "Work visa", "immediate_start": "Immediate start", "long_term": "Long-term",
+      "same_industry": "Same industry", "job_experience": "Work experience", "beginner_ok": "Beginners welcome", "korean_company_exp": "Korean company exp.",
+      "drivers_license": "Driver's license", "certificate": "Certified", "computer_skill": "Computer skills",
+      "driving": "Driving", "cooking": "Cooking", "teaching": "Teaching", "customer_service": "Customer service",
+      "local_family": "Local family", "referral": "Referral"
     }
   },
   "Create": {
@@ -351,7 +370,8 @@
       "submit": "Done",
       "errorPost": "Failed to create the post.",
       "errorImage": "Failed to upload images.",
-      "errorGoods": "Failed to register product info."
+      "errorGoods": "Failed to register product info.",
+      "errorNoImage": "Please upload at least one image."
     }
   },
   "Job": {
@@ -365,6 +385,10 @@
     "salary": "Salary",
     "workLocation": "Work location",
     "deadline": "Deadline",
+    "workHours": "Work hours",
+    "workDays": "Working days",
+    "deadlineExpired": "Closed",
+    "deadlineToday": "Closes today",
     "companyInfo": "Company info",
     "foundedYear": "Founded",
     "yearSuffix": "{year}",
@@ -407,6 +431,7 @@
       "workDaysLabel": "Working days",
       "selectedCount": "selected",
       "preferredSelect": "Select preferences",
+      "preferredDone": "Done ({count})",
       "hour": "Hour",
       "minute": "Min",
       "hourValue": "{value}",
@@ -607,6 +632,7 @@
       "regionDesc": "The region used as a reference when searching used goods and rental posts.",
       "regionInputAria": "Enter region",
       "regionSet": "Set",
+      "regionPlaceholder": "Select a region",
       "languageTitle": "Language",
       "languageSelectAria": "Select language",
       "linkTitle": "Linked Accounts",
@@ -618,6 +644,7 @@
     },
     "toast": {
       "saved": "Saved.",
+      "regionSaved": "Region setting has been saved.",
       "updated": "Updated.",
       "saveFailed": "Failed to save.",
       "deleteFailed": "Failed to delete account. Please try again.",
@@ -717,6 +744,12 @@
       "used_goods": "Used Goods",
       "jobs": "Jobs",
       "rental": "Rentals"
+    },
+    "empty": "No favorites yet.",
+    "goTo": {
+      "used_goods": "Browse Marketplace",
+      "jobs": "Browse Jobs",
+      "rental": "Browse Rentals"
     }
   }
 }

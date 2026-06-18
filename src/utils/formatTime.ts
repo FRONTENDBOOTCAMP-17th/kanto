@@ -6,7 +6,7 @@
 //   formatTimeAgo(iso, locale);
 // 인자를 생략하면 기존 동작(한국어)을 유지하므로 호출부를 점진적으로 교체할 수 있다.
 
-import { BCP47_LOCALE, defaultLocale, type Locale } from "@/i18n/config";
+import { BCP47_LOCALE, TIME_BCP47_LOCALE, defaultLocale, type Locale } from "@/i18n/config";
 
 /** 오전 10:00 와 같은 형태로 포맷 */
 export function formatMessageTime(
@@ -38,7 +38,7 @@ export function formatChatListTime(
 
   if (diffDay === 0) return formatMessageTime(dateStr, locale);
 
-  const rtf = new Intl.RelativeTimeFormat(BCP47_LOCALE[locale], {
+  const rtf = new Intl.RelativeTimeFormat(TIME_BCP47_LOCALE[locale], {
     numeric: "auto",
   });
 
@@ -56,7 +56,7 @@ export function formatTimeAgo(
   isoString: string,
   locale: Locale = defaultLocale,
 ): string {
-  const rtf = new Intl.RelativeTimeFormat(BCP47_LOCALE[locale], {
+  const rtf = new Intl.RelativeTimeFormat(TIME_BCP47_LOCALE[locale], {
     numeric: "auto",
   });
 
@@ -85,22 +85,17 @@ export function formatTimeAgo(
   return rtf.format(-years, "year");
 }
 
-/** 마감일까지 남은 기간을 D-7 / 오늘 마감 / 마감 형태로 포맷 */
-export function formatDeadline(deadline: string): string {
+/** 마감일까지 남은 일수 (음수 = 만료, 0 = 오늘, 양수 = D-n) */
+export function getDeadlineDiff(deadline: string): number {
   const startOfDay = (d: Date) =>
     new Date(d.getFullYear(), d.getMonth(), d.getDate());
-
-  const diffDay = Math.round(
+  return Math.round(
     (startOfDay(new Date(deadline)).getTime() -
       startOfDay(new Date()).getTime()) /
       (1000 * 60 * 60 * 24),
   );
-
-  if (diffDay < 0) return "마감";
-  if (diffDay === 0) return "오늘 마감";
-
-  return `D-${diffDay}`;
 }
+
 
 /** 날짜 구분선 포맷 */
 export function formatDateDivider(

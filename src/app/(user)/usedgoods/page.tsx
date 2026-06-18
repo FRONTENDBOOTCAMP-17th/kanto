@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 
 import { getUsedGoodsList } from "@/services/usedGoods/usedGoods";
 import { getLikeList } from "@/services/likes";
+import { getSessionUser } from "@/services/user/user";
 import { UsedGoodsList } from "@/app/(user)/usedgoods/_components/UsedGoodsList";
 import { UsedGoodsFilters } from "./_components/UsedGoodsFilters";
 import { PaginationUrl } from "@/components/common/PaginationUrl";
@@ -27,13 +28,14 @@ export default async function UsedGoodsPage({
   const currentPage = Number(params.page ?? 1);
   const t = await getTranslations("UsedGoods");
 
-  const [posts, { likedIds, currentUserId }] = await Promise.all([
+  const [posts, { likedIds, currentUserId }, sessionUser] = await Promise.all([
     getUsedGoodsList({
       search: params.search,
       category: params.category,
       location: params.location,
     }),
     getLikeList("used_goods"),
+    getSessionUser(),
   ]);
 
   const totalPages = Math.ceil(posts.length / ITEMS_PER_PAGE);
@@ -63,7 +65,7 @@ export default async function UsedGoodsPage({
         <UsedGoodsFilters
           givenSearch={params.search ?? ""}
           defaultCategory={params.category ?? "all"}
-          defaultLocation={params.location ?? "all"}
+          defaultLocation={params.location ?? sessionUser?.region ?? "all"}
         />
 
         <div className="border-t border-gray-200 my-6" />

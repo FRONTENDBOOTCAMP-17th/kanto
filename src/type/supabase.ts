@@ -1019,6 +1019,7 @@ export type Database = {
           phone: string | null
           post_count: number | null
           provider: string | null
+          region: string | null
           role: string
           suspended_until: string | null
           updated_at: string | null
@@ -1041,6 +1042,7 @@ export type Database = {
           phone?: string | null
           post_count?: number | null
           provider?: string | null
+          region?: string | null
           role?: string
           suspended_until?: string | null
           updated_at?: string | null
@@ -1063,6 +1065,7 @@ export type Database = {
           phone?: string | null
           post_count?: number | null
           provider?: string | null
+          region?: string | null
           role?: string
           suspended_until?: string | null
           updated_at?: string | null
@@ -1151,6 +1154,10 @@ export type Database = {
           report_count: number
           user_id: number
         }[]
+      }
+      increment_unread: {
+        Args: { p_chat_id: number; p_for_user1: boolean }
+        Returns: undefined
       }
       increment_view_count: { Args: { p_post_id: number }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }

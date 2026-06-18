@@ -108,6 +108,7 @@
     "urlCopied": "Nakopya ang URL.",
     "imageUpload": {
       "label": "Mga larawan (hanggang {maxCount})",
+      "labelWithMin": "Mga larawan (min {minCount}, max {maxCount})",
       "add": "Magdagdag ng larawan",
       "removeImage": "Alisin ang larawan {index}",
       "goToImage": "Pumunta sa larawan {index}"
@@ -217,6 +218,7 @@
     "roomType": {
       "아파트": "Apartment",
       "스튜디오": "Studio",
+      "원룸": "Isang kwarto",
       "투룸": "Dalawang kwarto"
     },
     "rentalRoomType": {
@@ -241,6 +243,23 @@
     },
     "tradeLocation": {
       "otherAreas": "Iba pang lugar"
+    },
+    "workDay": {
+      "월": "Lun", "화": "Mar", "수": "Miy", "목": "Huw", "금": "Biy", "토": "Sab", "일": "Lin"
+    },
+    "dayPreset": {
+      "평일": "Araw ng trabaho", "주말": "Weekend", "매일": "Araw-araw"
+    },
+    "preferredGroup": {
+      "어학": "Wika", "체류": "Tirahan", "경력": "Karanasan", "자격": "Kwalipikasyon", "직군": "Trabaho", "기타": "Iba pa"
+    },
+    "preferredItem": {
+      "korean": "Korean", "english": "Ingles", "tagalog": "Tagalog", "interpretation": "Interpretasyon",
+      "local_resident": "Lokal na residente", "work_visa": "Work visa", "immediate_start": "Agad magsimula", "long_term": "Pangmatagalan",
+      "same_industry": "Parehong industriya", "job_experience": "Karanasan sa trabaho", "beginner_ok": "OK para sa baguhan", "korean_company_exp": "May karanasan sa Korean na kumpanya",
+      "drivers_license": "Driver's license", "certificate": "May sertipiko", "computer_skill": "Computer skills",
+      "driving": "Pagmamaneho", "cooking": "Pagluluto", "teaching": "Pagtuturo", "customer_service": "Serbisyo sa customer",
+      "local_family": "Lokal na pamilya", "referral": "Rekomendasyon"
     }
   },
   "Create": {
@@ -357,7 +376,8 @@
       "submit": "Tapos na",
       "errorPost": "Nabigo ang paggawa ng post.",
       "errorImage": "Nabigo ang pag-upload ng mga larawan.",
-      "errorGoods": "Nabigo ang pagrehistro ng impormasyon ng produkto."
+      "errorGoods": "Nabigo ang pagrehistro ng impormasyon ng produkto.",
+      "errorNoImage": "Mangyaring mag-upload ng hindi bababa sa isang larawan."
     }
   },
   "Job": {
@@ -371,6 +391,10 @@
     "salary": "Sahod",
     "workLocation": "Lugar ng trabaho",
     "deadline": "Huling araw",
+    "workHours": "Oras ng trabaho",
+    "workDays": "Araw ng trabaho",
+    "deadlineExpired": "Sarado",
+    "deadlineToday": "Magsasara ngayon",
     "companyInfo": "Impormasyon ng kumpanya",
     "foundedYear": "Itinatag",
     "yearSuffix": "{year}",
@@ -413,6 +437,7 @@
       "workDaysLabel": "Araw ng trabaho",
       "selectedCount": "napili",
       "preferredSelect": "Pumili ng mga kagustuhan",
+      "preferredDone": "Tapos ({count})",
       "hour": "Oras",
       "minute": "Min",
       "hourValue": "{value}",
@@ -613,6 +638,7 @@
       "regionDesc": "Ang rehiyong ginagamit bilang batayan kapag naghahanap ng mga post ng gamit na bagay at paupahan.",
       "regionInputAria": "Maglagay ng rehiyon",
       "regionSet": "Itakda",
+      "regionPlaceholder": "Pumili ng rehiyon",
       "languageTitle": "Wika",
       "languageSelectAria": "Pumili ng wika",
       "linkTitle": "Mga Naka-link na Account",
@@ -624,6 +650,7 @@
     },
     "toast": {
       "saved": "Na-save.",
+      "regionSaved": "Na-save ang setting ng rehiyon.",
       "updated": "Na-update.",
       "saveFailed": "Nabigong i-save.",
       "deleteFailed": "Nabigong tanggalin ang account. Pakisubukan muli.",
@@ -723,6 +750,12 @@
       "used_goods": "Mga Gamit na Bagay",
       "jobs": "Mga Trabaho",
       "rental": "Mga Paupahan"
+    },
+    "empty": "Walang mga paborito.",
+    "goTo": {
+      "used_goods": "Pumunta sa Marketplace",
+      "jobs": "Pumunta sa Mga Trabaho",
+      "rental": "Pumunta sa Mga Paupahan"
     }
   }
 }

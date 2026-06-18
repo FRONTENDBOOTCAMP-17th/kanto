@@ -44,7 +44,8 @@ export async function getRentalList(
     .eq("status", "active")
     .order("created_at", { ascending: false });
 
-  if (filter?.targetIds?.length) {
+  if (filter?.targetIds !== undefined) {
+    if (filter.targetIds.length === 0) return [];
     query = query.in("id", filter.targetIds);
   }
   if (filter?.userId) {

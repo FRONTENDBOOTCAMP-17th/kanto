@@ -65,14 +65,16 @@ export async function postMessage(
 
   const { data: chat } = await supabase
     .from("chats")
-    .select("user_id_1, user_id_1_unread, user_id_2_unread")
+    .select("user_id_1")
     .eq("id", params.chatId)
     .single();
 
   const isUser1 = chat?.user_id_1 === params.senderId;
-  const unreadUpdate = isUser1
-    ? { user_id_2_unread: (chat?.user_id_2_unread ?? 0) + 1 }
-    : { user_id_1_unread: (chat?.user_id_1_unread ?? 0) + 1 };
+
+  await supabase.rpc("increment_unread", {
+    p_chat_id: params.chatId,
+    p_for_user1: !isUser1,
+  });
 
   // 메시지 보내기 이후에 마지막 메시지 시간 업데이트
   await supabase
@@ -80,7 +82,6 @@ export async function postMessage(
     .update({
       last_message_at: new Date().toISOString(),
       last_message_content: params.content,
-      ...unreadUpdate,
     })
     .eq("id", params.chatId);
 

@@ -82,7 +82,12 @@ export default function ChatRoomClient({
     scrollContainerRef,
   } = useChatMessages({ initialMessages, currentUser, chatId: activeChatId, partner });
 
-  useChatRoomRealtime({ chatId: activeChatId, currentUser, partner, setMessages });
+  const { partnerOnline } = useChatRoomRealtime({
+    chatId: activeChatId,
+    currentUser,
+    partner,
+    setMessages,
+  });
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -198,6 +203,7 @@ export default function ChatRoomClient({
         messagesEndRef={messagesEndRef}
         scrollContainerRef={scrollContainerRef}
         onTransactionChange={handleTransactionChange}
+        partnerOnline={partnerOnline}
       />
       {reviewableTxId !== null && (
         <ReviewBanner
