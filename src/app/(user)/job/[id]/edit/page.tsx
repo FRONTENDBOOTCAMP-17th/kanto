@@ -40,6 +40,7 @@ export default async function EditJobPage({
           manager_phone: job.manager_phone,
           manager_email: job.manager_email,
           images: job.images as string[] | null,
+          company_logo: job.company_logo,
         }}
       />
     </div>
