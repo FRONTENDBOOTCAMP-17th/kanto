@@ -604,7 +604,9 @@
       "title": "거래 후기",
       "ratingAria": "평점 {rating}점 ({count}건)",
       "count": "({count}건)",
-      "empty": "아직 받은 후기가 없습니다"
+      "empty": "아직 받은 후기가 없습니다",
+      "roleBuyer": "구매자",
+      "roleSeller": "판매자"
     },
     "settings": {
       "regionTitle": "지역 설정",

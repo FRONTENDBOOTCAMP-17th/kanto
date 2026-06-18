@@ -107,7 +107,7 @@ export function JobCard({
         <div className="flex flex-col gap-0.5 flex-3 min-w-0">
           <span className="text-sm lg:text-base font-medium text-gray-800">
             {salary.toLocaleString()}
-            {salaryType && <span className="text-gray-400 font-normal ml-1">/ {salaryType}</span>}
+            {salaryType && <span className="text-gray-400 font-normal ml-1">/ {te(`salaryType.${salaryType}`)}</span>}
           </span>
           <div className="flex items-center gap-1 text-xs lg:text-sm text-gray-500 min-w-0">
             <MapPin className="w-3 h-3 shrink-0" />

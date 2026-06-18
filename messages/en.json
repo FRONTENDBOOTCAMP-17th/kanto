@@ -596,7 +596,9 @@
       "title": "Transaction Reviews",
       "ratingAria": "Rating {rating} ({count})",
       "count": "({count})",
-      "empty": "No reviews yet"
+      "empty": "No reviews yet",
+      "roleBuyer": "Buyer",
+      "roleSeller": "Seller"
     },
     "settings": {
       "regionTitle": "Region",

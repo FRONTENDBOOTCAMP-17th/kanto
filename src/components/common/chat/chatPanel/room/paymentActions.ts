@@ -7,7 +7,13 @@ import {
   getTransaction,
   updateTransaction,
   postSystemMessage,
+  getReleasedTransactionsForChat,
+  hasBlockingTransactionForChat,
 } from "@/services/payment/transaction";
+import {
+  createReview,
+  getReviewByTransactionAndReviewer,
+} from "@/services/review/review";
 import { createInvoice } from "@/lib/xendit";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
@@ -180,7 +186,10 @@ export async function confirmReceiptAction(
 
   // 시스템 메시지는 부가 UX — 삽입 실패가 거래완료 처리 자체를 깨지 않도록 격리
   try {
-    await postSystemMessage(released, "거래가 완료되었습니다");
+    await postSystemMessage(
+      released,
+      "구매자가 물건을 수령했습니다 · 거래 후기를 남겨보세요",
+    );
   } catch (e) {
     console.error("거래완료 시스템 메시지 발송 실패:", e);
   }
@@ -207,4 +216,86 @@ export async function cancelTransactionAction(
   }
 
   return updateTransaction(transaction.id, { status: "cancelled" });
+}
+
+/**
+ * 거래 완료(released) 후 거래 당사자가 상대방에 대한 후기를 작성한다.
+ * 구매자/판매자 모두 1회씩 작성 가능하며, 작성된 후기는 상대방 프로필에 노출된다.
+ */
+export async function createReviewAction(input: {
+  transactionId: number;
+  rating: number;
+  content: string;
+}): Promise<void> {
+  const supabase = await createClient();
+  const me = await getCurrentUser(supabase);
+
+  const transaction = await getTransaction(input.transactionId);
+  if (!transaction) throw new Error("거래를 찾을 수 없습니다.");
+  if (transaction.status !== "released") {
+    throw new Error("거래가 완료된 후에만 후기를 작성할 수 있습니다.");
+  }
+
+  const isBuyer = transaction.buyer_id === me.id;
+  const isSeller = transaction.seller_id === me.id;
+  if (!isBuyer && !isSeller) {
+    throw new Error("거래 당사자만 후기를 작성할 수 있습니다.");
+  }
+
+  if (!Number.isInteger(input.rating) || input.rating < 1 || input.rating > 5) {
+    throw new Error("별점은 1~5 사이여야 합니다.");
+  }
+  const content = input.content.trim();
+
+  // 거래당 1후기 — 이 거래에 이미 작성한 후기가 있으면 차단
+  const existing = await getReviewByTransactionAndReviewer(transaction.id, me.id);
+  if (existing) throw new Error("이미 이 거래에 후기를 작성했습니다.");
+
+  const revieweeId = isBuyer ? transaction.seller_id : transaction.buyer_id;
+  const role = isBuyer ? "buyer" : "seller";
+
+  const { data: post } = await supabase
+    .from("posts")
+    .select("title")
+    .eq("id", transaction.post_id)
+    .single();
+
+  await createReview({
+    reviewerId: me.id,
+    revieweeId,
+    role,
+    rating: input.rating,
+    content,
+    transactionId: transaction.id,
+    postId: transaction.post_id,
+    postTitle: post?.title ?? null,
+    postPrice: transaction.amount,
+  });
+}
+
+/**
+ * 채팅방의 배너 노출 상태(후기 작성 대상 거래 id / 안전결제 요청 차단 여부)를 조회한다.
+ * 로드된 메시지가 아닌 서버에서 권위 있게 조회하므로 페이지네이션·realtime 수신 여부와 무관하다.
+ */
+export async function getChatBannerStateAction(chatId: number): Promise<{
+  reviewableTransactionId: number | null;
+  paymentRequestBlocked: boolean;
+}> {
+  const supabase = await createClient();
+  const me = await getCurrentUser(supabase);
+
+  const [released, paymentRequestBlocked] = await Promise.all([
+    getReleasedTransactionsForChat(chatId),
+    hasBlockingTransactionForChat(chatId),
+  ]);
+
+  // 가장 최근 거래 완료 건만 후기 대상 — 시연 시 배너가 끝없이 반복되지 않도록
+  let reviewableTransactionId: number | null = null;
+  const latest = released[0];
+  if (latest && (latest.buyer_id === me.id || latest.seller_id === me.id)) {
+    const existing = await getReviewByTransactionAndReviewer(latest.id, me.id);
+    reviewableTransactionId = existing ? null : latest.id;
+  }
+
+  return { reviewableTransactionId, paymentRequestBlocked };
 }

@@ -1,4 +1,3 @@
-import { ROUTES } from "@/constants/routes";
 import type { Notification } from "@/hooks/useNotifications";
 
 export function getNotificationHref(n: Notification): string | undefined {
