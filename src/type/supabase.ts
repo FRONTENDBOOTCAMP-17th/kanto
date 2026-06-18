@@ -443,6 +443,7 @@ export type Database = {
           applicant_count: string | null
           company_address: string | null
           company_intro: string
+          company_logo: string | null
           company_name: string
           company_website: string | null
           company_year: number | null
@@ -474,6 +475,7 @@ export type Database = {
           applicant_count?: string | null
           company_address?: string | null
           company_intro: string
+          company_logo?: string | null
           company_name: string
           company_website?: string | null
           company_year?: number | null
@@ -505,6 +507,7 @@ export type Database = {
           applicant_count?: string | null
           company_address?: string | null
           company_intro?: string
+          company_logo?: string | null
           company_name?: string
           company_website?: string | null
           company_year?: number | null

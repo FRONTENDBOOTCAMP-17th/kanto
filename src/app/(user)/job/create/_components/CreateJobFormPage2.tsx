@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,8 @@ import { useImageUpload } from "@/hooks/useImageUpload";
 const URL_REGEX = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&/=]*)$/i;
 
 interface CreateJobFormPageTwoProps {
+  companyLogoUrl: string;
+  companyLogoFile: File | null; setCompanyLogoFile: (f: File | null) => void;
   companyName: string; setCompanyName: (v: string) => void;
   companyIntro: string; setCompanyIntro: (v: string) => void;
   industry: string; setIndustry: (v: string) => void;
@@ -30,6 +32,8 @@ interface CreateJobFormPageTwoProps {
 }
 
 export function CreateJobFormPageTwo({
+  companyLogoUrl,
+  companyLogoFile, setCompanyLogoFile,
   companyName, setCompanyName,
   companyIntro, setCompanyIntro,
   industry, setIndustry,
@@ -48,6 +52,8 @@ export function CreateJobFormPageTwo({
 }: CreateJobFormPageTwoProps) {
   const t = useTranslations("Job");
   const [websiteError, setWebsiteError] = useState("");
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const logoPreview = companyLogoFile ? URL.createObjectURL(companyLogoFile) : companyLogoUrl || null;
 
   const handleWebsiteBlur = () => {
     if (companyWebsite && !URL_REGEX.test(companyWebsite)) {
@@ -63,6 +69,41 @@ export function CreateJobFormPageTwo({
 
       <div className="space-y-4">
         <h2 className="font-semibold text-gray-900">{t("form.companyInfo")}</h2>
+        <div className="space-y-2">
+          <Label>{t("form.companyLogoLabel")} <span className="text-gray-400 font-normal text-sm">{t("form.optional")}</span></Label>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => logoInputRef.current?.click()}
+              className="w-20 h-20 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden hover:border-teal-400 transition-colors shrink-0"
+            >
+              {logoPreview ? (
+                <img src={logoPreview} alt="logo" className="w-full h-full object-contain" />
+              ) : (
+                <span className="text-3xl text-gray-300">+</span>
+              )}
+            </button>
+            <div className="space-y-1">
+              <p className="text-sm text-gray-500">{t("form.companyLogoHint")}</p>
+              {companyLogoFile && (
+                <button type="button" onClick={() => setCompanyLogoFile(null)} className="text-xs text-red-400 hover:underline">
+                  {t("form.companyLogoRemove")}
+                </button>
+              )}
+            </div>
+          </div>
+          <input
+            ref={logoInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0] ?? null;
+              setCompanyLogoFile(file);
+              e.target.value = "";
+            }}
+          />
+        </div>
         <div className="space-y-2">
           <Label htmlFor="companyName">{t("form.companyNameLabel")}</Label>
           <Input id="companyName" placeholder={t("form.companyNamePlaceholder")} value={companyName} onChange={(e) => setCompanyName(e.target.value)} />

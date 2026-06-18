@@ -86,5 +86,5 @@ export type JobInitialData = Pick<
   | "main_task" | "preferred" | "preferred_tags" | "company_name" | "company_intro"
   | "industry" | "company_year" | "employee_count" | "company_address"
   | "company_website" | "manager_title"
-  | "manager_phone" | "manager_email" | "images"
+  | "manager_phone" | "manager_email" | "images" | "company_logo"
 > & { title: string };
