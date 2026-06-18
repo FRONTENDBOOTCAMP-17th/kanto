@@ -1,7 +1,9 @@
 import type { ElementType } from "react";
 import { Heart, FileText, MessageCircle, Bird, ShieldAlert } from "lucide-react";
+import { useLocale } from "next-intl";
 import type { Notification } from "@/hooks/useNotifications";
 import { formatTimeAgo } from "@/utils/formatTime";
+import type { Locale } from "@/i18n/config";
 
 const ICON_MAP: Record<string, { icon: ElementType; color: string }> = {
   like:       { icon: Heart,         color: "text-red-400" },
@@ -18,6 +20,7 @@ interface Props {
 }
 
 export function NotificationItem({ notification: n, onClick, size = "sm" }: Props) {
+  const locale = useLocale() as Locale;
   const meta = ICON_MAP[n.type ?? "like"] ?? ICON_MAP.like;
   const Icon = meta.icon;
   const lg = size === "lg";
@@ -35,7 +38,7 @@ export function NotificationItem({ notification: n, onClick, size = "sm" }: Prop
         <p className={`text-gray-500 mt-0.5 truncate ${lg ? "text-sm" : "text-xs"}`}>{n.body}</p>
         {n.created_at && (
           <time dateTime={n.created_at} className={`text-gray-400 mt-0.5 ${lg ? "text-xs" : "text-xs"}`}>
-            {formatTimeAgo(n.created_at)}
+            {formatTimeAgo(n.created_at, locale)}
           </time>
         )}
       </div>

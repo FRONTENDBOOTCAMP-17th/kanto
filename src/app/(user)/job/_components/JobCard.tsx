@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import type { Locale } from "@/i18n/config";
 import { MapPin } from "lucide-react";
 import { LikeButton } from "@/components/common/LikeButton";
 import { formatTimeAgo, getDeadlineDiff } from "@/utils/formatTime";
@@ -37,6 +38,7 @@ export function JobCard({
 }: JobCardProps) {
   const t = useTranslations("Job");
   const te = useTranslations("Enums");
+  const locale = useLocale() as Locale;
   const router = useRouter();
 
   const deadlineDiff = getDeadlineDiff(deadline);
@@ -132,7 +134,7 @@ export function JobCard({
         </div>
         <div className="flex flex-col items-end gap-1 text-sm md:text-xs lg:text-sm">
           {dDayBadge}
-          <span className="text-gray-400">{formatTimeAgo(createdAt)}</span>
+          <span className="text-gray-400">{formatTimeAgo(createdAt, locale)}</span>
         </div>
       </div>
     </div>
