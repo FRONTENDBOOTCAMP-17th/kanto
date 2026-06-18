@@ -168,20 +168,6 @@ function ProfileForm({
               >
                 {isIdentityVerified ? "인증 완료" : "본인인증 하기"}
               </button>
-              {/* 개발용: 인증 상태 초기화 (프로덕션 빌드에서는 렌더링되지 않음) */}
-              {process.env.NODE_ENV !== "production" && isIdentityVerified && (
-                <button
-                  type="button"
-                  onClick={async () => {
-                    await fetch("/api/profile/verification", { method: "DELETE" });
-                    setIsIdentityVerified(false);
-                    router.refresh();
-                  }}
-                  className="cursor-pointer w-full py-2 rounded-lg border border-dashed border-gray-300 text-gray-500 text-xs font-medium bg-transparent hover:bg-gray-50 transition-colors"
-                >
-                  [개발용] 본인인증 다시하기
-                </button>
-              )}
             </div>
           </div>
         </div>

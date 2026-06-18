@@ -186,24 +186,3 @@ export async function PATCH(req: NextRequest) {
 
   return NextResponse.json({ verified: true });
 }
-
-// 개발용: 본인인증 상태를 초기화한다. 프로덕션에서는 비활성화.
-export async function DELETE() {
-  if (process.env.NODE_ENV === "production") {
-    return NextResponse.json({ error: "사용할 수 없는 요청입니다." }, { status: 403 });
-  }
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    return NextResponse.json({ error: "인증되지 않은 요청입니다." }, { status: 401 });
-  }
-
-  await supabase.auth.updateUser({ data: { identity_verified: false } });
-
-  return NextResponse.json({ verified: false });
-}
