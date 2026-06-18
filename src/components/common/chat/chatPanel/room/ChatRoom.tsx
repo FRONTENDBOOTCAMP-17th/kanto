@@ -5,11 +5,12 @@ import { MessageWithSender } from "@/type/chat/message";
 import { SellerInfo } from "@/type/user";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import type { PendingNewChat } from "@/store/chatStore";
 
 interface ChatRoomData {
   messages: MessageWithSender[];
   currentUser: SellerInfo;
-  chatId: number;
+  chatId: number | null;
   postId: number;
   partner: SellerInfo;
   postTitle: string;
@@ -19,24 +20,44 @@ interface ChatRoomData {
 
 export default function ChatRoom({
   chatId,
+  newChatMeta,
+  currentUserOverride,
   onBack,
   onLeave,
+  onChatCreated,
 }: {
-  chatId: number;
+  chatId: number | null;
+  newChatMeta?: PendingNewChat;
+  currentUserOverride?: SellerInfo;
   onBack?: () => void;
   onLeave?: () => void;
+  onChatCreated?: (chatId: number) => void;
 }) {
   const t = useTranslations("Chat");
   const [data, setData] = useState<ChatRoomData | null>(null);
 
   useEffect(() => {
+    if (chatId === null) {
+      if (!newChatMeta || !currentUserOverride) return;
+      setData({
+        messages: [],
+        currentUser: currentUserOverride,
+        chatId: null,
+        postId: newChatMeta.postId,
+        partner: newChatMeta.partner,
+        postTitle: newChatMeta.postTitle,
+        sellerId: newChatMeta.sellerId,
+        postPrice: newChatMeta.postPrice,
+      });
+      return;
+    }
     fetch(`/api/chat/${chatId}`)
       .then((r) => r.json())
       .then((json) => {
         if (json.error) return;
         setData(json);
       });
-  }, [chatId]);
+  }, [chatId, newChatMeta, currentUserOverride]);
 
   if (!data)
     return (
@@ -51,6 +72,7 @@ export default function ChatRoom({
       initialMessages={data.messages}
       onBack={onBack}
       onLeave={onLeave}
+      onChatCreated={onChatCreated}
     />
   );
 }

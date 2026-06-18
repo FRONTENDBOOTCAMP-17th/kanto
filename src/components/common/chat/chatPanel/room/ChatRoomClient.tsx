@@ -6,7 +6,7 @@ import { ShieldCheck } from "lucide-react";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
-import { markChatReadAction, sendMessageAction } from "./actions";
+import { markChatReadAction, sendMessageAction, createChatAndSendAction } from "./actions";
 import { useSpamPrevention } from "@/hooks/chat/useSpamPrevention";
 import { useChatRoomRealtime } from "@/hooks/chat/useChatRoomRealtime";
 import { useChatMessages } from "@/hooks/chat/useChatMessages";
@@ -18,7 +18,7 @@ import PaymentRequestModal from "./PaymentRequestModal";
 interface Props {
   initialMessages: MessageWithSender[];
   currentUser: SellerInfo;
-  chatId: number;
+  chatId: number | null;
   postId: number;
   partner: SellerInfo;
   postTitle: string;
@@ -26,25 +26,27 @@ interface Props {
   postPrice: number | null;
   onBack?: () => void;
   onLeave?: () => void;
+  onChatCreated?: (chatId: number) => void;
 }
 
 export default function ChatRoomClient({
   initialMessages,
   currentUser,
-  chatId,
+  chatId: chatIdProp,
   postId,
   partner,
   postTitle,
   sellerId,
   postPrice,
   onBack,
-  onLeave
+  onLeave,
+  onChatCreated,
 }: Props) {
   const router = useRouter();
+  const [activeChatId, setActiveChatId] = useState<number | null>(chatIdProp);
   const [input, setInput] = useState("");
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
-  // 판매자이고 중고거래(가격 존재) 채팅일 때만 안전결제 요청 가능
   const canRequestPayment = sellerId !== null && currentUser.id === sellerId && postPrice !== null;
 
   const { isCooldown, cooldownSeconds, recordSend } = useSpamPrevention();
@@ -56,9 +58,9 @@ export default function ChatRoomClient({
     loadMore,
     messagesEndRef,
     scrollContainerRef,
-  } = useChatMessages({ initialMessages, currentUser, chatId, partner });
+  } = useChatMessages({ initialMessages, currentUser, chatId: activeChatId, partner });
 
-  useChatRoomRealtime({ chatId, currentUser, partner, setMessages });
+  useChatRoomRealtime({ chatId: activeChatId, currentUser, partner, setMessages });
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -75,7 +77,7 @@ export default function ChatRoomClient({
     const optimistic: MessageWithSender = {
       id: tempId,
       created_at: new Date().toISOString(),
-      chat_id: chatId,
+      chat_id: activeChatId ?? 0,
       sender_id: currentUser.id,
       post_id: postId,
       content,
@@ -88,23 +90,38 @@ export default function ChatRoomClient({
     setMessages((prev) => [...prev, optimistic]);
 
     try {
-      const saved = await sendMessageAction({ chatId, postId, content });
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.tempId === tempId ? { ...m, id: saved.id, tempId: undefined } : m,
-        ),
-      );
+      if (activeChatId === null) {
+        const { chatId: newChatId, message: saved } = await createChatAndSendAction({
+          partnerUserId: partner.id,
+          postId,
+          content,
+        });
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.tempId === tempId
+              ? { ...m, id: saved.id, chat_id: newChatId, tempId: undefined }
+              : m,
+          ),
+        );
+        setActiveChatId(newChatId);
+        onChatCreated?.(newChatId);
+      } else {
+        const saved = await sendMessageAction({ chatId: activeChatId, postId, content });
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.tempId === tempId ? { ...m, id: saved.id, tempId: undefined } : m,
+          ),
+        );
+      }
     } catch {
       setMessages((prev) => prev.filter((m) => m.tempId !== tempId));
     }
   };
 
-  // 결제요청 카드 메시지 추가 (판매자 본인 화면 — 리얼타임은 상대방 처리)
   const handlePaymentRequested = (message: MessageWithSender) => {
     setMessages((prev) => [...prev, message]);
   };
 
-  // 거래 상태 변경을 해당 결제 카드에 즉시 반영 (리얼타임과 멱등)
   const handleTransactionChange = (transaction: Transaction) => {
     setMessages((prev) =>
       prev.map((m) =>
@@ -114,15 +131,19 @@ export default function ChatRoomClient({
   };
 
   useEffect(() => {
-    markChatReadAction(chatId);
-  }, [chatId]);
+    if (activeChatId === null) return;
+    markChatReadAction(activeChatId);
+    return () => {
+      markChatReadAction(activeChatId);
+    };
+  }, [activeChatId]);
 
   return (
     <div className="relative flex flex-col h-full w-full bg-gray-50">
       <ChatHeader
         partner={partner}
         postTitle={postTitle}
-        chatId={chatId}
+        chatId={activeChatId ?? 0}
         onBack={onBack ?? (() => router.back())}
         onLeave={onLeave}
       />
@@ -154,9 +175,9 @@ export default function ChatRoomClient({
         isCooldown={isCooldown}
         cooldownSeconds={cooldownSeconds}
       />
-      {showPaymentModal && postPrice !== null && (
+      {showPaymentModal && postPrice !== null && activeChatId !== null && (
         <PaymentRequestModal
-          chatId={chatId}
+          chatId={activeChatId}
           postId={postId}
           defaultAmount={postPrice}
           onClose={() => setShowPaymentModal(false)}

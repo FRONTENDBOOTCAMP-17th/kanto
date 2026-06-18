@@ -4,7 +4,7 @@ import Image from "next/image";
 import { UserCircle2, Phone, Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import postChat from "@/services/chat/postChat";
+import findChat from "@/services/chat/postChat";
 import { useChatStore } from "@/store/chatStore";
 import type { JobDetail } from "@/type/job/jobsDetail";
 
@@ -21,8 +21,24 @@ export default function JobAuthorInfo({
 
   const handleChat = async () => {
     if (!userId || !job.posts.users) return;
-    const chatId = await postChat(userId, job.posts.users.id, job.post_id);
-    useChatStore.getState().openWidget(chatId);
+    const chatId = await findChat(userId, job.posts.users.id, job.post_id);
+    if (chatId !== null) {
+      useChatStore.getState().openWidget(chatId);
+    } else {
+      useChatStore.getState().openNewChat({
+        buyerId: userId,
+        sellerId: job.posts.users.id,
+        postId: job.post_id,
+        postTitle: job.posts.title ?? "",
+        postPrice: null,
+        partner: {
+          id: job.posts.users.id,
+          name: job.posts.users.name,
+          avatar_url: job.posts.users.avatar_url,
+          created_at: job.posts.users.created_at,
+        },
+      });
+    }
   };
 
   return (

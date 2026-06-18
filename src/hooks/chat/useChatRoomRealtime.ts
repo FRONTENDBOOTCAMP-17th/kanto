@@ -5,7 +5,7 @@ import { Transaction } from "@/type/transaction";
 import { useEffect } from "react";
 
 interface Props {
-  chatId: number;
+  chatId: number | null;
   currentUser: SellerInfo;
   partner: SellerInfo;
   setMessages: React.Dispatch<React.SetStateAction<MessageWithSender[]>>;
@@ -19,6 +19,7 @@ export function useChatRoomRealtime({
   setMessages,
 }: Props) {
   useEffect(() => {
+    if (chatId === null) return;
     const channel = supabase
       .channel(`chat-room-${chatId}`)
       .on(

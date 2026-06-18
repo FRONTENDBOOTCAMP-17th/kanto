@@ -169,8 +169,8 @@
     "loadPrevious": "View previous messages",
     "category": {
       "used_goods": "Marketplace",
-      "room_rent": "Rentals",
-      "job": "Jobs"
+      "rental": "Rentals",
+      "jobs": "Jobs"
     }
   },
   "Notifications": {
@@ -243,10 +243,16 @@
     "title": "Create post",
     "subtitle": "What would you like to post?",
     "categories": {
-      "usedgoods": { "name": "Marketplace", "description": "Buy and sell used items" },
+      "usedgoods": {
+        "name": "Marketplace",
+        "description": "Buy and sell used items"
+      },
       "jobs": { "name": "Jobs", "description": "Find a job or hire staff" },
       "rental": { "name": "Rentals", "description": "Find or list a room" },
-      "community": { "name": "Community", "description": "Chat freely with others" }
+      "community": {
+        "name": "Community",
+        "description": "Chat freely with others"
+      }
     }
   },
   "Main": {
@@ -266,11 +272,31 @@
       "community": "Community"
     },
     "hero": {
-      "usedgoods": { "title": "Buy and sell on Kanto!", "description": "A safe marketplace for Koreans in the Philippines", "button": "Go to Marketplace" },
-      "jobs": { "title": "Looking for a job?", "description": "Jobs for Koreans in the Philippines", "button": "Go to Jobs" },
-      "rental": { "title": "Looking for an affordable room?", "description": "Reasonably priced room rentals", "button": "Go to Rentals" },
-      "community": { "title": "Want to connect with Koreans?", "description": "A space for Koreans in the Philippines", "button": "Go to Community" },
-      "dating": { "title": "Want to meet someone new?", "description": "Start new connections with filtered random matching", "button": "Go to Random Chat" }
+      "usedgoods": {
+        "title": "Buy and sell on Kanto!",
+        "description": "A safe marketplace for Koreans in the Philippines",
+        "button": "Go to Marketplace"
+      },
+      "jobs": {
+        "title": "Looking for a job?",
+        "description": "Jobs for Koreans in the Philippines",
+        "button": "Go to Jobs"
+      },
+      "rental": {
+        "title": "Looking for an affordable room?",
+        "description": "Reasonably priced room rentals",
+        "button": "Go to Rentals"
+      },
+      "community": {
+        "title": "Want to connect with Koreans?",
+        "description": "A space for Koreans in the Philippines",
+        "button": "Go to Community"
+      },
+      "dating": {
+        "title": "Want to meet someone new?",
+        "description": "Start new connections with filtered random matching",
+        "button": "Go to Random Chat"
+      }
     }
   },
   "Time": {
@@ -373,6 +399,10 @@
       "locationDetailPlaceholder": "Enter a detailed area",
       "deadlineLabel": "Deadline *",
       "workHoursLabel": "Work hours *",
+      "timeNegotiable": "Negotiable hours",
+      "workDaysLabel": "Working days",
+      "selectedCount": "selected",
+      "preferredSelect": "Select preferences",
       "hour": "Hour",
       "minute": "Min",
       "hourValue": "{value}",
