@@ -76,6 +76,8 @@ export default function ChatRoom({
 
   return (
     <ChatRoomClient
+      // 채팅방이 바뀌면 리마운트하여 메시지/상태가 새 방으로 갱신되도록 한다.
+      key={data.chatId ?? `new-${data.postId}-${data.partner.id}`}
       {...data}
       initialMessages={data.messages}
       onBack={onBack}
