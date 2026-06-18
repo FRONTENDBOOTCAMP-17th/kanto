@@ -76,7 +76,7 @@
     "label": "Language",
     "ko": "한국어",
     "en": "English",
-    "ta": "Tagalog"
+    "fil": "Filipino"
   },
   "Common": {
     "confirm": "Confirm",
@@ -431,7 +431,7 @@
     "details": "Details",
     "mainTask": "Main tasks",
     "preferred": "Preferred qualifications",
-    "viewCount": "Views: {count}",
+    "viewCount": "{count}",
     "applicantCount": "Applicants: {count}",
     "managerInfo": "Contact person",
     "apply": "Apply",
@@ -536,7 +536,7 @@
     "inquire": "Inquire",
     "chat": "Chat",
     "selectRoomType": "Select room type",
-    "viewCount": "Views: {count}",
+    "viewCount": "{count}",
     "description": "Accommodation description",
     "form": {
       "back": "Back",

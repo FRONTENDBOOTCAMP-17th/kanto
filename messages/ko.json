@@ -76,7 +76,7 @@
     "label": "언어",
     "ko": "한국어",
     "en": "English",
-    "ta": "Tagalog"
+    "fil": "Filipino"
   },
   "Common": {
     "confirm": "확인",
@@ -437,7 +437,7 @@
     "details": "상세 내용",
     "mainTask": "주요 업무",
     "preferred": "우대 사항",
-    "viewCount": "조회수: {count}",
+    "viewCount": "{count}",
     "applicantCount": "지원자: {count}",
     "managerInfo": "담당자 정보",
     "apply": "지원하기",
@@ -544,7 +544,7 @@
     "inquire": "문의하기",
     "chat": "채팅하기",
     "selectRoomType": "방 종류 선택",
-    "viewCount": "조회수 : {count}",
+    "viewCount": "{count}",
     "description": "숙소 설명",
     "form": {
       "back": "뒤로가기",

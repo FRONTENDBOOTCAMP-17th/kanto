@@ -76,7 +76,7 @@
     "label": "Wika",
     "ko": "한국어",
     "en": "English",
-    "ta": "Tagalog"
+    "fil": "Filipino"
   },
   "Common": {
     "confirm": "Kumpirmahin",
@@ -437,7 +437,7 @@
     "details": "Mga detalye",
     "mainTask": "Mga pangunahing gawain",
     "preferred": "Mga gustong kwalipikasyon",
-    "viewCount": "Mga view: {count}",
+    "viewCount": "{count}",
     "applicantCount": "Mga aplikante: {count}",
     "managerInfo": "Taong makokontak",
     "apply": "Mag-apply",
@@ -542,7 +542,7 @@
     "inquire": "Magtanong",
     "chat": "Mag-chat",
     "selectRoomType": "Pumili ng uri ng kuwarto",
-    "viewCount": "Mga view: {count}",
+    "viewCount": "{count}",
     "description": "Paglalarawan ng tuluyan",
     "form": {
       "back": "Bumalik",
