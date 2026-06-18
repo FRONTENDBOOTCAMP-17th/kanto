@@ -17,7 +17,7 @@ import {
 
 const navItems: { icon: LucideIcon; label: string; href: string | null; badge?: number }[] = [
   { icon: LayoutDashboard, label: "대시보드", href: "/admin" },
-  { icon: FileText, label: "글 관리", href: null },
+  { icon: FileText, label: "글 관리", href: "/admin/posts" },
   { icon: Users, label: "유저 관리", href: "/admin/users" },
   { icon: Flag, label: "신고 내역", href: "/admin/reports" },
   { icon: MessageSquare, label: "채팅기록", href: "/admin/chats" },
