@@ -106,6 +106,7 @@
     "urlCopied": "URL copied.",
     "imageUpload": {
       "label": "Photos (up to {maxCount})",
+      "labelWithMin": "Photos (min {minCount}, max {maxCount})",
       "add": "Add photos",
       "removeImage": "Remove image {index}",
       "goToImage": "Go to image {index}"
@@ -349,7 +350,8 @@
       "submit": "Done",
       "errorPost": "Failed to create the post.",
       "errorImage": "Failed to upload images.",
-      "errorGoods": "Failed to register product info."
+      "errorGoods": "Failed to register product info.",
+      "errorNoImage": "Please upload at least one image."
     }
   },
   "Job": {

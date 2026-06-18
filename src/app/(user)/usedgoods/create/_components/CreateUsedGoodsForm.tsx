@@ -78,6 +78,16 @@ export function CreateUsedGoodsForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const isFormValid =
+    title.trim() !== "" &&
+    price !== "" &&
+    productCategory !== "" &&
+    condition !== "" &&
+    preferredLocation !== "" &&
+    (preferredLocation !== "그 외 지역" || preferredLocationDetail.trim() !== "") &&
+    content.trim() !== "" &&
+    imagePreviews.length > 0;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!productCategory || !condition || !preferredLocation) return;
@@ -342,10 +352,14 @@ export function CreateUsedGoodsForm({
             <ImageUploadField
               fileInputRef={fileInputRef}
               imagePreviews={imagePreviews}
+              minCount={1}
               onUploadClick={handleImageUpload}
               onSelect={handleImageSelect}
               onRemove={removeImage}
             />
+            {imagePreviews.length === 0 && (
+              <p className="text-sm text-red-500">{t("form.errorNoImage")}</p>
+            )}
 
             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
               <input
@@ -374,7 +388,7 @@ export function CreateUsedGoodsForm({
                 type="submit"
                 variant="teal"
                 className="flex-1"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !isFormValid}
               >
                 {isSubmitting ? t("form.submitting") : t("form.submit")}
               </Button>
