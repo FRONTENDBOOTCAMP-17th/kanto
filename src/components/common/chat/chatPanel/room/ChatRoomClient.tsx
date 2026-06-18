@@ -20,7 +20,7 @@ import ReviewBanner from "./ReviewBanner";
 interface Props {
   initialMessages: MessageWithSender[];
   currentUser: SellerInfo;
-  chatId: number;
+  chatId: number | null;
   postId: number;
   partner: SellerInfo;
   postTitle: string;
@@ -28,21 +28,24 @@ interface Props {
   postPrice: number | null;
   onBack?: () => void;
   onLeave?: () => void;
+  onChatCreated?: (chatId: number) => void;
 }
 
 export default function ChatRoomClient({
   initialMessages,
   currentUser,
-  chatId,
+  chatId: chatIdProp,
   postId,
   partner,
   postTitle,
   sellerId,
   postPrice,
   onBack,
-  onLeave
+  onLeave,
+  onChatCreated,
 }: Props) {
   const router = useRouter();
+  const [activeChatId, setActiveChatId] = useState<number | null>(chatIdProp);
   const [input, setInput] = useState("");
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
@@ -63,9 +66,9 @@ export default function ChatRoomClient({
     loadMore,
     messagesEndRef,
     scrollContainerRef,
-  } = useChatMessages({ initialMessages, currentUser, chatId, partner });
+  } = useChatMessages({ initialMessages, currentUser, chatId: activeChatId, partner });
 
-  useChatRoomRealtime({ chatId, currentUser, partner, setMessages });
+  useChatRoomRealtime({ chatId: activeChatId, currentUser, partner, setMessages });
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -82,7 +85,7 @@ export default function ChatRoomClient({
     const optimistic: MessageWithSender = {
       id: tempId,
       created_at: new Date().toISOString(),
-      chat_id: chatId,
+      chat_id: activeChatId ?? 0,
       sender_id: currentUser.id,
       post_id: postId,
       content,
@@ -95,23 +98,38 @@ export default function ChatRoomClient({
     setMessages((prev) => [...prev, optimistic]);
 
     try {
-      const saved = await sendMessageAction({ chatId, postId, content });
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.tempId === tempId ? { ...m, id: saved.id, tempId: undefined } : m,
-        ),
-      );
+      if (activeChatId === null) {
+        const { chatId: newChatId, message: saved } = await createChatAndSendAction({
+          partnerUserId: partner.id,
+          postId,
+          content,
+        });
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.tempId === tempId
+              ? { ...m, id: saved.id, chat_id: newChatId, tempId: undefined }
+              : m,
+          ),
+        );
+        setActiveChatId(newChatId);
+        onChatCreated?.(newChatId);
+      } else {
+        const saved = await sendMessageAction({ chatId: activeChatId, postId, content });
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.tempId === tempId ? { ...m, id: saved.id, tempId: undefined } : m,
+          ),
+        );
+      }
     } catch {
       setMessages((prev) => prev.filter((m) => m.tempId !== tempId));
     }
   };
 
-  // 결제요청 카드 메시지 추가 (판매자 본인 화면 — 리얼타임은 상대방 처리)
   const handlePaymentRequested = (message: MessageWithSender) => {
     setMessages((prev) => [...prev, message]);
   };
 
-  // 거래 상태 변경을 해당 결제 카드에 즉시 반영 (리얼타임과 멱등)
   const handleTransactionChange = (transaction: Transaction) => {
     setMessages((prev) =>
       prev.map((m) =>
@@ -121,8 +139,12 @@ export default function ChatRoomClient({
   };
 
   useEffect(() => {
-    markChatReadAction(chatId);
-  }, [chatId]);
+    if (activeChatId === null) return;
+    markChatReadAction(activeChatId);
+    return () => {
+      markChatReadAction(activeChatId);
+    };
+  }, [activeChatId]);
 
   // 후기 작성 배너 대상 거래 / 안전결제 요청 차단 여부 — 서버에서 권위 있게 조회(페이지네이션·realtime 무관)
   const [reviewableTxId, setReviewableTxId] = useState<number | null>(null);
@@ -146,7 +168,7 @@ export default function ChatRoomClient({
       <ChatHeader
         partner={partner}
         postTitle={postTitle}
-        chatId={chatId}
+        chatId={activeChatId ?? 0}
         onBack={onBack ?? (() => router.back())}
         onLeave={onLeave}
       />
@@ -185,9 +207,9 @@ export default function ChatRoomClient({
         isCooldown={isCooldown}
         cooldownSeconds={cooldownSeconds}
       />
-      {showPaymentModal && postPrice !== null && (
+      {showPaymentModal && postPrice !== null && activeChatId !== null && (
         <PaymentRequestModal
-          chatId={chatId}
+          chatId={activeChatId}
           postId={postId}
           defaultAmount={postPrice}
           onClose={() => setShowPaymentModal(false)}

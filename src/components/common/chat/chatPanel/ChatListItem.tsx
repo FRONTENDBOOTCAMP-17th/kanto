@@ -5,8 +5,8 @@ import type { Locale } from "@/i18n/config";
 
 const categoryStyle: Record<string, string> = {
   used_goods: "bg-teal-50 text-teal-600",
-  room_rent: "bg-cyan-50 text-cyan-600",
-  job: "bg-green-50 text-green-600",
+  rental: "bg-cyan-50 text-cyan-600",
+  jobs: "bg-green-50 text-green-600",
 };
 
 interface Props {

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { LucideIcon } from "lucide-react";
 import {
   LayoutDashboard,
   FileText,
@@ -14,12 +15,12 @@ import {
   Menu,
 } from "lucide-react";
 
-const navItems = [
+const navItems: { icon: LucideIcon; label: string; href: string | null; badge?: number }[] = [
   { icon: LayoutDashboard, label: "대시보드", href: "/admin" },
-  { icon: FileText, label: "글 관리", href: null },
+  { icon: FileText, label: "글 관리", href: "/admin/posts" },
   { icon: Users, label: "유저 관리", href: "/admin/users" },
   { icon: Flag, label: "신고 내역", href: "/admin/reports" },
-  { icon: MessageSquare, label: "채팅기록", href: null },
+  { icon: MessageSquare, label: "채팅기록", href: "/admin/chats" },
 ];
 
 export default function AdminLayout({

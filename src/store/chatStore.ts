@@ -1,12 +1,29 @@
 import { create } from "zustand";
 import type { ChatWithUsers } from "@/type/chat/chat";
 import type { MessageWithSender } from "@/type/chat/message";
+import { useAuthStore } from "@/store/authStore";
+import { useSuspendedModalStore } from "@/hooks/useSuspended";
+
+export interface PendingNewChat {
+  buyerId: number;
+  sellerId: number;
+  postId: number;
+  postTitle: string;
+  postPrice: number | null;
+  partner: {
+    id: number;
+    name: string | null;
+    avatar_url: string | null;
+    created_at: string | null;
+  };
+}
 
 interface ChatState {
   chatList: ChatWithUsers[];
   messages: MessageWithSender[];
   unreadCount: number;
   pendingChatId: number | null;
+  pendingNewChat: PendingNewChat | null;
 
   setChatList: (chats: ChatWithUsers[]) => void;
   setMessages: (messages: MessageWithSender[]) => void;
@@ -15,6 +32,8 @@ interface ChatState {
   decreaseUnreadCount: () => void;
   openWidget: (chatId: number) => void;
   clearPendingChat: () => void;
+  openNewChat: (meta: PendingNewChat) => void;
+  clearNewChat: () => void;
 }
 
 export const useChatStore = create<ChatState>((set) => ({
@@ -22,6 +41,7 @@ export const useChatStore = create<ChatState>((set) => ({
   messages: [],
   unreadCount: 0,
   pendingChatId: null,
+  pendingNewChat: null,
 
   setChatList: (chats) => set({ chatList: chats }),
   setMessages: (messages) => set({ messages }),
@@ -32,6 +52,15 @@ export const useChatStore = create<ChatState>((set) => ({
     set((state) => ({
       unreadCount: Math.max(0, state.unreadCount - 1),
     })),
-  openWidget: (chatId) => set({ pendingChatId: chatId }),
+  openWidget: (chatId) => {
+    const until = useAuthStore.getState().user?.suspended_until;
+    if (until && new Date(until) > new Date()) {
+      useSuspendedModalStore.getState().open();
+      return;
+    }
+    set({ pendingChatId: chatId });
+  },
   clearPendingChat: () => set({ pendingChatId: null }),
+  openNewChat: (meta) => set({ pendingNewChat: meta }),
+  clearNewChat: () => set({ pendingNewChat: null }),
 }));

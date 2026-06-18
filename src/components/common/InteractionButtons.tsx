@@ -6,6 +6,7 @@ import { Heart, Share2, Siren } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toggleLike } from "@/services/likeToggle";
 import { useAuthStore } from "@/store/authStore";
+import { useSuspended } from "@/hooks/useSuspended";
 import Toast from "@/components/common/Toast";
 import ReportModal from "@/components/common/ReportModal";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
@@ -31,6 +32,7 @@ export default function InteractionButtons({
 }: InteractionButtonsProps) {
   const t = useTranslations("Common");
   const { user: storeUser } = useAuthStore();
+  const { isSuspended, openModal } = useSuspended();
   const [isLiked, setIsLiked] = useState(initialLiked);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -40,6 +42,10 @@ export default function InteractionButtons({
   const handleLike = async () => {
     if (!userId) {
       setShowLoginModal(true);
+      return;
+    }
+    if (isSuspended) {
+      openModal();
       return;
     }
     if (storeUser?.deleted_at) {

@@ -1,5 +1,6 @@
 "use client";
 import { useAuthStore } from "@/store/authStore";
+import { useSuspended } from "@/hooks/useSuspended";
 import { ChevronUp, Plus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -12,6 +13,7 @@ export function ScrollToTop() {
   const router = useRouter();
   const path = usePathname();
   const { isLoggedIn } = useAuthStore();
+  const { isSuspended, openModal } = useSuspended();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,6 +30,7 @@ export function ScrollToTop() {
   };
 
   const handlePlus = () => {
+    if (isSuspended) { openModal(); return; }
     router.push("/create");
   };
 

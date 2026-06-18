@@ -3,7 +3,7 @@ import type { Category } from "@/type/admin";
 export const POST_TYPE_LABEL: Record<string, string> = {
   used_goods: "중고거래",
   community: "커뮤니티",
-  job: "구인구직",
+  jobs: "구인구직",
   rental: "방렌트",
 };
 
