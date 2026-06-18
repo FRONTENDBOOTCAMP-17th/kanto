@@ -85,21 +85,23 @@ export function formatTimeAgo(
   return rtf.format(-years, "year");
 }
 
-/** 마감일까지 남은 기간을 D-7 / 오늘 마감 / 마감 형태로 포맷 */
-export function formatDeadline(deadline: string): string {
+/** 마감일까지 남은 일수 (음수 = 만료, 0 = 오늘, 양수 = D-n) */
+export function getDeadlineDiff(deadline: string): number {
   const startOfDay = (d: Date) =>
     new Date(d.getFullYear(), d.getMonth(), d.getDate());
-
-  const diffDay = Math.round(
+  return Math.round(
     (startOfDay(new Date(deadline)).getTime() -
       startOfDay(new Date()).getTime()) /
       (1000 * 60 * 60 * 24),
   );
+}
 
-  if (diffDay < 0) return "마감";
-  if (diffDay === 0) return "오늘 마감";
-
-  return `D-${diffDay}`;
+/** @deprecated getDeadlineDiff 를 사용하고 컴포넌트에서 번역하세요 */
+export function formatDeadline(deadline: string): string {
+  const diff = getDeadlineDiff(deadline);
+  if (diff < 0) return "마감";
+  if (diff === 0) return "오늘 마감";
+  return `D-${diff}`;
 }
 
 /** 날짜 구분선 포맷 */

@@ -44,13 +44,13 @@ export default function JobInfo({ job }: { job: JobDetail }) {
           <dd>- {deadline}</dd>
         </div>
         <div className="flex gap-2">
-          <dt className="w-24 text-gray-500 shrink-0">근무 시간</dt>
-          <dd>- {job.is_time_negotiable ? "시간 협의" : job.work_hours}</dd>
+          <dt className="w-24 text-gray-500 shrink-0">{t("workHours")}</dt>
+          <dd>- {job.is_time_negotiable ? t("form.timeNegotiable") : job.work_hours}</dd>
         </div>
         {!job.is_time_negotiable && job.work_days && job.work_days.length > 0 && (
           <div className="flex gap-2">
-            <dt className="w-24 text-gray-500 shrink-0">근무 요일</dt>
-            <dd>- {job.work_days.join(", ")}</dd>
+            <dt className="w-24 text-gray-500 shrink-0">{t("workDays")}</dt>
+            <dd>- {(job.work_days as string[]).map((d) => te(`workDay.${d}`)).join(", ")}</dd>
           </div>
         )}
       </dl>

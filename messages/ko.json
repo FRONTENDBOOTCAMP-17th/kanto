@@ -240,6 +240,23 @@
     },
     "tradeLocation": {
       "otherAreas": "그 외 지역"
+    },
+    "workDay": {
+      "월": "월", "화": "화", "수": "수", "목": "목", "금": "금", "토": "토", "일": "일"
+    },
+    "dayPreset": {
+      "평일": "평일", "주말": "주말", "매일": "매일"
+    },
+    "preferredGroup": {
+      "어학": "어학", "체류": "체류", "경력": "경력", "자격": "자격", "직군": "직군", "기타": "기타"
+    },
+    "preferredItem": {
+      "korean": "한국어", "english": "영어", "tagalog": "따갈로그어", "interpretation": "통역 가능",
+      "local_resident": "현지 거주", "work_visa": "취업비자", "immediate_start": "즉시 출근", "long_term": "장기 근무",
+      "same_industry": "동종업계", "job_experience": "직무 경험", "beginner_ok": "초보 가능", "korean_company_exp": "한국기업 경험",
+      "drivers_license": "운전면허", "certificate": "자격증 보유", "computer_skill": "컴퓨터 활용",
+      "driving": "운전", "cooking": "조리", "teaching": "교육", "customer_service": "고객 응대",
+      "local_family": "현지 가족", "referral": "지인 추천"
     }
   },
   "Create": {
@@ -371,6 +388,10 @@
     "salary": "월급",
     "workLocation": "근무 지역",
     "deadline": "마감일",
+    "workHours": "근무 시간",
+    "workDays": "근무 요일",
+    "deadlineExpired": "마감",
+    "deadlineToday": "오늘 마감",
     "companyInfo": "회사 정보",
     "foundedYear": "설립연도",
     "yearSuffix": "{year}년",
@@ -414,6 +435,7 @@
       "workDaysLabel": "근무 요일",
       "selectedCount": "개 선택됨",
       "preferredSelect": "우대 사항 선택",
+      "preferredDone": "완료 ({count})",
 
       "hour": "시",
       "minute": "분",

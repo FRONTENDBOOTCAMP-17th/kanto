@@ -37,7 +37,7 @@ export function JobList({ posts, likedIds, currentUserId, emptyMessage }: Props)
             createdAt={post.created_at}
             deadline={job.deadline}
             employeeType={job.employee_type}
-            workHours={job.is_time_negotiable ? "시간협의" : (job.work_hours ?? "")}
+            workHours={job.is_time_negotiable ? t("form.timeNegotiable") : (job.work_hours ?? "")}
             initialIsLiked={likedSet.has(post.id)}
             currentUserId={currentUserId}
           />
