@@ -663,6 +663,7 @@ export type Database = {
           created_at: string
           id: number
           is_reserved: boolean
+          is_sold: boolean
           like_count: number
           post_type: string
           status: string
@@ -675,6 +676,7 @@ export type Database = {
           created_at?: string
           id?: number
           is_reserved?: boolean
+          is_sold?: boolean
           like_count?: number
           post_type: string
           status?: string
@@ -687,6 +689,7 @@ export type Database = {
           created_at?: string
           id?: number
           is_reserved?: boolean
+          is_sold?: boolean
           like_count?: number
           post_type?: string
           status?: string

@@ -31,7 +31,7 @@ export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId }: 
             ? (goods.location_custom ?? "")
             : (goods?.location_type ?? "");
 
-        const reservedBadge = post.is_reserved ? (
+        const reservedBadge = !post.is_sold && post.is_reserved ? (
           <span className="rounded bg-orange-500 px-1.5 py-0.5 text-[11px] font-bold text-white">
             예약중
           </span>
@@ -52,6 +52,7 @@ export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId }: 
             postId={post.id}
             subtitle={post.users?.name || undefined}
             badge={reservedBadge}
+            soldOverlay={post.is_sold}
           />
         );
       })}

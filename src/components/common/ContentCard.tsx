@@ -22,6 +22,7 @@ export interface ContentCardProps {
   initialIsLiked: boolean;
   currentUserId: number | null;
   badge?: React.ReactNode;
+  soldOverlay?: boolean;
   subtitle?: string;
   tags?: React.ReactNode;
   listOnMobile?: boolean;
@@ -39,6 +40,7 @@ export function ContentCard({
   initialIsLiked,
   currentUserId,
   badge,
+  soldOverlay,
   subtitle,
   tags,
   listOnMobile = false,
@@ -112,7 +114,12 @@ export function ContentCard({
                 <ImageIcon className="w-8 h-8 text-gray-300" />
               </div>
             )}
-            {badge && <div className="absolute top-2 left-2 z-10">{badge}</div>}
+            {soldOverlay && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/50">
+                <span className="text-2xl md:text-3xl font-bold text-white">판매완료</span>
+              </div>
+            )}
+            {!soldOverlay && badge && <div className="absolute top-2 left-2 z-10">{badge}</div>}
           </div>
 
           {/* 콘텐츠 영역 */}

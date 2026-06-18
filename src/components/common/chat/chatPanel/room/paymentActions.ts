@@ -172,6 +172,12 @@ export async function confirmReceiptAction(
     released_at: new Date().toISOString(),
   });
 
+  // 게시글 판매완료 처리 (is_sold=true, is_reserved=false)
+  await supabase
+    .from("posts")
+    .update({ is_sold: true, is_reserved: false })
+    .eq("id", transaction.post_id);
+
   // 시스템 메시지는 부가 UX — 삽입 실패가 거래완료 처리 자체를 깨지 않도록 격리
   try {
     await postSystemMessage(released, "거래가 완료되었습니다");
