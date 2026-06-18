@@ -22,12 +22,15 @@ export default async function ProfilePage() {
     alert_keywords: data?.alert_keywords ?? null,
   };
 
+  const initialIsVerified = user.user_metadata?.identity_verified === true;
+
   return (
     <div className="bg-white md:bg-teal-50">
       <div className="max-w-lg md:max-w-5xl mx-auto py-8">
         <ProfileCard
           alertSettings={alertSettings}
           initialIdentities={user.identities ?? []}
+          initialIsVerified={initialIsVerified}
         />
       </div>
     </div>

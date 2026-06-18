@@ -191,5 +191,7 @@ export async function PATCH(req: NextRequest) {
 
   await deleteVerificationCode(key);
 
+  await supabase.auth.updateUser({ data: { identity_verified: true } });
+
   return NextResponse.json({ verified: true });
 }
