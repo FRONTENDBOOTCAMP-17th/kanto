@@ -15,6 +15,17 @@ import type { AlertSettings } from "@/hooks/profile/useAlertSettings";
 import { ProfileBlockedSection } from "./sections/ProfileBlockedSection";
 import { ProfileSettingsSection } from "./sections/ProfileSettingsSection";
 import type { UserIdentity } from "@supabase/supabase-js";
+import type { ReviewWithReviewer } from "@/type/review";
+
+const PROVIDER_KEYS = ["google", "kakao", "facebook"] as const;
+
+export function ProfileCard({ alertSettings, initialIdentities, reviews }: { alertSettings: AlertSettings; initialIdentities: UserIdentity[]; reviews: ReviewWithReviewer[] }) {
+  const { user } = useAuthStore();
+  if (!user) return null;
+  return <ProfileForm user={user} alertSettings={alertSettings} initialIdentities={initialIdentities} reviews={reviews} />;
+}
+
+function ProfileForm({ user, alertSettings, initialIdentities, reviews }: { user: UserType; alertSettings: AlertSettings; initialIdentities: UserIdentity[]; reviews: ReviewWithReviewer[] }) {
 import { IdentityVerificationModal } from "./IdentityVerificationModal";
 
 const PROVIDER_KEYS = ["google", "kakao", "facebook", "email"] as const;
@@ -62,6 +73,12 @@ function ProfileForm({
 
   const providerKey = PROVIDER_KEYS.find((p) => p === user.provider) ?? "email";
   const joinedAt = user.created_at ? new Date(user.created_at) : null;
+
+  const reviewCount = reviews.length;
+  const avgRating =
+    reviewCount > 0
+      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount
+      : 0;
 
   return (
     <div className="bg-white md:bg-gray-50 min-h-screen md:min-h-0 md:rounded-xl overflow-hidden">
@@ -118,7 +135,7 @@ function ProfileForm({
                   </span>
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-xl font-bold text-gray-900">0</span>
+                  <span className="text-xl font-bold text-gray-900">{reviewCount}</span>
                   <span className="text-xs text-gray-500">{t("reviews")}</span>
                 </div>
               </div>
@@ -177,13 +194,9 @@ function ProfileForm({
 
         {/* 메인 콘텐츠 */}
         <div className="flex-1 md:pl-8">
-          {activeTab === "info" && (
-            <ProfileInfoSection user={user} avatarFile={avatarFile} />
-          )}
-          {activeTab === "reviews" && <ProfileReviewsSection />}
-          {activeTab === "alerts" && (
-            <ProfileAlertsSection initialSettings={alertSettings} />
-          )}
+          {activeTab === "info" && <ProfileInfoSection user={user} avatarFile={avatarFile} />}
+          {activeTab === "reviews" && <ProfileReviewsSection reviews={reviews} avgRating={avgRating} reviewCount={reviewCount} />}
+          {activeTab === "alerts" && <ProfileAlertsSection initialSettings={alertSettings} />}
           {activeTab === "blocked" && <ProfileBlockedSection />}
           {activeTab === "settings" && (
             <ProfileSettingsSection initialIdentities={initialIdentities} />

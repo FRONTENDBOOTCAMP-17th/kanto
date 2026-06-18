@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
-import { markChatReadAction, sendMessageAction, createChatAndSendAction } from "./actions";
+import { markChatReadAction, sendMessageAction } from "./actions";
+import { getChatBannerStateAction } from "./paymentActions";
 import { useSpamPrevention } from "@/hooks/chat/useSpamPrevention";
 import { useChatRoomRealtime } from "@/hooks/chat/useChatRoomRealtime";
 import { useChatMessages } from "@/hooks/chat/useChatMessages";
@@ -14,6 +15,7 @@ import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList";
 import ChatInput from "./ChatInput";
 import PaymentRequestModal from "./PaymentRequestModal";
+import ReviewBanner from "./ReviewBanner";
 
 interface Props {
   initialMessages: MessageWithSender[];
@@ -47,7 +49,13 @@ export default function ChatRoomClient({
   const [input, setInput] = useState("");
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
-  const canRequestPayment = sellerId !== null && currentUser.id === sellerId && postPrice !== null;
+  // 판매자이고 중고거래(가격 존재) 채팅이며, 진행 중/완료된 거래가 없을 때만 안전결제 요청 가능
+  const [paymentRequestBlocked, setPaymentRequestBlocked] = useState(false);
+  const canRequestPayment =
+    sellerId !== null &&
+    currentUser.id === sellerId &&
+    postPrice !== null &&
+    !paymentRequestBlocked;
 
   const { isCooldown, cooldownSeconds, recordSend } = useSpamPrevention();
   const {
@@ -138,6 +146,23 @@ export default function ChatRoomClient({
     };
   }, [activeChatId]);
 
+  // 후기 작성 배너 대상 거래 / 안전결제 요청 차단 여부 — 서버에서 권위 있게 조회(페이지네이션·realtime 무관)
+  const [reviewableTxId, setReviewableTxId] = useState<number | null>(null);
+  const refreshBannerState = useCallback(() => {
+    getChatBannerStateAction(chatId)
+      .then(({ reviewableTransactionId, paymentRequestBlocked }) => {
+        setReviewableTxId(reviewableTransactionId);
+        setPaymentRequestBlocked(paymentRequestBlocked);
+      })
+      .catch(() => {});
+  }, [chatId]);
+
+  // 마운트 + released 시스템 메시지 도착(양쪽 모두 수신) 시 재조회
+  const systemMsgCount = messages.filter((m) => m.type === "system").length;
+  useEffect(() => {
+    refreshBannerState();
+  }, [refreshBannerState, systemMsgCount]);
+
   return (
     <div className="relative flex flex-col h-full w-full bg-gray-50">
       <ChatHeader
@@ -157,6 +182,13 @@ export default function ChatRoomClient({
         scrollContainerRef={scrollContainerRef}
         onTransactionChange={handleTransactionChange}
       />
+      {reviewableTxId !== null && (
+        <ReviewBanner
+          key={reviewableTxId}
+          transactionId={reviewableTxId}
+          onReviewed={refreshBannerState}
+        />
+      )}
       {canRequestPayment && (
         <div className="bg-white border-t border-gray-100 px-4 py-2 md:px-3 shrink-0">
           <button

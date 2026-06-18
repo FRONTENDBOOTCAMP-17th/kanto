@@ -600,7 +600,9 @@
       "title": "Mga Review ng Transaksyon",
       "ratingAria": "Rating {rating} ({count})",
       "count": "({count})",
-      "empty": "Wala pang review"
+      "empty": "Wala pang review",
+      "roleBuyer": "Mamimili",
+      "roleSeller": "Nagbebenta"
     },
     "settings": {
       "regionTitle": "Rehiyon",

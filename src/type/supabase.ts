@@ -778,6 +778,7 @@ export type Database = {
           reviewee_id: number
           reviewer_id: number
           role: string
+          transaction_id: number | null
           updated_at: string | null
         }
         Insert: {
@@ -792,6 +793,7 @@ export type Database = {
           reviewee_id: number
           reviewer_id: number
           role: string
+          transaction_id?: number | null
           updated_at?: string | null
         }
         Update: {
@@ -806,6 +808,7 @@ export type Database = {
           reviewee_id?: number
           reviewer_id?: number
           role?: string
+          transaction_id?: number | null
           updated_at?: string | null
         }
         Relationships: [
@@ -842,6 +845,13 @@ export type Database = {
             columns: ["reviewer_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
             referencedColumns: ["id"]
           },
         ]

@@ -38,6 +38,42 @@ export async function getTransaction(id: number): Promise<Transaction | null> {
   return (data as Transaction) ?? null;
 }
 
+/**
+ * 채팅방의 거래 완료(released) 거래 목록을 최신순으로 조회한다.
+ * 후기 작성 배너 노출 대상 판정에 사용 (로드된 메시지와 무관하게 권위 있게 조회).
+ */
+export async function getReleasedTransactionsForChat(
+  chatId: number,
+): Promise<Transaction[]> {
+  const { data } = await supabaseAdmin
+    .from("transactions")
+    .select("*")
+    .eq("chat_id", chatId)
+    .eq("status", "released")
+    // released_at이 nullable이라 단독 정렬은 동순위에서 순서가 불안정함.
+    // id를 보조 정렬키로 둬 "최신 완료 거래" 판정(후기 배너)을 결정적으로 만든다.
+    .order("released_at", { ascending: false, nullsFirst: false })
+    .order("id", { ascending: false });
+
+  return (data as Transaction[]) ?? [];
+}
+
+/**
+ * 채팅에 진행 중(pending/paid) 또는 완료(released) 거래가 있는지 여부.
+ * 안전결제 요청하기 배너 노출 차단 판정에 사용 (cancelled/expired 만 있으면 false → 재요청 허용).
+ */
+export async function hasBlockingTransactionForChat(
+  chatId: number,
+): Promise<boolean> {
+  const { data } = await supabaseAdmin
+    .from("transactions")
+    .select("id")
+    .eq("chat_id", chatId)
+    .in("status", ["pending", "paid", "released"])
+    .limit(1);
+  return (data?.length ?? 0) > 0;
+}
+
 export async function getTransactionByExternalId(
   externalId: string,
 ): Promise<Transaction | null> {
