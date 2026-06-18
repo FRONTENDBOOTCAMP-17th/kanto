@@ -31,6 +31,7 @@ export default function RentSellorInfo({
         sellerId: rental.posts.users.id,
         postId: rental.post_id,
         postTitle: rental.posts.title ?? "",
+        postType: "rental",
         postPrice: null,
         partner: {
           id: rental.posts.users.id,

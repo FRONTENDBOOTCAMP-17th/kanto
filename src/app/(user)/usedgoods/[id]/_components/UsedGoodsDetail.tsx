@@ -64,6 +64,7 @@ export default function UsedGoodsDetail({
         sellerId: data.posts.users.id,
         postId: data.post_id,
         postTitle: data.posts.title ?? "",
+        postType: "used_goods",
         postPrice: data.price,
         partner: {
           id: data.posts.users.id,
@@ -94,7 +95,20 @@ export default function UsedGoodsDetail({
       {/* 이미지 + 상품/판매자 정보 */}
       {images.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 items-stretch gap-2 md:gap-4 mt-4">
-          <ImageCarousel images={images} />
+          <div className="relative">
+            <ImageCarousel images={images} />
+            {data.posts.is_sold ? (
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-2xl bg-black/50 z-10">
+                <span className="text-2xl md:text-4xl font-bold text-white">판매완료</span>
+              </div>
+            ) : data.posts.is_reserved ? (
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-2xl bg-black/40 z-10">
+                <span className="rounded-lg bg-orange-500 px-4 py-2 text-lg font-bold text-white">
+                  예약중
+                </span>
+              </div>
+            ) : null}
+          </div>
           <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-[450px]">
             {/* 상품 정보 */}
             <div>

@@ -37,7 +37,7 @@ export async function GET(
   // 판매자(글 작성자) id 와 중고거래 가격 — 안전결제 요청 게이팅/금액 prefill 용
   const { data: post } = await supabase
     .from("posts")
-    .select("user_id")
+    .select("user_id, is_reserved")
     .eq("id", chatRoom.post_id)
     .single();
 
@@ -58,7 +58,9 @@ export async function GET(
     postId: chatRoom.post_id,
     partner,
     postTitle: chatRoom.posts?.title ?? "",
+    postType: chatRoom.posts?.post_type ?? "",
     sellerId: post?.user_id ?? null,
     postPrice,
+    isReserved: post?.is_reserved ?? false,
   });
 }
