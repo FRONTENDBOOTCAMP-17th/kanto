@@ -4,6 +4,20 @@ import type { MessageWithSender } from "@/type/chat/message";
 import { useAuthStore } from "@/store/authStore";
 import { useSuspendedModalStore } from "@/hooks/useSuspended";
 
+export interface PendingNewChat {
+  buyerId: number;
+  sellerId: number;
+  postId: number;
+  postTitle: string;
+  postPrice: number | null;
+  partner: {
+    id: number;
+    name: string | null;
+    avatar_url: string | null;
+    created_at: string | null;
+  };
+}
+
 interface ChatState {
   chatList: ChatWithUsers[];
   messages: MessageWithSender[];
