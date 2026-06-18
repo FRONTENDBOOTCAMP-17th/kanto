@@ -1,3 +1,4 @@
+import nodemailer from "nodemailer";
 import { Redis } from "@upstash/redis";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
@@ -78,41 +79,31 @@ async function deleteVerificationCode(key: string) {
 }
 
 async function sendVerificationEmail(email: string, name: string, code: string) {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL;
+  const user = process.env.GMAIL_USER;
+  const pass = process.env.GMAIL_APP_PASSWORD;
 
-  if (!apiKey || !from) {
+  // 메일 발송 키가 없으면 발송을 건너뛰고 개발용 코드를 화면에 표시한다.
+  if (!user || !pass) {
     return { isEmailSent: false, isConfigured: false };
   }
 
-  if (from.includes("your-domain.com")) {
-    throw new Error("RESEND_FROM_EMAIL을 Resend에서 검증한 실제 발신 주소로 변경해주세요.");
-  }
-
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from,
-      to: email,
-      subject: "[Kanto] 본인인증 인증번호",
-      html: `
-        <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
-          <p>${name}님, Kanto 본인인증을 위한 인증번호입니다.</p>
-          <p style="font-size:28px;font-weight:700;letter-spacing:4px">${code}</p>
-          <p>인증번호는 발송 시점부터 3분 동안 유효합니다.</p>
-        </div>
-      `,
-    }),
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: { user, pass },
   });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || "email_send_failed");
-  }
+  await transporter.sendMail({
+    from: `Kanto <${user}>`,
+    to: email,
+    subject: "[Kanto] 본인인증 인증번호",
+    html: `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
+        <p>${name}님, Kanto 본인인증을 위한 인증번호입니다.</p>
+        <p style="font-size:28px;font-weight:700;letter-spacing:4px">${code}</p>
+        <p>인증번호는 발송 시점부터 3분 동안 유효합니다.</p>
+      </div>
+    `,
+  });
 
   return { isEmailSent: true, isConfigured: true };
 }
@@ -194,4 +185,25 @@ export async function PATCH(req: NextRequest) {
   await supabase.auth.updateUser({ data: { identity_verified: true } });
 
   return NextResponse.json({ verified: true });
+}
+
+// 개발용: 본인인증 상태를 초기화한다. 프로덕션에서는 비활성화.
+export async function DELETE() {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "사용할 수 없는 요청입니다." }, { status: 403 });
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    return NextResponse.json({ error: "인증되지 않은 요청입니다." }, { status: 401 });
+  }
+
+  await supabase.auth.updateUser({ data: { identity_verified: false } });
+
+  return NextResponse.json({ verified: false });
 }
