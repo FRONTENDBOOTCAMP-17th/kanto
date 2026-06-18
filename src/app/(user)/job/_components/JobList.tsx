@@ -21,7 +21,18 @@ export function JobList({ posts, likedIds, currentUserId, emptyMessage }: Props)
   }
 
   return (
-    <div className="flex flex-col divide-y divide-gray-200 border-t border-b border-gray-200">
+    <div className="border-t border-b border-gray-200">
+      {/* 데스크탑 테이블 헤더 */}
+      <div className="hidden md:flex justify-between gap-3 md:gap-4 px-5 py-3 bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+        <div className="flex items-center gap-4 flex-1 min-w-0">
+          <div className="flex-2">{t("colCompany")}</div>
+          <div className="flex-4 border-l px-4">{t("colPosition")}</div>
+          <div className="flex-3">{t("colSalaryLocation")}</div>
+          <div className="flex-2">{t("colWorkHours")}</div>
+        </div>
+        <div className="w-24 text-right">{t("colDeadline")}</div>
+      </div>
+      <div className="flex flex-col divide-y divide-gray-200">
       {posts.map((post) => {
         const job = post.jobs?.[0];
         if (!job) return null;
@@ -43,6 +54,7 @@ export function JobList({ posts, likedIds, currentUserId, emptyMessage }: Props)
           />
         );
       })}
+      </div>
     </div>
   );
 }
