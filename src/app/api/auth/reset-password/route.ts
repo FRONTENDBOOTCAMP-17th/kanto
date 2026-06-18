@@ -81,10 +81,22 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const isProduction = process.env.NODE_ENV === "production";
+
+  // 운영 환경에서 메일이 구성되지 않았다면, 코드를 노출하는 대신 에러로 막는다.
+  if (!emailResult.isConfigured && isProduction) {
+    await deleteVerificationCode(key);
+    return NextResponse.json(
+      { error: "인증번호 메일 발송이 구성되지 않았습니다. 관리자에게 문의해주세요." },
+      { status: 500 },
+    );
+  }
+
   return NextResponse.json({
     expiresIn: VERIFICATION_TTL_SECONDS,
     isEmailSent: emailResult.isEmailSent,
-    devCode: emailResult.isConfigured ? undefined : code,
+    // 운영 환경에서는 절대 코드를 내려보내지 않는다. 개발 편의로만 노출.
+    devCode: !emailResult.isConfigured && !isProduction ? code : undefined,
   });
 }
 
