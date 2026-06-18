@@ -16,7 +16,6 @@ import {
   SALARY_TYPES,
   WORK_DAYS,
   DAY_PRESETS,
-  PREFERRED_LABELS,
   type EmployeeType,
   type SalaryType,
 } from "@/type/job/jobCreate";
@@ -63,8 +62,6 @@ const EMPLOYEE_OPTIONS = EMPLOYEE_TYPES.map((t) => ({
 }));
 const SALARY_OPTIONS = SALARY_TYPES.map((t) => ({ value: t, label: t }));
 const LOCATION_OPTIONS = TRADE_LOCATIONS.map((l) => ({ value: l, label: l }));
-const HOUR_OPTIONS = HOURS.map((h) => ({ value: h, label: `${h}시` }));
-const MINUTE_OPTIONS = MINUTES.map((m) => ({ value: m, label: `${m}분` }));
 
 export function CreateJobFormPageOne({
   title,
@@ -104,6 +101,9 @@ export function CreateJobFormPageOne({
   const t = useTranslations("Job");
   const te = useTranslations("Enums");
   const tc = useTranslations("Common");
+
+  const HOUR_OPTIONS = HOURS.map((h) => ({ value: h, label: t("form.hourValue", { value: h }) }));
+  const MINUTE_OPTIONS = MINUTES.map((m) => ({ value: m, label: t("form.minuteValue", { value: m }) }));
 
   // 토글 핸들러들
   const toggleDay = (day: string) =>
@@ -306,7 +306,7 @@ export function CreateJobFormPageOne({
                 onClick={() => setWorkDays([...preset.days])}
                 className="px-3 py-1 rounded-full border border-gray-300 text-sm text-gray-600 transition-colors hover:border-teal-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {preset.id}
+                {te(`dayPreset.${preset.id}`)}
               </button>
             ))}
           </div>
@@ -327,7 +327,7 @@ export function CreateJobFormPageOne({
                       : "bg-white text-gray-700 border-gray-300 hover:border-teal-500"
                   }`}
                 >
-                  {day}
+                  {te(`workDay.${day}`)}
                 </button>
               );
             })}
@@ -369,7 +369,7 @@ export function CreateJobFormPageOne({
                 key={key}
                 className="flex items-center gap-1 rounded-full bg-teal-50 py-1 pl-3 pr-2 text-sm text-teal-700"
               >
-                {PREFERRED_LABELS[key] ?? key}
+                {te(`preferredItem.${key}`) ?? key}
                 <button
                   type="button"
                   onClick={() => toggleTag(key)}

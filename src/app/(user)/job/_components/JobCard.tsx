@@ -1,10 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import type { Locale } from "@/i18n/config";
 import { MapPin } from "lucide-react";
 import { LikeButton } from "@/components/common/LikeButton";
-import { formatTimeAgo, formatDeadline } from "@/utils/formatTime";
+import { formatTimeAgo, getDeadlineDiff } from "@/utils/formatTime";
 
 interface JobCardProps {
   id: number;
@@ -35,12 +36,18 @@ export function JobCard({
   initialIsLiked,
   currentUserId,
 }: JobCardProps) {
+  const t = useTranslations("Job");
   const te = useTranslations("Enums");
+  const locale = useLocale() as Locale;
   const router = useRouter();
 
-  const dDay = formatDeadline(deadline);
+  const deadlineDiff = getDeadlineDiff(deadline);
+  const dDay =
+    deadlineDiff < 0 ? t("deadlineExpired") :
+    deadlineDiff === 0 ? t("deadlineToday") :
+    `D-${deadlineDiff}`;
   const dDayClass =
-    dDay === "오늘 마감" ? "bg-red-50 text-red-400" : "bg-gray-100 text-gray-400";
+    deadlineDiff === 0 ? "bg-red-50 text-red-400" : "bg-gray-100 text-gray-400";
 
   const employeeTypeClass =
     employeeType === "정규직"
@@ -68,7 +75,7 @@ export function JobCard({
               {title}
             </p>
             <span className={`shrink-0 text-sm rounded px-1.5 py-0.5 font-medium ${employeeTypeClass}`}>
-              {employeeType}
+              {te(`employeeType.${employeeType}`)}
             </span>
           </div>
           <p className="text-base text-gray-500 mt-0.5">{companyName}</p>
@@ -100,7 +107,7 @@ export function JobCard({
             {title}
           </p>
           <span className={`shrink-0 text-xs lg:text-sm rounded px-1.5 py-0.5 font-medium ${employeeTypeClass}`}>
-            {employeeType}
+            {te(`employeeType.${employeeType}`)}
           </span>
         </div>
 
@@ -127,7 +134,7 @@ export function JobCard({
         </div>
         <div className="flex flex-col items-end gap-1 text-sm md:text-xs lg:text-sm">
           {dDayBadge}
-          <span className="text-gray-400">{formatTimeAgo(createdAt)}</span>
+          <span className="text-gray-400">{formatTimeAgo(createdAt, locale)}</span>
         </div>
       </div>
     </div>

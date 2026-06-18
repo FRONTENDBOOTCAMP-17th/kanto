@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { PREFERRED_CATEGORIES } from "@/type/job/jobCreate";
 
@@ -14,6 +15,9 @@ interface Props {
 }
 
 export function JobPreferredModal({ isOpen, onClose, selected, onToggle }: Props) {
+  const t = useTranslations("Job");
+  const te = useTranslations("Enums");
+  const tc = useTranslations("Common");
   const [mounted, setMounted] = useState(false);
   const [activeGroup, setActiveGroup] = useState<string>(PREFERRED_CATEGORIES[0].group);
 
@@ -48,11 +52,11 @@ export function JobPreferredModal({ isOpen, onClose, selected, onToggle }: Props
       >
         {/* 헤더 */}
         <div className="flex items-center justify-between border-b border-gray-200 p-5">
-          <h2 className="text-base font-semibold text-gray-800">우대 사항 선택</h2>
+          <h2 className="text-base font-semibold text-gray-800">{t("form.preferredSelect")}</h2>
           <button
             type="button"
             onClick={onClose}
-            aria-label="닫기"
+            aria-label={tc("close")}
             className="text-gray-400 transition-colors hover:text-gray-600"
           >
             <X className="h-5 w-5" />
@@ -76,7 +80,7 @@ export function JobPreferredModal({ isOpen, onClose, selected, onToggle }: Props
                       : "text-gray-600 hover:bg-gray-50"
                   }`}
                 >
-                  {c.group}
+                  {te(`preferredGroup.${c.group}`)}
                   {count > 0 && (
                     <span className="rounded-full bg-teal-600 px-1.5 text-xs text-white">
                       {count}
@@ -102,7 +106,7 @@ export function JobPreferredModal({ isOpen, onClose, selected, onToggle }: Props
                         : "border-gray-300 bg-white text-gray-700 hover:border-teal-500"
                     }`}
                   >
-                    {item.label}
+                    {te(`preferredItem.${item.key}`)}
                   </button>
                 );
               })}
@@ -113,7 +117,7 @@ export function JobPreferredModal({ isOpen, onClose, selected, onToggle }: Props
         {/* 푸터 */}
         <div className="flex justify-end border-t border-gray-200 p-4">
           <Button variant="teal" onClick={onClose}>
-            완료 ({selected.length})
+            {t("form.preferredDone", { count: selected.length })}
           </Button>
         </div>
       </div>

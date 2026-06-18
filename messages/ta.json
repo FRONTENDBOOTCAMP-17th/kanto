@@ -241,6 +241,23 @@
     },
     "tradeLocation": {
       "otherAreas": "Iba pang lugar"
+    },
+    "workDay": {
+      "월": "Lun", "화": "Mar", "수": "Miy", "목": "Huw", "금": "Biy", "토": "Sab", "일": "Lin"
+    },
+    "dayPreset": {
+      "평일": "Araw ng trabaho", "주말": "Weekend", "매일": "Araw-araw"
+    },
+    "preferredGroup": {
+      "어학": "Wika", "체류": "Tirahan", "경력": "Karanasan", "자격": "Kwalipikasyon", "직군": "Trabaho", "기타": "Iba pa"
+    },
+    "preferredItem": {
+      "korean": "Korean", "english": "Ingles", "tagalog": "Tagalog", "interpretation": "Interpretasyon",
+      "local_resident": "Lokal na residente", "work_visa": "Work visa", "immediate_start": "Agad magsimula", "long_term": "Pangmatagalan",
+      "same_industry": "Parehong industriya", "job_experience": "Karanasan sa trabaho", "beginner_ok": "OK para sa baguhan", "korean_company_exp": "May karanasan sa Korean na kumpanya",
+      "drivers_license": "Driver's license", "certificate": "May sertipiko", "computer_skill": "Computer skills",
+      "driving": "Pagmamaneho", "cooking": "Pagluluto", "teaching": "Pagtuturo", "customer_service": "Serbisyo sa customer",
+      "local_family": "Lokal na pamilya", "referral": "Rekomendasyon"
     }
   },
   "Create": {
@@ -372,6 +389,10 @@
     "salary": "Sahod",
     "workLocation": "Lugar ng trabaho",
     "deadline": "Huling araw",
+    "workHours": "Oras ng trabaho",
+    "workDays": "Araw ng trabaho",
+    "deadlineExpired": "Sarado",
+    "deadlineToday": "Magsasara ngayon",
     "companyInfo": "Impormasyon ng kumpanya",
     "foundedYear": "Itinatag",
     "yearSuffix": "{year}",
@@ -414,6 +435,7 @@
       "workDaysLabel": "Araw ng trabaho",
       "selectedCount": "napili",
       "preferredSelect": "Pumili ng mga kagustuhan",
+      "preferredDone": "Tapos ({count})",
       "hour": "Oras",
       "minute": "Min",
       "hourValue": "{value}",

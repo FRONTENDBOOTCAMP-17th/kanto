@@ -241,6 +241,23 @@
     },
     "tradeLocation": {
       "otherAreas": "Other areas"
+    },
+    "workDay": {
+      "월": "Mon", "화": "Tue", "수": "Wed", "목": "Thu", "금": "Fri", "토": "Sat", "일": "Sun"
+    },
+    "dayPreset": {
+      "평일": "Weekdays", "주말": "Weekend", "매일": "Every day"
+    },
+    "preferredGroup": {
+      "어학": "Language", "체류": "Residence", "경력": "Experience", "자격": "Qualifications", "직군": "Role", "기타": "Other"
+    },
+    "preferredItem": {
+      "korean": "Korean", "english": "English", "tagalog": "Tagalog", "interpretation": "Interpretation",
+      "local_resident": "Local resident", "work_visa": "Work visa", "immediate_start": "Immediate start", "long_term": "Long-term",
+      "same_industry": "Same industry", "job_experience": "Work experience", "beginner_ok": "Beginners welcome", "korean_company_exp": "Korean company exp.",
+      "drivers_license": "Driver's license", "certificate": "Certified", "computer_skill": "Computer skills",
+      "driving": "Driving", "cooking": "Cooking", "teaching": "Teaching", "customer_service": "Customer service",
+      "local_family": "Local family", "referral": "Referral"
     }
   },
   "Create": {
@@ -366,6 +383,10 @@
     "salary": "Salary",
     "workLocation": "Work location",
     "deadline": "Deadline",
+    "workHours": "Work hours",
+    "workDays": "Working days",
+    "deadlineExpired": "Closed",
+    "deadlineToday": "Closes today",
     "companyInfo": "Company info",
     "foundedYear": "Founded",
     "yearSuffix": "{year}",
@@ -408,6 +429,7 @@
       "workDaysLabel": "Working days",
       "selectedCount": "selected",
       "preferredSelect": "Select preferences",
+      "preferredDone": "Done ({count})",
       "hour": "Hour",
       "minute": "Min",
       "hourValue": "{value}",
