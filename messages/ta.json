@@ -53,6 +53,8 @@
     "emailPlaceholder": "example@email.com",
     "passwordPlaceholder": "Ilagay ang iyong password",
     "loginButton": "Mag-log in",
+    "forgotPassword": "Nakalimutan mo ba ang password?",
+    "findPassword": "Hanapin ang password",
     "noAccountInline": "Wala ka pang account?",
     "signup": "Mag-sign up",
     "noAccount": "Wala ka pa rin bang account?",

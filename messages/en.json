@@ -53,6 +53,8 @@
     "emailPlaceholder": "example@email.com",
     "passwordPlaceholder": "Enter your password",
     "loginButton": "Log in",
+    "forgotPassword": "Forgot your password?",
+    "findPassword": "Find password",
     "noAccountInline": "Don't have an account?",
     "signup": "Sign up",
     "noAccount": "Don't have an account yet?",
