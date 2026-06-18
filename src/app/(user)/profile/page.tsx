@@ -24,6 +24,7 @@ export default async function ProfilePage() {
   };
 
   const reviews = data?.id ? await getReviewsForUser(data.id) : [];
+  const initialIsVerified = user.user_metadata?.identity_verified === true;
 
   return (
     <div className="bg-white md:bg-teal-50">
@@ -32,6 +33,7 @@ export default async function ProfilePage() {
           alertSettings={alertSettings}
           initialIdentities={user.identities ?? []}
           reviews={reviews}
+          initialIsVerified={initialIsVerified}
         />
       </div>
     </div>

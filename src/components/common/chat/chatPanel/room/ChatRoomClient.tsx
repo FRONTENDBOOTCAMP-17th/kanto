@@ -6,7 +6,7 @@ import { ShieldCheck } from "lucide-react";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
-import { markChatReadAction, sendMessageAction } from "./actions";
+import { createChatAndSendAction, markChatReadAction, sendMessageAction } from "./actions";
 import { getChatBannerStateAction } from "./paymentActions";
 import { useSpamPrevention } from "@/hooks/chat/useSpamPrevention";
 import { useChatRoomRealtime } from "@/hooks/chat/useChatRoomRealtime";
@@ -149,13 +149,14 @@ export default function ChatRoomClient({
   // 후기 작성 배너 대상 거래 / 안전결제 요청 차단 여부 — 서버에서 권위 있게 조회(페이지네이션·realtime 무관)
   const [reviewableTxId, setReviewableTxId] = useState<number | null>(null);
   const refreshBannerState = useCallback(() => {
-    getChatBannerStateAction(chatId)
+    if (activeChatId === null) return;
+    getChatBannerStateAction(activeChatId)
       .then(({ reviewableTransactionId, paymentRequestBlocked }) => {
         setReviewableTxId(reviewableTransactionId);
         setPaymentRequestBlocked(paymentRequestBlocked);
       })
       .catch(() => {});
-  }, [chatId]);
+  }, [activeChatId]);
 
   // 마운트 + released 시스템 메시지 도착(양쪽 모두 수신) 시 재조회
   const systemMsgCount = messages.filter((m) => m.type === "system").length;
