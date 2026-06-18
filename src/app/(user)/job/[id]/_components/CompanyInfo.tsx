@@ -29,15 +29,17 @@ export default function CompanyInfo({ job }: { job: JobDetail }) {
   return (
     <div className="p-6 space-y-4">
       <h2 className="font-semibold text-base md:text-lg">{t("companyInfo")}</h2>
-      <div className="space-y-1">
-        <div className="flex items-center gap-3">
+      <div className="space-y-3">
+        <div className="flex gap-3">
           <CompanyLogo name={job.company_name} logoUrl={job.company_logo} />
-          <h3 className="font-semibold md:text-lg">{job.company_name}</h3>
+          <div className="space-y-1">
+            <h3 className="font-semibold md:text-lg">{job.company_name}</h3>
+            {job.industry && (
+              <p className="text-sm md:text-base text-gray-500">{job.industry}</p>
+            )}
+          </div>
         </div>
-        {job.industry && (
-          <p className="text-sm md:text-base text-gray-500">{job.industry}</p>
-        )}
-        <p className="text-sm md:text-base text-gray-600 whitespace-pre-line pt-1">
+        <p className="text-sm md:text-base text-gray-600 whitespace-pre-line">
           {job.company_intro}
         </p>
       </div>
