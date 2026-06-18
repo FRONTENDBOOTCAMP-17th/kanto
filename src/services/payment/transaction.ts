@@ -128,24 +128,24 @@ export async function postSystemMessage(
 
   if (error) throw new Error(error.message);
 
-  // 채팅 목록의 마지막 메시지/안 읽음 갱신 (postMessage 패턴과 동일)
   const { data: chat } = await supabaseAdmin
     .from("chats")
-    .select("user_id_1, user_id_1_unread, user_id_2_unread")
+    .select("user_id_1")
     .eq("id", transaction.chat_id)
     .single();
 
   const isUser1 = chat?.user_id_1 === transaction.buyer_id;
-  const unreadUpdate = isUser1
-    ? { user_id_2_unread: (chat?.user_id_2_unread ?? 0) + 1 }
-    : { user_id_1_unread: (chat?.user_id_1_unread ?? 0) + 1 };
+
+  await supabaseAdmin.rpc("increment_unread", {
+    p_chat_id: transaction.chat_id,
+    p_for_user1: !isUser1,
+  });
 
   await supabaseAdmin
     .from("chats")
     .update({
       last_message_at: new Date().toISOString(),
       last_message_content: content,
-      ...unreadUpdate,
     })
     .eq("id", transaction.chat_id);
 }
