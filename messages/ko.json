@@ -678,8 +678,6 @@
       "regionInputAria": "지역 입력",
       "regionSet": "설정",
       "regionPlaceholder": "지역을 선택하세요",
-      "languageTitle": "언어 설정",
-      "languageSelectAria": "언어 선택",
       "linkTitle": "계정 연동",
       "connected": "연결됨",
       "unlink": "해제",

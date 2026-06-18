@@ -670,8 +670,6 @@
       "regionInputAria": "Enter region",
       "regionSet": "Set",
       "regionPlaceholder": "Select a region",
-      "languageTitle": "Language",
-      "languageSelectAria": "Select language",
       "linkTitle": "Linked Accounts",
       "connected": "Connected",
       "unlink": "Unlink",
