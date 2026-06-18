@@ -1,11 +1,13 @@
+import Link from "next/link";
+import { Plus } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { WriteButton } from "@/components/common/WriteButton";
+import { Button } from "@/components/ui/button";
 import { getJobList, getPopularJobs } from "@/services/job/job";
 import { getLikeList } from "@/services/likes";
 import { getSessionUser } from "@/services/user/user";
-import { JobFilters } from "@/app/(user)/job/_components/JobFilters";
-import { JobList } from "@/app/(user)/job/_components/JobList";
-import { PopularJobs } from "@/app/(user)/job/_components/PopularJobs";
+import { JobFilters } from "./_components/JobFilters";
+import { JobList } from "./_components/JobList";
+import { PopularJobs } from "./_components/PopularJobs";
 import { PaginationUrl } from "@/components/common/PaginationUrl";
 
 const ITEMS_PER_PAGE = 10;
@@ -39,9 +41,19 @@ export default async function JobPage({
   return (
     <div className="page-wrapper">
       <main className="flex-1 page-container w-full py-8">
-        <div className="section-header">
-          <h1 className="page-title">{t("title")}</h1>
-          <WriteButton href="/create" label={t("write")} />
+        <div className="relative flex flex-col items-center text-center mb-6">
+          <h1 className="page-title-lg">{t("title")}</h1>
+          <p className="text-gray-600 mt-1">
+            {params.search
+              ? t("searchResult", { query: params.search })
+              : t("subtitle")}
+          </p>
+          <Link href="/create" className="absolute right-0 top-0">
+            <Button variant="teal" className="cursor-pointer gap-1">
+              <Plus className="w-4 h-4" />
+              {t("write")}
+            </Button>
+          </Link>
         </div>
 
         <JobFilters

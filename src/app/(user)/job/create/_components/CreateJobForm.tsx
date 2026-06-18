@@ -15,7 +15,7 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
 
   return (
     <main className="flex-1 bg-gray-50 py-8 px-4">
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-3xl mx-auto">
         <Button variant="ghost" onClick={form.handleBack} className="mb-6">
           <ArrowLeft className="w-4 h-4 mr-2" />
           {t("form.back")}

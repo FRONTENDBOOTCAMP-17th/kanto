@@ -57,11 +57,11 @@ export function LikeButton({ postId, initialIsLiked, currentUserId, className, o
     <>
       <button
         onClick={handleClick}
-        className={`group cursor-pointer hover:bg-gray-100 ${className ?? ""}`}
+        className={`group/like cursor-pointer hover:bg-gray-100 ${className ?? ""}`}
         aria-label={isLiked ? t("unfavorite") : t("favorite")}
       >
         <Heart
-          className={`w-4 h-4 transition-colors ${isLiked ? "fill-red-500 text-red-500" : "text-gray-400 group-hover:text-red-500"}`}
+          className={`w-4 h-4 transition-colors ${isLiked ? "fill-red-500 text-red-500" : "text-gray-400 group-hover/like:text-red-500"}`}
         />
       </button>
       <LoginRequiredModal isOpen={showModal} onClose={() => setShowModal(false)} />
