@@ -149,7 +149,12 @@
       "사기": "Scam",
       "허위 매물": "Fake listing",
       "불법 게시물": "Illegal content",
-      "성 범죄(성희롱/성추행 등)": "Sexual offense (harassment, etc.)"
+      "성 범죄(성희롱/성추행 등)": "Sexual offense (harassment, etc.)",
+      "욕설/비방": "Abusive language/Slander",
+      "성희롱/성적 불쾌감": "Sexual harassment/Discomfort",
+      "사기/금전 요구": "Scam/Money request",
+      "도배/광고/스팸": "Spam/Advertising",
+      "부적절한 행위": "Inappropriate behavior"
     }
   },
   "Chat": {
@@ -164,6 +169,7 @@
     "cancelReserve": "Cancel Reservation",
     "report": "Report",
     "block": "Block",
+    "blockConfirmMessage": "Block {name}? You will leave this chat after blocking.",
     "leave": "Leave chat",
     "moreMenu": "More menu",
     "messageInputLabel": "Message input",

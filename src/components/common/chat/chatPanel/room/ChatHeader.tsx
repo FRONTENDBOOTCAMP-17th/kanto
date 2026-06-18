@@ -6,12 +6,23 @@ import { useTranslations } from "next-intl";
 import { ArrowLeft, MoreVertical } from "lucide-react";
 import type { SellerInfo } from "@/type/user";
 import { useClickOutside } from "@/hooks/useClickOutside";
+import ReportModal from "@/components/common/ReportModal";
 import { leaveChatAction } from "./leaveChatAction";
+import { blockUserAction } from "./blockUserAction";
+
+const USER_REPORT_CATEGORIES = [
+  "욕설/비방",
+  "성희롱/성적 불쾌감",
+  "사기/금전 요구",
+  "도배/광고/스팸",
+  "부적절한 행위",
+] as const;
 
 interface Props {
   partner: SellerInfo;
   postTitle: string;
   chatId: number;
+  currentUserId: number;
   onBack: () => void;
   onLeave?: () => void;
   isReserved?: boolean;
@@ -22,19 +33,31 @@ export default function ChatHeader({
   partner,
   postTitle,
   chatId,
+  currentUserId,
   onBack,
   onLeave,
   isReserved,
   onToggleReserve,
 }: Props) {
   const t = useTranslations("Chat");
+  const tc = useTranslations("Common");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showReport, setShowReport] = useState(false);
+  const [showBlockConfirm, setShowBlockConfirm] = useState(false);
+  const [isBlocking, setIsBlocking] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(menuRef, () => setMenuOpen(false));
 
   const handleLeave = async () => {
     await leaveChatAction(chatId);
+    onLeave?.();
+  };
+
+  const handleBlock = async () => {
+    setIsBlocking(true);
+    await blockUserAction(chatId, partner.id);
+    setShowBlockConfirm(false);
     onLeave?.();
   };
 
@@ -92,10 +115,16 @@ export default function ChatHeader({
                 {isReserved ? t("cancelReserve") : t("setReserve")}
               </button>
             )}
-            <button className={`w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-gray-50 transition-colors ${onToggleReserve !== undefined ? "border-t border-gray-100" : ""}`}>
+            <button
+              onClick={() => { setShowReport(true); setMenuOpen(false); }}
+              className={`w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-gray-50 transition-colors ${onToggleReserve !== undefined ? "border-t border-gray-100" : ""}`}
+            >
               {t("report")}
             </button>
-            <button className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors border-t border-gray-100">
+            <button
+              onClick={() => { setShowBlockConfirm(true); setMenuOpen(false); }}
+              className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors border-t border-gray-100"
+            >
               {t("block")}
             </button>
             <button
@@ -107,6 +136,47 @@ export default function ChatHeader({
           </div>
         )}
       </div>
+
+      <ReportModal
+        isOpen={showReport}
+        onClose={() => setShowReport(false)}
+        postId={partner.id}
+        userId={currentUserId}
+        initialReported={false}
+        categories={USER_REPORT_CATEGORIES}
+        targetType="user"
+      />
+
+      {showBlockConfirm && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+          onClick={() => setShowBlockConfirm(false)}
+        >
+          <div
+            className="w-full max-w-sm mx-4 bg-white rounded-2xl shadow-xl p-6 flex flex-col gap-5 text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="text-base font-semibold text-gray-800">
+              {t("blockConfirmMessage", { name: partner.name })}
+            </p>
+            <div className="flex gap-2 justify-center">
+              <button
+                onClick={() => setShowBlockConfirm(false)}
+                className="flex-1 py-2.5 rounded-full border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                {tc("cancel")}
+              </button>
+              <button
+                onClick={handleBlock}
+                disabled={isBlocking}
+                className="flex-1 py-2.5 rounded-full bg-red-500 hover:bg-red-600 text-sm font-medium text-white transition-colors disabled:opacity-50"
+              >
+                {tc("confirm")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -149,7 +149,12 @@
       "사기": "Scam",
       "허위 매물": "Pekeng listing",
       "불법 게시물": "Ilegal na nilalaman",
-      "성 범죄(성희롱/성추행 등)": "Sekswal na paglabag (panliligalig, atbp.)"
+      "성 범죄(성희롱/성추행 등)": "Sekswal na paglabag (panliligalig, atbp.)",
+      "욕설/비방": "Pang-aabusong salita/Paninira",
+      "성희롱/성적 불쾌감": "Sekswal na panliligalig/Discomfort",
+      "사기/금전 요구": "Scam/Paghingi ng pera",
+      "도배/광고/스팸": "Spam/Patalastas",
+      "부적절한 행위": "Hindi angkop na asal"
     }
   },
   "Chat": {
@@ -164,6 +169,7 @@
     "cancelReserve": "Kanselahin ang Reserbasyon",
     "report": "Mag-ulat",
     "block": "I-block",
+    "blockConfirmMessage": "I-block si {name}? Aalis ka sa chat na ito pagkatapos i-block.",
     "leave": "Umalis sa chat",
     "moreMenu": "Higit pang menu",
     "messageInputLabel": "Message input",

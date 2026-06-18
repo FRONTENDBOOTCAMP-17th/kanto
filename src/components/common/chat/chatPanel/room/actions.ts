@@ -2,7 +2,25 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { getMessageList, postMessage } from "@/services/chat/message";
+import { isBlockedPair } from "@/services/chat/block";
 import type { MessageWithSender } from "@/type/chat/message";
+
+export async function checkBlockedAction(partnerId: number) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return false;
+
+  const { data: userData } = await supabase
+    .from("users")
+    .select("id")
+    .eq("auth_id", user.id)
+    .single();
+  if (!userData) return false;
+
+  return isBlockedPair(userData.id, partnerId);
+}
 
 export async function sendMessageAction(params: {
   chatId: number;
@@ -24,30 +42,34 @@ export async function sendMessageAction(params: {
 
   if (!userData) throw new Error("사용자를 찾을 수 없습니다.");
 
+  const { data: chat } = await supabase
+    .from("chats")
+    .select("user_id_1, user_id_2, user_id_1_left, user_id_2_left")
+    .eq("id", params.chatId)
+    .single();
+  if (!chat) throw new Error("채팅을 찾을 수 없습니다.");
+
+  const isUser1 = chat.user_id_1 === userData.id;
+  const partnerId = isUser1 ? chat.user_id_2 : chat.user_id_1;
+  if (partnerId !== null && (await isBlockedPair(userData.id, partnerId))) {
+    throw new Error("차단된 사용자와는 메시지를 주고받을 수 없습니다.");
+  }
+
   const result = await postMessage(
     { ...params, senderId: userData.id },
     supabase,
   );
 
-  const { data: chat } = await supabase
-    .from("chats")
-    .select("user_id_1, user_id_1_left, user_id_2_left")
-    .eq("id", params.chatId)
-    .single();
-
-  if (chat) {
-    const isUser1 = chat.user_id_1 === userData.id;
-    if (isUser1 && chat.user_id_2_left) {
-      await supabase
-        .from("chats")
-        .update({ user_id_2_left: false })
-        .eq("id", params.chatId);
-    } else if (!isUser1 && chat.user_id_1_left) {
-      await supabase
-        .from("chats")
-        .update({ user_id_1_left: false })
-        .eq("id", params.chatId);
-    }
+  if (isUser1 && chat.user_id_2_left) {
+    await supabase
+      .from("chats")
+      .update({ user_id_2_left: false })
+      .eq("id", params.chatId);
+  } else if (!isUser1 && chat.user_id_1_left) {
+    await supabase
+      .from("chats")
+      .update({ user_id_1_left: false })
+      .eq("id", params.chatId);
   }
 
   return result;
@@ -79,6 +101,10 @@ export async function createChatAndSendAction(params: {
     .eq("auth_id", user.id)
     .single();
   if (!userData) throw new Error("사용자를 찾을 수 없습니다.");
+
+  if (await isBlockedPair(userData.id, params.partnerUserId)) {
+    throw new Error("차단된 사용자와는 메시지를 주고받을 수 없습니다.");
+  }
 
   // 레이스 컨디션 대비: 이미 존재하는 채팅방 확인 후 없으면 생성
   const { data: existing } = await supabase
