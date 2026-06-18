@@ -34,7 +34,11 @@ export default function SignupPage() {
       });
 
       if (error) {
-        setErrorMessage(error.message);
+        if (error.code === "user_already_exists") {
+          setErrorMessage(t("emailExists"));
+        } else {
+          setErrorMessage(error.message);
+        }
         return;
       }
 
