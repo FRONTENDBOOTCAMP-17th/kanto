@@ -35,7 +35,7 @@ export function NotificationItem({ notification: n, onClick, size = "sm" }: Prop
       <Icon className={`shrink-0 mt-0.5 ${lg ? "w-5 h-5" : "w-4 h-4"} ${meta.color}`} />
       <div className="flex-1 min-w-0">
         <p className={`font-medium text-gray-700 ${lg ? "text-sm" : "text-xs"}`}>{n.title}</p>
-        <p className={`text-gray-500 mt-0.5 truncate ${lg ? "text-sm" : "text-xs"}`}>{n.body}</p>
+        <p className={`text-gray-500 mt-0.5 truncate ${lg ? "text-sm" : "text-xs"}`}>{n.body || " "}</p>
         {n.created_at && (
           <time dateTime={n.created_at} className={`text-gray-400 mt-0.5 ${lg ? "text-xs" : "text-xs"}`}>
             {formatTimeAgo(n.created_at, locale)}

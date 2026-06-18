@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
 import type { Tables } from "@/type/supabase";
@@ -11,6 +11,9 @@ export function useNotifications() {
   const { user } = useAuthStore();
   const userId = user?.id;
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  // 헤더 알림벨과 알림 페이지 등 여러 컴포넌트가 동시에 이 훅을 사용할 수 있어
+  // 채널명이 겹치지 않도록 컴포넌트 인스턴스별 고유 id를 부여한다.
+  const instanceId = useId();
 
   useEffect(() => {
     if (!userId) return;
@@ -26,7 +29,7 @@ export function useNotifications() {
       });
 
     const channel = supabase
-      .channel(`notifications:${userId}:${Date.now()}`)
+      .channel(`notifications:${userId}:${instanceId}`)
       .on(
         "postgres_changes",
         {
@@ -42,12 +45,27 @@ export function useNotifications() {
           );
         },
       )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "common_notifications",
+          filter: `receiver_id=eq.${userId}`,
+        },
+        (payload) => {
+          const updated = payload.new as Notification;
+          setNotifications((prev) =>
+            prev.map((n) => (n.id === updated.id ? updated : n)),
+          );
+        },
+      )
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [userId]);
+  }, [userId, instanceId]);
 
   const markAsRead = async (n: Notification) => {
     if (n.is_read) return;
