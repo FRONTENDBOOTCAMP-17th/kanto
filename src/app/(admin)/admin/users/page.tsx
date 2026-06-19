@@ -4,9 +4,5 @@ import AdminUsersClient from "@/app/(admin)/admin/users/_components/AdminUsersCl
 export default async function AdminUsers() {
   const users = await getAdminUsers();
 
-  return (
-    <div>
-      <AdminUsersClient users={users} />
-    </div>
-  );
+  return <AdminUsersClient users={users} />;
 }

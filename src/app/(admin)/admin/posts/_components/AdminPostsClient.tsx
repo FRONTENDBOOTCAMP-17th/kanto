@@ -9,6 +9,10 @@ import {
 } from "@/services/admin/adminPosts";
 import AdminPostsTable from "./AdminPostsTable";
 import { togglePostStatus } from "@/app/(admin)/admin/posts/_actions/togglePostStatus";
+import {
+  getPostReports,
+  type PostReport,
+} from "@/app/(admin)/admin/posts/_actions/getPostReports";
 
 interface AdminPostsClientProps {
   posts: AdminPost[];
@@ -51,6 +55,19 @@ function formatDate(date: string | null) {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
+  }).format(new Date(date));
+}
+
+function formatDateTime(date: string | null) {
+  if (!date) return "-";
+  return new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
   }).format(new Date(date));
 }
 
@@ -106,6 +123,8 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
   const [page, setPage] = useState(1);
   const [items, setItems] = useState(posts);
   const [selId, setSelId] = useState<number | null>(null);
+  const [postReports, setPostReports] = useState<PostReport[]>([]);
+  const [reportsLoading, setReportsLoading] = useState(false);
   const [toast, setToast] = useState("");
   const [isPending, startTransition] = useTransition();
 
@@ -257,7 +276,18 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
       {/* Table */}
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <div className="overflow-x-auto">
-          <AdminPostsTable posts={pageItems} onOpen={(id) => setSelId(id)} />
+          <AdminPostsTable
+          posts={pageItems}
+          onOpen={(id) => {
+            setSelId(id);
+            setPostReports([]);
+            setReportsLoading(true);
+            getPostReports(id).then((r) => {
+              setPostReports(r);
+              setReportsLoading(false);
+            });
+          }}
+        />
         </div>
 
         {/* Empty */}
@@ -415,13 +445,252 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
                     {(sel.view_count ?? 0).toLocaleString()}
                   </span>
                 </div>
-                <div className="flex items-center justify-between px-4 py-[11px]">
+                <div className={`flex items-center justify-between px-4 py-[11px]${sel.handled_by_name ? " border-b border-[#f3f5f7]" : ""}`}>
                   <span className="text-[13px] text-slate-400">작성일</span>
                   <span className="text-[13px] font-semibold text-slate-900">
                     {formatDate(sel.created_at)}
                   </span>
                 </div>
+                {sel.handled_by_name && (
+                  <div className={`flex items-center justify-between px-4 py-[11px]${sel.handled_at ? " border-b border-[#f3f5f7]" : ""}`}>
+                    <span className="text-[13px] text-slate-400">처리 관리자</span>
+                    <span className="text-[13px] font-bold text-slate-900">
+                      {sel.handled_by_name}
+                    </span>
+                  </div>
+                )}
+                {sel.handled_at && (
+                  <div className="flex items-center justify-between px-4 py-[11px]">
+                    <span className="text-[13px] text-slate-400">처리 일시</span>
+                    <span className="text-[13px] font-semibold text-slate-900">
+                      {formatDate(sel.handled_at)}
+                    </span>
+                  </div>
+                )}
               </div>
+
+              {/* 신고 내역 */}
+              <div className="mt-5 overflow-hidden rounded-[14px] border border-[#eef1f3]">
+                <div className="flex items-center gap-2 border-b border-[#f1f4f6] bg-slate-50 px-4 py-[13px]">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                  </svg>
+                  <span className="text-[13px] font-extrabold text-slate-900">신고 누적</span>
+                  {!reportsLoading && (
+                    <span className={[
+                      "ml-auto inline-flex items-center rounded-full px-2.5 py-0.5 text-[11.5px] font-bold",
+                      postReports.length > 0 ? "bg-orange-50 text-orange-600" : "bg-slate-100 text-slate-400",
+                    ].join(" ")}>
+                      {postReports.length}건
+                    </span>
+                  )}
+                </div>
+                {reportsLoading ? (
+                  <div className="px-4 py-5 text-[13px] text-slate-400">불러오는 중...</div>
+                ) : postReports.length === 0 ? (
+                  <div className="px-4 py-5 text-[13px] text-slate-400">신고 내역이 없습니다</div>
+                ) : (
+                  <div className="divide-y divide-[#f3f5f7]">
+                    {postReports.map((r) => {
+                      const statusStyle: Record<string, { label: string; bg: string; fg: string }> = {
+                        pending: { label: "대기중", bg: "#fef9c3", fg: "#a16207" },
+                        resolved: { label: "처리완료", bg: "#dcfce7", fg: "#15803d" },
+                        dismissed: { label: "무시됨", bg: "#f1f5f9", fg: "#64748b" },
+                      };
+                      const sanctionLabel: Record<string, string> = {
+                        "7d": "7일 정지", "30d": "30일 정지", perm: "영구 정지",
+                      };
+                      const ss = statusStyle[r.status] ?? statusStyle.pending;
+                      return (
+                        <div key={r.id} className="px-4 py-[13px]">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {r.reason && (
+                              <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-[12px] font-semibold text-slate-600">
+                                {r.reason}
+                              </span>
+                            )}
+                            <span
+                              className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11.5px] font-bold"
+                              style={{ background: ss.bg, color: ss.fg }}
+                            >
+                              {ss.label}
+                            </span>
+                            {r.sanction_type && (
+                              <span className="inline-flex items-center rounded-full border border-orange-200 bg-orange-50 px-2.5 py-0.5 text-[11.5px] font-bold text-orange-600">
+                                {sanctionLabel[r.sanction_type] ?? r.sanction_type}
+                              </span>
+                            )}
+                          </div>
+                          {(r.admin_name || r.resolved_at) && (
+                            <div className="mt-1.5 flex flex-col gap-0.5 text-[12px] text-slate-400">
+                              {r.admin_name && <span>처리: <span className="font-semibold text-slate-600">{r.admin_name}</span></span>}
+                              {r.resolved_at && <span>{formatDateTime(r.resolved_at)}</span>}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* 제재 로그 */}
+              {(() => {
+                const SANCTION_LABEL: Record<string, string> = {
+                  "7d": "유저 7일 정지",
+                  "30d": "유저 30일 정지",
+                  perm: "유저 영구 정지",
+                };
+
+                type LogEntry = {
+                  key: string;
+                  icon: "deactivate" | "sanction" | "activate";
+                  label: string;
+                  admin: string | null;
+                  date: string | null;
+                };
+
+                const logs: LogEntry[] = [];
+
+                for (const r of postReports) {
+                  if (r.status !== "resolved") continue;
+                  if (r.post_deactivated) {
+                    logs.push({
+                      key: `${r.id}-deactivate`,
+                      icon: "deactivate",
+                      label: "게시글 비공개 처리",
+                      admin: r.admin_name,
+                      date: r.resolved_at,
+                    });
+                  }
+                  if (r.sanction_type) {
+                    logs.push({
+                      key: `${r.id}-sanction`,
+                      icon: "sanction",
+                      label: SANCTION_LABEL[r.sanction_type] ?? r.sanction_type,
+                      admin: r.admin_name,
+                      date: r.resolved_at,
+                    });
+                  }
+                }
+
+                if (sel.handled_by_name && sel.handled_at) {
+                  const alreadyCovered = logs.some(
+                    (l) => l.icon === "deactivate" && l.admin === sel.handled_by_name,
+                  );
+                  if (!alreadyCovered) {
+                    logs.push({
+                      key: "direct-toggle",
+                      icon: sel.status === "inactive" ? "deactivate" : "activate",
+                      label:
+                        sel.status === "inactive"
+                          ? "게시글 비공개 처리"
+                          : "게시글 활성화",
+                      admin: sel.handled_by_name,
+                      date: sel.handled_at,
+                    });
+                  }
+                }
+
+                logs.sort((a, b) =>
+                  (b.date ?? "").localeCompare(a.date ?? ""),
+                );
+
+                return (
+                  <div className="mt-5 overflow-hidden rounded-[14px] border border-[#eef1f3]">
+                    <div className="flex items-center gap-2 border-b border-[#f1f4f6] bg-slate-50 px-4 py-[13px]">
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#6366f1"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                      </svg>
+                      <span className="text-[13px] font-extrabold text-slate-900">
+                        제재 로그
+                      </span>
+                      {!reportsLoading && (
+                        <span
+                          className={[
+                            "ml-auto inline-flex items-center rounded-full px-2.5 py-0.5 text-[11.5px] font-bold",
+                            logs.length > 0
+                              ? "bg-indigo-50 text-indigo-600"
+                              : "bg-slate-100 text-slate-400",
+                          ].join(" ")}
+                        >
+                          {logs.length}건
+                        </span>
+                      )}
+                    </div>
+                    {reportsLoading ? (
+                      <div className="px-4 py-5 text-[13px] text-slate-400">
+                        불러오는 중...
+                      </div>
+                    ) : logs.length === 0 ? (
+                      <div className="px-4 py-5 text-[13px] text-slate-400">
+                        제재 이력이 없습니다
+                      </div>
+                    ) : (
+                      <div className="divide-y divide-[#f3f5f7]">
+                        {logs.map((log) => {
+                          const iconColor =
+                            log.icon === "activate"
+                              ? "#059669"
+                              : log.icon === "sanction"
+                                ? "#dc2626"
+                                : "#f97316";
+                          const bgColor =
+                            log.icon === "activate"
+                              ? "#ecfdf5"
+                              : log.icon === "sanction"
+                                ? "#fef2f2"
+                                : "#fff7ed";
+                          return (
+                            <div
+                              key={log.key}
+                              className="flex items-start gap-3 px-4 py-[13px]"
+                            >
+                              <span
+                                className="mt-0.5 flex h-[26px] w-[26px] flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold"
+                                style={{ background: bgColor, color: iconColor }}
+                              >
+                                {log.icon === "activate" ? "✓" : "✕"}
+                              </span>
+                              <div className="flex-1 min-w-0">
+                                <div
+                                  className="text-[13px] font-bold"
+                                  style={{ color: iconColor }}
+                                >
+                                  {log.label}
+                                </div>
+                                <div className="mt-0.5 flex flex-wrap gap-2 text-[12px] text-slate-400">
+                                  {log.admin && (
+                                    <span>
+                                      처리:{" "}
+                                      <span className="font-semibold text-slate-600">
+                                        {log.admin}
+                                      </span>
+                                    </span>
+                                  )}
+                                  {log.date && (
+                                    <span>{formatDateTime(log.date)}</span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
 
             {/* footer */}

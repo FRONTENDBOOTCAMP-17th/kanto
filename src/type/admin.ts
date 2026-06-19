@@ -63,9 +63,11 @@ export interface Report {
   reason: string;
   description: string;
   reportDate: string;
+  createdAt?: string;
   status: Status;
   resolvedAt?: string | null;
   postDeactivated?: boolean;
   sanctionType?: Sanction | null;
   sanctionExpiresAt?: string | null;
+  handledBy?: string | null;
 }

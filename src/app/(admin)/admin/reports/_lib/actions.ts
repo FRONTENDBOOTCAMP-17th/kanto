@@ -1,8 +1,22 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import type { Sanction, ReportType } from "@/type/admin";
+
+async function getCurrentAdminId(): Promise<number | null> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  const admin = createAdminClient();
+  const { data } = await admin
+    .from("users")
+    .select("id")
+    .eq("auth_id", user.id)
+    .single();
+  return data?.id ?? null;
+}
 
 function calcExpiresAt(sanction: Sanction): string | null {
   if (sanction === "none") return null;
@@ -38,7 +52,7 @@ export async function resolveReport(
     sanction: Sanction;
   },
 ): Promise<void> {
-  const admin = createAdminClient();
+  const [admin, adminId] = [createAdminClient(), await getCurrentAdminId()];
   const expiresAt = calcExpiresAt(opts.sanction);
 
   await admin
@@ -49,6 +63,7 @@ export async function resolveReport(
       post_deactivated: opts.deactivatePost,
       sanction_type: opts.sanction !== "none" ? opts.sanction : null,
       sanction_expires_at: expiresAt,
+      handled_by: adminId,
     } as never)
     .eq("id", reportId);
 
@@ -63,6 +78,13 @@ export async function resolveReport(
       .update({ suspended_until: expiresAt } as never)
       .eq("id", userId);
 
+    await admin.from("user_sanctions").insert({
+      user_id: userId,
+      admin_id: adminId,
+      sanction_type: opts.sanction,
+      expires_at: expiresAt,
+    } as never);
+
     await admin.from("common_notifications").insert({
       receiver_id: userId,
       title: "계정이 정지되었습니다",
@@ -75,7 +97,7 @@ export async function resolveReport(
 }
 
 export async function dismissReport(reportId: number): Promise<void> {
-  const admin = createAdminClient();
+  const [admin, adminId] = [createAdminClient(), await getCurrentAdminId()];
 
   await admin
     .from("common_reports")
@@ -85,6 +107,7 @@ export async function dismissReport(reportId: number): Promise<void> {
       post_deactivated: false,
       sanction_type: null,
       sanction_expires_at: null,
+      handled_by: adminId,
     } as never)
     .eq("id", reportId);
 
@@ -103,7 +126,7 @@ export async function updateReportResolution(
     sanction: Sanction;
   },
 ): Promise<void> {
-  const admin = createAdminClient();
+  const [admin, adminId] = [createAdminClient(), await getCurrentAdminId()];
   const expiresAt = calcExpiresAt(opts.sanction);
 
   await admin
@@ -113,10 +136,10 @@ export async function updateReportResolution(
       sanction_type: opts.sanction !== "none" ? opts.sanction : null,
       sanction_expires_at: expiresAt,
       resolved_at: new Date().toISOString(),
+      handled_by: adminId,
     } as never)
     .eq("id", reportId);
 
-  // 게시글 비활성화 상태 변경
   if (opts.targetType === "post") {
     if (!opts.prevDeactivated && opts.deactivatePost) {
       await admin.from("posts").update({ status: "inactive" }).eq("id", opts.targetId);
@@ -125,7 +148,6 @@ export async function updateReportResolution(
     }
   }
 
-  // 제재 변경
   const userId = sanctionUserId(opts.targetType, opts.targetId, opts.authorId);
   if (userId != null) {
     const sanctionChanged = opts.sanction !== opts.prevSanction;
@@ -136,6 +158,13 @@ export async function updateReportResolution(
         .eq("id", userId);
 
       if (opts.sanction !== "none") {
+        await admin.from("user_sanctions").insert({
+          user_id: userId,
+          admin_id: adminId,
+          sanction_type: opts.sanction,
+          expires_at: expiresAt,
+        } as never);
+
         await admin.from("common_notifications").insert({
           receiver_id: userId,
           title: "계정이 정지되었습니다",

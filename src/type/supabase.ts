@@ -288,6 +288,7 @@ export type Database = {
           category: string | null
           created_at: string
           description: string | null
+          handled_by: number | null
           id: number
           post_deactivated: boolean
           resolved_at: string | null
@@ -302,6 +303,7 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
+          handled_by?: number | null
           id?: number
           post_deactivated?: boolean
           resolved_at?: string | null
@@ -316,6 +318,7 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
+          handled_by?: number | null
           id?: number
           post_deactivated?: boolean
           resolved_at?: string | null
@@ -327,6 +330,20 @@ export type Database = {
           user_id?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "common_reports_handled_by_fkey"
+            columns: ["handled_by"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "common_reports_handled_by_fkey"
+            columns: ["handled_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "common_reports_user_id_fkey"
             columns: ["user_id"]
@@ -670,6 +687,8 @@ export type Database = {
       posts: {
         Row: {
           created_at: string
+          handled_at: string | null
+          handled_by: number | null
           id: number
           is_reserved: boolean
           is_sold: boolean
@@ -683,6 +702,8 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          handled_at?: string | null
+          handled_by?: number | null
           id?: number
           is_reserved?: boolean
           is_sold?: boolean
@@ -696,6 +717,8 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          handled_at?: string | null
+          handled_by?: number | null
           id?: number
           is_reserved?: boolean
           is_sold?: boolean
@@ -708,6 +731,20 @@ export type Database = {
           view_count?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "posts_handled_by_fkey"
+            columns: ["handled_by"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_handled_by_fkey"
+            columns: ["handled_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "posts_user_id_fkey"
             columns: ["user_id"]
@@ -1053,6 +1090,62 @@ export type Database = {
           {
             foreignKeyName: "user_blocks_blocker_id_fkey"
             columns: ["blocker_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_sanctions: {
+        Row: {
+          admin_id: number | null
+          created_at: string | null
+          expires_at: string | null
+          id: number
+          sanction_type: string
+          user_id: number
+        }
+        Insert: {
+          admin_id?: number | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: number
+          sanction_type: string
+          user_id: number
+        }
+        Update: {
+          admin_id?: number | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: number
+          sanction_type?: string
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_sanctions_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_sanctions_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_sanctions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_sanctions_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]

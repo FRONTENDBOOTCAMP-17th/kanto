@@ -11,7 +11,7 @@ export default async function ReportsPage() {
   /* 1. 전체 신고 목록 */
   const { data: rawReports } = await admin
     .from("common_reports")
-    .select("id, target_id, target_type, category, description, status, created_at, resolved_at, post_deactivated, sanction_type, sanction_expires_at")
+    .select("id, target_id, target_type, category, description, status, created_at, resolved_at, post_deactivated, sanction_type, sanction_expires_at, handled_by")
     .order("created_at", { ascending: false }) as {
       data: Array<{
         id: number;
@@ -25,6 +25,7 @@ export default async function ReportsPage() {
         post_deactivated: boolean;
         sanction_type: string | null;
         sanction_expires_at: string | null;
+        handled_by: number | null;
       }> | null;
       error: unknown;
     };
@@ -46,9 +47,16 @@ export default async function ReportsPage() {
         .map((r) => r.target_id as number),
     ),
   ];
+  const adminIds = [
+    ...new Set(
+      reports
+        .filter((r) => r.handled_by != null)
+        .map((r) => r.handled_by as number),
+    ),
+  ];
 
-  /* 3. 게시글 + 유저 배치 조회 */
-  const [postsRes, targetUsersRes] = await Promise.all([
+  /* 3. 게시글 + 유저 + 처리 관리자 배치 조회 */
+  const [postsRes, targetUsersRes, adminUsersRes] = await Promise.all([
     postIds.length
       ? admin
           .from("posts")
@@ -57,6 +65,9 @@ export default async function ReportsPage() {
       : { data: [] as { id: number; title: string; post_type: string; user_id: number }[] },
     targetUserIds.length
       ? admin.from("users").select("id, name").in("id", targetUserIds)
+      : { data: [] as { id: number; name: string }[] },
+    adminIds.length
+      ? admin.from("users").select("id, name").in("id", adminIds)
       : { data: [] as { id: number; name: string }[] },
   ]);
 
@@ -72,6 +83,7 @@ export default async function ReportsPage() {
   const postMap = new Map((postsRes.data ?? []).map((p) => [p.id, p]));
   const targetUserMap = new Map((targetUsersRes.data ?? []).map((u) => [u.id, u]));
   const authorMap = new Map((authorsData ?? []).map((u) => [u.id, u]));
+  const adminUserMap = new Map((adminUsersRes.data ?? []).map((u) => [u.id, u]));
 
   /* 6. Report 목록 구성 */
   const reportList: Report[] = reports.map((r) => {
@@ -79,7 +91,9 @@ export default async function ReportsPage() {
     const description = r.description ?? "";
     const status = (r.status ?? "pending") as Status;
     const reportDate = r.created_at.split("T")[0];
+    const createdAt = r.created_at;
     const sanctionType = (r.sanction_type as Sanction | null) ?? null;
+    const handledBy = r.handled_by ? (adminUserMap.get(r.handled_by)?.name ?? null) : null;
 
     if (r.target_type === "post") {
       const post = r.target_id != null ? postMap.get(r.target_id) : undefined;
@@ -95,11 +109,13 @@ export default async function ReportsPage() {
         reason,
         description,
         reportDate,
+        createdAt,
         status,
         resolvedAt: r.resolved_at,
         postDeactivated: r.post_deactivated,
         sanctionType,
         sanctionExpiresAt: r.sanction_expires_at,
+        handledBy,
       };
     }
 
@@ -112,11 +128,13 @@ export default async function ReportsPage() {
       reason,
       description,
       reportDate,
+      createdAt,
       status,
       resolvedAt: r.resolved_at,
       postDeactivated: r.post_deactivated,
       sanctionType,
       sanctionExpiresAt: r.sanction_expires_at,
+      handledBy,
     };
   });
 

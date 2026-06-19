@@ -8,6 +8,8 @@ export interface AdminPost {
   view_count: number | null;
   created_at: string | null;
   author_name: string | null;
+  handled_by_name: string | null;
+  handled_at: string | null;
 }
 
 const POST_TYPE_LABEL: Record<string, string> = {
@@ -39,8 +41,23 @@ export async function getAdminPosts(): Promise<AdminPost[]> {
 
   const { data, error } = await admin
     .from("posts")
-    .select("id, title, post_type, status, view_count, created_at, users(name)")
-    .order("created_at", { ascending: false });
+    .select(
+      "id, title, post_type, status, view_count, created_at, handled_at, author:users!posts_user_id_fkey(name), admin_user:users!posts_handled_by_fkey(name)"
+    )
+    .order("created_at", { ascending: false }) as unknown as {
+      data: Array<{
+        id: number;
+        title: string;
+        post_type: string;
+        status: string;
+        view_count: number | null;
+        created_at: string | null;
+        handled_at: string | null;
+        author: { name: string } | null;
+        admin_user: { name: string } | null;
+      }> | null;
+      error: unknown;
+    };
 
   if (error) throw error;
 
@@ -51,9 +68,9 @@ export async function getAdminPosts(): Promise<AdminPost[]> {
     status: row.status,
     view_count: row.view_count,
     created_at: row.created_at,
-    author_name: Array.isArray(row.users)
-      ? (row.users[0]?.name ?? null)
-      : ((row.users as { name: string } | null)?.name ?? null),
+    author_name: row.author?.name ?? null,
+    handled_by_name: row.admin_user?.name ?? null,
+    handled_at: row.handled_at ?? null,
   }));
 }
 

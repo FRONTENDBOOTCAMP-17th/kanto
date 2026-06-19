@@ -9,8 +9,8 @@ export async function getAdminChatRooms() {
       created_at,
       last_message_at,
       last_message_content,
-      user1:users!chats_user_id_1_fkey(id, name),
-      user2:users!chats_user_id_2_fkey(id, name),
+      user1:users!chats_user_id_1_fkey(id, name, suspended_until),
+      user2:users!chats_user_id_2_fkey(id, name, suspended_until),
       posts(title, post_type)
     `)
     .order("last_message_at", { ascending: false });
@@ -19,31 +19,26 @@ export async function getAdminChatRooms() {
   return data ?? [];
 }
 
-export async function getAdminChatMessages(chatId: number) {
+export async function getAdminChatMessages(chatId: number, before?: string) {
   const admin = createAdminClient();
 
-  const [{ data: chat }, { data: messages }] = await Promise.all([
-    admin
-      .from("chats")
-      .select(`
-        id,
-        user1:users!chats_user_id_1_fkey(id, name),
-        user2:users!chats_user_id_2_fkey(id, name),
-        posts(title, post_type)
-      `)
-      .eq("id", chatId)
-      .single(),
-    admin
-      .from("messages")
-      .select(`
-        id,
-        content,
-        created_at,
-        sender:users!messages_sender_id_fkey(id, name)
-      `)
-      .eq("chat_id", chatId)
-      .order("created_at", { ascending: true }),
-  ]);
+  let query = admin
+    .from("messages")
+    .select(`
+      id,
+      content,
+      created_at,
+      sender:users!messages_sender_id_fkey(id, name)
+    `)
+    .eq("chat_id", chatId)
+    .order("created_at", { ascending: false })
+    .limit(20);
 
-  return { chat, messages: messages ?? [] };
+  if (before) {
+    query = query.lt("created_at", before);
+  }
+
+  const { data: messages, error } = await query;
+  if (error) throw error;
+  return (messages ?? []).reverse();
 }
