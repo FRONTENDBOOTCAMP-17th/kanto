@@ -1,10 +1,8 @@
-import Link from "next/link";
-import { Plus } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { Button } from "@/components/ui/button";
 import { getJobList, getPopularJobs } from "@/services/job/job";
 import { getLikeList } from "@/services/likes";
-import { getSessionUser } from "@/services/user/user";
+import { getSessionUser, getIdentityVerified } from "@/services/user/user";
+import { CategoryWriteButton } from "@/components/common/CategoryWriteButton";
 import { JobFilters } from "./_components/JobFilters";
 import { JobList } from "./_components/JobList";
 import { PopularJobs } from "./_components/PopularJobs";
@@ -21,16 +19,18 @@ export default async function JobPage({
   const currentPage = Number(params.page ?? 1);
   const t = await getTranslations("Job");
 
-  const [posts, { likedIds, currentUserId }, popularPosts, sessionUser] = await Promise.all([
-    getJobList({
-      search: params.search,
-      employeeType: params.type,
-      location: params.location,
-    }),
-    getLikeList("jobs"),
-    getPopularJobs(),
-    getSessionUser(),
-  ]);
+  const [posts, { likedIds, currentUserId }, popularPosts, sessionUser, isVerified] =
+    await Promise.all([
+      getJobList({
+        search: params.search,
+        employeeType: params.type,
+        location: params.location,
+      }),
+      getLikeList("jobs"),
+      getPopularJobs(),
+      getSessionUser(),
+      getIdentityVerified(),
+    ]);
 
   const totalPages = Math.ceil(posts.length / ITEMS_PER_PAGE);
   const pagedPosts = posts.slice(
@@ -48,12 +48,14 @@ export default async function JobPage({
               ? t("searchResult", { query: params.search })
               : t("subtitle")}
           </p>
-          <Link href="/create" className="absolute right-0 top-0">
-            <Button variant="teal" className="cursor-pointer gap-1">
-              <Plus className="w-4 h-4" />
-              {t("write")}
-            </Button>
-          </Link>
+          <div className="absolute right-0 top-0">
+            <CategoryWriteButton
+              href="/job/create"
+              label={t("write")}
+              isLoggedIn={!!sessionUser}
+              initialIsVerified={isVerified}
+            />
+          </div>
         </div>
 
         <JobFilters

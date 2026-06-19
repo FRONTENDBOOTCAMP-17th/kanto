@@ -3,11 +3,11 @@ import type { RentalWithPost } from "@/type/rental/rentalList";
 import type { RentalWithPost as RentalDetail } from "@/type/rental/rentalDetail";
 
 const RENTAL_DETAIL_SELECT =
-  `*, posts(*, users(id, name, avatar_url, auth_id, role, post_count, created_at))` as const;
+  `*, posts(*, users!posts_user_id_fkey(id, name, avatar_url, auth_id, role, post_count, created_at))` as const;
 const RENTAL_LIST_SELECT = `
   *,
   rentals(*),
-  users(id, name, avatar_url, created_at)
+  users!posts_user_id_fkey(id, name, avatar_url, created_at)
 ` as const;
 
 export async function getRentalDetail(postId: number): Promise<RentalDetail> {

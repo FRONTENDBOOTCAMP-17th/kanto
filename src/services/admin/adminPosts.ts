@@ -36,7 +36,7 @@ export async function getAdminPosts(): Promise<AdminPost[]> {
 
   const { data, error } = await admin
     .from("posts")
-    .select("id, title, post_type, status, view_count, created_at, users(name)")
+    .select("id, title, post_type, status, view_count, created_at, users!posts_user_id_fkey(name)")
     .order("created_at", { ascending: false });
 
   if (error) throw error;

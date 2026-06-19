@@ -4,7 +4,7 @@ import type { UsedGoodsWithPost } from "@/type/usedGoods";
 const USED_GOODS_SELECT = `
   *,
   used_goods(*),
-  users(id, name, avatar_url, created_at)
+  users!posts_user_id_fkey(id, name, avatar_url, created_at)
 ` as const;
 
 interface UsedGoodsListFilter {

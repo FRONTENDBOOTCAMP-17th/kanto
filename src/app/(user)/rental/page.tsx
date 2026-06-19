@@ -1,14 +1,12 @@
-import Link from "next/link";
-import { Plus } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 import { getRentalList } from "@/services/rental/rental";
 import { getLikeList } from "@/services/likes";
-import { getSessionUser } from "@/services/user/user";
+import { getSessionUser, getIdentityVerified } from "@/services/user/user";
 import { RentalList } from "./_components/RentalList";
 import { RentalFilters } from "./_components/RentalFilters";
 import { PaginationUrl } from "@/components/common/PaginationUrl";
-import { Button } from "@/components/ui/button";
+import { CategoryWriteButton } from "@/components/common/CategoryWriteButton";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -28,7 +26,7 @@ export default async function RentalPage({
   const currentPage = Number(params.page ?? 1);
   const t = await getTranslations("Rental");
 
-  const [posts, { likedIds, currentUserId }, sessionUser] = await Promise.all([
+  const [posts, { likedIds, currentUserId }, sessionUser, isVerified] = await Promise.all([
     getRentalList({
       search: params.search,
       roomType: params.roomType,
@@ -36,6 +34,7 @@ export default async function RentalPage({
     }),
     getLikeList("rental"),
     getSessionUser(),
+    getIdentityVerified(),
   ]);
 
   const totalPages = Math.ceil(posts.length / ITEMS_PER_PAGE);
@@ -54,12 +53,14 @@ export default async function RentalPage({
               ? t("searchResult", { query: params.search })
               : t("subtitle")}
           </p>
-          <Link href="/create" className="absolute right-0 top-0">
-            <Button variant="teal" className="cursor-pointer gap-1">
-              <Plus className="w-4 h-4" />
-              {t("write")}
-            </Button>
-          </Link>
+          <div className="absolute right-0 top-0">
+            <CategoryWriteButton
+              href="/rental/create"
+              label={t("write")}
+              isLoggedIn={!!sessionUser}
+              initialIsVerified={isVerified}
+            />
+          </div>
         </div>
 
         <RentalFilters
