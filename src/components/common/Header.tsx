@@ -30,6 +30,7 @@ import { NotificationBell } from "./header/NotificationBell";
 import type { NotificationBellHandle } from "./header/NotificationBell";
 import type { User as AppUser } from "@/type/user";
 import { useTranslations } from "next-intl";
+import { useSuspended } from "@/hooks/useSuspended";
 
 const HEADER_HEIGHT = 48; // 모바일 헤더 높이(h-12)
 
@@ -79,6 +80,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
 
   const pathname = usePathname();
   const PROTECTED_PATHS = ["/create", "/myposts", "/favorites", "/profile"];
+  const { isSuspended, openModal } = useSuspended();
 
   const handleLogoutConfirm = async () => {
     setIsLogoutModalOpen(false);
@@ -259,13 +261,13 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
           ))}
           {/* 글쓰기 버튼 — 메인 페이지에서만 노출 (모바일에서는 nav 자체가 숨겨짐) */}
           {pathname === ROUTES.home && (
-            <Link
-              href={ROUTES.create}
+            <button
+              onClick={() => isSuspended ? openModal() : router.push(ROUTES.create)}
               className="absolute right-0 flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition-colors"
             >
               <SquarePen className="w-4 h-4" />
               {t("write")}
-            </Link>
+            </button>
           )}
         </nav>
 

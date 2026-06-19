@@ -46,7 +46,7 @@ export async function middleware(request: NextRequest) {
       const { pathname } = request.nextUrl;
       const BLOCKED_PATHS = ["/create", "/job/create", "/usedgoods/create", "/rental/create"];
       if (BLOCKED_PATHS.some((p) => pathname.startsWith(p))) {
-        return NextResponse.redirect(new URL("/?suspended=1", request.url));
+        return NextResponse.redirect(new URL("/main", request.url));
       }
     }
   }

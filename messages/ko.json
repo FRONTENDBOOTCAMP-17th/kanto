@@ -133,7 +133,14 @@
       "favorite": "탈퇴 예정 계정은 찜하기를 이용할 수 없습니다.",
       "write": "탈퇴 예정 계정은 새 글을 작성할 수 없습니다."
     },
-    "soldOut": "판매완료"
+    "soldOut": "판매완료",
+    "suspended": {
+      "title": "계정이 정지되었습니다",
+      "permanent": "영구 정지 처리된 계정입니다.",
+      "until": "{date}까지 서비스 이용이 제한됩니다.",
+      "bannerTitle": "계정이 정지되었습니다.",
+      "bannerPermanent": "영구 정지 처리된 계정입니다. 서비스 이용이 불가합니다."
+    }
   },
   "Report": {
     "title": "신고하기",
@@ -437,6 +444,7 @@
     "details": "상세 내용",
     "mainTask": "주요 업무",
     "preferred": "우대 사항",
+    "backToList": "목록으로",
     "viewCount": "{count}",
     "applicantCount": "지원자: {count}",
     "managerInfo": "담당자 정보",

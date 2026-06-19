@@ -133,7 +133,14 @@
       "favorite": "Accounts pending deletion cannot use favorites.",
       "write": "Accounts pending deletion cannot create new posts."
     },
-    "soldOut": "Sold Out"
+    "soldOut": "Sold Out",
+    "suspended": {
+      "title": "Your account has been suspended",
+      "permanent": "Your account has been permanently suspended.",
+      "until": "Service is restricted until {date}.",
+      "bannerTitle": "Your account has been suspended.",
+      "bannerPermanent": "Your account has been permanently suspended. Service is unavailable."
+    }
   },
   "Report": {
     "title": "Report",
@@ -431,6 +438,7 @@
     "details": "Details",
     "mainTask": "Main tasks",
     "preferred": "Preferred qualifications",
+    "backToList": "Back to list",
     "viewCount": "{count}",
     "applicantCount": "Applicants: {count}",
     "managerInfo": "Contact person",

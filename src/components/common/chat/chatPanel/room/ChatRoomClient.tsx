@@ -6,7 +6,7 @@ import { ShieldCheck } from "lucide-react";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
-import { checkBlockedAction, createChatAndSendAction, markChatReadAction, sendMessageAction } from "./actions";
+import { checkBlockedAction, checkUserSuspendedAction, createChatAndSendAction, markChatReadAction, sendMessageAction } from "./actions";
 import { getChatBannerStateAction } from "./paymentActions";
 import { useSpamPrevention } from "@/hooks/chat/useSpamPrevention";
 import { useChatRoomRealtime } from "@/hooks/chat/useChatRoomRealtime";
@@ -101,6 +101,12 @@ export default function ChatRoomClient({
 
     const content = input.trim();
     setInput("");
+
+    if (await checkUserSuspendedAction(partner.id)) {
+      setSendError("정지된 사용자입니다.");
+      setTimeout(() => setSendError(""), 3000);
+      return;
+    }
 
     if (await checkBlockedAction(partner.id)) {
       setSendError("차단된 사용자와는 메시지를 주고받을 수 없습니다.");

@@ -22,6 +22,17 @@ export async function checkBlockedAction(partnerId: number) {
   return isBlockedPair(userData.id, partnerId);
 }
 
+export async function checkUserSuspendedAction(partnerId: number) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("users")
+    .select("suspended_until")
+    .eq("id", partnerId)
+    .single();
+  if (!data?.suspended_until) return false;
+  return new Date(data.suspended_until) > new Date();
+}
+
 export async function sendMessageAction(params: {
   chatId: number;
   postId: number;
