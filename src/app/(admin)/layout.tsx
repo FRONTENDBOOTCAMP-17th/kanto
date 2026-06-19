@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { REPORTS_TABLE, REPORT_STATUS } from "@/constants/report";
 import AdminSidebar from "./_components/AdminSidebar";
 
 export default async function AdminLayout({
@@ -23,9 +24,9 @@ export default async function AdminLayout({
 
   const admin = createAdminClient();
   const { count } = await admin
-    .from("common_reports")
+    .from(REPORTS_TABLE)
     .select("*", { count: "exact", head: true })
-    .eq("status", "pending");
+    .eq("status", REPORT_STATUS.PENDING);
 
   return (
     <div className="flex min-h-screen bg-[#f5f7f8] text-gray-900">

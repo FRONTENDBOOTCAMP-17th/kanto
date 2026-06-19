@@ -20,6 +20,7 @@ interface RentalCardProps {
   likeCount: number;
   initialIsLiked: boolean;
   currentUserId: number | null;
+  fromPage?: number;
 }
 
 export function RentalCard({
@@ -34,6 +35,7 @@ export function RentalCard({
   likeCount,
   initialIsLiked,
   currentUserId,
+  fromPage,
 }: RentalCardProps) {
   const displayLocation =
     location === "그 외 지역" ? (locationDetail ?? location) : location;
@@ -58,7 +60,7 @@ export function RentalCard({
 
   return (
     <ContentCard
-      href={`/rental/${id}`}
+      href={`/rental/${id}${fromPage ? `?fromPage=${fromPage}` : ""}`}
       images={images}
       title={title}
       price={price}

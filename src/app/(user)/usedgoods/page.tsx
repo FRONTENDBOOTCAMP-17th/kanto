@@ -74,6 +74,7 @@ export default async function UsedGoodsPage({
           initialPosts={pagedPosts}
           initialLikedIds={likedIds}
           currentUserId={currentUserId}
+          currentPage={currentPage}
         />
 
         {totalPages > 1 && (

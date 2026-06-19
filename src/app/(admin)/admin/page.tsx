@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/utils/supabase/admin";
+import { REPORTS_TABLE, REPORT_STATUS } from "@/constants/report";
 import {
   POST_TYPE_LABEL,
   CAT_ORDER,
@@ -58,9 +59,9 @@ export default async function DashboardPage() {
       .eq("status", "active")
       .gte("created_at", todayISO),
     admin
-      .from("common_reports")
+      .from(REPORTS_TABLE)
       .select("target_type, created_at")
-      .eq("status", "pending")
+      .eq("status", REPORT_STATUS.PENDING)
       .order("created_at", { ascending: true }),
     admin.from("posts").select("post_type").eq("status", "active"),
     admin
@@ -71,10 +72,10 @@ export default async function DashboardPage() {
       .limit(5),
     admin.rpc("get_reported_users", { limit_count: 10 }),
     admin.rpc("get_reported_posts", { limit_count: 10 }),
-    admin.from("common_reports").select("category").eq("status", "pending"),
+    admin.from(REPORTS_TABLE).select("category").eq("status", REPORT_STATUS.PENDING),
     admin.rpc("get_region_post_counts", { days: 7 }),
     admin
-      .from("common_reports")
+      .from(REPORTS_TABLE)
       .select("status, created_at, resolved_at")
       .gte("created_at", thirtyDaysAgo),
     admin.rpc("get_daily_signups", { days: 30 }),
@@ -189,7 +190,7 @@ export default async function DashboardPage() {
     weekStart.setDate(weekStart.getDate() - weekStart.getDay());
     weekStart.setHours(0, 0, 0, 0);
     const rows = reportStatsRes.data;
-    const resolved = rows.filter((r) => r.status !== "pending");
+    const resolved = rows.filter((r) => r.status !== REPORT_STATUS.PENDING);
     const weekResolved = resolved.filter(
       (r) => r.resolved_at && new Date(r.resolved_at) >= weekStart,
     ).length;

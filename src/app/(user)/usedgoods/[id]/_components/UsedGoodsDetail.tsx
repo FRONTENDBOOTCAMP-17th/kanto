@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { BadgeCheck, Heart, Clock, Eye, MoveLeft, User } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Tables } from "@/type/supabase";
@@ -42,6 +42,8 @@ export default function UsedGoodsDetail({
   const tt = useTranslations("Time");
   const locale = useLocale() as Locale;
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const fromPage = searchParams.get("fromPage");
   const { user: storeUser } = useAuthStore();
   const isOwner = storeUser?.auth_id === data.posts.users?.auth_id;
   const images = (data.images as string[]) ?? [];
@@ -80,7 +82,7 @@ export default function UsedGoodsDetail({
     <div className="page-container pb-12">
       {/* 네비게이션 */}
       <div className="flex items-center justify-between mt-4">
-        <button onClick={() => router.push("/usedgoods")} className="flex gap-2 cursor-pointer">
+        <button onClick={() => router.push(fromPage ? `/usedgoods?page=${fromPage}` : "/usedgoods")} className="flex gap-2 cursor-pointer">
           <MoveLeft />
           {t("backToList")}
         </button>

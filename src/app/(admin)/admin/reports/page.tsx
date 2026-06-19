@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { createAdminClient } from "@/utils/supabase/admin";
+import { REPORTS_TABLE, REPORT_STATUS } from "@/constants/report";
 import { POST_TYPE_LABEL } from "../_lib/constants";
 import type { Report, Status, Sanction } from "@/type/admin";
 import ReportsClient from "./_components/ReportsClient";
@@ -10,7 +11,7 @@ export default async function ReportsPage() {
 
   /* 1. 전체 신고 목록 */
   const { data: rawReports } = await admin
-    .from("common_reports")
+    .from(REPORTS_TABLE)
     .select("id, target_id, target_type, category, description, status, created_at, resolved_at, post_deactivated, sanction_type, sanction_expires_at, handled_by")
     .order("created_at", { ascending: false }) as {
       data: Array<{
@@ -89,7 +90,7 @@ export default async function ReportsPage() {
   const reportList: Report[] = reports.map((r) => {
     const reason = r.category ?? "기타";
     const description = r.description ?? "";
-    const status = (r.status ?? "pending") as Status;
+    const status = (r.status ?? REPORT_STATUS.PENDING) as Status;
     const reportDate = r.created_at.split("T")[0];
     const createdAt = r.created_at;
     const sanctionType = (r.sanction_type as Sanction | null) ?? null;
