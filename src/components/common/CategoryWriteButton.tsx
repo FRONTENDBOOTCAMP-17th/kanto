@@ -6,6 +6,7 @@ import { SquarePen, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import { IdentityVerificationModal } from "@/app/(user)/profile/_components/IdentityVerificationModal";
+import { useSuspended } from "@/hooks/useSuspended";
 
 interface CategoryWriteButtonProps {
   href: string; // 글쓰기 폼 경로 (예: /usedgoods/create)
@@ -21,6 +22,7 @@ export function CategoryWriteButton({
   initialIsVerified,
 }: CategoryWriteButtonProps) {
   const router = useRouter();
+  const { isSuspended, openModal: openSuspendedModal } = useSuspended();
   const [isVerified, setIsVerified] = useState(initialIsVerified);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -28,6 +30,10 @@ export function CategoryWriteButton({
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
 
   const handleClick = () => {
+    if (isSuspended) {
+      openSuspendedModal();
+      return;
+    }
     if (!isLoggedIn) {
       setIsLoginOpen(true);
       return;

@@ -133,7 +133,14 @@
       "favorite": "Hindi maaaring gumamit ng paborito ang account na malapit nang burahin.",
       "write": "Hindi makakagawa ng bagong post ang account na malapit nang burahin."
     },
-    "soldOut": "Nabenta Na"
+    "soldOut": "Nabenta Na",
+    "suspended": {
+      "title": "Ang iyong account ay nasuspinde",
+      "permanent": "Ang iyong account ay permanenteng nasuspinde.",
+      "until": "Ang serbisyo ay nirestriktahan hanggang {date}.",
+      "bannerTitle": "Ang iyong account ay nasuspinde.",
+      "bannerPermanent": "Ang iyong account ay permanenteng nasuspinde. Hindi magagamit ang serbisyo."
+    }
   },
   "Report": {
     "title": "Mag-ulat",
