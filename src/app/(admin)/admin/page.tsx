@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import {
   POST_TYPE_LABEL,
@@ -17,22 +15,6 @@ import ReportQueue from "./_components/ReportQueue";
 import ReportTypes from "./_components/ReportTypes";
 
 export default async function DashboardPage() {
-  /* 로그인 확인 */
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  /* 어드민 권한 확인 */
-  const { data: userRow } = await supabase
-    .from("users")
-    .select("role")
-    .eq("auth_id", user.id)
-    .single();
-  if (userRow?.role !== "admin") redirect("/");
-
-  /*  어드민 클라이언트로 전체 데이터 조회 (RLS 우회) */
   const admin = createAdminClient();
 
   const todayStart = new Date();

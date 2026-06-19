@@ -1,26 +1,11 @@
 export const dynamic = "force-dynamic";
 
-import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { POST_TYPE_LABEL } from "../_lib/constants";
 import type { Report, Status, Sanction } from "@/type/admin";
 import ReportsClient from "./_components/ReportsClient";
 
 export default async function ReportsPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  const { data: userRow } = await supabase
-    .from("users")
-    .select("role")
-    .eq("auth_id", user.id)
-    .single();
-  if (userRow?.role !== "admin") redirect("/");
-
   const admin = createAdminClient();
 
   /* 1. 전체 신고 목록 */
