@@ -30,8 +30,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "이름과 이메일을 입력해주세요." }, { status: 400 });
   }
 
-  const code = createVerificationCode();
   const normalizedEmail = email.trim().toLowerCase();
+
+  // 가입 시 사용한 이메일과 동일할 때만 인증번호를 발송한다.
+  if (normalizedEmail !== user.email?.toLowerCase()) {
+    return NextResponse.json(
+      { error: "가입 시 사용한 이메일과 일치하지 않습니다." },
+      { status: 400 },
+    );
+  }
+
+  const code = createVerificationCode();
   const key = getVerificationKey(user.id, normalizedEmail);
 
   const storage = await saveVerificationCode(key, code);

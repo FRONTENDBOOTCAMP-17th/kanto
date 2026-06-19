@@ -20,6 +20,7 @@ import {
   ThumbsUp,
   FileText,
   LogOut,
+  SquarePen,
 } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
@@ -27,6 +28,7 @@ import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { SuspendedBanner } from "@/components/common/SuspendedBanner";
 import { NotificationBell } from "./header/NotificationBell";
 import type { NotificationBellHandle } from "./header/NotificationBell";
+import type { User as AppUser } from "@/type/user";
 import { useTranslations } from "next-intl";
 
 const HEADER_HEIGHT = 48; // 모바일 헤더 높이(h-12)
@@ -37,10 +39,12 @@ const NAV_ITEMS = [
   { key: "rental", icon: Home, href: ROUTES.rental },
 ] as const;
 
-export function Header() {
+export function Header({ initialUser }: { initialUser: AppUser | null }) {
   const t = useTranslations("Header");
   const router = useRouter();
-  const { user } = useAuthStore();
+  // 서버에서 확정된 initialUser를 첫 렌더(SSR 포함) fallback으로 사용해 깜빡임 제거.
+  // 이후 스토어가 갱신되면(아바타 변경 등) 스토어 값을 따른다.
+  const user = useAuthStore((s) => s.user) ?? initialUser;
   useAuthInit();
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -161,6 +165,8 @@ export function Header() {
                       alt={user.name ?? t("profile.alt")}
                       width={36}
                       height={36}
+                      priority
+                      unoptimized
                       className="w-9 h-9 rounded-full object-cover"
                     />
                   ) : (
@@ -240,7 +246,7 @@ export function Header() {
         </div>
 
         {/* 데스크탑 네비게이션 */}
-        <nav className="hidden md:flex items-center justify-center gap-1 border-t border-gray-100 py-1">
+        <nav className="relative hidden md:flex items-center justify-center gap-1 border-t border-gray-100 py-1">
           {NAV_ITEMS.map(({ key, icon: Icon, href }) => (
             <Link
               key={href}
@@ -251,6 +257,16 @@ export function Header() {
               {t(`nav.${key}`)}
             </Link>
           ))}
+          {/* 글쓰기 버튼 — 메인 페이지에서만 노출 (모바일에서는 nav 자체가 숨겨짐) */}
+          {pathname === ROUTES.home && (
+            <Link
+              href={ROUTES.create}
+              className="absolute right-0 flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition-colors"
+            >
+              <SquarePen className="w-4 h-4" />
+              {t("write")}
+            </Link>
+          )}
         </nav>
 
         {/* 모바일 메뉴 */}

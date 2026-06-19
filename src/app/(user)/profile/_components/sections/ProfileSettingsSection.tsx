@@ -1,8 +1,8 @@
 "use client";
 
-import { MapPin, Globe, Link } from "lucide-react";
+import { MapPin, Link } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useProfileSettings, LANGUAGES, SOCIAL_PROVIDERS } from "@/hooks/profile/useProfileSettings";
+import { useProfileSettings, SOCIAL_PROVIDERS } from "@/hooks/profile/useProfileSettings";
 import { TRADE_LOCATIONS } from "@/type/location";
 import type { UserIdentity } from "@supabase/supabase-js";
 import {
@@ -51,7 +51,6 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
   const {
     region, setRegion,
     handleSaveRegion,
-    language, setLanguage,
     identities,
     notice,
     handleLink,
@@ -91,26 +90,6 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
               {t("regionSet")}
             </button>
           </div>
-        </div>
-      </div>
-
-      {/* 언어 설정 */}
-      <div className="px-5 md:px-0 py-6">
-        <div className="max-w-md mx-auto">
-          <div className="flex items-center gap-2 mb-5">
-            <Globe className="w-4 h-4 text-gray-500" aria-hidden="true" />
-            <h2 className="text-lg font-semibold text-gray-900">{t("languageTitle")}</h2>
-          </div>
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            aria-label={t("languageSelectAria")}
-            className="w-full px-3 py-2.5 text-sm text-gray-900 border border-gray-200 rounded-lg outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-200 bg-white cursor-pointer"
-          >
-            {LANGUAGES.map(({ value, label }) => (
-              <option key={value} value={value}>{label}</option>
-            ))}
-          </select>
         </div>
       </div>
 

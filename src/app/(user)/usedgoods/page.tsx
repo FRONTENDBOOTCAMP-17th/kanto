@@ -1,11 +1,9 @@
-import Link from "next/link";
-import { Plus } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { Button } from "@/components/ui/button";
 
 import { getUsedGoodsList } from "@/services/usedGoods/usedGoods";
 import { getLikeList } from "@/services/likes";
-import { getSessionUser } from "@/services/user/user";
+import { getSessionUser, getIdentityVerified } from "@/services/user/user";
+import { CategoryWriteButton } from "@/components/common/CategoryWriteButton";
 import { UsedGoodsList } from "@/app/(user)/usedgoods/_components/UsedGoodsList";
 import { UsedGoodsFilters } from "./_components/UsedGoodsFilters";
 import { PaginationUrl } from "@/components/common/PaginationUrl";
@@ -28,7 +26,7 @@ export default async function UsedGoodsPage({
   const currentPage = Number(params.page ?? 1);
   const t = await getTranslations("UsedGoods");
 
-  const [posts, { likedIds, currentUserId }, sessionUser] = await Promise.all([
+  const [posts, { likedIds, currentUserId }, sessionUser, isVerified] = await Promise.all([
     getUsedGoodsList({
       search: params.search,
       category: params.category,
@@ -36,6 +34,7 @@ export default async function UsedGoodsPage({
     }),
     getLikeList("used_goods"),
     getSessionUser(),
+    getIdentityVerified(),
   ]);
 
   const totalPages = Math.ceil(posts.length / ITEMS_PER_PAGE);
@@ -54,12 +53,14 @@ export default async function UsedGoodsPage({
               ? t("searchResult", { query: params.search })
               : t("subtitle")}
           </p>
-          <Link href="/create" className="absolute right-0 top-0">
-            <Button variant="teal" className="cursor-pointer gap-1">
-              <Plus className="w-4 h-4" />
-              {t("write")}
-            </Button>
-          </Link>
+          <div className="absolute right-0 top-0">
+            <CategoryWriteButton
+              href="/usedgoods/create"
+              label={t("write")}
+              isLoggedIn={!!sessionUser}
+              initialIsVerified={isVerified}
+            />
+          </div>
         </div>
 
         <UsedGoodsFilters

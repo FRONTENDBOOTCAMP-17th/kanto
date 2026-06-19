@@ -34,7 +34,7 @@ export function GlobalLayout({ children, initialUser }: Props) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {!hideGlobalUI && <Header />}
+      {!hideGlobalUI && <Header initialUser={initialUser} />}
       {!hideGlobalUI && <div className="h-12 md:h-0" aria-hidden="true" />}
       {!hideGlobalUI && <DeletionPendingBanner />}
       {!hideGlobalUI && (

@@ -7,12 +7,6 @@ import { linkSocialIdentity, unlinkSocialIdentity } from "@/services/profile/pro
 import { useAuthStore } from "@/store/authStore";
 import { supabase } from "@/lib/supabase";
 
-export const LANGUAGES = [
-  { value: "ko", label: "한국어" },
-  { value: "en", label: "English" },
-  { value: "fil", label: "Filipino" },
-];
-
 export const SOCIAL_PROVIDERS: { key: "google" | "kakao" | "facebook" }[] = [
   { key: "google" },
   { key: "kakao" },
@@ -32,7 +26,6 @@ export function useProfileSettings(initialIdentities: UserIdentity[]) {
   };
 
   const [region, setRegion] = useState(user?.region ?? "");
-  const [language, setLanguage] = useState("ko");
   const [identities, setIdentities] = useState<UserIdentity[]>(initialIdentities);
   const [notice, setNotice] = useState<Notice | null>(() => {
     if (typeof window === "undefined") return null;
@@ -98,7 +91,6 @@ export function useProfileSettings(initialIdentities: UserIdentity[]) {
   return {
     region, setRegion,
     handleSaveRegion,
-    language, setLanguage,
     identities,
     notice,
     handleLink,
