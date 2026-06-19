@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Flag, FileText, User, X, ExternalLink } from "lucide-react";
+import { REPORT_STATUS } from "@/constants/report";
 import {
   REASON_STYLE,
   CATEGORY_STYLE,
@@ -94,7 +95,7 @@ export default function ReportsClient({ reports }: Props) {
   );
 
   const totalCount = all.length;
-  const pendingCount = all.filter((r) => r.status === "pending").length;
+  const pendingCount = all.filter((r) => r.status === REPORT_STATUS.PENDING).length;
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -115,7 +116,7 @@ export default function ReportsClient({ reports }: Props) {
   const pageItems = filtered.slice(startIdx, startIdx + PAGE_SIZE);
 
   const sel = selId != null ? (all.find((r) => r.id === selId) ?? null) : null;
-  const selIsPending = sel?.status === "pending";
+  const selIsPending = sel?.status === REPORT_STATUS.PENDING;
   const sanctionTarget = sel
     ? sel.type === "post"
       ? sel.author
@@ -308,20 +309,20 @@ export default function ReportsClient({ reports }: Props) {
               전체
             </SegButton>
             <SegButton
-              active={status === "pending"}
-              onClick={() => setFilter(() => setStatus("pending"))}
+              active={status === REPORT_STATUS.PENDING}
+              onClick={() => setFilter(() => setStatus(REPORT_STATUS.PENDING))}
             >
               대기중
             </SegButton>
             <SegButton
-              active={status === "resolved"}
-              onClick={() => setFilter(() => setStatus("resolved"))}
+              active={status === REPORT_STATUS.RESOLVED}
+              onClick={() => setFilter(() => setStatus(REPORT_STATUS.RESOLVED))}
             >
               처리완료
             </SegButton>
             <SegButton
-              active={status === "dismissed"}
-              onClick={() => setFilter(() => setStatus("dismissed"))}
+              active={status === REPORT_STATUS.DISMISSED}
+              onClick={() => setFilter(() => setStatus(REPORT_STATUS.DISMISSED))}
             >
               무시됨
             </SegButton>
@@ -332,18 +333,32 @@ export default function ReportsClient({ reports }: Props) {
       {/* Table */}
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] border-collapse">
+          <table className="w-full min-w-[760px] table-fixed border-collapse">
+            <colgroup>
+              <col className="w-1/6" />
+              <col className="w-1/6" />
+              <col className="w-1/6" />
+              <col className="w-1/6" />
+              <col className="w-1/6" />
+              <col className="w-1/6" />
+            </colgroup>
             <thead>
               <tr className="border-b border-[#f1f4f6] bg-slate-50">
-                {["유형", "대상", "신고 사유", "신고일", "상태"].map((h) => (
+                {[
+                  { label: "유형", align: "text-center" },
+                  { label: "대상", align: "text-center" },
+                  { label: "신고 사유", align: "text-center" },
+                  { label: "신고일", align: "text-center" },
+                  { label: "상태", align: "text-center" },
+                ].map(({ label, align }) => (
                   <th
-                    key={h}
-                    className="px-[18px] py-[13px] text-left text-[12px] font-bold uppercase tracking-wide text-slate-400"
+                    key={label}
+                    className={`px-[18px] py-[13px] ${align} text-[12px] font-bold uppercase tracking-wide text-slate-400`}
                   >
-                    {h}
+                    {label}
                   </th>
                 ))}
-                <th className="px-[18px] py-[13px] text-right text-[12px] font-bold uppercase tracking-wide text-slate-400">
+                <th className="px-[18px] py-[13px] text-center text-[12px] font-bold uppercase tracking-wide text-slate-400">
                   액션
                 </th>
               </tr>
@@ -353,7 +368,7 @@ export default function ReportsClient({ reports }: Props) {
                 const reason = REASON_STYLE[r.reason] ?? REASON_STYLE["기타"];
                 const st = STATUS_STYLE[r.status];
                 const cat = r.category ? CATEGORY_STYLE[r.category] : null;
-                const isPending = r.status === "pending";
+                const isPending = r.status === REPORT_STATUS.PENDING;
                 return (
                   <tr
                     key={r.id}
@@ -361,7 +376,7 @@ export default function ReportsClient({ reports }: Props) {
                     className="cursor-pointer border-t border-[#f3f5f7] hover:bg-slate-50"
                   >
                     <td className="px-[18px] py-[15px]">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-center gap-2">
                         <span
                           style={{
                             color: r.type === "post" ? "#0d9488" : "#8b5cf6",
@@ -379,9 +394,9 @@ export default function ReportsClient({ reports }: Props) {
                         </span>
                       </div>
                     </td>
-                    <td className="px-[18px] py-[15px]">
+                    <td className="px-[18px] py-[15px] text-center">
                       <div className="min-w-0">
-                        <div className="max-w-[320px] truncate text-[14px] font-bold text-slate-900">
+                        <div className="truncate text-[14px] font-bold text-slate-900">
                           {r.targetName}
                         </div>
                         {cat && (
@@ -394,17 +409,17 @@ export default function ReportsClient({ reports }: Props) {
                         )}
                       </div>
                     </td>
-                    <td className="px-[18px] py-[15px]">
+                    <td className="px-[18px] py-[15px] text-center">
                       <Pill text={r.reason} fg={reason.fg} bg={reason.bg} />
                     </td>
-                    <td className="whitespace-nowrap px-[18px] py-[15px] text-[13.5px] text-slate-500">
+                    <td className="whitespace-nowrap px-[18px] py-[15px] text-center text-[13.5px] text-slate-500">
                       {r.reportDate}
                     </td>
-                    <td className="px-[18px] py-[15px]">
+                    <td className="px-[18px] py-[15px] text-center">
                       <Pill text={st.label} fg={st.fg} bg={st.bg} bold />
                     </td>
                     <td className="px-[18px] py-[15px]">
-                      <div className="flex items-center justify-end">
+                      <div className="flex items-center justify-center">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -612,7 +627,7 @@ export default function ReportsClient({ reports }: Props) {
                     </div>
 
                     {/* 처리 결과 (resolved/dismissed이고 편집 중이 아닐 때) */}
-                    {sel.status !== "pending" &&
+                    {sel.status !== REPORT_STATUS.PENDING &&
                       !editing &&
                       (() => {
                         const localOc = outcomes[sel.id];

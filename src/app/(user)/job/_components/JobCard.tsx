@@ -20,6 +20,7 @@ interface JobCardProps {
   workHours: string;
   initialIsLiked: boolean;
   currentUserId: number | null;
+  fromPage?: number;
 }
 
 export function JobCard({
@@ -35,6 +36,7 @@ export function JobCard({
   workHours,
   initialIsLiked,
   currentUserId,
+  fromPage,
 }: JobCardProps) {
   const t = useTranslations("Job");
   const te = useTranslations("Enums");
@@ -65,7 +67,7 @@ export function JobCard({
   return (
     <div
       className="bg-white px-5 py-4 flex justify-between gap-3 md:gap-4 hover:bg-gray-50 transition-colors cursor-pointer group"
-      onClick={() => router.push(`/job/${id}`)}
+      onClick={() => router.push(`/job/${id}${fromPage ? `?fromPage=${fromPage}` : ""}`)}
     >
       {/* 모바일: 기존 세로 스택 */}
       <div className="flex flex-col gap-2 flex-1 min-w-0 md:hidden">

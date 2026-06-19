@@ -10,7 +10,6 @@ import {
   Users,
   Flag,
   MessageSquare,
-  LogOut,
   MapPin,
   Menu,
 } from "lucide-react";
@@ -140,24 +139,6 @@ export default function AdminSidebar({ pendingCount }: { pendingCount: number })
         </nav>
 
         <div className="flex-1" />
-
-        <div className="flex items-center gap-2.5 rounded-[13px] border border-[#eef1f3] bg-slate-50 p-3">
-          <div className="flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-full bg-teal-700 text-sm font-bold text-white">
-            관
-          </div>
-          <div className="min-w-0 flex-1 leading-tight">
-            <div className="text-[13.5px] font-bold text-slate-900">관리자</div>
-            <div className="truncate text-xs text-slate-400">
-              admin@kanto.ph
-            </div>
-          </div>
-          <button
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] text-slate-400 hover:bg-red-50 hover:text-red-600"
-            aria-label="로그아웃"
-          >
-            <LogOut className="h-4.25 w-4.25" strokeWidth={2} />
-          </button>
-        </div>
       </aside>
     </>
   );

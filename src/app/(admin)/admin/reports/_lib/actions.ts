@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { REPORTS_TABLE, REPORT_STATUS } from "@/constants/report";
 import type { Sanction, ReportType } from "@/type/admin";
 
 function calcExpiresAt(sanction: Sanction): string | null {
@@ -42,9 +43,9 @@ export async function resolveReport(
   const expiresAt = calcExpiresAt(opts.sanction);
 
   await admin
-    .from("common_reports")
+    .from(REPORTS_TABLE)
     .update({
-      status: "resolved",
+      status: REPORT_STATUS.RESOLVED,
       resolved_at: new Date().toISOString(),
       post_deactivated: opts.deactivatePost,
       sanction_type: opts.sanction !== "none" ? opts.sanction : null,
@@ -78,9 +79,9 @@ export async function dismissReport(reportId: number): Promise<void> {
   const admin = createAdminClient();
 
   await admin
-    .from("common_reports")
+    .from(REPORTS_TABLE)
     .update({
-      status: "dismissed",
+      status: REPORT_STATUS.DISMISSED,
       resolved_at: new Date().toISOString(),
       post_deactivated: false,
       sanction_type: null,
@@ -107,7 +108,7 @@ export async function updateReportResolution(
   const expiresAt = calcExpiresAt(opts.sanction);
 
   await admin
-    .from("common_reports")
+    .from(REPORTS_TABLE)
     .update({
       post_deactivated: opts.deactivatePost,
       sanction_type: opts.sanction !== "none" ? opts.sanction : null,

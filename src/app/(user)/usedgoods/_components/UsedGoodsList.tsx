@@ -9,9 +9,10 @@ interface Props {
   initialPosts: UsedGoodsWithPost[];
   initialLikedIds: number[];
   currentUserId: number | null;
+  currentPage: number;
 }
 
-export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId }: Props) {
+export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId, currentPage }: Props) {
   const t = useTranslations("UsedGoods");
   const likedSet = new Set(initialLikedIds);
 
@@ -32,7 +33,7 @@ export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId }: 
             : (goods?.location_type ?? "");
 
         const reservedBadge = !post.is_sold && post.is_reserved ? (
-          <span className="rounded bg-orange-500 px-1.5 py-0.5 text-[11px] font-bold text-white">
+          <span className="rounded bg-teal-400 px-1.5 py-0.5 text-[11px] font-bold text-white">
             {t("reserved")}
           </span>
         ) : undefined;
@@ -40,7 +41,7 @@ export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId }: 
         return (
           <ContentCard
             key={post.id}
-            href={`/usedgoods/${post.id}`}
+            href={`/usedgoods/${post.id}${currentPage > 1 ? `?fromPage=${currentPage}` : ""}`}
             images={images}
             title={post.title}
             price={goods?.price ?? 0}

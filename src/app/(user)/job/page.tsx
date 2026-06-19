@@ -72,6 +72,7 @@ export default async function JobPage({
           posts={pagedPosts}
           likedIds={likedIds}
           currentUserId={currentUserId}
+          currentPage={currentPage}
           emptyMessage={params.search ? t("emptySearch") : t("empty")}
         />
 

@@ -41,6 +41,8 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   const [managerTitle, setManagerTitle] = useState(initialData?.manager_title ?? "");
   const [managerPhone, setManagerPhone] = useState(initialData?.manager_phone ?? "");
   const [managerEmail, setManagerEmail] = useState(initialData?.manager_email ?? "");
+  const [companyLogoUrl, setCompanyLogoUrl] = useState(initialData?.company_logo ?? "");
+  const [companyLogoFile, setCompanyLogoFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const imageUpload = useImageUpload(initialData?.images as string[] ?? []);
 
@@ -68,6 +70,17 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       return;
     }
     setIsSubmitting(true);
+
+    // 로고 업로드 헬퍼 (등록/수정 공통)
+    const uploadLogo = async (postId: number): Promise<string | null> => {
+      if (!companyLogoFile) return companyLogoUrl || null;
+      const ext = companyLogoFile.name.split(".").pop()?.toLowerCase() ?? "jpg";
+      const logoPath = `logos/${userId}/${postId}.${ext}`;
+      const { error } = await supabase.storage.from("images").upload(logoPath, companyLogoFile, { upsert: true });
+      if (error) { alert(t("errorImage")); return null; }
+      const { data } = supabase.storage.from("images").getPublicUrl(logoPath);
+      return data.publicUrl;
+    };
 
     const jobFields = {
       company_name: companyName,
@@ -97,6 +110,9 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
 
     // 수정 모드
     if (initialData?.post_id) {
+      const logoUrl = await uploadLogo(initialData.post_id);
+      if (companyLogoFile && !logoUrl) { setIsSubmitting(false); return; }
+
       const uploadedUrls: string[] = [];
       for (const file of imageUpload.imageFiles) {
         const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
@@ -116,7 +132,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
 
       await supabase.from("posts").update({ title }).eq("id", initialData.post_id);
       const { error } = await supabase.from("jobs")
-        .update({ ...jobFields, images: finalImages.length > 0 ? finalImages : null })
+        .update({ ...jobFields, company_logo: logoUrl, images: finalImages.length > 0 ? finalImages : null })
         .eq("post_id", initialData.post_id);
 
       if (error) {
@@ -142,6 +158,13 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       return;
     }
 
+    const logoUrl = await uploadLogo(post.id);
+    if (companyLogoFile && !logoUrl) {
+      await supabase.from("posts").delete().eq("id", post.id);
+      setIsSubmitting(false);
+      return;
+    }
+
     const uploadedUrls: string[] = [];
     for (const file of imageUpload.imageFiles) {
       const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
@@ -160,6 +183,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     const { error: jobError } = await supabase.from("jobs").insert({
       post_id: post.id,
       ...jobFields,
+      company_logo: logoUrl,
       images: uploadedUrls.length > 0 ? uploadedUrls : null,
     });
 
@@ -203,6 +227,8 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     managerTitle, setManagerTitle,
     managerPhone, setManagerPhone,
     managerEmail, setManagerEmail,
+    companyLogoUrl, setCompanyLogoUrl,
+    companyLogoFile, setCompanyLogoFile,
     isSubmitting,
     imageUpload,
     handleSubmit,

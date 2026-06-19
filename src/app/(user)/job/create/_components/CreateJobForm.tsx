@@ -65,6 +65,9 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
 
           {form.step === 2 && (
             <CreateJobFormPageTwo
+              companyLogoUrl={form.companyLogoUrl}
+              companyLogoFile={form.companyLogoFile}
+              setCompanyLogoFile={form.setCompanyLogoFile}
               companyName={form.companyName}
               setCompanyName={form.setCompanyName}
               companyIntro={form.companyIntro}

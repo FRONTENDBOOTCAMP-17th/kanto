@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { REPORTS_TABLE, REPORT_STATUS } from "@/constants/report";
 
 export async function checkReported(
   targetId: number,
@@ -6,7 +7,7 @@ export async function checkReported(
   targetType: "post" | "user" = "post",
 ) {
   const { data } = await supabase
-    .from("common_reports")
+    .from(REPORTS_TABLE)
     .select("id")
     .eq("target_id", targetId)
     .eq("target_type", targetType)
@@ -22,13 +23,13 @@ export async function submitReport(
   content: string,
   targetType: "post" | "user" = "post",
 ) {
-  const { error } = await supabase.from("common_reports").insert({
+  const { error } = await supabase.from(REPORTS_TABLE).insert({
     user_id: userId,
     target_id: targetId,
     target_type: targetType,
     category,
     description: content || null,
-    status: "pending",
+    status: REPORT_STATUS.PENDING,
   });
   return { error };
 }

@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import { REPORTS_TABLE } from "@/constants/report";
 
 export async function getAdminUsers() {
   const supabase = await createClient();
@@ -12,7 +13,7 @@ export async function getAdminUsers() {
   if (usersError) throw usersError;
 
   const { data: reports, error: reportsError } = await supabase
-    .from("common_reports")
+    .from(REPORTS_TABLE)
     .select("target_id")
     .eq("target_type", "user");
 

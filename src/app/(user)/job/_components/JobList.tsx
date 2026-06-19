@@ -9,10 +9,11 @@ interface Props {
   posts: JobWithPost[];
   likedIds: number[];
   currentUserId: number | null;
+  currentPage: number;
   emptyMessage?: string;
 }
 
-export function JobList({ posts, likedIds, currentUserId, emptyMessage }: Props) {
+export function JobList({ posts, likedIds, currentUserId, currentPage, emptyMessage }: Props) {
   const t = useTranslations("Job");
   const likedSet = new Set(likedIds);
 
@@ -40,6 +41,7 @@ export function JobList({ posts, likedIds, currentUserId, emptyMessage }: Props)
           <JobCard
             key={post.id}
             id={post.id}
+            fromPage={currentPage > 1 ? currentPage : undefined}
             title={post.title}
             companyName={job.company_name}
             salary={job.salary}

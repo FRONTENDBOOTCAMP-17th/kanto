@@ -75,6 +75,7 @@ export default async function RentalPage({
           initialPosts={pagedPosts}
           initialLikedIds={likedIds}
           currentUserId={currentUserId}
+          currentPage={currentPage}
         />
 
         {totalPages > 1 && (
