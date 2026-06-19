@@ -15,7 +15,7 @@ import { test, expect, Page } from "@playwright/test";
  * 비밀번호는 커밋하지 않고 환경변수로 주입: REVIEW_TEST_PASSWORD.
  * 관리자 화면은 테스트 계정을 일시적으로 admin 으로 승격해 확인한다(리뷰 후 user 로 원복).
  */
-const DAY = "2026-06-18";
+const DAY = "2026-06-19";
 const SHOT = `../images/${DAY}`;
 const EMAIL = process.env.REVIEW_TEST_EMAIL ?? "kanto-review@example.com";
 const PASSWORD = process.env.REVIEW_TEST_PASSWORD ?? "";
@@ -260,5 +260,69 @@ test("K22 회원 관리(/admin/users) → 회원 상세", async ({ page }) => {
       await settle(page);
       await page.screenshot({ path: `${SHOT}/kanto-K22b-admin-user-detail.png`, fullPage: true });
     }
+  }
+});
+
+test("K23 관리자 글 관리(/admin/posts, 신규)", async ({ page }) => {
+  test.setTimeout(90_000);
+  await login(page);
+  const res = await page.goto("/admin/posts");
+  await settle(page);
+  console.log("/admin/posts status:", res?.status());
+  await page.screenshot({ path: `${SHOT}/kanto-K23-admin-posts.png`, fullPage: true });
+});
+
+test("K24 관리자 채팅 관리(/admin/chats → 상세, 신규)", async ({ page }) => {
+  test.setTimeout(90_000);
+  await login(page);
+  const res = await page.goto("/admin/chats");
+  await settle(page);
+  console.log("/admin/chats status:", res?.status());
+  await page.screenshot({ path: `${SHOT}/kanto-K24a-admin-chats.png`, fullPage: true });
+  const chatLink = page.locator('a[href*="/admin/chats/"]').first();
+  if (await chatLink.count()) {
+    const href = await chatLink.getAttribute("href");
+    if (href) {
+      await page.goto(href);
+      await settle(page);
+      await page.screenshot({ path: `${SHOT}/kanto-K24b-admin-chat-room.png`, fullPage: true });
+    }
+  } else {
+    // 목록 링크가 없어도 직접 상세로 진입해 본다(샘플 chat id 11)
+    await page.goto("/admin/chats/11");
+    await settle(page);
+    await page.screenshot({ path: `${SHOT}/kanto-K24b-admin-chat-room.png`, fullPage: true });
+  }
+});
+
+test("K25 비밀번호 찾기 모달(/login → 신규 reset-password)", async ({ page }) => {
+  await page.goto("/login");
+  await settle(page, 1000);
+  await page.getByRole("button", { name: "이메일로 로그인" }).click().catch(() => {});
+  await page.waitForTimeout(500);
+  const trigger = page.getByRole("button", { name: /비밀번호.*찾기|비밀번호.*재설정|비밀번호를 잊/ }).first();
+  if (await trigger.count()) {
+    await trigger.click().catch(() => {});
+    await page.waitForTimeout(700);
+  }
+  await page.screenshot({ path: `${SHOT}/kanto-K25-find-password.png`, fullPage: true });
+});
+
+/* ===================== 보안 회귀: 비관리자 어드민 접근 ===================== */
+// 테스트 계정을 user(비관리자) 상태로 둔 채 신규 어드민 페이지에 직접 진입해
+// 일반 사용자에게 관리자 데이터가 새는지(접근 차단 여부)를 확인한다.
+
+test("K30 비관리자(user)로 신규 어드민 페이지 직접 진입 — 차단 확인", async ({ page }) => {
+  test.setTimeout(120_000);
+  await login(page);
+
+  for (const url of ["/admin/posts", "/admin/chats", "/admin/chats/11", "/admin/users"]) {
+    await page.goto(url);
+    await settle(page, 1200);
+    const finalUrl = page.url();
+    const blocked = !finalUrl.includes(url.split("?")[0]); // 리다이렉트되면 차단
+    console.log(`[authz] non-admin ${url} → final=${finalUrl} blocked=${blocked}`);
+    const slug = url.replace(/\//g, "_");
+    await page.screenshot({ path: `${SHOT}/kanto-K30${slug}.png`, fullPage: true });
   }
 });
