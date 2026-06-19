@@ -1,6 +1,5 @@
 import { useEffect, RefObject } from "react";
 
-/** 메뉴 바깥을 클릭했을때 메뉴가 닫히도록 하는 로직 */
 export function useClickOutside(
   ref: RefObject<HTMLElement | null>,
   callback: () => void,

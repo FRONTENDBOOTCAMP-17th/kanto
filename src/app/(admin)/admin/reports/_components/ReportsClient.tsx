@@ -223,7 +223,7 @@ export default function ReportsClient({ reports }: Props) {
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
       `}</style>
 
-      {/* Header */}
+      
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
@@ -242,7 +242,7 @@ export default function ReportsClient({ reports }: Props) {
         </div>
       </div>
 
-      {/* Search */}
+      
       <div className="flex items-center gap-2.5 rounded-[14px] border border-[#e7ebee] bg-white px-4 py-[13px] shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <svg
           width="19"
@@ -265,7 +265,7 @@ export default function ReportsClient({ reports }: Props) {
         />
       </div>
 
-      {/* Filters */}
+      
       <div className="flex flex-wrap gap-7 rounded-2xl border border-[#e7ebee] bg-white px-[22px] py-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <div>
           <div className="mb-2.5 text-[13px] font-bold text-slate-600">
@@ -331,7 +331,7 @@ export default function ReportsClient({ reports }: Props) {
         </div>
       </div>
 
-      {/* Table */}
+      
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px] table-fixed border-collapse">
@@ -444,7 +444,7 @@ export default function ReportsClient({ reports }: Props) {
           </table>
         </div>
 
-        {/* Empty */}
+        
         {filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center px-5 py-16 text-center">
             <Flag className="h-12 w-12 text-slate-200" strokeWidth={1.8} />
@@ -457,7 +457,7 @@ export default function ReportsClient({ reports }: Props) {
           </div>
         )}
 
-        {/* Pagination */}
+        
         {totalPages > 1 && (
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#f1f4f6] px-[22px] py-4">
             <span className="text-[13px] text-slate-400">
@@ -507,7 +507,7 @@ export default function ReportsClient({ reports }: Props) {
         )}
       </div>
 
-      {/* Drawer */}
+      
       {sel && (
         <>
           <div
@@ -519,7 +519,7 @@ export default function ReportsClient({ reports }: Props) {
             className="fixed right-0 top-0 z-[71] flex h-screen w-[460px] max-w-full flex-col bg-white shadow-[-12px_0_44px_rgba(15,23,42,0.18)]"
             style={{ animation: "drawerIn .26s cubic-bezier(.4,0,.2,1)" }}
           >
-            {/* header */}
+            
             <div className="flex items-center justify-between gap-3 border-b border-[#f1f4f6] px-6 py-[22px]">
               <div className="flex items-center gap-2.5">
                 <h2 className="text-[18px] font-extrabold tracking-tight text-slate-900">
@@ -537,7 +537,7 @@ export default function ReportsClient({ reports }: Props) {
               </button>
             </div>
 
-            {/* body */}
+            
             <div className="flex-1 overflow-y-auto overscroll-contain p-6">
               {(() => {
                 const reason = REASON_STYLE[sel.reason] ?? REASON_STYLE["기타"];
@@ -550,7 +550,7 @@ export default function ReportsClient({ reports }: Props) {
                       <Pill text={sel.reason} fg={reason.fg} bg={reason.bg} />
                     </div>
 
-                    {/* target preview */}
+                    
                     <div className="mb-5 rounded-[14px] border border-[#eef1f3] bg-slate-50 p-[18px]">
                       <div className="mb-3 flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wide text-slate-400">
                         <span
@@ -620,7 +620,7 @@ export default function ReportsClient({ reports }: Props) {
                       })()}
                     </div>
 
-                    {/* description */}
+                    
                     <div className="mb-5">
                       <div className="mb-2.5 text-[12px] font-bold uppercase tracking-wide text-slate-400">
                         신고 내용
@@ -630,7 +630,7 @@ export default function ReportsClient({ reports }: Props) {
                       </p>
                     </div>
 
-                    {/* meta */}
+                    
                     <div className="mb-6 overflow-hidden rounded-xl border border-[#eef1f3]">
                       {sel.type === "post" && (
                         <div className="flex items-center justify-between border-b border-[#f3f5f7] px-4 py-[11px]">
@@ -652,7 +652,7 @@ export default function ReportsClient({ reports }: Props) {
                       </div>
                     </div>
 
-                    {/* 처리 결과 (resolved/dismissed이고 편집 중이 아닐 때) */}
+                    
                     {sel.status !== REPORT_STATUS.PENDING &&
                       !editing &&
                       (() => {
@@ -867,7 +867,7 @@ export default function ReportsClient({ reports }: Props) {
                         );
                       })()}
 
-                    {/* 처리 로그 */}
+                    
                     {(() => {
                       function formatDateTime(d: string | null | undefined) {
                         if (!d) return "-";
@@ -937,7 +937,7 @@ export default function ReportsClient({ reports }: Props) {
                       );
                     })()}
 
-                    {/* actions (대기중이거나 편집 중일 때) */}
+                    
                     {(selIsPending || editing) && (
                       <>
                         {editing && (
@@ -1037,7 +1037,7 @@ export default function ReportsClient({ reports }: Props) {
               })()}
             </div>
 
-            {/* footer */}
+            
             <div className="border-t border-[#f1f4f6] px-6 py-[18px]">
               {editing ? (
                 <div className="flex gap-2.5">
@@ -1093,7 +1093,7 @@ export default function ReportsClient({ reports }: Props) {
         </>
       )}
 
-      {/* Toast */}
+      
       {toast && (
         <div
           className="fixed bottom-7 left-1/2 z-[80] flex -translate-x-1/2 items-center gap-2.5 rounded-xl bg-slate-900 px-5 py-[13px] text-white shadow-[0_10px_30px_rgba(15,23,42,0.3)]"

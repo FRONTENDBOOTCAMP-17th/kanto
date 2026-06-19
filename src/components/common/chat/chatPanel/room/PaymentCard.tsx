@@ -66,7 +66,6 @@ export default function PaymentCard({
   const ghostBtn =
     "w-full rounded-full border border-gray-200 py-2 text-xs font-medium text-gray-500 hover:bg-gray-50 transition-colors disabled:opacity-50 cursor-pointer";
 
-  // 상태별 헤더(아이콘/문구) + 액션
   const renderBody = () => {
     switch (transaction.status) {
       case "pending":

@@ -26,7 +26,6 @@ export async function middleware(request: NextRequest) {
     },
   );
 
-  // 세션 갱신 — getUser()가 반드시 호출되어야 쿠키가 갱신됨
   const {
     data: { user },
   } = await supabase.auth.getUser();

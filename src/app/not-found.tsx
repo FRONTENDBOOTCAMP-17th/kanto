@@ -4,13 +4,13 @@ import { ChevronLeft } from "lucide-react";
 export default function NotFound() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] gap-10 text-center px-4">
-      {/* 404 */}
+      
       <div className="flex items-center justify-center gap-1">
         <span className="text-[200px] font-semibold leading-none tracking-tighter text-slate-800">
           4
         </span>
 
-        {/* 위치 핀 = 0 */}
+        
         <div className="relative w-32 h-37.5 mx-1 shrink-0" aria-label="kanto">
           <div className="absolute left-2.25 top-0 w-27.5 h-27.5 bg-teal-500 rounded-[50%_50%_50%_0] -rotate-45" />
           <svg
@@ -32,7 +32,7 @@ export default function NotFound() {
         </span>
       </div>
 
-      {/* 안내 문구 */}
+      
       <div className="flex flex-col items-center gap-2.5">
         <h1 className="text-2xl font-semibold text-slate-800">
           페이지를 찾을 수 없어요
@@ -42,7 +42,7 @@ export default function NotFound() {
         </p>
       </div>
 
-      {/* 메인으로 */}
+      
       <Link
         href="/main"
         className="inline-flex items-center gap-1.5 text-[15px] font-medium text-gray-600 underline-offset-4 hover:text-teal-700 hover:underline transition-colors whitespace-nowrap"

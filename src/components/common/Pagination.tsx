@@ -38,7 +38,7 @@ export const Pagination = ({
 
   return (
     <>
-      {/* 데스크탑 */}
+      
       <div className="hidden sm:flex items-center justify-center gap-[18px]">
         <button
           aria-label="이전 페이지"
@@ -79,7 +79,7 @@ export const Pagination = ({
         </button>
       </div>
 
-      {/* 모바일 */}
+      
       <div className="flex sm:hidden items-center justify-center gap-7">
         <button
           aria-label="이전 페이지"

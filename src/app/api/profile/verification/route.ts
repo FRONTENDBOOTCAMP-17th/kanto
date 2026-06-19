@@ -32,7 +32,6 @@ export async function POST(req: NextRequest) {
 
   const normalizedEmail = email.trim().toLowerCase();
 
-  // 가입 시 사용한 이메일과 동일할 때만 인증번호를 발송한다.
   if (normalizedEmail !== user.email?.toLowerCase()) {
     return NextResponse.json(
       { error: "가입 시 사용한 이메일과 일치하지 않습니다." },
@@ -60,7 +59,6 @@ export async function POST(req: NextRequest) {
 
   const isProduction = process.env.NODE_ENV === "production";
 
-  // 운영 환경에서 메일이 구성되지 않았다면, 코드를 노출하는 대신 에러로 막는다.
   if (!emailResult.isConfigured && isProduction) {
     await deleteVerificationCode(key);
     return NextResponse.json(
@@ -72,7 +70,6 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     expiresIn: VERIFICATION_TTL_SECONDS,
     isEmailSent: emailResult.isEmailSent,
-    // 운영 환경에서는 절대 코드를 내려보내지 않는다. 개발 편의로만 노출.
     devCode: !emailResult.isConfigured && !isProduction ? code : undefined,
     storage,
   });

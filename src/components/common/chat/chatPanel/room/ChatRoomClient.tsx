@@ -65,7 +65,6 @@ export default function ChatRoomClient({
     await toggleReserveAction(postId, next);
   };
 
-  // 판매자이고 중고거래(가격 존재) 채팅이며, 진행 중/완료된 거래가 없을 때만 안전결제 요청 가능
   const [paymentRequestBlocked, setPaymentRequestBlocked] = useState(false);
   const canRequestPayment =
     sellerId !== null &&
@@ -181,7 +180,6 @@ export default function ChatRoomClient({
     };
   }, [activeChatId]);
 
-  // 후기 작성 배너 대상 거래 / 안전결제 요청 차단 여부 — 서버에서 권위 있게 조회(페이지네이션·realtime 무관)
   const [reviewableTxId, setReviewableTxId] = useState<number | null>(null);
   const refreshBannerState = useCallback(() => {
     if (activeChatId === null) return;
@@ -193,7 +191,6 @@ export default function ChatRoomClient({
       .catch(() => {});
   }, [activeChatId]);
 
-  // 마운트 + released 시스템 메시지 도착(양쪽 모두 수신) 시 재조회
   const systemMsgCount = messages.filter((m) => m.type === "system").length;
   useEffect(() => {
     refreshBannerState();

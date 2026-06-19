@@ -36,7 +36,7 @@ export default async function AdminChatRoomPage({
         채팅 목록으로
       </Link>
 
-      {/* 참여자 헤더 */}
+      
       <div className="rounded-[18px] border border-[#e7ebee] bg-white px-[22px] py-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <div className="flex items-center gap-3">
           <MessageSquare className="h-5 w-5 text-teal-500 shrink-0" strokeWidth={2} />
@@ -61,7 +61,7 @@ export default async function AdminChatRoomPage({
         </div>
       </div>
 
-      {/* 채팅 뷰 */}
+      
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-[#f5f7f8] shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <div className="flex flex-col gap-2 px-4 py-5 min-h-[400px]">
           {messages.length === 0 && (

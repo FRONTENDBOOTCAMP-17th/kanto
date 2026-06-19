@@ -34,7 +34,6 @@ export async function GET(
   const partner =
     chatRoom.user_id_1 === currentUser.id ? chatRoom.user2 : chatRoom.user1;
 
-  // 판매자(글 작성자) id 와 중고거래 가격 — 안전결제 요청 게이팅/금액 prefill 용
   const { data: post } = await supabase
     .from("posts")
     .select("user_id, is_reserved")

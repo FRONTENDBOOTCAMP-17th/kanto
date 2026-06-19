@@ -129,7 +129,7 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
       `}</style>
 
-      {/* Header */}
+      
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
@@ -146,7 +146,7 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
         </div>
       </div>
 
-      {/* Search */}
+      
       <div className="flex items-center gap-2.5 rounded-[14px] border border-[#e7ebee] bg-white px-4 py-[13px] shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -159,7 +159,7 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
         />
       </div>
 
-      {/* Table */}
+      
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] border-collapse">
@@ -244,7 +244,7 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
         )}
       </div>
 
-      {/* Drawer */}
+      
       {selId != null && sel && (
         <>
           <div onClick={closeDrawer} className="fixed inset-0 z-[70] bg-slate-900/45" style={{ animation: "fadeIn .18s ease" }} />
@@ -252,7 +252,7 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
             className="fixed right-0 top-0 z-[71] flex h-screen w-[520px] max-w-full flex-col bg-white shadow-[-12px_0_44px_rgba(15,23,42,0.18)]"
             style={{ animation: "drawerIn .26s cubic-bezier(.4,0,.2,1)" }}
           >
-            {/* drawer header */}
+            
             <div className="flex items-center justify-between gap-3 border-b border-[#f1f4f6] px-6 py-[22px]">
               <div className="flex items-center gap-2.5">
                 <MessageSquare className="h-5 w-5 text-teal-500" strokeWidth={2.2} />
@@ -264,7 +264,7 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
               </button>
             </div>
 
-            {/* 게시물 정보 + 최근 대화 */}
+            
             <div className="border-b border-[#f1f4f6] px-6 py-4">
               {sel.posts ? (
                 <div className="mb-2 flex items-center gap-2 flex-wrap">
@@ -294,7 +294,7 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
               </div>
             </div>
 
-            {/* 탭 버튼 */}
+            
             <div className="flex gap-2 border-b border-[#f1f4f6] px-6 py-4">
               {([
                 { key: "user1" as Tab, label: sel.user1?.name ?? "사용자 1" },
@@ -318,14 +318,14 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
               ))}
             </div>
 
-            {/* 탭 컨텐츠 */}
+            
             <div
               ref={tab === "chat" ? chatScrollRef : undefined}
               onScroll={tab === "chat" ? (e) => { if (e.currentTarget.scrollTop < 80) loadMoreMessages(); } : undefined}
               className={`flex-1 overflow-y-auto overscroll-contain ${tab === "chat" ? "bg-[#f5f7f8]" : "bg-white"} p-6`}
             >
 
-              {/* 선택 안 됨 */}
+              
               {tab === null && (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
                   <MessageSquare className="h-10 w-10 text-slate-200" strokeWidth={1.8} />
@@ -335,7 +335,7 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
                 </div>
               )}
 
-              {/* 사용자 1 / 사용자 2 — 유저 카드 + 제재 버튼 + 발화 텍스트 로그 */}
+              
               {(tab === "user1" || tab === "user2") && (() => {
                 const user = tab === "user1" ? sel.user1 : sel.user2;
                 if (!user) return (
@@ -369,7 +369,7 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
 
                 return (
                   <div className="flex flex-col gap-4">
-                    {/* 유저 카드 */}
+                    
                     <div className="rounded-[14px] border border-[#eef1f3] bg-white p-4">
                       <div className="flex items-center justify-between">
                         <div>
@@ -390,7 +390,7 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
                           정지 중 · 만료: {effectiveSuspended === "9999-12-31T00:00:00Z" ? "영구" : effectiveSuspended?.slice(0, 10)}
                         </div>
                       )}
-                      {/* 제재 버튼 */}
+                      
                       <div className="mt-3 flex flex-wrap gap-1.5">
                         <button
                           onClick={doLift}
@@ -412,7 +412,7 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
                       </div>
                     </div>
 
-                    {/* 발화 텍스트 로그 */}
+                    
                     {chatLoading && (
                       <div className="py-8 text-center text-[13px] text-slate-400">불러오는 중...</div>
                     )}
@@ -440,7 +440,7 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
                 );
               })()}
 
-              {/* 채팅 내역 */}
+              
               {tab === "chat" && (
                 <>
                   {chatLoading && (
@@ -494,7 +494,7 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
               )}
             </div>
 
-            {/* footer */}
+            
             <div className="border-t border-[#f1f4f6] px-6 py-[18px]">
               {tab === "chat" && !chatLoading && messages.length > 0 ? (
                 <div className="flex flex-col gap-2.5">

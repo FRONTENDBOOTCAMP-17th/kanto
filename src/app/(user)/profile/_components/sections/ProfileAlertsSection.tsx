@@ -26,7 +26,7 @@ export function ProfileAlertsSection({ initialSettings }: { initialSettings: Ale
 
   return (
     <div className="flex flex-col divide-y divide-gray-100">
-      {/* 알림 토글 */}
+      
       <div className="px-5 md:px-0 py-6">
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-2 mb-5">
@@ -59,7 +59,7 @@ export function ProfileAlertsSection({ initialSettings }: { initialSettings: Ale
 
       {postAlert && (
         <>
-          {/* 관심 카테고리 */}
+          
           <div className="px-5 md:px-0 py-6">
             <div className="max-w-md mx-auto">
               <div className="flex items-center gap-2 mb-2">
@@ -83,7 +83,7 @@ export function ProfileAlertsSection({ initialSettings }: { initialSettings: Ale
             </div>
           </div>
 
-          {/* 키워드 알림 */}
+          
           <div className="px-5 md:px-0 py-6">
             <div className="max-w-md mx-auto">
               <div className="flex items-center justify-between mb-2">

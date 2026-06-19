@@ -11,8 +11,6 @@ export function useNotifications() {
   const { user } = useAuthStore();
   const userId = user?.id;
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  // 헤더 알림벨과 알림 페이지 등 여러 컴포넌트가 동시에 이 훅을 사용할 수 있어
-  // 채널명이 겹치지 않도록 컴포넌트 인스턴스별 고유 id를 부여한다.
   const instanceId = useId();
 
   useEffect(() => {

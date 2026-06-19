@@ -1,12 +1,9 @@
-// Xendit Invoice API 헬퍼 (서버 전용 — Secret Key 사용)
-// 문서: https://developers.xendit.co/api-reference/#create-invoice
 
 const XENDIT_API = "https://api.xendit.co";
 
 function authHeader() {
   const key = process.env.XENDIT_SECRET_KEY;
   if (!key) throw new Error("XENDIT_SECRET_KEY 환경변수가 설정되지 않았습니다.");
-  // Basic 인증: base64(secretKey + ":")
   return `Basic ${Buffer.from(`${key}:`).toString("base64")}`;
 }
 
@@ -64,7 +61,6 @@ export async function getInvoice(invoiceId: string): Promise<XenditInvoice> {
   return res.json();
 }
 
-// Xendit 결제완료 상태 판별 (PAID 또는 정산완료 SETTLED)
 export function isInvoicePaid(status: XenditInvoice["status"]) {
   return status === "PAID" || status === "SETTLED";
 }

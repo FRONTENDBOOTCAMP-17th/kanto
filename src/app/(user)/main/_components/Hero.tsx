@@ -45,13 +45,13 @@ export default function Hero() {
                 }`}
               >
                 <div className={`w-full h-full bg-cyan-950 relative overflow-hidden`}>
-                  {/* 배경 장식 */}
+                  
                   <div className="absolute -right-10 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
                   <div className="absolute top-1/2 right-12 -translate-y-1/2 opacity-10 hidden md:block">
                     <Icon className="w-56 h-56 text-white" />
                   </div>
 
-                  {/* 콘텐츠 */}
+                  
                   <div className="relative z-10 h-full flex flex-col justify-center px-4 md:px-16 max-w-2xl">
                     <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 leading-tight drop-shadow break-keep">
                       {t(`hero.${slide.key}.title`)}
@@ -72,7 +72,7 @@ export default function Hero() {
             );
           })}
 
-          {/* 좌우 화살표 */}
+          
           <button
             type="button"
             onClick={prev}
@@ -90,7 +90,7 @@ export default function Hero() {
             <ChevronRight className="w-5 h-5" />
           </button>
 
-          {/* 도트 인디케이터 */}
+          
           <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-1.5">
             {slides.map((_, index) => (
               <button

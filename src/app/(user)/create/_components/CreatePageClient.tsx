@@ -72,7 +72,6 @@ export function CreatePageClient({ initialIsVerified }: CreatePageClientProps) {
   const handleVerified = () => {
     setIsVerified(true);
     setIsVerificationOpen(false);
-    // 서버 데이터를 다시 읽어 캐시를 갱신한다. (뒤로가기 시 미인증으로 보이는 문제 방지)
     router.refresh();
     if (pendingHref) {
       setIsSuccessOpen(true);

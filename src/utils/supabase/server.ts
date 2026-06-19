@@ -19,7 +19,6 @@ export async function createClient() {
               cookieStore.set(name, value, options),
             );
           } catch {
-            // 서버 컴포넌트에서 호출 시 무시 — middleware가 세션 갱신을 담당
           }
         },
       },

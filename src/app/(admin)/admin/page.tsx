@@ -81,13 +81,13 @@ export default async function DashboardPage() {
     admin.rpc("get_daily_signups", { days: 30 }),
   ]);
 
-  /*  KPIs */
+  
   const totalUsers = usersRes.count ?? 0;
   const activeUsers = Number(activeRes.data?.[0]?.count ?? 0);
   const todaySignups = todaySignupsRes.count ?? 0;
   const totalPosts = totalPostsRes.count ?? 0;
 
-  /* 오늘 게시글 + 카테고리별 */
+  
   let todayPosts = 0;
   let todayByCat: { name: Category; delta: number }[] = [];
   if (todayPostsRes.data) {
@@ -103,7 +103,7 @@ export default async function DashboardPage() {
     }));
   }
 
-  /* 신고 배너 */
+  
   let pendingTotal = 0,
     pendingUser = 0,
     pendingPost = 0;
@@ -116,7 +116,7 @@ export default async function DashboardPage() {
     if (rows.length > 0) oldestDays = daysSince(rows[0].created_at!);
   }
 
-  /* 도넛 차트 */
+  
   let donutData: { name: Category; value: number; pct: string }[] = [];
   if (postTypesRes.data) {
     const counts: Record<string, number> = {};
@@ -132,7 +132,7 @@ export default async function DashboardPage() {
     }));
   }
 
-  /* 인기 게시글  */
+  
   const topPosts = (topPostsRes.data ?? []).map(
     (
       p: { id: number; title: string; post_type: string; view_count: number },
@@ -147,7 +147,7 @@ export default async function DashboardPage() {
     }),
   );
 
-  /* 신고 유형 분포  */
+  
   let reportTypes: {
     name: string;
     count: number;
@@ -173,7 +173,7 @@ export default async function DashboardPage() {
     }));
   }
 
-  /* 지역 */
+  
   const regions = (regionsRes.data ?? []).map(
     (r: { location: string; count: number }) => ({
       name: r.location,
@@ -181,7 +181,7 @@ export default async function DashboardPage() {
     }),
   );
 
-  /* 신고 처리 통계 */
+  
   let reportStats = {
     weekResolved: 0,
     resolveRate: 0,
@@ -215,7 +215,7 @@ export default async function DashboardPage() {
     reportStats = { weekResolved, resolveRate, avgHours };
   }
 
-  /* 신규 가입자 추이 */
+  
   const rawTrend = (signupTrendRes.data ?? []) as {
     day: string;
     count: number;

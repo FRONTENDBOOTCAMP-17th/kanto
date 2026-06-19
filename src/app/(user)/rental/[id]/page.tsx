@@ -50,7 +50,7 @@ export default async function RentalDetail({
           </div>
         </div>
       ) : (
-        /* 이미지 없을 때: 구인구직처럼 2열 나란히 */
+        
         <div className="border border-gray-200 rounded-2xl overflow-hidden mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
             <div className="p-6 flex flex-col gap-4">

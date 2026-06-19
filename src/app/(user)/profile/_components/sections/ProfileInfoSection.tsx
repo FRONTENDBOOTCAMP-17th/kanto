@@ -29,7 +29,7 @@ export function ProfileInfoSection({
 
   return (
     <div className="flex flex-col divide-y divide-gray-100">
-      {/* 프로필 편집 */}
+      
       <div className="px-5 md:px-0 py-6">
         <div className="max-w-md mx-auto">
           <h2 className="text-lg font-semibold text-gray-900 mb-6">{t("editTitle")}</h2>
@@ -66,7 +66,7 @@ export function ProfileInfoSection({
         </div>
       </div>
 
-      {/* 계정 삭제 */}
+      
       <div className="px-5 md:px-0 py-6">
         <div className="max-w-md mx-auto">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">{t("deleteTitle")}</h2>
@@ -100,7 +100,7 @@ export function ProfileInfoSection({
         </div>
       </div>
 
-      {/* 회원 탈퇴 확인 모달 */}
+      
       {showDeleteModal && (
         <div
           role="dialog"

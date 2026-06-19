@@ -50,7 +50,7 @@ export function JobPreferredModal({ isOpen, onClose, selected, onToggle }: Props
         className="mx-4 flex h-[70vh] max-h-[520px] w-full max-w-lg flex-col rounded-2xl bg-white shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 헤더 */}
+        
         <div className="flex items-center justify-between border-b border-gray-200 p-5">
           <h2 className="text-base font-semibold text-gray-800">{t("form.preferredSelect")}</h2>
           <button
@@ -63,7 +63,7 @@ export function JobPreferredModal({ isOpen, onClose, selected, onToggle }: Props
           </button>
         </div>
 
-        {/* 본문: 좌측 대분류 / 우측 태그 */}
+        
         <div className="flex min-h-0 flex-1">
           <div className="w-28 shrink-0 overflow-y-auto border-r border-gray-200">
             {PREFERRED_CATEGORIES.map((c) => {
@@ -114,7 +114,7 @@ export function JobPreferredModal({ isOpen, onClose, selected, onToggle }: Props
           </div>
         </div>
 
-        {/* 푸터 */}
+        
         <div className="flex justify-end border-t border-gray-200 p-4">
           <Button variant="teal" onClick={onClose}>
             {t("form.preferredDone", { count: selected.length })}

@@ -23,7 +23,7 @@ export default function TermsNav() {
     <nav className="border-b border-gray-700 bg-gray-900">
       <div className="max-w-3xl mx-auto px-4">
 
-        {/* 모바일 드롭다운 */}
+        
         <div className="md:hidden relative">
           <button
             onClick={() => setIsOpen((v) => !v)}
@@ -54,7 +54,7 @@ export default function TermsNav() {
           )}
         </div>
 
-        {/* 데스크탑 탭 */}
+        
         <ul className="hidden md:flex gap-6">
           {termsNavigationList.map(({ type, href }) => (
             <li key={href}>

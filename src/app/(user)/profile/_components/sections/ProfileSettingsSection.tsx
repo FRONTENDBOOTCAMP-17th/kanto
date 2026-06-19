@@ -61,7 +61,7 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
 
   return (
     <div className="flex flex-col divide-y divide-gray-100">
-      {/* 지역 설정 */}
+      
       <div className="px-5 md:px-0 py-6">
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-2 mb-5">
@@ -93,7 +93,7 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
         </div>
       </div>
 
-      {/* 계정 연동 */}
+      
       <div className="px-5 md:px-0 py-6">
         <div className="max-w-md mx-auto">
           <div className="flex items-center gap-2 mb-5">

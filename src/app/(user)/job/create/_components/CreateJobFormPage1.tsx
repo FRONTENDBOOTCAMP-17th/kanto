@@ -97,7 +97,6 @@ export function CreateJobFormPageOne({
 }: CreateJobFormPageOneProps) {
   const [showPreferredModal, setShowPreferredModal] = useState(false);
 
-  // i18n 훅
   const t = useTranslations("Job");
   const te = useTranslations("Enums");
   const tc = useTranslations("Common");
@@ -111,7 +110,6 @@ export function CreateJobFormPageOne({
     label: t("form.minuteValue", { value: m }),
   }));
 
-  // 토글 핸들러들
   const toggleDay = (day: string) =>
     setWorkDays(
       workDays.includes(day)
@@ -126,21 +124,17 @@ export function CreateJobFormPageOne({
         : [...preferredTags, key],
     );
 
-  // 급여 숫자 포맷팅 핸들러 (숫자만 남기기)
   const handleSalaryChange = (value: string) => {
-    const rawNumber = value.replace(/\D/g, ""); // 숫자가 아닌 모든 문자 제거
+    const rawNumber = value.replace(/\D/g, ""); 
     setSalary(rawNumber);
   };
 
-  // 시간 문자열 안전하게 파싱 (Defensive Programming)
   const [startHour, startMinute] = (workHoursStart || "00:00").split(":");
   const [endHour, endMinute] = (workHoursEnd || "00:00").split(":");
 
-  // 시간 협의 체크 변경 시 부가 효과 처리
   const handleTimeNegotiableChange = (checked: boolean) => {
     setIsTimeNegotiable(checked);
     if (checked) {
-      // 시간 협의 선택 시 기존에 골라둔 데이터 초기화 (선택 사항)
       setWorkHoursStart("");
       setWorkHoursEnd("");
       setWorkDays([]);
@@ -156,7 +150,7 @@ export function CreateJobFormPageOne({
         </h2>
       </div>
 
-      {/* 공고 제목 */}
+      
       <div className="space-y-2">
         <Label htmlFor="title">{t("form.titleLabel")}</Label>
         <Input
@@ -167,7 +161,7 @@ export function CreateJobFormPageOne({
         />
       </div>
 
-      {/* 고용 형태 */}
+      
       <div className="space-y-2">
         <Label>{t("form.employeeTypeLabel")}</Label>
         <ResponsiveSelect
@@ -178,7 +172,7 @@ export function CreateJobFormPageOne({
         />
       </div>
 
-      {/* 급여 입력 */}
+      
       <div className="space-y-2">
         <Label htmlFor="salary">{t("form.salaryLabel")}</Label>
         <div className="flex gap-2">
@@ -206,7 +200,7 @@ export function CreateJobFormPageOne({
         </div>
       </div>
 
-      {/* 근무 지역 */}
+      
       <div className="space-y-2">
         <Label>{t("form.locationLabel")}</Label>
         <ResponsiveSelect
@@ -224,7 +218,7 @@ export function CreateJobFormPageOne({
         )}
       </div>
 
-      {/* 마감일 */}
+      
       <div className="space-y-2">
         <Label htmlFor="deadline">{t("form.deadlineLabel")}</Label>
         <Input
@@ -235,7 +229,7 @@ export function CreateJobFormPageOne({
         />
       </div>
 
-      {/* 근무 시간 및 요일 */}
+      
       <div className="space-y-4 border-t pt-4 mt-2">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
@@ -250,7 +244,7 @@ export function CreateJobFormPageOne({
           </div>
 
           <div className="flex items-center gap-2">
-            {/* 시작 시간 - 시 */}
+            
             <ResponsiveSelect
               className="w-24"
               disabled={isTimeNegotiable}
@@ -261,7 +255,7 @@ export function CreateJobFormPageOne({
               options={HOUR_OPTIONS}
               placeholder={t("form.hour")}
             />
-            {/* 시작 시간 - 분 */}
+            
             <ResponsiveSelect
               className="w-24"
               disabled={isTimeNegotiable}
@@ -275,7 +269,7 @@ export function CreateJobFormPageOne({
 
             <span className="text-gray-500 mx-1">~</span>
 
-            {/* 종료 시간 - 시 */}
+            
             <ResponsiveSelect
               className="w-24"
               disabled={isTimeNegotiable}
@@ -286,7 +280,7 @@ export function CreateJobFormPageOne({
               options={HOUR_OPTIONS}
               placeholder={t("form.hour")}
             />
-            {/* 종료 시간 - 분 */}
+            
             <ResponsiveSelect
               className="w-24"
               disabled={isTimeNegotiable}
@@ -298,11 +292,11 @@ export function CreateJobFormPageOne({
           </div>
         </div>
 
-        {/* 근무 요일 선택 */}
+        
         <div className="space-y-2">
           <Label>{t("form.workDaysLabel")}</Label>
 
-          {/* 프리셋 버튼 그룹 */}
+          
           <div className="flex flex-wrap gap-2">
             {DAY_PRESETS.map((preset) => (
               <button
@@ -317,7 +311,7 @@ export function CreateJobFormPageOne({
             ))}
           </div>
 
-          {/* 개별 요일 버튼 그룹 */}
+          
           <div className="flex flex-wrap gap-2">
             {WORK_DAYS.map((day) => {
               const selected = workDays.includes(day);
@@ -341,7 +335,7 @@ export function CreateJobFormPageOne({
         </div>
       </div>
 
-      {/* 주요 업무 */}
+      
       <div className="space-y-2">
         <Label htmlFor="mainTask">{t("form.mainTaskLabel")}</Label>
         <Textarea
@@ -353,7 +347,7 @@ export function CreateJobFormPageOne({
         />
       </div>
 
-      {/* 우대 사항 */}
+      
       <div className="space-y-2">
         <Label>{t("form.preferredLabel")}</Label>
         <button
@@ -367,7 +361,7 @@ export function CreateJobFormPageOne({
             : t("form.preferredSelect")}
         </button>
 
-        {/* 선택된 태그 리스트 */}
+        
         {preferredTags.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {preferredTags.map((key) => (
@@ -396,7 +390,7 @@ export function CreateJobFormPageOne({
         />
       </div>
 
-      {/* 하단 네비게이션 버튼 */}
+      
       <div className="flex gap-3 pt-4 border-t">
         <Button
           type="button"
@@ -416,7 +410,7 @@ export function CreateJobFormPageOne({
         </Button>
       </div>
 
-      {/* 우대사항 모달 */}
+      
       <JobPreferredModal
         isOpen={showPreferredModal}
         onClose={() => setShowPreferredModal(false)}
