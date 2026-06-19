@@ -19,7 +19,8 @@ export default function FloatingChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [view, setView] = useState<"list" | "room">("list");
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
-  const [pendingNewChatMeta, setPendingNewChatMeta] = useState<PendingNewChat | null>(null);
+  const [pendingNewChatMeta, setPendingNewChatMeta] =
+    useState<PendingNewChat | null>(null);
   const [chats, setChats] = useState<ChatWithUsers[]>([]);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -38,7 +39,10 @@ export default function FloatingChatWidget() {
             if (!json.error) setChats(json.chatList);
           });
       }
-      if (state.pendingNewChat && state.pendingNewChat !== prev.pendingNewChat) {
+      if (
+        state.pendingNewChat &&
+        state.pendingNewChat !== prev.pendingNewChat
+      ) {
         setIsOpen(true);
         setView("room");
         setSelectedChatId(null);
@@ -63,11 +67,14 @@ export default function FloatingChatWidget() {
     const el = panelRef.current;
     if (!el || !isOpen) return;
     const onWheel = (e: WheelEvent) => {
-      const scrollable = (e.target as HTMLElement).closest<HTMLElement>("[data-chat-scroll]");
+      const scrollable = (e.target as HTMLElement).closest<HTMLElement>(
+        "[data-chat-scroll]",
+      );
       if (scrollable) {
         const { scrollTop, scrollHeight, clientHeight } = scrollable;
         const atTop = e.deltaY < 0 && scrollTop <= 0;
-        const atBottom = e.deltaY > 0 && scrollTop + clientHeight >= scrollHeight;
+        const atBottom =
+          e.deltaY > 0 && scrollTop + clientHeight >= scrollHeight;
         if (!atTop && !atBottom) return;
       }
       e.preventDefault();
@@ -118,7 +125,7 @@ export default function FloatingChatWidget() {
         <div
           ref={panelRef}
           className="
-          w-80 h-120 flex flex-col bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden
+          w-80 h-120 flex flex-col bg-white rounded-2xl shadow-2xl shadow-black/40 border border-gray-100 overflow-hidden
           md:w-80 md:h-120 md:rounded-2xl
           max-md:fixed max-md:inset-0 max-md:w-full max-md:h-full max-md:rounded-none max-md:shadow-none max-md:border-0 max-md:z-40
         "
@@ -137,7 +144,8 @@ export default function FloatingChatWidget() {
                 setView("room");
               }}
             />
-          ) : view === "room" && (selectedChatId !== null || pendingNewChatMeta !== null) ? (
+          ) : view === "room" &&
+            (selectedChatId !== null || pendingNewChatMeta !== null) ? (
             <ChatRoom
               chatId={selectedChatId}
               newChatMeta={pendingNewChatMeta ?? undefined}
@@ -149,10 +157,16 @@ export default function FloatingChatWidget() {
                       if (c.id !== selectedChatId) return c;
                       return {
                         ...c,
-                        user_id_1_unread: c.user_id_1 === currentUserId ? 0 : c.user_id_1_unread,
-                        user_id_2_unread: c.user_id_2 === currentUserId ? 0 : c.user_id_2_unread,
+                        user_id_1_unread:
+                          c.user_id_1 === currentUserId
+                            ? 0
+                            : c.user_id_1_unread,
+                        user_id_2_unread:
+                          c.user_id_2 === currentUserId
+                            ? 0
+                            : c.user_id_2_unread,
                       };
-                    })
+                    }),
                   );
                 }
                 setPendingNewChatMeta(null);
