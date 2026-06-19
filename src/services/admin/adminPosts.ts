@@ -13,7 +13,7 @@ export interface AdminPost {
 const POST_TYPE_LABEL: Record<string, string> = {
   used_goods: "중고거래",
   jobs: "구인구직",
-  rental: "방렌트",
+  rental: "방 렌탈",
   community: "커뮤니티",
 };
 
@@ -25,7 +25,10 @@ const POST_TYPE_PATH: Record<string, string> = {
   rental: "rental",
 };
 
-export function getPostDetailUrl(postType: string, postId: number): string | null {
+export function getPostDetailUrl(
+  postType: string,
+  postId: number
+): string | null {
   const path = POST_TYPE_PATH[postType];
   if (!path) return null;
   return `/${path}/${postId}`;
@@ -54,8 +57,14 @@ export async function getAdminPosts(): Promise<AdminPost[]> {
   }));
 }
 
-export async function setPostStatus(postId: number, status: "active" | "inactive") {
+export async function setPostStatus(
+  postId: number,
+  status: "active" | "inactive"
+) {
   const admin = await createAdminClient();
-  const { error } = await admin.from("posts").update({ status }).eq("id", postId);
+  const { error } = await admin
+    .from("posts")
+    .update({ status })
+    .eq("id", postId);
   if (error) throw error;
 }
