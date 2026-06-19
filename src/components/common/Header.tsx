@@ -20,6 +20,7 @@ import {
   ThumbsUp,
   FileText,
   LogOut,
+  SquarePen,
 } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
@@ -240,7 +241,7 @@ export function Header() {
         </div>
 
         {/* 데스크탑 네비게이션 */}
-        <nav className="hidden md:flex items-center justify-center gap-1 border-t border-gray-100 py-1">
+        <nav className="relative hidden md:flex items-center justify-center gap-1 border-t border-gray-100 py-1">
           {NAV_ITEMS.map(({ key, icon: Icon, href }) => (
             <Link
               key={href}
@@ -251,6 +252,16 @@ export function Header() {
               {t(`nav.${key}`)}
             </Link>
           ))}
+          {/* 글쓰기 버튼 — 메인 페이지에서만 노출 (모바일에서는 nav 자체가 숨겨짐) */}
+          {pathname === ROUTES.home && (
+            <Link
+              href={ROUTES.create}
+              className="absolute right-0 flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition-colors"
+            >
+              <SquarePen className="w-4 h-4" />
+              {t("write")}
+            </Link>
+          )}
         </nav>
 
         {/* 모바일 메뉴 */}
