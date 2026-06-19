@@ -157,7 +157,6 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <Users className="h-7 w-7 text-teal-600" strokeWidth={2.2} />
             <h1 className="whitespace-nowrap text-[31px] font-extrabold tracking-tight text-slate-900">
               유저 관리
             </h1>
@@ -237,7 +236,7 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
             </div>
 
             {/* body */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto overscroll-contain p-6">
               {/* status pills */}
               <div className="mb-5 flex flex-wrap items-center gap-2">
                 {isSuspended ? (

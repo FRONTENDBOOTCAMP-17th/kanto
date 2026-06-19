@@ -227,7 +227,6 @@ export default function ReportsClient({ reports }: Props) {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <Flag className="h-7 w-7 text-red-500" strokeWidth={2.2} />
             <h1 className="whitespace-nowrap text-[31px] font-extrabold tracking-tight text-slate-900">
               신고 내역
             </h1>
@@ -539,7 +538,7 @@ export default function ReportsClient({ reports }: Props) {
             </div>
 
             {/* body */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto overscroll-contain p-6">
               {(() => {
                 const reason = REASON_STYLE[sel.reason] ?? REASON_STYLE["기타"];
                 const st = STATUS_STYLE[sel.status];

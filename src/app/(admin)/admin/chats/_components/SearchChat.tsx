@@ -133,7 +133,6 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <MessageSquare className="h-7 w-7 text-teal-500" strokeWidth={2.2} />
             <h1 className="whitespace-nowrap text-[31px] font-extrabold tracking-tight text-slate-900">
               채팅 기록
             </h1>
@@ -323,7 +322,7 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
             <div
               ref={tab === "chat" ? chatScrollRef : undefined}
               onScroll={tab === "chat" ? (e) => { if (e.currentTarget.scrollTop < 80) loadMoreMessages(); } : undefined}
-              className={`flex-1 overflow-y-auto ${tab === "chat" ? "bg-[#f5f7f8]" : "bg-white"} p-6`}
+              className={`flex-1 overflow-y-auto overscroll-contain ${tab === "chat" ? "bg-[#f5f7f8]" : "bg-white"} p-6`}
             >
 
               {/* 선택 안 됨 */}
