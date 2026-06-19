@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Flag, FileText, User, X, ExternalLink } from "lucide-react";
 import { REPORT_STATUS } from "@/constants/report";
@@ -16,6 +17,7 @@ import {
   dismissReport,
   updateReportResolution,
 } from "../_lib/actions";
+import { getPostDetailUrl } from "@/services/admin/adminPosts";
 
 interface Props {
   reports: Report[];
@@ -579,19 +581,44 @@ export default function ReportsClient({ reports }: Props) {
                           </span>
                         )}
                       </div>
-                      <a
-                        href="#"
-                        onClick={(e) => e.preventDefault()}
-                        className="mt-3.5 inline-flex items-center gap-1.5 text-[13px] font-semibold text-orange-500"
-                      >
-                        {sel.type === "post"
-                          ? "원본 게시글 보기"
-                          : "유저 프로필 보기"}
-                        <ExternalLink
-                          className="h-[14px] w-[14px]"
-                          strokeWidth={2.2}
-                        />
-                      </a>
+                      {sel.type === "user" ? (
+                        <Link
+                          href={`/admin/users/${sel.targetId}`}
+                          target="_blank"
+                          className="mt-3.5 inline-flex items-center gap-1.5 text-[13px] font-semibold text-orange-500"
+                        >
+                          유저 프로필 보기
+                          <ExternalLink
+                            className="h-[14px] w-[14px]"
+                            strokeWidth={2.2}
+                          />
+                        </Link>
+                      ) : (() => {
+                        const postUrl = sel.postType
+                          ? getPostDetailUrl(sel.postType, sel.targetId)
+                          : null;
+                        return postUrl ? (
+                          <Link
+                            href={postUrl}
+                            target="_blank"
+                            className="mt-3.5 inline-flex items-center gap-1.5 text-[13px] font-semibold text-orange-500"
+                          >
+                            원본 게시글 보기
+                            <ExternalLink
+                              className="h-[14px] w-[14px]"
+                              strokeWidth={2.2}
+                            />
+                          </Link>
+                        ) : (
+                          <span className="mt-3.5 inline-flex items-center gap-1.5 text-[13px] font-semibold text-slate-400">
+                            원본 게시글 보기
+                            <ExternalLink
+                              className="h-[14px] w-[14px]"
+                              strokeWidth={2.2}
+                            />
+                          </span>
+                        );
+                      })()}
                     </div>
 
                     {/* description */}

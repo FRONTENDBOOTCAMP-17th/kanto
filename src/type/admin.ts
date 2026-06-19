@@ -57,6 +57,7 @@ export interface Report {
   type: ReportType;
   targetId: number;
   authorId?: number;
+  postType?: string;
   targetName: string;
   category?: string;
   author?: string;

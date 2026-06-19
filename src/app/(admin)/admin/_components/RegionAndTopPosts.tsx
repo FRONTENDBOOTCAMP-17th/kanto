@@ -1,11 +1,13 @@
+import Link from "next/link";
 import { Eye } from "lucide-react";
 import { CATEGORY } from "../_lib/constants";
 import type { Category } from "@/type/admin";
+import { getPostDetailUrl } from "@/services/admin/adminPosts";
 import Card from "./Card";
 
 interface Props {
   regions: { name: string; count: number }[];
-  topPosts: { rank: number; title: string; cat: Category; views: string }[];
+  topPosts: { rank: number; id: number; post_type: string; title: string; cat: Category; views: string }[];
 }
 
 export default function RegionAndTopPosts({ regions, topPosts }: Props) {
@@ -67,36 +69,53 @@ export default function RegionAndTopPosts({ regions, topPosts }: Props) {
           </div>
         ) : (
           <div className="flex flex-col">
-            {topPosts.map((p) => (
-              <div
-                key={p.rank}
-                className="flex items-center gap-3.5 border-b border-[#f3f5f7] px-1.5 py-[11px] hover:bg-slate-50"
-              >
-                <span className="w-[18px] flex-shrink-0 text-center text-[15px] font-extrabold text-slate-300">
-                  {p.rank}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <div className="truncate text-[14.5px] font-semibold text-slate-900">
-                    {p.title}
+            {topPosts.map((p) => {
+              const url = getPostDetailUrl(p.post_type, p.id);
+              const inner = (
+                <>
+                  <span className="w-[18px] flex-shrink-0 text-center text-[15px] font-extrabold text-slate-300">
+                    {p.rank}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-[14.5px] font-semibold text-slate-900">
+                      {p.title}
+                    </div>
+                    <span
+                      className="mt-1.5 inline-flex items-center rounded-md px-2 py-0.5 text-[11.5px] font-semibold"
+                      style={{
+                        background: CATEGORY[p.cat]?.bg ?? "#f8fafc",
+                        color: CATEGORY[p.cat]?.fg ?? "#64748b",
+                      }}
+                    >
+                      {p.cat}
+                    </span>
                   </div>
-                  <span
-                    className="mt-1.5 inline-flex items-center rounded-md px-2 py-0.5 text-[11.5px] font-semibold"
-                    style={{
-                      background: CATEGORY[p.cat]?.bg ?? "#f8fafc",
-                      color: CATEGORY[p.cat]?.fg ?? "#64748b",
-                    }}
-                  >
-                    {p.cat}
-                  </span>
+                  <div className="flex flex-shrink-0 items-center gap-1.5 text-slate-400">
+                    <Eye className="h-[15px] w-[15px]" strokeWidth={2} />
+                    <span className="text-[13px] font-semibold text-slate-500">
+                      {p.views}
+                    </span>
+                  </div>
+                </>
+              );
+              return url ? (
+                <Link
+                  key={p.rank}
+                  href={url}
+                  target="_blank"
+                  className="flex items-center gap-3.5 border-b border-[#f3f5f7] px-1.5 py-[11px] hover:bg-slate-50"
+                >
+                  {inner}
+                </Link>
+              ) : (
+                <div
+                  key={p.rank}
+                  className="flex items-center gap-3.5 border-b border-[#f3f5f7] px-1.5 py-[11px] hover:bg-slate-50"
+                >
+                  {inner}
                 </div>
-                <div className="flex flex-shrink-0 items-center gap-1.5 text-slate-400">
-                  <Eye className="h-[15px] w-[15px]" strokeWidth={2} />
-                  <span className="text-[13px] font-semibold text-slate-500">
-                    {p.views}
-                  </span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </Card>
