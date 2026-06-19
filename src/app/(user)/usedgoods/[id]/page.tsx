@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { getTranslations } from "next-intl/server";
+import { notFound } from "next/navigation";
 import { getUsedGoodsItem } from "@/services/usedGoods/usedGoods";
 import { supabase } from "@/lib/supabase";
 import UsedGoodsDetail from "@/app/(user)/usedgoods/[id]/_components/UsedGoodsDetail";
@@ -15,10 +15,7 @@ export default async function UsedGoodsDetailPage({
   const { id } = await params;
   const data = await getUsedGoodsItem(Number(id));
 
-  if (!data) {
-    const t = await getTranslations("Common");
-    return <div>{t("notFound")}</div>;
-  }
+  if (!data) notFound();
 
   const { data: relatedData } = await supabase
     .from("used_goods")

@@ -9,9 +9,10 @@ interface Props {
   initialPosts: UsedGoodsWithPost[];
   initialLikedIds: number[];
   currentUserId: number | null;
+  currentPage: number;
 }
 
-export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId }: Props) {
+export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId, currentPage }: Props) {
   const t = useTranslations("UsedGoods");
   const likedSet = new Set(initialLikedIds);
 
@@ -40,7 +41,7 @@ export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId }: 
         return (
           <ContentCard
             key={post.id}
-            href={`/usedgoods/${post.id}`}
+            href={`/usedgoods/${post.id}${currentPage > 1 ? `?fromPage=${currentPage}` : ""}`}
             images={images}
             title={post.title}
             price={goods?.price ?? 0}

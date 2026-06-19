@@ -9,9 +9,10 @@ interface Props {
   initialPosts: RentalWithPost[];
   initialLikedIds: number[];
   currentUserId: number | null;
+  currentPage: number;
 }
 
-export function RentalList({ initialPosts, initialLikedIds, currentUserId }: Props) {
+export function RentalList({ initialPosts, initialLikedIds, currentUserId, currentPage }: Props) {
   const t = useTranslations("Rental");
   const likedSet = new Set(initialLikedIds);
 
@@ -27,6 +28,7 @@ export function RentalList({ initialPosts, initialLikedIds, currentUserId }: Pro
           <RentalCard
             key={post.id}
             id={post.id}
+            fromPage={currentPage > 1 ? currentPage : undefined}
             title={post.title}
             price={rental?.price ?? null}
             location={rental?.location ?? null}
