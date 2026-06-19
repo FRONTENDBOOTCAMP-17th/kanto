@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
 import { useChatStore, type PendingNewChat } from "@/store/chatStore";
@@ -22,6 +22,7 @@ export default function FloatingChatWidget() {
   const [pendingNewChatMeta, setPendingNewChatMeta] = useState<PendingNewChat | null>(null);
   const [chats, setChats] = useState<ChatWithUsers[]>([]);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     return useChatStore.subscribe((state, prev) => {
@@ -56,6 +57,23 @@ export default function FloatingChatWidget() {
     return () => {
       document.body.style.overflow = "";
     };
+  }, [isOpen]);
+
+  useEffect(() => {
+    const el = panelRef.current;
+    if (!el || !isOpen) return;
+    const onWheel = (e: WheelEvent) => {
+      const scrollable = (e.target as HTMLElement).closest<HTMLElement>("[data-chat-scroll]");
+      if (scrollable) {
+        const { scrollTop, scrollHeight, clientHeight } = scrollable;
+        const atTop = e.deltaY < 0 && scrollTop <= 0;
+        const atBottom = e.deltaY > 0 && scrollTop + clientHeight >= scrollHeight;
+        if (!atTop && !atBottom) return;
+      }
+      e.preventDefault();
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
   }, [isOpen]);
 
   useEffect(() => {
@@ -98,6 +116,7 @@ export default function FloatingChatWidget() {
     <div className="flex flex-col items-end gap-2">
       {isOpen && (
         <div
+          ref={panelRef}
           className="
           w-80 h-120 flex flex-col bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden
           md:w-80 md:h-120 md:rounded-2xl
