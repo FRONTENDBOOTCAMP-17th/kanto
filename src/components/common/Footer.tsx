@@ -26,7 +26,7 @@ export function Footer() {
           <div>
             <div className="mb-4">
               <Image
-                src="/logoIcon+Text.png"
+                src="/kantoLogo.png"
                 alt="Kanto"
                 width={1502}
                 height={704}
