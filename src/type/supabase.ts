@@ -292,8 +292,6 @@ export type Database = {
           id: number
           post_deactivated: boolean
           resolved_at: string | null
-          sanction_expires_at: string | null
-          sanction_type: string | null
           status: string | null
           target_id: number | null
           target_type: string | null
@@ -307,8 +305,6 @@ export type Database = {
           id?: number
           post_deactivated?: boolean
           resolved_at?: string | null
-          sanction_expires_at?: string | null
-          sanction_type?: string | null
           status?: string | null
           target_id?: number | null
           target_type?: string | null
@@ -322,8 +318,6 @@ export type Database = {
           id?: number
           post_deactivated?: boolean
           resolved_at?: string | null
-          sanction_expires_at?: string | null
-          sanction_type?: string | null
           status?: string | null
           target_id?: number | null
           target_type?: string | null
@@ -1102,6 +1096,7 @@ export type Database = {
           created_at: string | null
           expires_at: string | null
           id: number
+          report_id: number | null
           sanction_type: string
           user_id: number
         }
@@ -1110,6 +1105,7 @@ export type Database = {
           created_at?: string | null
           expires_at?: string | null
           id?: number
+          report_id?: number | null
           sanction_type: string
           user_id: number
         }
@@ -1118,10 +1114,18 @@ export type Database = {
           created_at?: string | null
           expires_at?: string | null
           id?: number
+          report_id?: number | null
           sanction_type?: string
           user_id?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "user_sanctions_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "common_reports"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "user_sanctions_admin_id_fkey"
             columns: ["admin_id"]
