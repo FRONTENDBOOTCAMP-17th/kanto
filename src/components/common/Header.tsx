@@ -28,6 +28,7 @@ import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { SuspendedBanner } from "@/components/common/SuspendedBanner";
 import { NotificationBell } from "./header/NotificationBell";
 import type { NotificationBellHandle } from "./header/NotificationBell";
+import type { User as AppUser } from "@/type/user";
 import { useTranslations } from "next-intl";
 
 const HEADER_HEIGHT = 48; // 모바일 헤더 높이(h-12)
@@ -38,10 +39,12 @@ const NAV_ITEMS = [
   { key: "rental", icon: Home, href: ROUTES.rental },
 ] as const;
 
-export function Header() {
+export function Header({ initialUser }: { initialUser: AppUser | null }) {
   const t = useTranslations("Header");
   const router = useRouter();
-  const { user } = useAuthStore();
+  // 서버에서 확정된 initialUser를 첫 렌더(SSR 포함) fallback으로 사용해 깜빡임 제거.
+  // 이후 스토어가 갱신되면(아바타 변경 등) 스토어 값을 따른다.
+  const user = useAuthStore((s) => s.user) ?? initialUser;
   useAuthInit();
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);

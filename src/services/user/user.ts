@@ -3,18 +3,20 @@ import type { User } from "@/type/user";
 
 export async function getSessionUser(): Promise<User | null> {
   const supabase = await createClient();
+  // 서버 컴포넌트에서는 getSession()이 로그인 상태인데도 null을 반환할 수 있어
+  // 인증 서버로 검증하는 getUser()를 사용한다. (새로고침 시 헤더 로그인 버튼 깜빡임 방지)
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user: authUser },
+  } = await supabase.auth.getUser();
 
-  if (!session) return null;
+  if (!authUser) return null;
 
   const { data } = await supabase
     .from("users")
     .select(
       "id, name, email, phone, region, auth_id, avatar_url, provider, role, post_count, created_at, updated_at",
     )
-    .eq("auth_id", session.user.id)
+    .eq("auth_id", authUser.id)
     .single();
 
   return (data as User) ?? null;
