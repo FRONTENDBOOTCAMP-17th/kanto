@@ -225,7 +225,6 @@ export default function ReportsClient({ reports }: Props) {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <Flag className="h-7 w-7 text-red-500" strokeWidth={2.2} />
             <h1 className="whitespace-nowrap text-[31px] font-extrabold tracking-tight text-slate-900">
               신고 내역
             </h1>

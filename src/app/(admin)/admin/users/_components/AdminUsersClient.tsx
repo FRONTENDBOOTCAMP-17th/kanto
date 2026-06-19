@@ -157,7 +157,6 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <Users className="h-7 w-7 text-teal-600" strokeWidth={2.2} />
             <h1 className="whitespace-nowrap text-[31px] font-extrabold tracking-tight text-slate-900">
               유저 관리
             </h1>
