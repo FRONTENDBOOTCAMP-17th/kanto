@@ -19,3 +19,13 @@ export async function getSessionUser(): Promise<User | null> {
 
   return (data as User) ?? null;
 }
+
+// 본인인증 여부(auth 메타데이터)를 조회한다. 글쓰기 버튼의 인증 관문 분기에 사용한다.
+export async function getIdentityVerified(): Promise<boolean> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  return user?.user_metadata?.identity_verified === true;
+}
