@@ -46,7 +46,8 @@ export default function MessageList({
   return (
     <div
       ref={scrollContainerRef}
-      className="flex-1 min-h-0 overflow-y-auto px-4 py-4 md:px-3 md:py-3 flex flex-col gap-2"
+      data-chat-scroll
+      className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 md:px-3 md:py-3 flex flex-col gap-2"
     >
       {hasMore && (
         <div className="flex justify-center mb-1">

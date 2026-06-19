@@ -40,7 +40,7 @@ export default function ChatListClient({ chats, currentUserId, onChatSelect }: P
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto overscroll-contain" data-chat-scroll>
         {filtered.length === 0 ? (
           <div className="py-12 text-center text-gray-400 text-xs">
             {t("empty")}
