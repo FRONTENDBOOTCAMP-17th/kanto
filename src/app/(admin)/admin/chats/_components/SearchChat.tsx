@@ -322,7 +322,7 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
             <div
               ref={tab === "chat" ? chatScrollRef : undefined}
               onScroll={tab === "chat" ? (e) => { if (e.currentTarget.scrollTop < 80) loadMoreMessages(); } : undefined}
-              className={`flex-1 overflow-y-auto ${tab === "chat" ? "bg-[#f5f7f8]" : "bg-white"} p-6`}
+              className={`flex-1 overflow-y-auto overscroll-contain ${tab === "chat" ? "bg-[#f5f7f8]" : "bg-white"} p-6`}
             >
 
               {/* 선택 안 됨 */}

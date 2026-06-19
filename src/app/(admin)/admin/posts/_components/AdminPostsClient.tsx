@@ -386,7 +386,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
             </div>
 
             {/* body */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto overscroll-contain p-6">
               {/* status + category pills */}
               <div className="mb-5 flex items-center gap-2">
                 <Pill

@@ -236,7 +236,7 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
             </div>
 
             {/* body */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto overscroll-contain p-6">
               {/* status pills */}
               <div className="mb-5 flex flex-wrap items-center gap-2">
                 {isSuspended ? (

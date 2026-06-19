@@ -536,7 +536,7 @@ export default function ReportsClient({ reports }: Props) {
             </div>
 
             {/* body */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto overscroll-contain p-6">
               {(() => {
                 const reason = REASON_STYLE[sel.reason] ?? REASON_STYLE["기타"];
                 const st = STATUS_STYLE[sel.status];
