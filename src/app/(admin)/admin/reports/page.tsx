@@ -12,7 +12,7 @@ export default async function ReportsPage() {
   /* 1. 전체 신고 목록 */
   const { data: rawReports } = await admin
     .from(REPORTS_TABLE)
-    .select("id, target_id, target_type, category, description, status, created_at, resolved_at, post_deactivated, sanction_type, sanction_expires_at, handled_by")
+    .select("id, target_id, target_type, category, description, status, created_at, resolved_at, post_deactivated, handled_by")
     .order("created_at", { ascending: false }) as {
       data: Array<{
         id: number;
@@ -24,8 +24,6 @@ export default async function ReportsPage() {
         created_at: string;
         resolved_at: string | null;
         post_deactivated: boolean;
-        sanction_type: string | null;
-        sanction_expires_at: string | null;
         handled_by: number | null;
       }> | null;
       error: unknown;
@@ -56,8 +54,9 @@ export default async function ReportsPage() {
     ),
   ];
 
-  /* 3. 게시글 + 유저 + 처리 관리자 배치 조회 */
-  const [postsRes, targetUsersRes, adminUsersRes] = await Promise.all([
+  /* 3. 게시글 + 유저 + 처리 관리자 + 제재 이력 배치 조회 */
+  const reportIds = reports.map((r) => r.id);
+  const [postsRes, targetUsersRes, adminUsersRes, sanctionsRes] = await Promise.all([
     postIds.length
       ? admin
           .from("posts")
@@ -70,7 +69,26 @@ export default async function ReportsPage() {
     adminIds.length
       ? admin.from("users").select("id, name").in("id", adminIds)
       : { data: [] as { id: number; name: string }[] },
+    reportIds.length
+      ? admin
+          .from("user_sanctions")
+          .select("report_id, sanction_type, expires_at, created_at")
+          .in("report_id", reportIds)
+          .order("created_at", { ascending: true })
+      : { data: [] as { report_id: number | null; sanction_type: string; expires_at: string | null; created_at: string | null }[] },
   ]);
+
+  /* 3-1. 신고별 최신 제재 맵 (제재 수정 시 append되므로 가장 최근 행이 현재 결과) */
+  const sanctionByReport = new Map<number, { sanction_type: string; expires_at: string | null }>();
+  for (const s of (sanctionsRes.data ?? []) as Array<{
+    report_id: number | null;
+    sanction_type: string;
+    expires_at: string | null;
+  }>) {
+    if (s.report_id != null) {
+      sanctionByReport.set(s.report_id, { sanction_type: s.sanction_type, expires_at: s.expires_at });
+    }
+  }
 
   /* 4. 게시글 작성자 조회 */
   const authorIds = [
@@ -93,7 +111,9 @@ export default async function ReportsPage() {
     const status = (r.status ?? REPORT_STATUS.PENDING) as Status;
     const reportDate = r.created_at.split("T")[0];
     const createdAt = r.created_at;
-    const sanctionType = (r.sanction_type as Sanction | null) ?? null;
+    const sanc = sanctionByReport.get(r.id);
+    const sanctionType = (sanc?.sanction_type as Sanction | null) ?? null;
+    const sanctionExpiresAt = sanc?.expires_at ?? null;
     const handledBy = r.handled_by ? (adminUserMap.get(r.handled_by)?.name ?? null) : null;
 
     if (r.target_type === "post") {
@@ -115,7 +135,7 @@ export default async function ReportsPage() {
         resolvedAt: r.resolved_at,
         postDeactivated: r.post_deactivated,
         sanctionType,
-        sanctionExpiresAt: r.sanction_expires_at,
+        sanctionExpiresAt,
         handledBy,
       };
     }
@@ -134,7 +154,7 @@ export default async function ReportsPage() {
       resolvedAt: r.resolved_at,
       postDeactivated: r.post_deactivated,
       sanctionType,
-      sanctionExpiresAt: r.sanction_expires_at,
+      sanctionExpiresAt,
       handledBy,
     };
   });

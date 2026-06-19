@@ -62,8 +62,6 @@ export async function resolveReport(
       status: REPORT_STATUS.RESOLVED,
       resolved_at: new Date().toISOString(),
       post_deactivated: opts.deactivatePost,
-      sanction_type: opts.sanction !== "none" ? opts.sanction : null,
-      sanction_expires_at: expiresAt,
       handled_by: adminId,
     } as never)
     .eq("id", reportId);
@@ -84,6 +82,7 @@ export async function resolveReport(
       admin_id: adminId,
       sanction_type: opts.sanction,
       expires_at: expiresAt,
+      report_id: reportId,
     } as never);
 
     await admin.from("common_notifications").insert({
@@ -106,8 +105,6 @@ export async function dismissReport(reportId: number): Promise<void> {
       status: REPORT_STATUS.DISMISSED,
       resolved_at: new Date().toISOString(),
       post_deactivated: false,
-      sanction_type: null,
-      sanction_expires_at: null,
       handled_by: adminId,
     } as never)
     .eq("id", reportId);
@@ -134,8 +131,6 @@ export async function updateReportResolution(
     .from(REPORTS_TABLE)
     .update({
       post_deactivated: opts.deactivatePost,
-      sanction_type: opts.sanction !== "none" ? opts.sanction : null,
-      sanction_expires_at: expiresAt,
       resolved_at: new Date().toISOString(),
       handled_by: adminId,
     } as never)
@@ -164,6 +159,7 @@ export async function updateReportResolution(
           admin_id: adminId,
           sanction_type: opts.sanction,
           expires_at: expiresAt,
+          report_id: reportId,
         } as never);
 
         await admin.from("common_notifications").insert({
