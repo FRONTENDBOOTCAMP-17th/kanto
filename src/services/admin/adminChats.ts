@@ -19,6 +19,22 @@ export async function getAdminChatRooms() {
   return data ?? [];
 }
 
+export async function getAdminChatRoom(chatId: number) {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("chats")
+    .select(`
+      id,
+      user1:users!chats_user_id_1_fkey(id, name),
+      user2:users!chats_user_id_2_fkey(id, name),
+      posts(title, post_type)
+    `)
+    .eq("id", chatId)
+    .single();
+  if (error) return null;
+  return data;
+}
+
 export async function getAdminChatMessages(chatId: number, before?: string) {
   const admin = createAdminClient();
 

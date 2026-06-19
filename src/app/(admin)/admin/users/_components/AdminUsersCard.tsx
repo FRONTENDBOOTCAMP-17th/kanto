@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { User } from "@/app/(admin)/admin/users/_components/AdminUsersClient";
+import { User } from "@/services/admin/adminUsers";
 import { FileText, CalendarDays, Mail } from "lucide-react";
 
 interface AdminUsersCardProps {

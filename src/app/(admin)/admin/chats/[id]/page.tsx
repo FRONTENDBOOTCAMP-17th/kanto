@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, MessageSquare } from "lucide-react";
-import { getAdminChatMessages } from "@/services/admin/adminChats";
+import { getAdminChatRoom, getAdminChatMessages } from "@/services/admin/adminChats";
 import { POST_TYPE_LABEL } from "@/app/(admin)/admin/_lib/constants";
 import { formatDateDivider, formatMessageTime } from "@/utils/formatTime";
 
@@ -17,7 +17,10 @@ export default async function AdminChatRoomPage({
   const chatId = Number(id);
   if (isNaN(chatId)) notFound();
 
-  const { chat, messages } = await getAdminChatMessages(chatId);
+  const [chat, messages] = await Promise.all([
+    getAdminChatRoom(chatId),
+    getAdminChatMessages(chatId),
+  ]);
   if (!chat) notFound();
 
   const user1 = chat.user1;

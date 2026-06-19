@@ -4,7 +4,7 @@ import type { UsedGoodsWithPost } from "@/type/usedGoods";
 const USED_GOODS_SELECT = `
   *,
   used_goods(*),
-  users(id, name, avatar_url, created_at)
+  users!posts_user_id_fkey(id, name, avatar_url, created_at)
 ` as const;
 
 interface UsedGoodsListFilter {
@@ -80,7 +80,7 @@ export async function getUsedGoodsItem(postId: number) {
 
   const { data } = await supabase
     .from("used_goods")
-    .select(`*, posts (*, users (id, name, avatar_url, auth_id, role, post_count, created_at))`)
+    .select(`*, posts (*, users!posts_user_id_fkey (id, name, avatar_url, auth_id, role, post_count, created_at))`)
     .eq("post_id", postId)
     .single();
 
