@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getJobDetail } from "@/services/job/jobDetail";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
@@ -20,12 +21,7 @@ export default async function JobDetailPage({
   try {
     job = await getJobDetail(Number(id));
   } catch {
-    const t = await getTranslations("Common");
-    return (
-      <div className="p-8 text-center text-gray-500">
-        {t("notFound")}
-      </div>
-    );
+    notFound();
   }
 
   const images = (job.images as string[]) ?? [];

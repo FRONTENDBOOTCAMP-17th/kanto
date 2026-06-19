@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { notFound } from "next/navigation";
 import { getRentalDetail } from "@/services/rental/rental";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
 import BackButton from "@/app/(user)/rental/[id]/_components/BackButton";
@@ -20,12 +20,7 @@ export default async function RentalDetail({
   try {
     rental = await getRentalDetail(id);
   } catch {
-    const t = await getTranslations("Common");
-    return (
-      <div className="p-8 text-center text-gray-500">
-        {t("notFound")}
-      </div>
-    );
+    notFound();
   }
 
   const images = (rental.images as string[]) ?? [];
