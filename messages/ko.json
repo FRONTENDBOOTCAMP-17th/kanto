@@ -12,6 +12,7 @@
     "logoutConfirm": "로그아웃 하시겠습니까?",
     "openMenu": "메뉴 열기",
     "closeMenu": "메뉴 닫기",
+    "write": "글쓰기",
     "profile": {
       "menuLabel": "내 프로필 메뉴",
       "alt": "프로필",

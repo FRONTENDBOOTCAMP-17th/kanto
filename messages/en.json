@@ -12,6 +12,7 @@
     "logoutConfirm": "Are you sure you want to log out?",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
+    "write": "Write",
     "profile": {
       "menuLabel": "My profile menu",
       "alt": "Profile",
