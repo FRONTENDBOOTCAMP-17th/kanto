@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import { REPORTS_TABLE } from "@/constants/report";
 
 interface UserLikeReportStatus {
   userId: number | undefined;
@@ -31,7 +32,7 @@ export async function getUserLikeReportStatus(
       .eq("user_id", userData.id)
       .single(),
     supabase
-      .from("common_reports")
+      .from(REPORTS_TABLE)
       .select("id")
       .eq("target_id", postId)
       .eq("target_type", "post")
