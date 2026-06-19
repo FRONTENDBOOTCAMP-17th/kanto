@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Clock, Eye, Heart, Users } from "lucide-react";
+import { Clock, Eye, Heart, Users, MoveLeft } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
+import { useRouter, useSearchParams } from "next/navigation";
 import { formatTimeAgo } from "@/utils/formatTime";
 import type { JobDetail } from "@/type/job/jobsDetail";
 import InteractionButtons from "@/components/common/InteractionButtons";
@@ -24,6 +25,9 @@ export default function JobTitle({
 }: JobTitleProps) {
   const t = useTranslations("Job");
   const locale = useLocale() as Locale;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const fromPage = searchParams.get("fromPage");
 
   const [likeCount, setLikeCount] = useState(
     job.posts.like_count ?? 0
@@ -36,6 +40,13 @@ export default function JobTitle({
 
   return (
     <div className="p-6 space-y-4">
+      <button
+        onClick={() => router.push(fromPage ? `/job?page=${fromPage}` : "/job")}
+        className="flex items-center gap-2 text-gray-500 hover:text-gray-700 cursor-pointer"
+      >
+        <MoveLeft className="w-5 h-5" />
+        {t("backToList")}
+      </button>
       <div className="flex items-start justify-between gap-2">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">
