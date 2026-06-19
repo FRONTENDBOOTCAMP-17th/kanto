@@ -14,7 +14,7 @@ export async function getJobList(filter?: JobListFilter): Promise<JobWithPost[]>
 
   let query = supabase
     .from("posts")
-    .select("*, jobs(*), users(id, name, avatar_url, created_at)")
+    .select("*, jobs(*), users!posts_user_id_fkey(id, name, avatar_url, created_at)")
     .eq("post_type", "jobs")
     .eq("status", "active")
     .order("created_at", { ascending: false });
@@ -54,7 +54,7 @@ export async function getPopularJobs(): Promise<JobWithPost[]> {
 
   const { data, error } = await supabase
     .from("posts")
-    .select("*, jobs!inner(*), users(id, name, avatar_url, created_at)")
+    .select("*, jobs!inner(*), users!posts_user_id_fkey(id, name, avatar_url, created_at)")
     .eq("post_type", "jobs");
 
   if (error) throw new Error(error.message);
