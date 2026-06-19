@@ -717,6 +717,31 @@ export default function ReportsClient({ reports }: Props) {
                               )}
                             </div>
                             <div className="flex flex-col gap-2.5 px-4 py-3.5">
+                              {sel.handledBy && (
+                                <div className="flex items-center gap-2.5">
+                                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-[7px] bg-slate-100">
+                                    <svg
+                                      width="14"
+                                      height="14"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="#64748b"
+                                      strokeWidth="2.4"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    >
+                                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                      <circle cx="12" cy="7" r="4" />
+                                    </svg>
+                                  </span>
+                                  <span className="text-[13.5px] text-slate-700">
+                                    처리 관리자:{" "}
+                                    <span className="font-bold text-slate-900">
+                                      {sel.handledBy}
+                                    </span>
+                                  </span>
+                                </div>
+                              )}
                               {oc.deactivated && (
                                 <div className="flex items-center gap-2.5">
                                   <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-[7px] bg-orange-50">
@@ -815,6 +840,76 @@ export default function ReportsClient({ reports }: Props) {
                           </div>
                         );
                       })()}
+
+                    {/* 처리 로그 */}
+                    {(() => {
+                      function formatDateTime(d: string | null | undefined) {
+                        if (!d) return "-";
+                        return new Intl.DateTimeFormat("ko-KR", {
+                          year: "numeric", month: "2-digit", day: "2-digit",
+                          hour: "2-digit", minute: "2-digit", second: "2-digit",
+                          hour12: false,
+                        }).format(new Date(d));
+                      }
+
+                      type LogEntry = { key: string; color: string; bg: string; label: string; by: string | null; at: string | null };
+                      const logs: LogEntry[] = [];
+
+                      logs.push({
+                        key: "created",
+                        color: "#64748b", bg: "#f1f5f9",
+                        label: "신고 접수",
+                        by: null,
+                        at: sel.createdAt ?? sel.reportDate,
+                      });
+
+                      if (sel.status !== "pending") {
+                        if (sel.status === "dismissed") {
+                          logs.push({ key: "dismissed", color: "#64748b", bg: "#f1f5f9", label: "신고 무시 처리", by: sel.handledBy ?? null, at: sel.resolvedAt ?? null });
+                        } else {
+                          const hasAction = sel.postDeactivated || (sel.sanctionType && sel.sanctionType !== "none");
+                          if (sel.postDeactivated) {
+                            logs.push({ key: "deactivate", color: "#f97316", bg: "#fff7ed", label: "게시글 비공개 처리", by: sel.handledBy ?? null, at: sel.resolvedAt ?? null });
+                          }
+                          if (sel.sanctionType && sel.sanctionType !== "none") {
+                            const sLabel = SANCTION_LABEL[sel.sanctionType as Exclude<Sanction,"none">];
+                            const isPerm = sel.sanctionType === "perm";
+                            logs.push({ key: "sanction", color: isPerm ? "#dc2626" : "#c2410c", bg: isPerm ? "#fef2f2" : "#fff7ed", label: `유저 ${sLabel}`, by: sel.handledBy ?? null, at: sel.resolvedAt ?? null });
+                          }
+                          if (!hasAction) {
+                            logs.push({ key: "resolved", color: "#059669", bg: "#ecfdf5", label: "처리완료 (조치 없음)", by: sel.handledBy ?? null, at: sel.resolvedAt ?? null });
+                          }
+                        }
+                      }
+
+                      return (
+                        <div className="mb-6 overflow-hidden rounded-[14px] border border-[#eef1f3]">
+                          <div className="flex items-center gap-2 border-b border-[#f1f4f6] bg-slate-50 px-4 py-[13px]">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                            </svg>
+                            <span className="text-[13px] font-extrabold text-slate-900">처리 로그</span>
+                            <span className="ml-auto text-[11.5px] font-bold text-indigo-500 bg-indigo-50 rounded-full px-2.5 py-0.5">{logs.length}건</span>
+                          </div>
+                          <div className="divide-y divide-[#f3f5f7]">
+                            {logs.map((log) => (
+                              <div key={log.key} className="flex items-start gap-3 px-4 py-[13px]">
+                                <span className="mt-0.5 flex h-[26px] w-[26px] flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold" style={{ background: log.bg, color: log.color }}>
+                                  {log.key === "created" ? "접" : log.key === "dismissed" ? "무" : log.key === "resolved" ? "✓" : "✕"}
+                                </span>
+                                <div className="flex-1 min-w-0">
+                                  <div className="text-[13px] font-bold" style={{ color: log.color }}>{log.label}</div>
+                                  <div className="mt-0.5 flex flex-wrap gap-2 text-[12px] text-slate-400">
+                                    {log.by && <span>처리: <span className="font-semibold text-slate-600">{log.by}</span></span>}
+                                    {log.at && <span>{formatDateTime(log.at)}</span>}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
 
                     {/* actions (대기중이거나 편집 중일 때) */}
                     {(selIsPending || editing) && (

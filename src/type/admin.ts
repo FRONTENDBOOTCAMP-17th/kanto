@@ -1,4 +1,4 @@
-export type Category = "중고거래" | "커뮤니티" | "구인구직" | "방렌트";
+export type Category = "중고거래" | "커뮤니티" | "구인구직" | "방 렌탈";
 
 export interface ReportedUser {
   user_id: number;
@@ -63,9 +63,11 @@ export interface Report {
   reason: string;
   description: string;
   reportDate: string;
+  createdAt?: string;
   status: Status;
   resolvedAt?: string | null;
   postDeactivated?: boolean;
   sanctionType?: Sanction | null;
   sanctionExpiresAt?: string | null;
+  handledBy?: string | null;
 }

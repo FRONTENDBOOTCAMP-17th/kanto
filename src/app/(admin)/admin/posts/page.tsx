@@ -4,9 +4,5 @@ import AdminPostsClient from "@/app/(admin)/admin/posts/_components/AdminPostsCl
 export default async function AdminPostsPage() {
   const posts = await getAdminPosts();
 
-  return (
-    <div>
-      <AdminPostsClient posts={posts} />
-    </div>
-  );
+  return <AdminPostsClient posts={posts} />;
 }
