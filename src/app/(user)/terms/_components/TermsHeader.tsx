@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 
 export default function TermsHeader() {
   const t = useTranslations("Terms.header");
@@ -13,9 +14,12 @@ export default function TermsHeader() {
             <span className="text-teal-600 font-extrabold -ml-1.5 -mb-1">{t("support")}</span>
           </Link>
         </div>
-        <Link href="/" className="text-sm font-medium text-gray-400 hover:text-teal-500 transition-colors flex items-center gap-1">
-          {t("home")}
-        </Link>
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
+          <Link href="/" className="text-sm font-medium text-gray-400 hover:text-teal-500 transition-colors flex items-center gap-1">
+            {t("home")}
+          </Link>
+        </div>
       </div>
     </header>
   );
