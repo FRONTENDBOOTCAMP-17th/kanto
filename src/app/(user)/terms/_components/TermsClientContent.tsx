@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import TermsContent from "./TermsContent";
 
 const CACHE_DURATION = 36000 * 1000;
-const CACHE_KEY = (type: string) => `terms_${type}`;
+const CACHE_KEY = (type: string, locale: string) => `terms_${type}_${locale}`;
 
 interface CachedData {
   title: string;
@@ -12,9 +12,9 @@ interface CachedData {
   timestamp: number;
 }
 
-function getCached(type: string): { title: string; content: string } | null {
+function getCached(type: string, locale: string): { title: string; content: string } | null {
   try {
-    const raw = localStorage.getItem(CACHE_KEY(type));
+    const raw = localStorage.getItem(CACHE_KEY(type, locale));
     if (!raw) return null;
     const { title, content, timestamp }: CachedData = JSON.parse(raw);
     if (Date.now() - timestamp > CACHE_DURATION) return null;
@@ -24,33 +24,33 @@ function getCached(type: string): { title: string; content: string } | null {
   }
 }
 
-function setCache(type: string, title: string, content: string) {
+function setCache(type: string, locale: string, title: string, content: string) {
   try {
     const data: CachedData = { title, content, timestamp: Date.now() };
-    localStorage.setItem(CACHE_KEY(type), JSON.stringify(data));
+    localStorage.setItem(CACHE_KEY(type, locale), JSON.stringify(data));
   } catch {}
 }
 
-export default function TermsClientContent({ type }: { type: string }) {
+export default function TermsClientContent({ type, locale }: { type: string; locale: string }) {
   const [data, setData] = useState<{ title: string; content: string } | null>(
-    () => getCached(type)
+    () => getCached(type, locale)
   );
   const [error, setError] = useState(false);
 
   useEffect(() => {
     if (data) return;
 
-    fetch(`/api/terms?type=${type}`)
+    fetch(`/api/terms?type=${type}&locale=${locale}`)
       .then((res) => {
         if (!res.ok) throw new Error();
         return res.json();
       })
       .then(({ title, content }) => {
-        setCache(type, title, content);
+        setCache(type, locale, title, content);
         setData({ title, content });
       })
       .catch(() => setError(true));
-  }, [type, data]);
+  }, [type, locale, data]);
 
   if (error) return (
     <main className="min-h-screen bg-gray-900 text-gray-400 flex items-center justify-center">
