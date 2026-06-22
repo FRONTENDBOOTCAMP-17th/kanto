@@ -64,9 +64,8 @@ export default function InteractionButtons({
   };
 
   const handleShare = async () => {
-    const url = window.location.href;
-    await navigator.clipboard.writeText(url);
-    setToastMessage(`${t("urlCopied")}\n${url}`);
+    await navigator.clipboard.writeText(window.location.href);
+    setToastMessage(t("urlCopied"));
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
