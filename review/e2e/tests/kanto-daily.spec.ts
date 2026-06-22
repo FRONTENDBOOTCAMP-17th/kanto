@@ -15,7 +15,7 @@ import { test, expect, Page } from "@playwright/test";
  * 비밀번호는 커밋하지 않고 환경변수로 주입: REVIEW_TEST_PASSWORD.
  * 관리자 화면은 테스트 계정을 일시적으로 admin 으로 승격해 확인한다(리뷰 후 user 로 원복).
  */
-const DAY = "2026-06-19";
+const DAY = "2026-06-22";
 const SHOT = `../images/${DAY}`;
 const EMAIL = process.env.REVIEW_TEST_EMAIL ?? "kanto-review@example.com";
 const PASSWORD = process.env.REVIEW_TEST_PASSWORD ?? "";
