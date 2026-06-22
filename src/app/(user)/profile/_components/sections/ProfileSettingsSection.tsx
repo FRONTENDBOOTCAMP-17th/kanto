@@ -78,7 +78,7 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
                 <SelectValue placeholder={t("regionPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">{tc("allRegions")}</SelectItem>
+                <SelectItem value="all">{tc("allRegions")}</SelectItem>
                 {TRADE_LOCATIONS.map((loc) => (
                   <SelectItem key={loc} value={loc}>{loc}</SelectItem>
                 ))}
