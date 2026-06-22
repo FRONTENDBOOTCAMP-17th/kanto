@@ -58,6 +58,7 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
   } = useProfileSettings(initialIdentities);
   const t = useTranslations("Profile.settings");
   const tp = useTranslations("Profile.providers");
+  const tc = useTranslations("Common");
 
   return (
     <div className="flex flex-col divide-y divide-gray-100">
@@ -77,6 +78,7 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
                 <SelectValue placeholder={t("regionPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="">{tc("allRegions")}</SelectItem>
                 {TRADE_LOCATIONS.map((loc) => (
                   <SelectItem key={loc} value={loc}>{loc}</SelectItem>
                 ))}
