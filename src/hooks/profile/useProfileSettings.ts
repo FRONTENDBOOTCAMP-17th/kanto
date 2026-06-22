@@ -25,7 +25,7 @@ export function useProfileSettings(initialIdentities: UserIdentity[]) {
     return null;
   };
 
-  const [region, setRegion] = useState(user?.region ?? "");
+  const [region, setRegion] = useState(user?.region ?? "all");
   const [identities, setIdentities] = useState<UserIdentity[]>(initialIdentities);
   const [notice, setNotice] = useState<Notice | null>(() => {
     if (typeof window === "undefined") return null;
@@ -52,7 +52,7 @@ export function useProfileSettings(initialIdentities: UserIdentity[]) {
     if (!user) return;
     const { data, error } = await supabase
       .from("users")
-      .update({ region: region || null })
+      .update({ region: region === "all" ? null : region || null })
       .eq("id", user.id)
       .select()
       .single();
