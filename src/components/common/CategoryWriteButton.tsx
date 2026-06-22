@@ -9,7 +9,7 @@ import { IdentityVerificationModal } from "@/app/(user)/profile/_components/Iden
 import { useSuspended } from "@/hooks/useSuspended";
 
 interface CategoryWriteButtonProps {
-  href: string; // 글쓰기 폼 경로 (예: /usedgoods/create)
+  href: string; 
   label: string;
   isLoggedIn: boolean;
   initialIsVerified: boolean;
@@ -38,7 +38,6 @@ export function CategoryWriteButton({
       setIsLoginOpen(true);
       return;
     }
-    // 이미 인증된 사용자: 안내 모달 1.5초 후 글쓰기 폼으로 이동
     if (isVerified) {
       setIsSuccessOpen(true);
       window.setTimeout(() => {
@@ -47,7 +46,6 @@ export function CategoryWriteButton({
       }, 1500);
       return;
     }
-    // 미인증 사용자: 본인인증 관문을 연다.
     setIsConfirmOpen(true);
   };
 
@@ -59,7 +57,6 @@ export function CategoryWriteButton({
   const handleVerified = () => {
     setIsVerified(true);
     setIsVerificationOpen(false);
-    // 서버 데이터를 다시 읽어 캐시를 갱신한다. (뒤로가기 시 미인증으로 보이는 문제 방지)
     router.refresh();
     router.push(href);
   };

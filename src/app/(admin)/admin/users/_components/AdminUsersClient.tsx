@@ -153,7 +153,7 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
       `}</style>
 
-      {/* Header */}
+      
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
@@ -171,7 +171,7 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
         </div>
       </div>
 
-      {/* Search */}
+      
       <div className="flex items-center gap-2.5 rounded-[14px] border border-[#e7ebee] bg-white px-4 py-[13px] shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="11" cy="11" r="8" />
@@ -185,7 +185,7 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
         />
       </div>
 
-      {/* Table */}
+      
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <div className="overflow-x-auto">
           <AdminUsersTable users={pageItems} onOpen={(id) => { setSelId(id); setSanctioning(false); }} />
@@ -218,13 +218,13 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
         )}
       </div>
 
-      {/* Drawer */}
+      
       {sel && (
         <>
           <div onClick={closeDrawer} className="fixed inset-0 z-[70] bg-slate-900/45" style={{ animation: "fadeIn .18s ease" }} />
           <div className="fixed right-0 top-0 z-[71] flex h-screen w-[460px] max-w-full flex-col bg-white shadow-[-12px_0_44px_rgba(15,23,42,0.18)]" style={{ animation: "drawerIn .26s cubic-bezier(.4,0,.2,1)" }}>
 
-            {/* header */}
+            
             <div className="flex items-center justify-between gap-3 border-b border-[#f1f4f6] px-6 py-[22px]">
               <div className="flex items-center gap-2.5">
                 <h2 className="text-[18px] font-extrabold tracking-tight text-slate-900">유저 상세</h2>
@@ -235,9 +235,9 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
               </button>
             </div>
 
-            {/* body */}
+            
             <div className="flex-1 overflow-y-auto overscroll-contain p-6">
-              {/* status pills */}
+              
               <div className="mb-5 flex flex-wrap items-center gap-2">
                 {isSuspended ? (
                   <span className="inline-flex items-center whitespace-nowrap rounded-full px-[11px] py-1 text-[12px] font-bold" style={{ background: "#fef2f2", color: "#dc2626" }}>
@@ -255,7 +255,7 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
                 )}
               </div>
 
-              {/* user info card */}
+              
               <div className="mb-5 rounded-[14px] border border-[#eef1f3] bg-slate-50 p-[18px]">
                 <div className="mb-3 flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wide text-slate-400">
                   <Users className="h-[17px] w-[17px] text-teal-600" strokeWidth={2} />
@@ -269,7 +269,7 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
                 </a>
               </div>
 
-              {/* meta */}
+              
               <div className="mb-5 overflow-hidden rounded-xl border border-[#eef1f3]">
                 <div className="flex items-center justify-between border-b border-[#f3f5f7] px-4 py-[11px]">
                   <span className="text-[13px] text-slate-400">작성 글</span>
@@ -281,7 +281,7 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
                 </div>
               </div>
 
-              {/* 제재 이력 로그 */}
+              
               <div className="overflow-hidden rounded-[14px] border border-[#eef1f3]">
                 <div className="flex items-center gap-2 border-b border-[#f1f4f6] bg-slate-50 px-4 py-[13px]">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={isSuspended ? "#dc2626" : "#94a3b8"} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -335,7 +335,7 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
               </div>
             </div>
 
-            {/* footer */}
+            
             <div className="border-t border-[#f1f4f6] px-6 py-[18px]">
               {sanctioning ? (
                 <div>
@@ -415,7 +415,7 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
         </>
       )}
 
-      {/* Toast */}
+      
       {toast && (
         <div className="fixed bottom-7 left-1/2 z-[80] flex -translate-x-1/2 items-center gap-2.5 rounded-xl bg-slate-900 px-5 py-[13px] text-white shadow-[0_10px_30px_rgba(15,23,42,0.3)]" style={{ animation: "fadeIn .18s ease" }}>
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">

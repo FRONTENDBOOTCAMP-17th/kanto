@@ -40,12 +40,12 @@ export default function ChatListItem({
         !isLast ? "border-b border-gray-100" : ""
       }`}
     >
-      {/* 아바타 */}
+      
       <div className="w-11 h-11 md:w-9 md:h-9 rounded-full bg-teal-500 flex items-center justify-center text-white font-semibold text-base md:text-sm shrink-0">
         {otherUser?.name?.[0] ?? "?"}
       </div>
 
-      {/* 내용 */}
+      
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between gap-1 mb-0.5">
           <div className="flex items-center gap-1.5 min-w-0">

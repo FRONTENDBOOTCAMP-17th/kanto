@@ -1,7 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
 
-// 찜목록 조회...
-
 interface LikeListResult {
   likedIds: number[];
   currentUserId: number | null;

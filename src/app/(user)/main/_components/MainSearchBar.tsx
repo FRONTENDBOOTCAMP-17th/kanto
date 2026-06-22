@@ -50,7 +50,7 @@ export default function MainSearchBar() {
       <form onSubmit={handleSubmit} className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center bg-white border-2 border-gray-200 rounded-full h-11 md:h-14 px-2 focus-within:border-teal-400 transition-colors">
 
-          {/* 모바일: 바텀시트 트리거 */}
+          
           <button
             type="button"
             onClick={() => setBottomSheetOpen(true)}
@@ -62,7 +62,7 @@ export default function MainSearchBar() {
             <ChevronDown className="w-3.5 h-3.5 text-gray-500" />
           </button>
 
-          {/* 데스크탑: 드롭다운 */}
+          
           <div className="hidden md:block relative shrink-0" ref={dropdownRef}>
             <button
               type="button"
@@ -112,7 +112,7 @@ export default function MainSearchBar() {
         </div>
       </form>
 
-      {/* 모바일 카테고리 바텀시트 */}
+      
       {bottomSheetOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex flex-col justify-end">
           <div className="absolute inset-0 bg-black/40" onClick={() => setBottomSheetOpen(false)} />

@@ -13,7 +13,6 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   const t = useTranslations("Job.form");
   const [step, setStep] = useState<1 | 2>(1);
 
-  // 1단계: 채용 정보
   const [title, setTitle] = useState(initialData?.title ?? "");
   const [employeeType, setEmployeeType] = useState<EmployeeType | "">(initialData?.employee_type as EmployeeType ?? "");
   const [salary, setSalary] = useState(initialData?.salary?.toString() ?? "");
@@ -29,7 +28,6 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   const [preferred, setPreferred] = useState(initialData?.preferred ?? "");
   const [preferredTags, setPreferredTags] = useState<string[]>(initialData?.preferred_tags ?? []);
 
-  // 2단계: 회사 및 담당자 정보
   const [companyName, setCompanyName] = useState(initialData?.company_name ?? "");
   const [companyIntro, setCompanyIntro] = useState(initialData?.company_intro ?? "");
   const [industry, setIndustry] = useState(initialData?.industry ?? "");
@@ -45,7 +43,6 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   const [companyLogoFile, setCompanyLogoFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const imageUpload = useImageUpload(initialData?.images as string[] ?? []);
-
 
   const handleNextStep = () => {
     if (!title || !employeeType || !salary || !locationType || !deadline || !mainTask) {
@@ -71,7 +68,6 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     }
     setIsSubmitting(true);
 
-    // 로고 업로드 헬퍼 (등록/수정 공통)
     const uploadLogo = async (postId: number): Promise<string | null> => {
       if (!companyLogoFile) return companyLogoUrl || null;
       const ext = companyLogoFile.name.split(".").pop()?.toLowerCase() ?? "jpg";
@@ -108,7 +104,6 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       manager_email: managerEmail || null,
     };
 
-    // 수정 모드
     if (initialData?.post_id) {
       const logoUrl = await uploadLogo(initialData.post_id);
       if (companyLogoFile && !logoUrl) { setIsSubmitting(false); return; }
@@ -145,7 +140,6 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       return;
     }
 
-    // 등록 모드
     const { data: post, error: postError } = await supabase
       .from("posts")
       .insert({ user_id: userId, post_type: "jobs", title, status: "active", view_count: 0, like_count: 0 })
@@ -199,7 +193,6 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
 
   return {
     step,
-    // 1단계
     title, setTitle,
     employeeType, setEmployeeType,
     salary, setSalary,
@@ -215,7 +208,6 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     preferred, setPreferred,
     preferredTags, setPreferredTags,
     handleNextStep,
-    // 2단계
     companyName, setCompanyName,
     companyIntro, setCompanyIntro,
     industry, setIndustry,

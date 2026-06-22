@@ -5,7 +5,6 @@ const MESSAGE_SELECT = `*,
     sender:users!messages_sender_id_fkey(id, name, avatar_url, created_at),
     transaction:transactions!messages_transaction_id_fkey(*)`;
 
-// 메시지 조회
 export async function getMessageList(
   chatId: number,
   supabase: Awaited<ReturnType<typeof createClient>>,
@@ -20,7 +19,6 @@ export async function getMessageList(
     query = query.lt("created_at", before);
   }
 
-  // 대화 50개씩 짤라서 가져오기
   const { data, error } = await query
     .order("created_at", { ascending: false })
     .limit(50);
@@ -29,11 +27,9 @@ export async function getMessageList(
     throw new Error(error.message);
   }
 
-  // 최신대화 순으로 뒤집음
   return (data as MessageWithSender[]).reverse();
 }
 
-// 메시지 보내기
 export async function postMessage(
   params: {
     chatId: number;
@@ -76,7 +72,6 @@ export async function postMessage(
     p_for_user1: !isUser1,
   });
 
-  // 메시지 보내기 이후에 마지막 메시지 시간 업데이트
   await supabase
     .from("chats")
     .update({

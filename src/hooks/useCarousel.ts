@@ -1,5 +1,3 @@
-// 상세페이지 이미지 케러셀
-// 드래그/스와이프, 썸네일 클릭
 
 import { useState, useRef } from "react";
 

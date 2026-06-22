@@ -9,7 +9,7 @@ import ReportsClient from "./_components/ReportsClient";
 export default async function ReportsPage() {
   const admin = createAdminClient();
 
-  /* 1. 전체 신고 목록 */
+  
   const { data: rawReports } = await admin
     .from(REPORTS_TABLE)
     .select("id, target_id, target_type, category, description, status, created_at, resolved_at, post_deactivated, handled_by")
@@ -31,7 +31,7 @@ export default async function ReportsPage() {
 
   const reports = rawReports ?? [];
 
-  /* 2. 신고 대상 ID 수집 */
+  
   const postIds = [
     ...new Set(
       reports
@@ -54,7 +54,7 @@ export default async function ReportsPage() {
     ),
   ];
 
-  /* 3. 게시글 + 유저 + 처리 관리자 + 제재 이력 배치 조회 */
+  
   const reportIds = reports.map((r) => r.id);
   const [postsRes, targetUsersRes, adminUsersRes, sanctionsRes] = await Promise.all([
     postIds.length
@@ -78,7 +78,7 @@ export default async function ReportsPage() {
       : { data: [] as { report_id: number | null; sanction_type: string; expires_at: string | null; created_at: string | null }[] },
   ]);
 
-  /* 3-1. 신고별 최신 제재 맵 (제재 수정 시 append되므로 가장 최근 행이 현재 결과) */
+  
   const sanctionByReport = new Map<number, { sanction_type: string; expires_at: string | null }>();
   for (const s of (sanctionsRes.data ?? []) as Array<{
     report_id: number | null;
@@ -90,7 +90,7 @@ export default async function ReportsPage() {
     }
   }
 
-  /* 4. 게시글 작성자 조회 */
+  
   const authorIds = [
     ...new Set((postsRes.data ?? []).map((p) => p.user_id)),
   ];
@@ -98,13 +98,13 @@ export default async function ReportsPage() {
     ? await admin.from("users").select("id, name").in("id", authorIds)
     : { data: [] as { id: number; name: string }[] };
 
-  /* 5. 룩업 맵 */
+  
   const postMap = new Map((postsRes.data ?? []).map((p) => [p.id, p]));
   const targetUserMap = new Map((targetUsersRes.data ?? []).map((u) => [u.id, u]));
   const authorMap = new Map((authorsData ?? []).map((u) => [u.id, u]));
   const adminUserMap = new Map((adminUsersRes.data ?? []).map((u) => [u.id, u]));
 
-  /* 6. Report 목록 구성 */
+  
   const reportList: Report[] = reports.map((r) => {
     const reason = r.category ?? "기타";
     const description = r.description ?? "";

@@ -79,6 +79,11 @@
     "en": "English",
     "fil": "Filipino"
   },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "This page has been deleted or the address has changed.",
+    "backToMain": "Back to main"
+  },
   "Common": {
     "confirm": "Confirm",
     "cancel": "Cancel",

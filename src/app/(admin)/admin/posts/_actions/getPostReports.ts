@@ -52,7 +52,7 @@ export async function getPostReports(postId: number): Promise<PostReport[]> {
 
   const adminMap = new Map((admins ?? []).map((a) => [a.id, a.name]));
 
-  /* 신고별 최신 제재 (제재 수정 시 append되므로 가장 최근 행이 현재 결과) */
+  
   const sanctionByReport = new Map<number, string>();
   for (const s of (sanctions ?? []) as Array<{ report_id: number | null; sanction_type: string }>) {
     if (s.report_id != null) sanctionByReport.set(s.report_id, s.sanction_type);

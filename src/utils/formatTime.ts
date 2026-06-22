@@ -1,14 +1,6 @@
-// 공통 시간 포맷 유틸 함수
-//
-// i18n 패턴: 로케일을 인자로 받아 Intl API로 포맷한다.
-// 컴포넌트에서는 next-intl의 useLocale()로 얻은 값을 넘기면 된다.
-//   const locale = useLocale();
-//   formatTimeAgo(iso, locale);
-// 인자를 생략하면 기존 동작(한국어)을 유지하므로 호출부를 점진적으로 교체할 수 있다.
 
 import { BCP47_LOCALE, TIME_BCP47_LOCALE, defaultLocale, type Locale } from "@/i18n/config";
 
-/** 오전 10:00 와 같은 형태로 포맷 */
 export function formatMessageTime(
   dateStr: string,
   locale: Locale = defaultLocale,
@@ -22,7 +14,6 @@ export function formatMessageTime(
   });
 }
 
-/** 어제 / N일 전 / N주 전 / N달 전과 같은 형태로 포맷 (당일은 시각 표시) */
 export function formatChatListTime(
   dateStr: string | null,
   locale: Locale = defaultLocale,
@@ -51,7 +42,6 @@ export function formatChatListTime(
   return rtf.format(-diffMonths, "month");
 }
 
-/** 방금 전 / N분 전 / N시간 전 / N일 전 ... 형태로 포맷 */
 export function formatTimeAgo(
   isoString: string,
   locale: Locale = defaultLocale,
@@ -85,7 +75,6 @@ export function formatTimeAgo(
   return rtf.format(-years, "year");
 }
 
-/** 마감일까지 남은 일수 (음수 = 만료, 0 = 오늘, 양수 = D-n) */
 export function getDeadlineDiff(deadline: string): number {
   const startOfDay = (d: Date) =>
     new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -96,8 +85,6 @@ export function getDeadlineDiff(deadline: string): number {
   );
 }
 
-
-/** 날짜 구분선 포맷 */
 export function formatDateDivider(
   dateStr: string,
   locale: Locale = defaultLocale,

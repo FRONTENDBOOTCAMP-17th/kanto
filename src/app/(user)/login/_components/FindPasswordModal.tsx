@@ -172,7 +172,7 @@ export function FindPasswordModal({ isOpen, onClose }: FindPasswordModalProps) {
           </button>
         </div>
 
-        {/* 1단계: 이름 + 이메일 */}
+        
         {stage === "request" && (
           <form className="mt-5 flex flex-col gap-4" onSubmit={handleSendCode}>
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
@@ -206,7 +206,7 @@ export function FindPasswordModal({ isOpen, onClose }: FindPasswordModalProps) {
           </form>
         )}
 
-        {/* 2단계: 인증번호 확인 */}
+        
         {stage === "verify" && (
           <form className="mt-5 flex flex-col gap-4" onSubmit={handleVerifyCode}>
             {devCode && (
@@ -245,7 +245,7 @@ export function FindPasswordModal({ isOpen, onClose }: FindPasswordModalProps) {
           </form>
         )}
 
-        {/* 3단계: 새 비밀번호 입력 */}
+        
         {stage === "reset" && (
           <form className="mt-5 flex flex-col gap-4" onSubmit={handleResetPassword}>
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">

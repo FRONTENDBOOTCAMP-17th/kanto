@@ -1,9 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import type { Review, ReviewWithReviewer } from "@/type/review";
 
-// 후기 쓰기/조회는 모두 service-role(supabaseAdmin)로 수행 — RLS 우회.
-// (거래 서비스 transaction.ts 와 동일한 패턴)
-
 export async function createReview(input: {
   reviewerId: number;
   revieweeId: number;
@@ -33,16 +30,11 @@ export async function createReview(input: {
 
   if (error) throw new Error(error.message);
 
-  // 후기 대상자의 평균 평점 재계산
   await recalcAvgRating(input.revieweeId);
 
   return data as Review;
 }
 
-/**
- * 후기 대상자(reviewee)의 평균 평점을 reviews 테이블 기준으로 재계산해
- * users.avg_rating 에 반영한다. 삭제된 후기는 제외한다.
- */
 export async function recalcAvgRating(revieweeId: number): Promise<void> {
   const { data } = await supabaseAdmin
     .from("reviews")
@@ -62,10 +54,6 @@ export async function recalcAvgRating(revieweeId: number): Promise<void> {
     .eq("id", revieweeId);
 }
 
-/**
- * 특정 거래(transaction)에 대해 해당 작성자가 이미 남긴 후기를 조회한다.
- * 거래당 1후기(중복 작성 방지) 판정에 사용한다.
- */
 export async function getReviewByTransactionAndReviewer(
   transactionId: number,
   reviewerId: number,
@@ -81,10 +69,6 @@ export async function getReviewByTransactionAndReviewer(
   return (data as Review) ?? null;
 }
 
-/**
- * 후기 대상자(reviewee)가 받은 후기 목록을 작성자 정보와 함께 조회한다.
- * 프로필 "거래 후기" 탭에서 사용.
- */
 export async function getReviewsForUser(
   revieweeId: number,
 ): Promise<ReviewWithReviewer[]> {

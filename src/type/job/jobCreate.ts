@@ -10,7 +10,6 @@ export const SALARY_TYPES = ["시급", "주급", "월급"] as const;
 export type EmployeeType = (typeof EMPLOYEE_TYPES)[number]["id"];
 export type SalaryType = (typeof SALARY_TYPES)[number];
 
-// 근무 요일 (월~일) + 빠른 선택 프리셋
 export const WORK_DAYS = ["월", "화", "수", "목", "금", "토", "일"] as const;
 export const DAY_PRESETS = [
   { id: "평일", days: ["월", "화", "수", "목", "금"] },
@@ -18,7 +17,6 @@ export const DAY_PRESETS = [
   { id: "매일", days: ["월", "화", "수", "목", "금", "토", "일"] },
 ] as const;
 
-// 우대 사항 카테고리 (key는 DB 저장값, label은 표시용)
 export const PREFERRED_CATEGORIES = [
   {
     group: "어학",
@@ -77,7 +75,6 @@ export const PREFERRED_CATEGORIES = [
   },
 ] as const;
 
-// key → label 매핑 (표시용)
 export const PREFERRED_LABELS: Record<string, string> = Object.fromEntries(
   PREFERRED_CATEGORIES.flatMap((c) => c.items.map((i) => [i.key, i.label])),
 );

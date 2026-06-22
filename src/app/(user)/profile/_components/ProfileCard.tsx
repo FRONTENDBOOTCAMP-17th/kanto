@@ -77,7 +77,7 @@ function ProfileForm({
 
   return (
     <div className="bg-white md:bg-gray-50 min-h-screen md:min-h-0 md:rounded-xl overflow-hidden">
-      {/* 헤더 */}
+      
       <div className="bg-white border-b border-gray-200 px-5 py-4 flex items-center gap-3">
         <button
           onClick={() => router.back()}
@@ -92,7 +92,7 @@ function ProfileForm({
       <div className="md:flex md:p-8 p-0 bg-white md:rounded-xl md:border md:border-gray-100">
         <ProfileAside activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {/* 사이드바 — 프로필 정보 */}
+        
         <div className="md:w-64 md:shrink-0 flex flex-col gap-6 md:border-r md:border-gray-100 md:px-8">
           <ProfileMobileTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -109,7 +109,7 @@ function ProfileForm({
 
             <div className="border-t border-gray-100" />
 
-            {/* 활동 통계 */}
+            
             <div className="flex flex-col gap-3 px-5 md:px-0">
               <h2 className="text-sm font-semibold text-gray-700">{t("stats")}</h2>
               <div className="grid grid-cols-3 gap-2 text-center">
@@ -130,7 +130,7 @@ function ProfileForm({
 
             <div className="border-t border-gray-100" />
 
-            {/* 계정 정보 */}
+            
             <div className="flex flex-col gap-3 px-5 md:px-0">
               <h2 className="text-sm font-semibold text-gray-700">{t("account")}</h2>
               <div className="flex items-center justify-between">
@@ -149,7 +149,7 @@ function ProfileForm({
 
             <div className="border-t border-gray-100" />
 
-            {/* 본인인증 */}
+            
             <div className="flex flex-col gap-3 px-5 md:px-0">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-teal-500" />
@@ -172,7 +172,7 @@ function ProfileForm({
           </div>
         </div>
 
-        {/* 메인 콘텐츠 */}
+        
         <div className="flex-1 md:pl-8">
           {activeTab === "info" && <ProfileInfoSection user={user} avatarFile={avatarFile} />}
           {activeTab === "reviews" && <ProfileReviewsSection reviews={reviews} avgRating={avgRating} reviewCount={reviewCount} />}

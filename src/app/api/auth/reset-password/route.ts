@@ -1,9 +1,3 @@
-// 비밀번호 재설정 (로그인 전, 미인증 상태에서 동작)
-// POST   : 이름+이메일 확인 후 인증번호 메일 발송
-// PATCH  : 인증번호 검증 (코드는 유지)
-// PUT    : 인증번호 재검증 후 새 비밀번호로 재설정
-//
-// 보안: 본인 확인은 "이메일로 받은 인증번호"로 한다. 이름+이메일은 계정 매칭용.
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
@@ -17,7 +11,6 @@ import {
   sendVerificationEmail,
 } from "@/utils/verificationCode";
 
-// 회원가입과 동일한 비밀번호 규칙 (영문 + 숫자 포함 8자 이상)
 const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
 
 function getResetKey(email: string) {
@@ -31,7 +24,6 @@ function admin() {
   );
 }
 
-// 이름+이메일이 일치하는 계정을 찾는다. (auth_id 반환)
 async function findMatchingUser(name: string, email: string) {
   const supabase = admin();
   const { data } = await supabase
@@ -83,7 +75,6 @@ export async function POST(req: NextRequest) {
 
   const isProduction = process.env.NODE_ENV === "production";
 
-  // 운영 환경에서 메일이 구성되지 않았다면, 코드를 노출하는 대신 에러로 막는다.
   if (!emailResult.isConfigured && isProduction) {
     await deleteVerificationCode(key);
     return NextResponse.json(
@@ -95,7 +86,6 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     expiresIn: VERIFICATION_TTL_SECONDS,
     isEmailSent: emailResult.isEmailSent,
-    // 운영 환경에서는 절대 코드를 내려보내지 않는다. 개발 편의로만 노출.
     devCode: !emailResult.isConfigured && !isProduction ? code : undefined,
   });
 }
@@ -142,7 +132,6 @@ export async function PUT(req: NextRequest) {
   const key = getResetKey(email);
   const savedCode = await getSavedVerificationCode(key);
 
-  // 인증번호를 다시 검증해 인증 단계를 건너뛴 요청을 막는다.
   if (!savedCode || String(savedCode) !== code.trim()) {
     return NextResponse.json({ error: "인증이 만료되었거나 올바르지 않습니다." }, { status: 400 });
   }

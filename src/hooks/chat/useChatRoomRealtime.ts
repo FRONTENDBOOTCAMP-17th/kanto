@@ -11,7 +11,6 @@ interface Props {
   setMessages: React.Dispatch<React.SetStateAction<MessageWithSender[]>>;
 }
 
-/** 채팅 리얼타임 함수 */
 export function useChatRoomRealtime({
   chatId,
   currentUser,
@@ -41,7 +40,6 @@ export function useChatRoomRealtime({
         async (payload) => {
           const newMsg = payload.new as Message;
 
-          // 시스템 메시지는 낙관적 삽입이 없으므로 skip-own을 우회해 양쪽 모두 수신
           if (newMsg.type === "system") {
             const msgWithSender: MessageWithSender = {
               ...newMsg,
@@ -56,10 +54,8 @@ export function useChatRoomRealtime({
             return;
           }
 
-          // 내 메시지는 낙관적 업데이트로 처리 — 리얼타임 중복 방지
           if (newMsg.sender_id === currentUser.id) return;
 
-          // 결제요청 카드 메시지는 연결된 거래 정보를 함께 조회
           let transaction: Transaction | null = null;
           if (newMsg.type === "payment" && newMsg.transaction_id) {
             const { data } = await supabase
@@ -134,7 +130,6 @@ export function useChatRoomRealtime({
         }
       });
 
-    // 비정상 종료(탭 닫기 등) 시에도 열람중 플래그를 해제
     const handlePageHide = () => {
       supabase.rpc("set_chat_active", {
         p_chat_id: chatId,
@@ -154,8 +149,7 @@ export function useChatRoomRealtime({
       });
       supabase.removeChannel(channel);
     };
-  // currentUser·partner 객체 전체 대신 .id만 사용 — 참조 변경 시 채널 재구독 방지
-  }, [chatId, currentUser.id, partner.id, setMessages]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [chatId, currentUser.id, partner.id, setMessages]); 
 
   return { partnerOnline };
 }

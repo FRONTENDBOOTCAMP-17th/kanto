@@ -1,4 +1,4 @@
-/** 도배 방지 훅 */
+
 
 import { useEffect, useRef, useState } from "react";
 

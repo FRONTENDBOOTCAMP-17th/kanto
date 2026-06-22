@@ -195,7 +195,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
       `}</style>
 
-      {/* Header */}
+      
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
@@ -213,7 +213,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
         </div>
       </div>
 
-      {/* Search */}
+      
       <div className="flex items-center gap-2.5 rounded-[14px] border border-[#e7ebee] bg-white px-4 py-[13px] shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <svg
           width="19"
@@ -236,7 +236,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
         />
       </div>
 
-      {/* Filters */}
+      
       <div className="flex flex-wrap gap-7 rounded-2xl border border-[#e7ebee] bg-white px-[22px] py-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <div>
           <div className="mb-2.5 text-[13px] font-bold text-slate-600">
@@ -272,7 +272,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
         </div>
       </div>
 
-      {/* Table */}
+      
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <div className="overflow-x-auto">
           <AdminPostsTable
@@ -289,7 +289,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
         />
         </div>
 
-        {/* Empty */}
+        
         {filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center px-5 py-16 text-center">
             <FileText
@@ -305,7 +305,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
           </div>
         )}
 
-        {/* Pagination */}
+        
         {totalPages > 1 && (
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#f1f4f6] px-[22px] py-4">
             <span className="text-[13px] text-slate-400">
@@ -355,7 +355,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
         )}
       </div>
 
-      {/* Drawer */}
+      
       {sel && stStyle && catStyle && (
         <>
           <div
@@ -367,7 +367,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
             className="fixed right-0 top-0 z-[71] flex h-screen w-[460px] max-w-full flex-col bg-white shadow-[-12px_0_44px_rgba(15,23,42,0.18)]"
             style={{ animation: "drawerIn .26s cubic-bezier(.4,0,.2,1)" }}
           >
-            {/* header */}
+            
             <div className="flex items-center justify-between gap-3 border-b border-[#f1f4f6] px-6 py-[22px]">
               <div className="flex items-center gap-2.5">
                 <h2 className="text-[18px] font-extrabold tracking-tight text-slate-900">
@@ -385,9 +385,9 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
               </button>
             </div>
 
-            {/* body */}
+            
             <div className="flex-1 overflow-y-auto overscroll-contain p-6">
-              {/* status + category pills */}
+              
               <div className="mb-5 flex items-center gap-2">
                 <Pill
                   text={stStyle.label}
@@ -402,7 +402,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
                 />
               </div>
 
-              {/* post preview */}
+              
               <div className="mb-5 rounded-[14px] border border-[#eef1f3] bg-slate-50 p-[18px]">
                 <div className="mb-3 flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wide text-slate-400">
                   <FileText
@@ -430,7 +430,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
                 )}
               </div>
 
-              {/* meta */}
+              
               <div className="overflow-hidden rounded-xl border border-[#eef1f3]">
                 <div className="flex items-center justify-between border-b border-[#f3f5f7] px-4 py-[11px]">
                   <span className="text-[13px] text-slate-400">작성자</span>
@@ -468,7 +468,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
                 )}
               </div>
 
-              {/* 신고 내역 */}
+              
               <div className="mt-5 overflow-hidden rounded-[14px] border border-[#eef1f3]">
                 <div className="flex items-center gap-2 border-b border-[#f1f4f6] bg-slate-50 px-4 py-[13px]">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -534,7 +534,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
                 )}
               </div>
 
-              {/* 제재 로그 */}
+              
               {(() => {
                 const SANCTION_LABEL: Record<string, string> = {
                   "7d": "유저 7일 정지",
@@ -692,7 +692,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
               })()}
             </div>
 
-            {/* footer */}
+            
             <div className="border-t border-[#f1f4f6] px-6 py-[18px]">
               {isActive ? (
                 <div className="flex gap-2.5">
@@ -732,7 +732,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
         </>
       )}
 
-      {/* Toast */}
+      
       {toast && (
         <div
           className="fixed bottom-7 left-1/2 z-[80] flex -translate-x-1/2 items-center gap-2.5 rounded-xl bg-slate-900 px-5 py-[13px] text-white shadow-[0_10px_30px_rgba(15,23,42,0.3)]"

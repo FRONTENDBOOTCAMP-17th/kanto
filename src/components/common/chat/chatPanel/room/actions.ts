@@ -86,9 +86,6 @@ export async function sendMessageAction(params: {
   return result;
 }
 
-// 이전 메시지 페이지네이션 로드
-// before: 현재 화면에서 가장 오래된 메시지의 created_at (커서)
-// before 기준 이전 50개를 오름차순으로 반환
 export async function loadMoreMessagesAction(chatId: number, before: string) {
   const supabase = await createClient();
   return getMessageList(chatId, supabase, before);
@@ -117,7 +114,6 @@ export async function createChatAndSendAction(params: {
     throw new Error("차단된 사용자와는 메시지를 주고받을 수 없습니다.");
   }
 
-  // 레이스 컨디션 대비: 이미 존재하는 채팅방 확인 후 없으면 생성
   const { data: existing } = await supabase
     .from("chats")
     .select("id")

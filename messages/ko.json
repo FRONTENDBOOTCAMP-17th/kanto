@@ -3,7 +3,7 @@
     "nav": {
       "usedgoods": "중고거래",
       "jobs": "구인구직",
-      "rental": "방렌트",
+      "rental": "부동산",
       "community": "커뮤니티",
       "dating": "랜덤채팅"
     },
@@ -29,7 +29,7 @@
       "title": "서비스",
       "usedgoods": "중고거래",
       "jobs": "구인구직",
-      "rental": "방렌트",
+      "rental": "부동산",
       "community": "한인 커뮤니티"
     },
     "support": {
@@ -78,6 +78,11 @@
     "ko": "한국어",
     "en": "English",
     "fil": "Filipino"
+  },
+  "NotFound": {
+    "title": "페이지를 찾을 수 없어요",
+    "description": "삭제되었거나 주소가 변경된 페이지예요.",
+    "backToMain": "메인으로 돌아가기"
   },
   "Common": {
     "confirm": "확인",
@@ -189,7 +194,7 @@
     "loadPrevious": "이전 메시지 보기",
     "category": {
       "used_goods": "중고거래",
-      "rental": "방렌트",
+      "rental": "부동산",
       "jobs": "구인구직"
     },
     "payment": {
@@ -310,7 +315,7 @@
         "description": "일자리를 구하거나 직원을 모집해요"
       },
       "rental": {
-        "name": "방렌트",
+        "name": "부동산",
         "description": "방을 구하거나 방을 내놓아요"
       },
       "community": {
@@ -320,7 +325,7 @@
     }
   },
   "Main": {
-    "tagline": "중고거래 · 구인구직 · 방렌트를 한곳에서",
+    "tagline": "중고거래 · 구인구직 · 부동산를 한곳에서",
     "popularTitle": "인기 목록",
     "popularBadge": "인기",
     "popularCategoriesAria": "인기 카테고리",
@@ -332,7 +337,7 @@
     "category": {
       "usedgoods": "중고거래",
       "jobs": "구인구직",
-      "rental": "방렌트",
+      "rental": "부동산",
       "community": "커뮤니티"
     },
     "hero": {
@@ -349,7 +354,7 @@
       "rental": {
         "title": "초저가 방을 찾고 있다면",
         "description": "합리적인 가격의 방 렌트 정보",
-        "button": "방렌트 바로가기"
+        "button": "부동산 바로가기"
       },
       "community": {
         "title": "한인들과 소통하고 싶다면",
@@ -537,7 +542,7 @@
     }
   },
   "Rental": {
-    "title": "방렌트",
+    "title": "부동산",
     "subtitle": "필리핀 한인을 위한 방 렌트 정보",
     "searchResult": "\"{query}\" 검색 결과",
     "write": "글쓰기",
@@ -559,8 +564,8 @@
     "description": "숙소 설명",
     "form": {
       "back": "뒤로가기",
-      "editTitle": "방렌트 글 수정",
-      "createTitle": "방렌트 글쓰기",
+      "editTitle": "부동산 글 수정",
+      "createTitle": "부동산 글쓰기",
       "subtitle": "필요한 정보를 입력해주세요",
       "titleLabel": "숙소명 *",
       "titlePlaceholder": "숙소명을 입력하세요",
@@ -666,7 +671,7 @@
       "alertCategories": {
         "usedgoods": "중고거래",
         "jobs": "구인구직",
-        "rental": "방렌트",
+        "rental": "부동산",
         "community": "커뮤니티",
         "dating": "랜덤채팅"
       }
@@ -685,7 +690,7 @@
     },
     "settings": {
       "regionTitle": "지역 설정",
-      "regionDesc": "중고거래·방렌트 게시글 검색 시 기준이 되는 지역입니다.",
+      "regionDesc": "중고거래·부동산 게시글 검색 시 기준이 되는 지역입니다.",
       "regionInputAria": "지역 입력",
       "regionSet": "설정",
       "regionPlaceholder": "지역을 선택하세요",
@@ -797,13 +802,13 @@
     "tabs": {
       "used_goods": "중고거래",
       "jobs": "구인구직",
-      "rental": "방렌트"
+      "rental": "부동산"
     },
     "empty": "찜한 목록이 없습니다.",
     "goTo": {
       "used_goods": "중고거래 보러가기",
       "jobs": "구인구직 보러가기",
-      "rental": "방렌트 보러가기"
+      "rental": "부동산 보러가기"
     }
   }
 }
