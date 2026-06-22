@@ -3,6 +3,5 @@ export const TERMS_LIST = [
   { type: "service" },
   { type: "privacy" },
   { type: "youth" },
-  { type: "age" },
   { type: "payment" },
 ];

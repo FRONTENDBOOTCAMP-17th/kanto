@@ -26,16 +26,17 @@ export default async function RentalPage({
   const currentPage = Number(params.page ?? 1);
   const t = await getTranslations("Rental");
 
-  const [posts, { likedIds, currentUserId }, sessionUser, isVerified] = await Promise.all([
-    getRentalList({
-      search: params.search,
-      roomType: params.roomType,
-      location: params.location,
-    }),
-    getLikeList("rental"),
-    getSessionUser(),
-    getIdentityVerified(),
-  ]);
+  const [posts, { likedIds, currentUserId }, sessionUser, isVerified] =
+    await Promise.all([
+      getRentalList({
+        search: params.search,
+        roomType: params.roomType,
+        location: params.location,
+      }),
+      getLikeList("rental"),
+      getSessionUser(),
+      getIdentityVerified(),
+    ]);
 
   const totalPages = Math.ceil(posts.length / ITEMS_PER_PAGE);
   const pagedPosts = posts.slice(
@@ -44,7 +45,7 @@ export default async function RentalPage({
   );
 
   return (
-    <main className="flex-1 bg-gray-50 py-8">
+    <main className="flex-1 py-8">
       <div className="page-container">
         <div className="relative flex flex-col items-center text-center mb-6">
           <h1 className="page-title-lg">{t("title")}</h1>

@@ -253,7 +253,7 @@ export default function ChatRoomClient({
           onRequested={handlePaymentRequested}
         />
       )}
-      <Toast message={sendError} showMessage={!!sendError} />
+      <Toast message={sendError} showMessage={!!sendError} type="error" />
     </div>
   );
 }
