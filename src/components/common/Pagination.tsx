@@ -44,7 +44,7 @@ export const Pagination = ({
           aria-label="이전 페이지"
           disabled={!canGoPrev}
           onClick={() => onPageChange(currentPage - 1)}
-          className="p-1.5 text-gray-400 disabled:opacity-40"
+          className="p-1.5 text-gray-400 disabled:opacity-40 cursor-pointer hover:text-teal-600 transition-colors"
         >
           <ChevronLeft size={18} />
         </button>
@@ -60,8 +60,8 @@ export const Pagination = ({
               onClick={() => onPageChange(page)}
               className={
                 page === currentPage
-                  ? "text-[20px] font-medium text-teal-700"
-                  : "text-sm text-gray-400"
+                  ? "text-[20px] font-medium text-teal-700 cursor-pointer"
+                  : "text-sm text-gray-400 cursor-pointer hover:text-teal-600 transition-colors"
               }
             >
               {page}
@@ -73,7 +73,7 @@ export const Pagination = ({
           aria-label="다음 페이지"
           disabled={!canGoNext}
           onClick={() => onPageChange(currentPage + 1)}
-          className="p-1.5 text-gray-400 disabled:opacity-40"
+          className="p-1.5 text-gray-400 disabled:opacity-40 cursor-pointer hover:text-teal-600 transition-colors"
         >
           <ChevronRight size={18} />
         </button>
@@ -85,7 +85,7 @@ export const Pagination = ({
           aria-label="이전 페이지"
           disabled={!canGoPrev}
           onClick={() => onPageChange(currentPage - 1)}
-          className="flex h-10 w-10 items-center justify-center text-gray-500 disabled:opacity-40"
+          className="flex h-10 w-10 items-center justify-center text-gray-500 disabled:opacity-40 cursor-pointer hover:text-teal-600 transition-colors"
         >
           <ChevronLeft size={20} />
         </button>
@@ -101,7 +101,7 @@ export const Pagination = ({
           aria-label="다음 페이지"
           disabled={!canGoNext}
           onClick={() => onPageChange(currentPage + 1)}
-          className="flex h-10 w-10 items-center justify-center text-gray-500 disabled:opacity-40"
+          className="flex h-10 w-10 items-center justify-center text-gray-500 disabled:opacity-40 cursor-pointer hover:text-teal-600 transition-colors"
         >
           <ChevronRight size={20} />
         </button>

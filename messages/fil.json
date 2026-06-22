@@ -79,6 +79,11 @@
     "en": "English",
     "fil": "Filipino"
   },
+  "NotFound": {
+    "title": "Hindi mahanap ang pahina",
+    "description": "Ang pahinang ito ay tinanggal o binago ang address.",
+    "backToMain": "Bumalik sa pangunahing pahina"
+  },
   "Common": {
     "confirm": "Kumpirmahin",
     "cancel": "Kanselahin",
