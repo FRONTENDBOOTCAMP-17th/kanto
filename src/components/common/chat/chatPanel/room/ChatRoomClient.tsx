@@ -15,7 +15,7 @@ import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList";
 import ChatInput from "./ChatInput";
 import PaymentRequestModal from "./PaymentRequestModal";
-import { toggleReserveAction } from "./toggleReserveAction";
+import { toggleReserveAction, sendReserveSystemMessageAction } from "./toggleReserveAction";
 import ReviewBanner from "./ReviewBanner";
 import Toast from "@/components/common/Toast";
 
@@ -62,7 +62,22 @@ export default function ChatRoomClient({
   const handleToggleReserve = async () => {
     const next = !isReserved;
     setIsReserved(next);
-    await toggleReserveAction(postId, next);
+    try {
+      await toggleReserveAction(postId, next);
+    } catch {
+      setIsReserved(!next);
+      setSendError("예약 상태 변경에 실패했습니다.");
+      setTimeout(() => setSendError(""), 3000);
+      return;
+    }
+    if (activeChatId !== null) {
+      try {
+        await sendReserveSystemMessageAction(postId, next, activeChatId);
+      } catch {
+        setSendError("채팅 알림 전송에 실패했습니다.");
+        setTimeout(() => setSendError(""), 3000);
+      }
+    }
   };
 
   const [paymentRequestBlocked, setPaymentRequestBlocked] = useState(false);
