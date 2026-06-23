@@ -32,7 +32,7 @@ function RecenterButton() {
 
   return (
     <button
-      className="flex h-11 w-11 items-center justify-center rounded-[13px] border border-black/8 bg-white/92 shadow-md backdrop-blur-md hover:bg-white"
+      className="flex h-11 w-11 items-center justify-center rounded-[13px] border border-black/8 bg-white/92 shadow-md backdrop-blur-md transition-colors hover:bg-teal-50 hover:border-teal-300 hover:text-teal-600"
       onClick={handleRecenter}
     >
       <Crosshair className="h-5 w-5 text-slate-900" strokeWidth={2} />
@@ -50,10 +50,13 @@ export default function GoPage() {
   const { meetups, loading } = useLiveMeetups({ topicFilter });
 
   // 실시간 목록과 동기화된 선택 모임 — 참여자 수/상태 변경이 패널에 즉시 반영됨
-  const selectedMeetup = meetups.find((m) => m.post_id === selectedMeetupId) ?? null;
+  const selectedMeetup =
+    meetups.find((m) => m.post_id === selectedMeetupId) ?? null;
 
   const handlePinClick = (meetup: Meetup) => {
-    setSelectedMeetupId((prev) => (prev === meetup.post_id ? null : meetup.post_id));
+    setSelectedMeetupId((prev) =>
+      prev === meetup.post_id ? null : meetup.post_id,
+    );
   };
 
   const handleCreated = (_postId: number) => {
@@ -63,9 +66,7 @@ export default function GoPage() {
 
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
-      {/* 지도 전체 화면 (nav 60px 제외) */}
-      <div className="relative overflow-hidden" style={{ height: "calc(100vh - 60px)" }}>
-
+      <div className="relative h-[calc(100vh-48px)] overflow-hidden md:h-[calc(100vh-110px)]">
         {/* Google Maps */}
         <Map
           id={MAP_ID}
@@ -73,10 +74,12 @@ export default function GoPage() {
           defaultCenter={MANILA_CENTER}
           defaultZoom={14}
           gestureHandling="greedy"
-          zoomControl={true}
-          disableDefaultUI={false}
+          disableDefaultUI={true}
           className="h-full w-full"
-          onClick={() => { setSelectedMeetupId(null); setShowList(false); }}
+          onClick={() => {
+            setSelectedMeetupId(null);
+            setShowList(false);
+          }}
         >
           {meetups.map((m) => (
             <MeetupPin
@@ -109,12 +112,13 @@ export default function GoPage() {
           </span>
         </button>
 
-        {/* ── 우측 하단: FAB + 내 위치 ── */}
-        <div className="absolute bottom-7 right-7 z-10 flex flex-col items-end gap-3">
-          {/* 내 위치 버튼 */}
+        {/* ── 내 위치 버튼 (좌측 하단) ── */}
+        <div className="absolute bottom-7 left-5 z-10">
           <RecenterButton />
+        </div>
 
-          {/* 번개모임 만들기 FAB */}
+        {/* ── 우측 하단: FAB ── */}
+        <div className="absolute bottom-7 right-7 z-10">
           <button
             onClick={() => setShowCreate(true)}
             className="flex items-center gap-2 rounded-[16px] bg-slate-900 px-5 py-3.5 text-[14.5px] font-bold text-white shadow-[0_8px_28px_rgba(15,23,42,.4)] hover:bg-slate-800 active:scale-95 transition-all"
