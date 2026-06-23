@@ -120,6 +120,13 @@ export default function FloatingChatWidget() {
       }
     : null;
 
+  const handleClose = () => {
+    setView("list");
+    setSelectedChatId(null);
+    setPendingNewChatMeta(null);
+    setWidgetOpen(false);
+  };
+
   return (
     <div className="flex flex-col items-end gap-2">
       {isOpen && (
@@ -144,6 +151,7 @@ export default function FloatingChatWidget() {
                 setPendingNewChatMeta(null);
                 setView("room");
               }}
+              onClose={handleClose}
             />
           ) : view === "room" &&
             (selectedChatId !== null || pendingNewChatMeta !== null) ? (
@@ -186,7 +194,7 @@ export default function FloatingChatWidget() {
           ) : null}
         </div>
       )}
-      <div className={view === "room" ? "max-md:hidden" : ""}>
+      <div className={isOpen ? "max-md:hidden" : ""}>
         <ChatBubbleButton
           isOpen={isOpen}
           onToggle={() => {
