@@ -159,3 +159,18 @@
     @apply font-sans;
   }
 }
+
+/* 새로고침으로 채팅 오버레이를 복원할 때, 하이드레이션 전에 SSR된 밑 페이지가
+   잠깐 보이는 깜빡임을 막는 부팅 커버.
+   layout.tsx의 인라인 스크립트가 html[data-chat-boot]를 설정하고,
+   위젯이 마운트되면 GlobalLayout이 이 속성을 제거한다.
+   오버레이가 전체화면이 되는 모바일(md 미만)에서만 필요하다. */
+@media (max-width: 767px) {
+  html[data-chat-boot] body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: #fff;
+    z-index: 60;
+  }
+}
