@@ -9,6 +9,8 @@ import JobAuthorInfo from "./_components/JobAuthorInfo";
 import JobContent from "./_components/JobContent";
 import CompanyInfo from "./_components/CompanyInfo";
 import { viewCountUp } from "@/services/view";
+import { createClient } from "@/utils/supabase/server";
+import RelatedItemsCarousel, { type RelatedItem } from "@/components/common/RelatedItemsCarousel";
 
 export default async function JobDetailPage({
   params,
@@ -29,6 +31,21 @@ export default async function JobDetailPage({
   const { userId, initialLiked, initialReported } = await getUserLikeReportStatus(job.post_id);
   const t = await getTranslations("Job");
 
+  const supabase = await createClient();
+  const { data: relatedData } = await supabase
+    .from("jobs")
+    .select("id, post_id, images, salary, posts(title)")
+    .eq("location_type", job.location_type)
+    .neq("id", job.id)
+    .limit(8);
+  const relatedItems: RelatedItem[] = (relatedData ?? []).map((item) => ({
+    id: item.id,
+    href: `/job/${item.post_id}`,
+    imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
+    title: (item.posts as { title: string | null } | null)?.title ?? "",
+    priceText: `₱ ${item.salary.toLocaleString()}`,
+  }));
+
   return (
     <div className="page-container w-full py-6">
       <div className="border border-gray-200 rounded-2xl overflow-hidden divide-y divide-gray-200">
@@ -48,6 +65,7 @@ export default async function JobDetailPage({
         <JobContent job={job} />
         <CompanyInfo job={job} />
       </div>
+      <RelatedItemsCarousel title="관련 공고" items={relatedItems} />
     </div>
   );
 }
