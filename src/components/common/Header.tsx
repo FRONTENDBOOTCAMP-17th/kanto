@@ -31,6 +31,7 @@ import type { NotificationBellHandle } from "./header/NotificationBell";
 import type { User as AppUser } from "@/type/user";
 import { useTranslations } from "next-intl";
 import { useSuspended } from "@/hooks/useSuspended";
+import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 
 const HEADER_HEIGHT = 48; 
 
@@ -50,6 +51,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const profileRef = useRef<HTMLDivElement>(null);
   const notificationBellRef = useRef<NotificationBellHandle>(null);
@@ -260,7 +262,11 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
           
           {pathname === ROUTES.home && (
             <button
-              onClick={() => isSuspended ? openModal() : router.push(ROUTES.create)}
+              onClick={() => {
+                if (!user) { setShowLoginModal(true); return; }
+                if (isSuspended) { openModal(); return; }
+                router.push(ROUTES.create);
+              }}
               className="absolute right-0 flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition-colors"
             >
               <SquarePen className="w-4 h-4" />
@@ -341,6 +347,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
         )}
       </div>
       <SuspendedBanner />
+      <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <ConfirmModal
         isOpen={isLogoutModalOpen}
         title={t("logoutConfirm")}

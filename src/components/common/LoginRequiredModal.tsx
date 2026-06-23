@@ -1,5 +1,6 @@
 "use client";
 
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
@@ -21,7 +22,7 @@ export function LoginRequiredModal({ isOpen, onClose }: LoginRequiredModalProps)
     router.push("/login");
   };
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       onClick={onClose}
@@ -50,6 +51,7 @@ export function LoginRequiredModal({ isOpen, onClose }: LoginRequiredModalProps)
           {t("goToLogin")}
         </Button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

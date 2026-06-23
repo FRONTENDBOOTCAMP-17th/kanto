@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { RentalWithPost } from "@/type/rental/rentalDetail";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import findChat from "@/services/chat/postChat";
 import { useChatStore } from "@/store/chatStore";
 import { useSuspended } from "@/hooks/useSuspended";
+import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 
 export default function RentSellorInfo({
   rental,
@@ -18,10 +20,12 @@ export default function RentSellorInfo({
 }) {
   const isOwner = userId !== undefined && userId === rental.posts.users?.id;
   const { isSuspended, openModal } = useSuspended();
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const handleChat = async () => {
+    if (!userId) { setShowLoginModal(true); return; }
     if (isSuspended) { openModal(); return; }
-    if (!userId || !rental.posts.users || rental.post_id === null) return;
+    if (!rental.posts.users || rental.post_id === null) return;
     const chatId = await findChat(userId, rental.posts.users.id, rental.post_id);
     if (chatId !== null) {
       useChatStore.getState().openWidget(chatId);
@@ -87,6 +91,7 @@ export default function RentSellorInfo({
           {t("chat")}
         </Button>
       )}
+      <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </>
   );
 }

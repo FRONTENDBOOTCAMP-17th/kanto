@@ -93,7 +93,11 @@ export default function InteractionButtons({
         <Button
           size={size}
           aria-label={t("report")}
-          onClick={() => { if (isSuspended) { openModal(); return; } setShowReportModal(true); }}
+          onClick={() => {
+            if (!userId) { setShowLoginModal(true); return; }
+            if (isSuspended) { openModal(); return; }
+            setShowReportModal(true);
+          }}
           className="cursor-pointer border rounded-lg bg-white hover:bg-red-300/50 border-gray-200"
         >
           <Siren className="text-black" />
