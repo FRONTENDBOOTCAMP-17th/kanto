@@ -62,13 +62,18 @@ export const NotificationBell = forwardRef<NotificationBellHandle, Props>(
 
     const handleNotificationClick = async (n: Notification) => {
       await markAsRead(n);
-      setIsOpen(false);
       if (n.related_type === "chat" && n.related_id) {
+        setIsOpen(false);
         useChatStore.getState().openWidget(n.related_id);
         return;
       }
       const href = getNotificationHref(n);
-      if (href) router.push(href);
+      if (href) {
+        setIsOpen(false);
+        router.push(href);
+      }
+      // 이동할 곳이 없는 알림(정지/해제 등)은 드롭다운을 유지하고
+      // 읽음 처리된 항목만 미읽음 필터에서 사라진다.
     };
 
     return (
