@@ -89,7 +89,7 @@ function ProfileForm({
         <h1 className="text-base font-semibold text-gray-900">{t("title")}</h1>
       </div>
 
-      <div className="md:flex md:p-8 p-0 bg-white md:rounded-xl md:border md:border-gray-100">
+      <div className="md:flex md:p-8 p-0 bg-white md:rounded-b-xl md:border md:border-gray-100">
         <ProfileAside activeTab={activeTab} onTabChange={setActiveTab} />
 
         
