@@ -42,9 +42,9 @@ export default function JobTitle({
     <div className="p-6 space-y-4">
       <button
         onClick={() => router.push(fromPage ? `/job?page=${fromPage}` : "/job")}
-        className="flex items-center gap-2 text-gray-500 hover:text-gray-700 cursor-pointer"
+        className="flex gap-2 cursor-pointer"
       >
-        <MoveLeft className="w-5 h-5" />
+        <MoveLeft />
         {t("backToList")}
       </button>
       <div className="flex items-start justify-between gap-2">

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { UserCircle2, Phone, Mail } from "lucide-react";
+import { User, Phone, Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import findChat from "@/services/chat/postChat";
@@ -58,7 +58,9 @@ export default function JobAuthorInfo({
             className="rounded-full object-cover w-10 h-10 shrink-0"
           />
         ) : (
-          <UserCircle2 className="w-10 h-10 text-gray-400 shrink-0" />
+          <div className="w-10 h-10 rounded-full bg-purple-400 flex items-center justify-center shrink-0">
+            <User className="w-5 h-5 text-white" />
+          </div>
         )}
         <div>
           <p className="font-medium md:text-lg">{name}</p>
