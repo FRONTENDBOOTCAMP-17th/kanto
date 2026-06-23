@@ -11,6 +11,9 @@ import ChatList from "./chatPanel/ChatList";
 import ChatRoom from "./chatPanel/room/ChatRoom";
 import type { ChatWithUsers } from "@/type/chat/chat";
 
+// 아직 생성 전(첫 메시지 전)인 새 채팅 초안을 새로고침 동안 보관하는 키
+const NEW_CHAT_DRAFT_KEY = "chatWidget:newChatDraft";
+
 export default function FloatingChatWidget() {
   const t = useTranslations("Chat");
   const { isLoggedIn, user: authUser } = useAuthStore();
@@ -108,6 +111,81 @@ export default function FloatingChatWidget() {
     }, 0);
     setUnreadCount(total);
   }, [chats, currentUserId, setUnreadCount]);
+
+  // 새로고침 시 열려 있던 1:1 채팅방/새 채팅 초안을 복원한다.
+  // - 생성된 채팅방: URL의 ?chat=<id> (openWidget 경로)
+  // - 첫 메시지 전 새 채팅 초안: sessionStorage (openNewChat 경로)
+  const restoredRef = useRef(false);
+  useEffect(() => {
+    if (restoredRef.current || !isLoggedIn) return;
+    restoredRef.current = true;
+
+    const chatParam = new URLSearchParams(window.location.search).get("chat");
+    const id = Number(chatParam);
+    if (chatParam && Number.isInteger(id) && id > 0) {
+      useChatStore.getState().openWidget(id);
+      return;
+    }
+
+    const draftRaw = sessionStorage.getItem(NEW_CHAT_DRAFT_KEY);
+    if (draftRaw) {
+      try {
+        useChatStore
+          .getState()
+          .openNewChat(JSON.parse(draftRaw) as PendingNewChat);
+      } catch {
+        sessionStorage.removeItem(NEW_CHAT_DRAFT_KEY);
+      }
+    }
+  }, [isLoggedIn]);
+
+  // 열려 있는 1:1 채팅방을 URL(?chat=<id>)에 반영해 새로고침에도 유지되게 한다.
+  // (언더라잉 페이지를 재요청하지 않도록 history API로 URL만 갱신)
+  const urlSyncReadyRef = useRef(false);
+  useEffect(() => {
+    if (!urlSyncReadyRef.current) {
+      urlSyncReadyRef.current = true; // 최초 마운트는 복원 로직에 맡기고 건너뛴다
+      return;
+    }
+    const params = new URLSearchParams(window.location.search);
+    const inRoom = isOpen && view === "room" && selectedChatId !== null;
+    if (inRoom) {
+      if (params.get("chat") === String(selectedChatId)) return;
+      params.set("chat", String(selectedChatId));
+    } else {
+      if (!params.has("chat")) return;
+      params.delete("chat");
+    }
+    const query = params.toString();
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`,
+    );
+  }, [isOpen, view, selectedChatId]);
+
+  // 아직 생성 전인 새 채팅 초안을 sessionStorage에 저장해 새로고침에도 유지한다.
+  // (생성되면 selectedChatId가 채워지며 ?chat 으로 전환되고, 닫히면 초안을 비운다)
+  const draftSyncReadyRef = useRef(false);
+  useEffect(() => {
+    if (!draftSyncReadyRef.current) {
+      draftSyncReadyRef.current = true; // 최초 마운트는 복원 로직에 맡기고 건너뛴다
+      return;
+    }
+    const isNewDraft =
+      isOpen &&
+      view === "room" &&
+      selectedChatId === null &&
+      pendingNewChatMeta !== null;
+    if (isNewDraft) {
+      sessionStorage.setItem(
+        NEW_CHAT_DRAFT_KEY,
+        JSON.stringify(pendingNewChatMeta),
+      );
+    } else {
+      sessionStorage.removeItem(NEW_CHAT_DRAFT_KEY);
+    }
+  }, [isOpen, view, selectedChatId, pendingNewChatMeta]);
 
   if (!isLoggedIn) return null;
 
