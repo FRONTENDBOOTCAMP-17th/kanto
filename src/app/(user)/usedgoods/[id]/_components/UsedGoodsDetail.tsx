@@ -17,6 +17,7 @@ import { useSuspended } from "@/hooks/useSuspended";
 import InteractionButtons from "@/components/common/InteractionButtons";
 import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarresel";
 import { Button } from "@/components/ui/button";
+import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 
 type UsedGoods = Tables<"used_goods"> & {
   posts: Tables<"posts"> & {
@@ -48,6 +49,7 @@ export default function UsedGoodsDetail({
   const isOwner = storeUser?.auth_id === data.posts.users?.auth_id;
   const images = (data.images as string[]) ?? [];
   const [likeCount, setLikeCount] = useState(data.posts.like_count ?? 0);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const { isSuspended, openModal } = useSuspended();
 
   const accession = data.posts.users?.created_at
@@ -55,8 +57,9 @@ export default function UsedGoodsDetail({
     : null;
 
   const handleChat = async () => {
+    if (!userId) { setShowLoginModal(true); return; }
     if (isSuspended) { openModal(); return; }
-    if (!userId || !data.posts.users) return;
+    if (!data.posts.users) return;
     const chatId = await findChat(userId, data.posts.users.id, data.post_id);
     if (chatId !== null) {
       useChatStore.getState().openWidget(chatId);
@@ -284,6 +287,8 @@ export default function UsedGoodsDetail({
       </div>
 
       
+      <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+
       {relatedData && relatedData.length > 0 && (
         <div className="mt-2 md:mt-4 border border-gray-200 rounded-2xl p-6">
           <h2 className="text-xl font-semibold mb-4">{t("related")}</h2>
