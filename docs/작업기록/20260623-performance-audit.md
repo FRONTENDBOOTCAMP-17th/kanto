@@ -112,4 +112,43 @@
 ### 후속
 - [ ] C-3 중복 정책 병합(리뷰 회차).
 - [ ] 데이터 증가 후 `unused_index` 재평가(실제 사용 시작되면 INFO 사라짐).
-- 권장 다음 단계: B(진짜 페이지네이션/필터) 또는 D(캐싱).
+
+---
+
+## B 진행 로그 (페이지네이션/필터) — 2026-06-23
+
+### B1. 목록 3종 DB 페이지네이션 + DB 필터
+- 서비스 시그니처 변경: `getUsedGoodsList`/`getJobList`/`getRentalList` → `(filter, pagination?) => { posts, total }`.
+  - `used_goods!inner`/`jobs!inner`/`rentals!inner` 로 바꿔 자식 컬럼 필터를 DB로 push:
+    - 카테고리/지역(`used_goods.category`,`used_goods.location_type`), 고용형태/지역(`jobs.employee_type`,`jobs.location_type`), 방종류/지역(`rentals.room_type`,`rentals.location`).
+  - `count: "exact"` + `.range()` 로 진짜 페이지네이션. `created_at`+`id` 정렬로 경계 안정성 확보.
+  - location 값은 URL string → `TradeLocation` 캐스팅(드롭다운으로 값 제한됨).
+- 호출처 6곳 갱신: `usedgoods/page`,`job/page`,`rental/page`(페이저 `total` 사용), `myposts/page`,`favorites/page`(DB 페이지네이션으로 전환, `offset` 슬라이스 제거).
+- 효과: "12개 보여주려 전체 테이블 + 조인 + 이미지 페치 후 JS slice" → 페이지당 정확히 N건만 페치. JS 필터 제거.
+- 검증: `tsc` 0, `eslint` 0.
+
+### B2. 인기목록 전용 소량 페치
+- `getPopularList`(main): 종류별 전체 → `{page:1,pageSize:4}` 4건씩만. 반환을 `{posts}`로 풀어 `Popular.tsx` 계약 유지.
+- `getPopularJobs`: 전체 jobs 스캔 → `not("jobs.popular_count","is",null)` 로 큐레이션된 소량만 DB에서 추린 뒤 JS 정렬(부모를 자식 컬럼으로 정렬은 PostgREST 불가).
+
+### B3. Admin 목록 — **보류**
+- `getAdminPosts`/`getAdminUsers` 는 admin 클라이언트 컴포넌트가 클라이언트 측 페이지네이션 → 서버 페이지네이션 전환은 UI(페이저 URL 연동)까지 손봐야 함. admin 저트래픽이라 ROI 낮아 별도 회차로 보류.
+
+---
+
+## D 진행 로그 (캐싱) — 2026-06-23, **의도적 보류 + 사유**
+
+조사 결과 **안전하게 출시 가능한 코드 캐싱이 없음**을 확인하여, cosmetic 변경으로 흉내내지 않고 설계만 남긴다.
+
+- 상세/목록 페이지는 per-user 데이터(getSessionUser/getLikeList, 쿠키 의존)와 공개 데이터가 섞여 **세그먼트 단위 ISR 불가**(쿠키 read → 항상 dynamic).
+- 공개 본문만 `unstable_cache`로 캐싱하려면 **태그 무효화 배선**이 필요한데, 게시글 변경 지점이 흩어져 있어 누락 시 **가격/판매완료(is_sold)/예약(is_reserved) stale = 거래 플랫폼 치명적 버그**:
+  - 클라이언트 폼(`useCreateJobForm`, `CreateUsedGoodsForm.tsx`, `RentalCreateForm.tsx`, `DeleteButton.tsx`)은 브라우저 supabase 클라이언트 직접 호출 → `revalidateTag` 불가(서버 액션 아님).
+  - `paymentActions`(is_sold)·`toggleReserveAction`(is_reserved)은 **채팅 패널 소유** → 채팅 담당자 작업과 겹침.
+- `usedgoods/[id]` 의 `force-dynamic` 제거도 **순효과 없음**(쿠키 read로 어차피 dynamic) → 안 건드림.
+- **권장(별도 회차)**: ① 게시글 변경을 서버 액션으로 일원화 → ② 공개 detail/list 페치를 anon 클라이언트 + `unstable_cache`(tag `post-{id}`) → ③ 모든 변경 액션에 `revalidateTag`. 채팅 소유 액션은 담당자와 조율. runtime 검증 가능한 환경에서 진행.
+
+### 진행 로그
+- [x] B1 목록 3종 DB 페이지네이션 + DB 필터
+- [x] B2 인기목록 전용 소량 페치
+- [ ] B3 admin 서버 페이지네이션(보류)
+- [~] D 캐싱 — 안전 범위 없음 확인, 설계만 문서화(보류)
