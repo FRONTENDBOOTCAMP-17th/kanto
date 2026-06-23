@@ -1,5 +1,4 @@
 import { loadMoreMessagesAction } from "@/components/common/chat/chatPanel/room/actions";
-import { supabase } from "@/lib/supabase";
 import { MessageWithSender } from "@/type/chat/message";
 import { SellerInfo } from "@/type/user";
 import { useEffect, useRef, useState } from "react";
@@ -26,18 +25,6 @@ export function useChatMessages({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const wasLoadingMore = useRef(false);
   const isInitialScroll = useRef(true);
-
-  useEffect(() => {
-    if (chatId === null) return;
-    (async () => {
-      await supabase
-        .from("messages")
-        .update({ is_read: true })
-        .eq("chat_id", chatId)
-        .neq("sender_id", currentUser.id)
-        .eq("is_read", false);
-    })();
-  }, [chatId, currentUser.id]);
 
   useEffect(() => {
     if (wasLoadingMore.current) {
