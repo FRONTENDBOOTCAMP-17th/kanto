@@ -1,4 +1,20 @@
 {
+  "PublicProfile": {
+    "title": "Profile",
+    "moreMenu": "Higit pang menu",
+    "report": "I-report",
+    "block": "I-block",
+    "blocked": "Naka-block",
+    "blockConfirmMessage": "I-block si {name}?",
+    "identityVerified": "Beripikadong ID",
+    "identityUnverified": "Hindi Beripikadong ID",
+    "neighborhoodVerified": "Beripikadong Lugar",
+    "neighborhoodUnverified": "Hindi Beripikadong Lugar",
+    "mangoIndex": "Mango Index",
+    "preparing": "Malapit na",
+    "posts": "Mga Post",
+    "reviews": "Mga Review"
+  },
   "Header": {
     "nav": {
       "usedgoods": "Palengke",
@@ -186,6 +202,7 @@
     "blockConfirmMessage": "I-block si {name}? Aalis ka sa chat na ito pagkatapos i-block.",
     "leave": "Umalis sa chat",
     "moreMenu": "Higit pang menu",
+    "viewProfile": "Tingnan ang profile ni {name}",
     "messageInputLabel": "Message input",
     "messageSend": "Ipadala ang mensahe",
     "inputPlaceholder": "Mag-type ng mensahe...",

@@ -1,4 +1,20 @@
 {
+  "PublicProfile": {
+    "title": "프로필",
+    "moreMenu": "더보기 메뉴",
+    "report": "신고하기",
+    "block": "차단하기",
+    "blocked": "차단됨",
+    "blockConfirmMessage": "{name}님을 차단하시겠어요?",
+    "identityVerified": "본인인증",
+    "identityUnverified": "본인인증 안함",
+    "neighborhoodVerified": "동네인증",
+    "neighborhoodUnverified": "동네인증 안함",
+    "mangoIndex": "망고지수",
+    "preparing": "준비 중",
+    "posts": "게시글",
+    "reviews": "후기"
+  },
   "Header": {
     "nav": {
       "usedgoods": "중고거래",
@@ -186,6 +202,7 @@
     "blockConfirmMessage": "{name}님을 차단하시겠어요? 차단하면 채팅방을 나가게 됩니다.",
     "leave": "채팅방 나가기",
     "moreMenu": "더보기 메뉴",
+    "viewProfile": "{name}님 프로필 보기",
     "messageInputLabel": "메시지 입력",
     "messageSend": "메시지 전송",
     "inputPlaceholder": "메시지를 입력하세요...",
