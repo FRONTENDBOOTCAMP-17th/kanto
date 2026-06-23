@@ -1,16 +1,25 @@
 "use client";
 
-// 번개모임 생성 모달 (지도 클릭 → 위치 선택 + 폼 입력)
+// 번개모임 생성 모달 (장소 자동완성 + 폼 입력)
 
 import { useState } from "react";
-import { X, Zap, MapPin, Loader2 } from "lucide-react";
-import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
+import { X, Zap, Loader2 } from "lucide-react";
+import { APIProvider } from "@vis.gl/react-google-maps";
 import { TOPIC_OPTIONS } from "@/constants/meetupTopics";
-import { useLocationPicker } from "@/hooks/go/useLocationPicker";
+import { PlaceAutocomplete } from "@/components/go/PlaceAutocomplete";
 import { createMeetup } from "@/services/go/go";
 import type { MeetupTopicKey } from "@/constants/meetupTopics";
+import type { PickedLocation } from "@/type/go";
 
-const MANILA_CENTER = { lat: 14.5547, lng: 121.0244 };
+// 드롭다운 옵션
+const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0")); // "00".."23"
+const MINUTES = ["00", "10", "20", "30", "40", "50"];
+const PARTICIPANTS = Array.from({ length: 29 }, (_, i) => i + 2); // 2..30
+const CURRENT_YEAR = new Date().getFullYear();
+const YEARS = [CURRENT_YEAR, CURRENT_YEAR + 1]; // 모임은 근시일 — 올해/내년
+const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1); // 1..12
+
+const toMinutes = (h: string, m: string) => Number(h) * 60 + Number(m);
 
 interface MeetupCreateModalProps {
   onClose: () => void;
@@ -18,30 +27,79 @@ interface MeetupCreateModalProps {
 }
 
 export function MeetupCreateModal({ onClose, onCreated }: MeetupCreateModalProps) {
-  const { location, geocoding, handleMapClick, reset } = useLocationPicker();
+  const [location, setLocation] = useState<PickedLocation | null>(null);
 
   const [form, setForm] = useState({
     title: "",
     topic: "" as MeetupTopicKey | "",
-    date: "",
-    startTime: "",
-    endTime: "",
+    year: "",
+    month: "",
+    day: "",
+    startHour: "",
+    startMinute: "",
+    endHour: "",
+    endMinute: "",
     locationDetail: "",
     description: "",
-    maxParticipants: "",
+    maxParticipants: "6",
   });
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
 
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setForm((f) => ({ ...f, [k]: e.target.value }));
+  const set =
+    (k: keyof typeof form) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+      setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  // 년/월 변경 → 선택일이 말일을 넘으면 일 초기화 (effect 대신 핸들러에서 처리)
+  const setDatePart =
+    (k: "year" | "month") => (e: React.ChangeEvent<HTMLSelectElement>) =>
+      setForm((f) => {
+        const next = { ...f, [k]: e.target.value };
+        const dim = next.year && next.month ? new Date(Number(next.year), Number(next.month), 0).getDate() : 31;
+        if (next.day && Number(next.day) > dim) next.day = "";
+        return next;
+      });
+
+  // 시작 변경 → 종료가 시작 이하이면 종료 초기화
+  const setStart =
+    (k: "startHour" | "startMinute") => (e: React.ChangeEvent<HTMLSelectElement>) =>
+      setForm((f) => {
+        const next = { ...f, [k]: e.target.value };
+        if (
+          next.startHour !== "" && next.startMinute !== "" &&
+          next.endHour !== "" && next.endMinute !== "" &&
+          toMinutes(next.endHour, next.endMinute) <= toMinutes(next.startHour, next.startMinute)
+        ) {
+          next.endHour = "";
+          next.endMinute = "";
+        }
+        return next;
+      });
+
+  // 선택한 년/월의 말일 (윤년·월별 일수 반영)
+  const daysInMonth =
+    form.year && form.month ? new Date(Number(form.year), Number(form.month), 0).getDate() : 31;
+  const DAYS = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+  // 종료는 시작 이후만 — 드롭다운 옵션을 시작 이후로 제한
+  const startSet = form.startHour !== "" && form.startMinute !== "";
+  const endHourOptions = startSet ? HOURS.filter((h) => Number(h) >= Number(form.startHour)) : HOURS;
+  const endMinuteOptions =
+    startSet && form.endHour === form.startHour
+      ? MINUTES.filter((m) => Number(m) > Number(form.startMinute))
+      : MINUTES;
 
   const isValid =
     form.title.trim() &&
     form.topic &&
-    form.date &&
-    form.startTime &&
-    form.endTime &&
+    form.year &&
+    form.month &&
+    form.day &&
+    form.startHour &&
+    form.startMinute &&
+    form.endHour &&
+    form.endMinute &&
     form.description.trim() &&
     location;
 
@@ -53,9 +111,9 @@ export function MeetupCreateModal({ onClose, onCreated }: MeetupCreateModalProps
         title: form.title.trim(),
         topic: form.topic as MeetupTopicKey,
         description: form.description.trim(),
-        date: form.date,
-        startTime: form.startTime,
-        endTime: form.endTime,
+        date: `${form.year}-${form.month.padStart(2, "0")}-${form.day.padStart(2, "0")}`,
+        startTime: `${form.startHour}:${form.startMinute}`,
+        endTime: `${form.endHour}:${form.endMinute}`,
         lat: location!.lat,
         lng: location!.lng,
         address: location!.address,
@@ -64,12 +122,15 @@ export function MeetupCreateModal({ onClose, onCreated }: MeetupCreateModalProps
       });
       setDone(true);
       setTimeout(() => onCreated(postId), 1800);
-    } catch (e: any) {
-      alert(e.message ?? "생성 중 오류가 발생했습니다");
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "생성 중 오류가 발생했습니다");
     } finally {
       setSubmitting(false);
     }
   };
+
+  const selectClass =
+    "w-full rounded-[11px] border-[1.5px] border-slate-200 bg-white px-2.5 py-3 text-[14px] text-slate-900 outline-none focus:border-teal-400";
 
   return (
     <>
@@ -106,50 +167,15 @@ export function MeetupCreateModal({ onClose, onCreated }: MeetupCreateModalProps
             {/* 폼 */}
             <div className="flex flex-1 flex-col gap-5 overflow-y-auto px-6 py-5">
 
-              {/* 지도 — 클릭으로 위치 선택 */}
+              {/* 장소 — 주소/장소명 자동완성 */}
               <div>
                 <label className="mb-2 block text-[13px] font-bold text-slate-600">
                   장소 선택 <span className="text-red-500">*</span>
-                  <span className="ml-1.5 font-normal text-slate-400">(지도를 클릭해 위치를 지정하세요)</span>
+                  <span className="ml-1.5 font-normal text-slate-400">(장소명이나 주소를 검색하세요)</span>
                 </label>
-                <div className="relative h-[140px] overflow-hidden rounded-[14px] border-[1.5px] border-slate-200">
-                  <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
-                    <Map
-                      mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID}
-                      defaultCenter={MANILA_CENTER}
-                      defaultZoom={13}
-                      gestureHandling="greedy"
-                      zoomControl={true}
-                      disableDefaultUI={false}
-                      onClick={handleMapClick}
-                      style={{ width: "100%", height: "100%" }}
-                    >
-                      {location && (
-                        <AdvancedMarker position={{ lat: location.lat, lng: location.lng }}>
-                          <svg width="28" height="36" viewBox="-14 -36 28 36">
-                            <path d="M 0 0 C -8 -8 -14 -14 -14 -22 A 14 14 0 1 1 14 -22 C 14 -14 8 -8 0 0 Z" fill="#14b8a6" />
-                            <circle cx="0" cy="-24" r="6" fill="white" />
-                          </svg>
-                        </AdvancedMarker>
-                      )}
-                    </Map>
-                  </APIProvider>
-
-                  {geocoding && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white/70">
-                      <Loader2 className="h-5 w-5 animate-spin text-teal-500" />
-                    </div>
-                  )}
-                </div>
-
-                {location ? (
-                  <div className="mt-2 flex items-center gap-2 rounded-[10px] bg-teal-50 px-3 py-2.5">
-                    <MapPin className="h-4 w-4 flex-shrink-0 text-teal-600" strokeWidth={2} />
-                    <span className="text-[13px] font-semibold text-teal-800">{location.address}</span>
-                  </div>
-                ) : (
-                  <p className="mt-1.5 text-[12.5px] text-slate-400">아직 위치가 선택되지 않았습니다</p>
-                )}
+                <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
+                  <PlaceAutocomplete selected={location} onSelect={setLocation} />
+                </APIProvider>
               </div>
 
               {/* 제목 */}
@@ -192,49 +218,83 @@ export function MeetupCreateModal({ onClose, onCreated }: MeetupCreateModalProps
                 </div>
               </div>
 
-              {/* 날짜 / 시간 */}
-              <div className="grid grid-cols-3 gap-3">
-                <div className="col-span-3">
+              {/* 날짜 (년 / 월 / 일 드롭다운) */}
+              <div>
+                <label className="mb-2 block text-[13px] font-bold text-slate-600">
+                  날짜 <span className="text-red-500">*</span>
+                </label>
+                <div className="grid grid-cols-3 gap-1.5">
+                  <select value={form.year} onChange={setDatePart("year")} className={selectClass}>
+                    <option value="" disabled>년</option>
+                    {YEARS.map((y) => (
+                      <option key={y} value={y}>{y}년</option>
+                    ))}
+                  </select>
+                  <select value={form.month} onChange={setDatePart("month")} className={selectClass}>
+                    <option value="" disabled>월</option>
+                    {MONTHS.map((m) => (
+                      <option key={m} value={m}>{m}월</option>
+                    ))}
+                  </select>
+                  <select value={form.day} onChange={set("day")} className={selectClass}>
+                    <option value="" disabled>일</option>
+                    {DAYS.map((d) => (
+                      <option key={d} value={d}>{d}일</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* 시작 / 종료 시간 (시 + 분 드롭다운, 24시간제) */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
                   <label className="mb-2 block text-[13px] font-bold text-slate-600">
-                    날짜 <span className="text-red-500">*</span>
+                    시작 <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="date"
-                    value={form.date}
-                    onChange={set("date")}
-                    className="w-full rounded-[11px] border-[1.5px] border-slate-200 px-3.5 py-3 text-[14px] text-slate-900 outline-none focus:border-teal-400"
-                  />
+                  <div className="flex items-center gap-1.5">
+                    <select value={form.startHour} onChange={setStart("startHour")} className={selectClass}>
+                      <option value="" disabled>시</option>
+                      {HOURS.map((h) => (
+                        <option key={h} value={h}>{parseInt(h)}시</option>
+                      ))}
+                    </select>
+                    <select value={form.startMinute} onChange={setStart("startMinute")} className={selectClass}>
+                      <option value="" disabled>분</option>
+                      {MINUTES.map((m) => (
+                        <option key={m} value={m}>{m}분</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
                 <div>
-                  <label className="mb-2 block text-[13px] font-bold text-slate-600">시작</label>
-                  <input
-                    type="time"
-                    value={form.startTime}
-                    onChange={set("startTime")}
-                    className="w-full rounded-[11px] border-[1.5px] border-slate-200 px-2.5 py-3 text-[14px] text-slate-900 outline-none focus:border-teal-400"
-                  />
+                  <label className="mb-2 block text-[13px] font-bold text-slate-600">
+                    종료 <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex items-center gap-1.5">
+                    <select value={form.endHour} onChange={set("endHour")} disabled={!startSet} className={`${selectClass} disabled:bg-slate-50 disabled:text-slate-400`}>
+                      <option value="" disabled>시</option>
+                      {endHourOptions.map((h) => (
+                        <option key={h} value={h}>{parseInt(h)}시</option>
+                      ))}
+                    </select>
+                    <select value={form.endMinute} onChange={set("endMinute")} disabled={!startSet} className={`${selectClass} disabled:bg-slate-50 disabled:text-slate-400`}>
+                      <option value="" disabled>분</option>
+                      {endMinuteOptions.map((m) => (
+                        <option key={m} value={m}>{m}분</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-                <div>
-                  <label className="mb-2 block text-[13px] font-bold text-slate-600">종료</label>
-                  <input
-                    type="time"
-                    value={form.endTime}
-                    onChange={set("endTime")}
-                    className="w-full rounded-[11px] border-[1.5px] border-slate-200 px-2.5 py-3 text-[14px] text-slate-900 outline-none focus:border-teal-400"
-                  />
-                </div>
-                <div>
-                  <label className="mb-2 block text-[13px] font-bold text-slate-600">최대 인원</label>
-                  <input
-                    type="number"
-                    min={2}
-                    max={30}
-                    value={form.maxParticipants}
-                    onChange={set("maxParticipants")}
-                    placeholder="6"
-                    className="w-full rounded-[11px] border-[1.5px] border-slate-200 px-2.5 py-3 text-[14px] text-slate-900 outline-none focus:border-teal-400"
-                  />
-                </div>
+              </div>
+
+              {/* 최대 인원 (드롭다운) */}
+              <div>
+                <label className="mb-2 block text-[13px] font-bold text-slate-600">최대 인원</label>
+                <select value={form.maxParticipants} onChange={set("maxParticipants")} className={selectClass}>
+                  {PARTICIPANTS.map((n) => (
+                    <option key={n} value={n}>{n}명</option>
+                  ))}
+                </select>
               </div>
 
               {/* 상세 위치 */}
