@@ -50,7 +50,7 @@ export default function RentSellorInfo({
 
   return (
     <>
-      <h2 className="text-xl font-medium">{t("landlordInfo")}</h2>
+      <h2 className="text-xl font-semibold">{t("landlordInfo")}</h2>
       <div className="flex items-center gap-3">
         {rental.posts.users?.avatar_url ? (
           <Image

@@ -111,7 +111,7 @@ export default function UsedGoodsDetail({
               </div>
             ) : null}
           </div>
-          <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-[450px]">
+          <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-112.5">
             
             <div>
               <h2 className="text-xl font-semibold mb-3">{t("productInfo")}</h2>
@@ -165,7 +165,7 @@ export default function UsedGoodsDetail({
                 </div>
               </div>
               {!isOwner && (
-                <Button variant="teal" className="cursor-pointer w-full" onClick={handleChat}>
+                <Button variant="teal" className="cursor-pointer self-start min-w-72" onClick={handleChat}>
                   {t("chat")}
                 </Button>
               )}
@@ -226,7 +226,7 @@ export default function UsedGoodsDetail({
                 </div>
               </div>
               {!isOwner && (
-                <Button variant="teal" className="cursor-pointer w-full" onClick={handleChat}>
+                <Button variant="teal" className="cursor-pointer self-start min-w-72" onClick={handleChat}>
                   {t("chat")}
                 </Button>
               )}
