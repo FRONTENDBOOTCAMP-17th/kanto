@@ -7,7 +7,6 @@ import { useTranslations } from "next-intl";
 import { ArrowLeft, MoreVertical } from "lucide-react";
 import type { SellerInfo } from "@/type/user";
 import { useClickOutside } from "@/hooks/useClickOutside";
-import { useChatStore } from "@/store/chatStore";
 import ReportModal, { USER_REPORT_CATEGORIES } from "@/components/common/ReportModal";
 import { leaveChatAction } from "./leaveChatAction";
 import { blockUserAction } from "./blockUserAction";
@@ -36,7 +35,6 @@ export default function ChatHeader({
   const t = useTranslations("Chat");
   const tc = useTranslations("Common");
   const router = useRouter();
-  const closeWidget = useChatStore((s) => s.closeWidget);
   const [menuOpen, setMenuOpen] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
@@ -46,7 +44,6 @@ export default function ChatHeader({
   useClickOutside(menuRef, () => setMenuOpen(false));
 
   const handleOpenProfile = () => {
-    closeWidget();
     router.push(`/user/${partner.id}`);
   };
 

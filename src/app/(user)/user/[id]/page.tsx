@@ -17,15 +17,15 @@ export default async function UserProfilePage({
   const currentUserId = await getCurrentUserId();
   if (currentUserId === targetId) redirect("/profile");
 
-  const profile = await getPublicProfile(targetId);
-  if (!profile) notFound();
-
-  const [reviews, initialBlocked] = await Promise.all([
+  const [profile, reviews, initialBlocked] = await Promise.all([
+    getPublicProfile(targetId),
     getReviewsForUser(targetId),
     currentUserId
       ? hasBlockedUser(currentUserId, targetId)
       : Promise.resolve(false),
   ]);
+
+  if (!profile) notFound();
 
   return (
     <div className="bg-white md:bg-teal-50 min-h-screen">
