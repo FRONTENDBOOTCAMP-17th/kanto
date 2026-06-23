@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { after } from "next/server";
 import { getRentalDetail } from "@/services/rental/rental";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
 import BackButton from "@/app/(user)/rental/[id]/_components/BackButton";
@@ -24,9 +25,10 @@ export default async function RentalDetail({
   }
 
   const images = (rental.images as string[]) ?? [];
-  await viewCountUp(rental.post_id ?? 0);
-
   const postId = rental.post_id ?? 0;
+
+  // 조회수 증가는 응답 후로 미뤄 렌더를 막지 않는다.
+  after(() => viewCountUp(postId));
   const { userId, initialLiked, initialReported } = await getUserLikeReportStatus(postId);
 
   return (

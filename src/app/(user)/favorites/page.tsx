@@ -35,7 +35,6 @@ export default async function FavoritesPage({
     ? (type as TabType)
     : "used_goods";
   const currentPage = Number(page ?? 1);
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   const { likedIds, currentUserId } = await getLikeList(activeType);
   if (currentUserId === null) redirect("/login");
@@ -49,18 +48,19 @@ export default async function FavoritesPage({
   let totalPages = 1;
 
   if (!isEmpty) {
+    const paging = { page: currentPage, pageSize: ITEMS_PER_PAGE };
     if (activeType === "used_goods") {
-      const all = await getUsedGoodsList({ targetIds: likedIds });
-      totalPages = Math.ceil(all.length / ITEMS_PER_PAGE);
-      usedGoods = all.slice(offset, offset + ITEMS_PER_PAGE);
+      const { posts, total } = await getUsedGoodsList({ targetIds: likedIds }, paging);
+      totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+      usedGoods = posts;
     } else if (activeType === "jobs") {
-      const all = await getJobList({ targetIds: likedIds });
-      totalPages = Math.ceil(all.length / ITEMS_PER_PAGE);
-      jobs = all.slice(offset, offset + ITEMS_PER_PAGE);
+      const { posts, total } = await getJobList({ targetIds: likedIds }, paging);
+      totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+      jobs = posts;
     } else {
-      const all = await getRentalList({ targetIds: likedIds });
-      totalPages = Math.ceil(all.length / ITEMS_PER_PAGE);
-      rentals = all.slice(offset, offset + ITEMS_PER_PAGE);
+      const { posts, total } = await getRentalList({ targetIds: likedIds }, paging);
+      totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+      rentals = posts;
     }
   }
 
