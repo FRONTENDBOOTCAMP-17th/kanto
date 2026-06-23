@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       banned_keywords: {
@@ -639,8 +664,8 @@ export type Database = {
             foreignKeyName: "meetup_participants_meetup_post_id_fkey"
             columns: ["meetup_post_id"]
             isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
+            referencedRelation: "meetups"
+            referencedColumns: ["post_id"]
           },
           {
             foreignKeyName: "meetup_participants_user_id_fkey"
@@ -783,8 +808,10 @@ export type Database = {
           handled_at: string | null
           handled_by: number | null
           id: number
+          is_popular: boolean | null
           is_reserved: boolean
           is_sold: boolean
+          kpps_score: number | null
           like_count: number
           post_type: string
           status: string
@@ -798,8 +825,10 @@ export type Database = {
           handled_at?: string | null
           handled_by?: number | null
           id?: number
+          is_popular?: boolean | null
           is_reserved?: boolean
           is_sold?: boolean
+          kpps_score?: number | null
           like_count?: number
           post_type: string
           status?: string
@@ -813,8 +842,10 @@ export type Database = {
           handled_at?: string | null
           handled_by?: number | null
           id?: number
+          is_popular?: boolean | null
           is_reserved?: boolean
           is_sold?: boolean
+          kpps_score?: number | null
           like_count?: number
           post_type?: string
           status?: string
@@ -1255,6 +1286,42 @@ export type Database = {
           },
         ]
       }
+      user_trust_history: {
+        Row: {
+          grade_level: number
+          kts_score: number
+          user_id: number
+          week_date: string
+        }
+        Insert: {
+          grade_level: number
+          kts_score: number
+          user_id: number
+          week_date: string
+        }
+        Update: {
+          grade_level?: number
+          kts_score?: number
+          user_id?: number
+          week_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_trust_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_trust_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           alert_chat: boolean | null
@@ -1269,6 +1336,8 @@ export type Database = {
           email: string | null
           id: number
           interest_categories: string[] | null
+          kts_grade: string | null
+          kts_score: number | null
           like_count: number
           name: string
           phone: string | null
@@ -1292,6 +1361,8 @@ export type Database = {
           email?: string | null
           id?: number
           interest_categories?: string[] | null
+          kts_grade?: string | null
+          kts_score?: number | null
           like_count?: number
           name: string
           phone?: string | null
@@ -1315,6 +1386,8 @@ export type Database = {
           email?: string | null
           id?: number
           interest_categories?: string[] | null
+          kts_grade?: string | null
+          kts_score?: number | null
           like_count?: number
           name?: string
           phone?: string | null
@@ -1422,10 +1495,14 @@ export type Database = {
       }
       my_role: { Args: never; Returns: string }
       my_user_id: { Args: never; Returns: number }
+      recalculate_kpps: { Args: never; Returns: undefined }
+      recalculate_kts: { Args: never; Returns: undefined }
       set_chat_active: {
         Args: { p_active: boolean; p_chat_id: number; p_user_id: number }
         Returns: undefined
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       product_condition: "미개봉" | "가벼운 사용감" | "사용감 있음"
@@ -1568,6 +1645,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       product_condition: ["미개봉", "가벼운 사용감", "사용감 있음"],
