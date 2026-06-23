@@ -94,11 +94,13 @@ export default function GoPage() {
           defaultZoom={14}
           gestureHandling="greedy"
           zoomControl={true}
-          mapTypeControl={false}
-          disableDefaultUI={false}
+          disableDefaultUI={true}
           className="h-full w-full"
           onBoundsChanged={handleBoundsChanged}
-          onClick={() => { setSelectedMeetupId(null); setShowList(false); }}
+          onClick={() => {
+            setSelectedMeetupId(null);
+            setShowList(false);
+          }}
         >
           {meetups.map((m) => (
             <MeetupPin
