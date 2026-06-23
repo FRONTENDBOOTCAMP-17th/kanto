@@ -4,10 +4,11 @@
 
 import { useState } from "react";
 import { APIProvider, Map, useMap } from "@vis.gl/react-google-maps";
-import { Search, Plus, Crosshair, Zap } from "lucide-react";
+import { Plus, Crosshair, Zap } from "lucide-react";
 import { useLiveMeetups } from "@/hooks/go/useLiveMeetups";
 import { MeetupPin } from "@/components/go/MeetupPin";
 import { MeetupDetailPanel } from "@/components/go/MeetupDetailPanel";
+import { MeetupListPanel } from "@/components/go/MeetupListPanel";
 import { MeetupCreateModal } from "@/components/go/MeetupCreateModal";
 import { TopicFilterChips } from "@/components/go/TopicFilterChips";
 import { useAuthStore } from "@/store/authStore";
@@ -43,6 +44,7 @@ export default function GoPage() {
   const [topicFilter, setTopicFilter] = useState<MeetupTopicKey | "all">("all");
   const [selectedMeetupId, setSelectedMeetupId] = useState<number | null>(null);
   const [showCreate, setShowCreate] = useState(false);
+  const [showList, setShowList] = useState(false);
   const currentUserId = useAuthStore((s) => s.user)?.id;
 
   const { meetups, loading } = useLiveMeetups({ topicFilter });
@@ -74,7 +76,7 @@ export default function GoPage() {
           zoomControl={true}
           disableDefaultUI={false}
           className="h-full w-full"
-          onClick={() => setSelectedMeetupId(null)}
+          onClick={() => { setSelectedMeetupId(null); setShowList(false); }}
         >
           {meetups.map((m) => (
             <MeetupPin
@@ -86,26 +88,26 @@ export default function GoPage() {
           ))}
         </Map>
 
-        {/* ── 상단 오버레이: 검색 + 필터 ── */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 bg-gradient-to-b from-[rgba(233,235,224,0.97)] to-transparent pb-8 pt-3.5">
+        {/* ── 상단 오버레이: 필터 ── */}
+        <div
+          className="pointer-events-none absolute right-0 top-0 z-10 pt-3.5 transition-[left] duration-[280ms] ease-[cubic-bezier(.4,0,.2,1)]"
+          style={{ left: showList ? 360 : 0 }}
+        >
           <div className="pointer-events-auto flex items-center gap-3 px-5 flex-wrap">
-            {/* 검색바 */}
-            <div className="flex min-w-[220px] items-center gap-2.5 rounded-xl bg-white/90 px-4 py-2.5 shadow-md backdrop-blur-md">
-              <Search className="h-[17px] w-[17px] flex-shrink-0 text-slate-400" strokeWidth={2} />
-              <span className="text-[14px] text-slate-400">주변 번개모임 찾기...</span>
-            </div>
-            {/* 주제 필터 칩 */}
             <TopicFilterChips value={topicFilter} onChange={setTopicFilter} />
           </div>
         </div>
 
-        {/* ── 진행 중 카운트 필 ── */}
-        <div className="pointer-events-none absolute left-5 top-[72px] z-10 flex items-center gap-1.5 rounded-full bg-slate-900/78 px-3.5 py-[7px] backdrop-blur-md">
+        {/* ── 진행 중 카운트 필 (클릭 시 목록 사이드바 토글) ── */}
+        <button
+          onClick={() => setShowList((prev) => !prev)}
+          className="absolute left-5 top-[72px] z-10 flex items-center gap-1.5 rounded-full bg-slate-900/78 px-3.5 py-[7px] backdrop-blur-md hover:bg-slate-900/90 transition-colors"
+        >
           <Zap className="h-3 w-3 text-emerald-400" strokeWidth={2.5} />
           <span className="text-[13px] font-semibold text-white">
             {loading ? "..." : `${meetups.length}개 모임 진행 중`}
           </span>
-        </div>
+        </button>
 
         {/* ── 우측 하단: FAB + 내 위치 ── */}
         <div className="absolute bottom-7 right-7 z-10 flex flex-col items-end gap-3">
@@ -122,11 +124,22 @@ export default function GoPage() {
           </button>
         </div>
 
-        {/* ── 상세 패널 ── */}
+        {/* ── 목록 패널 (왼쪽) ── */}
+        {showList && (
+          <MeetupListPanel
+            meetups={meetups}
+            selectedId={selectedMeetupId}
+            onSelect={(meetup) => setSelectedMeetupId(meetup.post_id)}
+            onClose={() => setShowList(false)}
+          />
+        )}
+
+        {/* ── 상세 패널 (오른쪽) ── */}
         <MeetupDetailPanel
           meetup={selectedMeetup}
           onClose={() => setSelectedMeetupId(null)}
           currentUserId={currentUserId}
+          suppressOverlay={showList}
         />
 
         {/* ── 생성 모달 ── */}

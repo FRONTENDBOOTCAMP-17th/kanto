@@ -14,6 +14,7 @@ interface MeetupDetailPanelProps {
   meetup: Meetup | null;
   onClose: () => void;
   currentUserId?: number;
+  suppressOverlay?: boolean;
 }
 
 function Avatar({ name, size = 36 }: { name: string; size?: number }) {
@@ -38,7 +39,7 @@ function Avatar({ name, size = 36 }: { name: string; size?: number }) {
   );
 }
 
-export function MeetupDetailPanel({ meetup, onClose, currentUserId }: MeetupDetailPanelProps) {
+export function MeetupDetailPanel({ meetup, onClose, currentUserId, suppressOverlay }: MeetupDetailPanelProps) {
   const [participants, setParticipants] = useState<MeetupParticipant[]>([]);
   const [joining, setJoining] = useState(false);
   const [joined, setJoined] = useState(false);
@@ -120,12 +121,13 @@ export function MeetupDetailPanel({ meetup, onClose, currentUserId }: MeetupDeta
 
   return (
     <>
-      {/* 오버레이 */}
-      <div
-        onClick={onClose}
-        className="fixed inset-0 z-40 bg-black/20"
-        style={{ top: 60 }}
-      />
+      {!suppressOverlay && (
+        <div
+          onClick={onClose}
+          className="fixed inset-0 z-40 bg-black/20"
+          style={{ top: 60 }}
+        />
+      )}
 
       {/* 패널 */}
       <div
