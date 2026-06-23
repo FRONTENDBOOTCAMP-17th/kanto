@@ -2,21 +2,15 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, MoreVertical } from "lucide-react";
 import type { SellerInfo } from "@/type/user";
 import { useClickOutside } from "@/hooks/useClickOutside";
-import ReportModal from "@/components/common/ReportModal";
+import { useChatStore } from "@/store/chatStore";
+import ReportModal, { USER_REPORT_CATEGORIES } from "@/components/common/ReportModal";
 import { leaveChatAction } from "./leaveChatAction";
 import { blockUserAction } from "./blockUserAction";
-
-const USER_REPORT_CATEGORIES = [
-  "욕설/비방",
-  "성희롱/성적 불쾌감",
-  "사기/금전 요구",
-  "도배/광고/스팸",
-  "부적절한 행위",
-] as const;
 
 interface Props {
   partner: SellerInfo;
@@ -41,6 +35,8 @@ export default function ChatHeader({
 }: Props) {
   const t = useTranslations("Chat");
   const tc = useTranslations("Common");
+  const router = useRouter();
+  const closeWidget = useChatStore((s) => s.closeWidget);
   const [menuOpen, setMenuOpen] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
@@ -48,6 +44,11 @@ export default function ChatHeader({
   const menuRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(menuRef, () => setMenuOpen(false));
+
+  const handleOpenProfile = () => {
+    closeWidget();
+    router.push(`/user/${partner.id}`);
+  };
 
   const handleLeave = async () => {
     await leaveChatAction(chatId);
@@ -71,28 +72,35 @@ export default function ChatHeader({
         <ArrowLeft className="w-5 h-5 md:w-4 md:h-4" />
       </button>
 
-      <div className="w-10 h-10 md:w-8 md:h-8 rounded-full bg-teal-400 flex items-center justify-center text-white font-semibold text-sm shrink-0">
-        {partner.avatar_url ? (
-          <Image
-            src={partner.avatar_url}
-            alt={partner.name ?? ""}
-            width={40}
-            height={40}
-            className="w-full h-full rounded-full object-cover"
-          />
-        ) : (
-          partner.name[0]
-        )}
-      </div>
+      <button
+        type="button"
+        onClick={handleOpenProfile}
+        aria-label={t("viewProfile", { name: partner.name })}
+        className="flex items-center gap-2 flex-1 min-w-0 text-left rounded-lg px-1 py-0.5 -mx-1 hover:bg-teal-600/50 transition-colors cursor-pointer"
+      >
+        <div className="w-10 h-10 md:w-8 md:h-8 rounded-full bg-teal-400 flex items-center justify-center text-white font-semibold text-sm shrink-0">
+          {partner.avatar_url ? (
+            <Image
+              src={partner.avatar_url}
+              alt={partner.name ?? ""}
+              width={40}
+              height={40}
+              className="w-full h-full rounded-full object-cover"
+            />
+          ) : (
+            partner.name[0]
+          )}
+        </div>
 
-      <div className="flex-1 min-w-0">
-        <p className="text-white font-semibold text-sm md:text-xs leading-tight truncate">
-          {partner.name}
-        </p>
-        <p className="text-teal-100 text-xs md:text-[10px] truncate">
-          {postTitle}
-        </p>
-      </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-white font-semibold text-sm md:text-xs leading-tight truncate">
+            {partner.name}
+          </p>
+          <p className="text-teal-100 text-xs md:text-[10px] truncate">
+            {postTitle}
+          </p>
+        </div>
+      </button>
 
       <div ref={menuRef} className="relative">
         <button

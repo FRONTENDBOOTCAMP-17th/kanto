@@ -16,7 +16,8 @@ export default function FloatingChatWidget() {
   const { isLoggedIn, user: authUser } = useAuthStore();
   const { isSuspended, openModal } = useSuspended();
   const setUnreadCount = useChatStore((s) => s.setUnreadCount);
-  const [isOpen, setIsOpen] = useState(false);
+  const isOpen = useChatStore((s) => s.isOpen);
+  const setWidgetOpen = useChatStore((s) => s.setWidgetOpen);
   const [view, setView] = useState<"list" | "room">("list");
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
   const [pendingNewChatMeta, setPendingNewChatMeta] =
@@ -28,7 +29,7 @@ export default function FloatingChatWidget() {
   useEffect(() => {
     return useChatStore.subscribe((state, prev) => {
       if (state.pendingChatId && state.pendingChatId !== prev.pendingChatId) {
-        setIsOpen(true);
+        useChatStore.getState().setWidgetOpen(true);
         setView("room");
         setSelectedChatId(state.pendingChatId);
         setPendingNewChatMeta(null);
@@ -43,7 +44,7 @@ export default function FloatingChatWidget() {
         state.pendingNewChat &&
         state.pendingNewChat !== prev.pendingNewChat
       ) {
-        setIsOpen(true);
+        useChatStore.getState().setWidgetOpen(true);
         setView("room");
         setSelectedChatId(null);
         setPendingNewChatMeta(state.pendingNewChat);
@@ -198,7 +199,7 @@ export default function FloatingChatWidget() {
               setSelectedChatId(null);
               setPendingNewChatMeta(null);
             }
-            setIsOpen((v) => !v);
+            setWidgetOpen(!isOpen);
           }}
         />
       </div>

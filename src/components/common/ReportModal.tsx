@@ -33,6 +33,14 @@ export const POST_REPORT_CATEGORIES = [
   "성 범죄(성희롱/성추행 등)",
 ] as const;
 
+export const USER_REPORT_CATEGORIES = [
+  "욕설/비방",
+  "성희롱/성적 불쾌감",
+  "사기/금전 요구",
+  "도배/광고/스팸",
+  "부적절한 행위",
+] as const;
+
 export default function ReportModal({
   isOpen,
   onClose,
