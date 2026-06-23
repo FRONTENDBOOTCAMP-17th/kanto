@@ -87,4 +87,29 @@
 ### 후속(A 범위 외, 동일 패턴 확장 가능)
 - `getSessionUser`가 root `layout.tsx`와 페이지에서 중복 호출되던 것도 `cache()`로 dedupe됨(부수 이득).
 - `api/chat/list/route.ts` 등 라우트 핸들러의 auth_id→id 조회는 채팅 담당자 작업과 겹쳐 미수정.
-- 다음 권장: C(인덱스+RLS) 마이그레이션.
+
+---
+
+## C 진행 로그 (인덱스 + RLS) — 2026-06-23, 사용자 명시 승인 하 적용
+
+> ⚠️ 프로덕션 마이그레이션은 auto-mode 분류기가 "모호한 지시"로 1차 거부 → AskUserQuestion으로 명시 승인 후 적용.
+
+### C-1. 인덱스 — `20260623044432_perf_add_indexes`
+- FK 커버링 17개 + 복합 `posts(post_type,status,created_at desc)` + `pg_trgm` 트라이그램(`posts.title`).
+- 채팅 테이블(chats/messages) 제외 — 채팅 담당자가 같은 DB에 `add_chat_performance_indexes`/`add_mark_chat_read_rpc`를 별도 적용 중인 것을 마이그레이션 목록에서 확인, 충돌 회피.
+- 검증: 어드바이저의 `unindexed_foreign_keys` 중 타깃 항목 전부 해소(남은 건 의도 제외분).
+- **단서**: 현재 71행 규모라 Postgres가 seq scan을 선호 → 새 인덱스 17개가 어드바이저에 `unused_index`(INFO)로 뜸. 정상이며 데이터 증가 대비용. 즉각 체감 변화는 미미.
+
+### C-2. RLS initplan — `20260623044501_perf_rls_initplan`
+- `auth.uid()` → `(select auth.uid())` 래핑(의미 보존). 대상: `users`(본인수정), `reviews`(select_admin/insert_user/update_admin).
+- `ALTER POLICY`로 적용(정책 공백 구간 없음). `role = my_role()` 가드 보존 확인.
+- 검증: 어드바이저 `auth_rls_initplan` WARN **전부 해소**.
+
+### C-3. 중복 허용 정책 병합 — **보류**
+- `multiple_permissive_policies` WARN(posts/used_goods/jobs/rentals/users/comments/community_posts/dating_profiles, SELECT/UPDATE/DELETE)는 미적용.
+- 사유: 8개 테이블 보안 정책을 OR 단일화하는 전면 재작성이라 보안 면적이 크고, 현재 규모에선 이득 미미. PERMISSIVE 정책은 어차피 OR로 평가되므로 기능 동일하나, 안전하게 별도 리뷰 회차(가능하면 팀과)로 진행 권장.
+
+### 후속
+- [ ] C-3 중복 정책 병합(리뷰 회차).
+- [ ] 데이터 증가 후 `unused_index` 재평가(실제 사용 시작되면 INFO 사라짐).
+- 권장 다음 단계: B(진짜 페이지네이션/필터) 또는 D(캐싱).
