@@ -19,6 +19,12 @@ export default function NotificationsPage() {
     if (href) router.push(href);
   };
 
+  // 읽은 알림은 목록에서 제외하고(#5), 채팅 알림은 플로팅 위젯에서 처리하므로
+  // 전체보기 페이지에는 정지/해제 등 비채팅 알림만 보여준다.
+  const visible = notifications.filter(
+    (n) => !n.is_read && n.type !== "chat",
+  );
+
   return (
     <div className="max-w-lg mx-auto">
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
@@ -33,12 +39,12 @@ export default function NotificationsPage() {
         )}
       </div>
       <div className="divide-y divide-gray-50">
-        {notifications.length === 0 ? (
+        {visible.length === 0 ? (
           <p className="py-8 text-center text-sm text-gray-400">
             {t("empty")}
           </p>
         ) : (
-          notifications.map((n) => (
+          visible.map((n) => (
             <NotificationItem key={n.id} notification={n} onClick={handleClick} size="lg" />
           ))
         )}

@@ -21,7 +21,8 @@ export function useNotifications() {
       .select("*")
       .eq("receiver_id", userId)
       .order("created_at", { ascending: false })
-      .limit(20)
+      .order("id", { ascending: false })
+      .limit(50)
       .then(({ data }) => {
         if (data) setNotifications(data);
       });
@@ -93,8 +94,7 @@ export function useNotifications() {
     const { error } = await supabase
       .from("common_notifications")
       .update({ is_read: true })
-      .eq("receiver_id", userId)
-      .eq("is_read", false);
+      .eq("receiver_id", userId);
 
     if (error) setNotifications(snapshot);
   };
