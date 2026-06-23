@@ -3,7 +3,7 @@
 import { type ReactNode } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { BadgeCheck, MapPin } from "lucide-react";
+import { BadgeCheck } from "lucide-react";
 import type { PublicProfile } from "@/services/user/publicProfile";
 import { MangoIndex } from "./MangoIndex";
 
@@ -54,15 +54,6 @@ export function PublicProfileCard({ profile, reviewCount }: Props) {
               : t("identityUnverified")
           }
           icon={<BadgeCheck className="w-3.5 h-3.5" />}
-        />
-        <Badge
-          active={profile.neighborhoodVerified}
-          label={
-            profile.neighborhoodVerified
-              ? t("neighborhoodVerified")
-              : t("neighborhoodUnverified")
-          }
-          icon={<MapPin className="w-3.5 h-3.5" />}
         />
       </div>
 

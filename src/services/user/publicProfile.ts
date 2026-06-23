@@ -10,7 +10,6 @@ export interface PublicProfile {
   postCount: number;
   avgRating: number | null;
   identityVerified: boolean;
-  neighborhoodVerified: boolean; // 스키마 미구현 - 항상 false
 }
 
 // 다른 유저의 공개 프로필을 조회한다.
@@ -44,7 +43,6 @@ export const getPublicProfile = cache(
       postCount: data.post_count ?? 0,
       avgRating: data.avg_rating,
       identityVerified,
-      neighborhoodVerified: false,
     };
   },
 );
