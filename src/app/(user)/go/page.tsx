@@ -93,8 +93,8 @@ export default function GoPage() {
           defaultCenter={MANILA_CENTER}
           defaultZoom={14}
           gestureHandling="greedy"
-          zoomControl={true}
           disableDefaultUI={true}
+          zoomControl={false}
           className="h-full w-full"
           onBoundsChanged={handleBoundsChanged}
           onClick={() => {
