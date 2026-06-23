@@ -1,14 +1,47 @@
 import { getJobList } from "@/services/job/job";
-import { getRentalList } from "@/services/rental/rental";
-import { getUsedGoodsList } from "@/services/usedGoods/usedGoods";
+import { createClient } from "@/utils/supabase/server";
+import type { RentalWithPost } from "@/type/rental/rentalList";
+import type { UsedGoodsWithPost } from "@/type/usedGoods";
+
+const POPULAR_RENTAL_SELECT = `
+  *,
+  rentals!inner(*),
+  users!posts_user_id_fkey(id, name, avatar_url, created_at)
+` as const;
+
+const POPULAR_USED_GOODS_SELECT = `
+  *,
+  used_goods!inner(*),
+  users!posts_user_id_fkey(id, name, avatar_url, created_at)
+` as const;
 
 export async function getPopularList() {
-  // 메인 인기 섹션은 종류별 최신 4건만 노출 → 전체 테이블 대신 4건씩만 페치.
-  const paging = { page: 1, pageSize: 4 };
-  const [usedGoods, rentals, jobs] = await Promise.all([
-    getUsedGoodsList(undefined, paging),
-    getRentalList(undefined, paging),
-    getJobList(undefined, paging),
+  const supabase = await createClient();
+
+  const [{ data: rentalData }, { data: usedGoodsData }, jobs] = await Promise.all([
+    supabase
+      .from("posts")
+      .select(POPULAR_RENTAL_SELECT)
+      .eq("post_type", "rental")
+      .eq("status", "active")
+      .eq("is_popular", true)
+      .order("kpps_score", { ascending: false })
+      .limit(4),
+    supabase
+      .from("posts")
+      .select(POPULAR_USED_GOODS_SELECT)
+      .eq("post_type", "used_goods")
+      .eq("status", "active")
+      .eq("is_popular", true)
+      .eq("is_sold", false)
+      .order("kpps_score", { ascending: false })
+      .limit(4),
+    getJobList(undefined, { page: 1, pageSize: 4 }),
   ]);
-  return { usedGoods: usedGoods.posts, rentals: rentals.posts, jobs: jobs.posts };
+
+  return {
+    rentals: (rentalData as unknown as RentalWithPost[]) ?? [],
+    usedGoods: (usedGoodsData as unknown as UsedGoodsWithPost[]) ?? [],
+    jobs: jobs.posts,
+  };
 }

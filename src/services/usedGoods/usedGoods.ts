@@ -44,6 +44,7 @@ export async function getUsedGoodsList(
     .select(USED_GOODS_LIST_SELECT, { count: "exact" })
     .eq("post_type", "used_goods")
     .eq("status", "active")
+    .order("is_popular", { ascending: false })
     .order("created_at", { ascending: false })
     .order("id", { ascending: false });
 
