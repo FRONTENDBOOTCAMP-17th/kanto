@@ -3,7 +3,7 @@
 // 칸토 go! 지도 메인 페이지
 
 import { useState } from "react";
-import { APIProvider, Map, useMap } from "@vis.gl/react-google-maps";
+import { APIProvider, Map, useMap, type MapCameraChangedEvent } from "@vis.gl/react-google-maps";
 import { Plus, Crosshair, Zap } from "lucide-react";
 import { useLiveMeetups } from "@/hooks/go/useLiveMeetups";
 import { MeetupPin } from "@/components/go/MeetupPin";
@@ -47,7 +47,26 @@ export default function GoPage() {
   const [showList, setShowList] = useState(false);
   const currentUserId = useAuthStore((s) => s.user)?.id;
 
-  const { meetups, loading } = useLiveMeetups({ topicFilter });
+  const [bounds, setBounds] = useState<{ north: number; south: number; east: number; west: number } | null>(null);
+
+  const { meetups, allMeetups, loading } = useLiveMeetups({ topicFilter });
+
+  const activeTopics =
+    loading || !bounds
+      ? undefined
+      : new Set(
+          allMeetups
+            .filter(
+              (m) =>
+                m.location_lat >= bounds.south &&
+                m.location_lat <= bounds.north &&
+                m.location_lng >= bounds.west &&
+                m.location_lng <= bounds.east,
+            )
+            .map((m) => m.topic),
+        );
+
+  const handleBoundsChanged = (e: MapCameraChangedEvent) => setBounds(e.detail.bounds);
 
   // 실시간 목록과 동기화된 선택 모임 — 참여자 수/상태 변경이 패널에 즉시 반영됨
   const selectedMeetup = meetups.find((m) => m.post_id === selectedMeetupId) ?? null;
@@ -74,8 +93,10 @@ export default function GoPage() {
           defaultZoom={14}
           gestureHandling="greedy"
           zoomControl={true}
+          mapTypeControl={false}
           disableDefaultUI={false}
           className="h-full w-full"
+          onBoundsChanged={handleBoundsChanged}
           onClick={() => { setSelectedMeetupId(null); setShowList(false); }}
         >
           {meetups.map((m) => (
@@ -94,7 +115,7 @@ export default function GoPage() {
           style={{ left: showList ? 360 : 0 }}
         >
           <div className="pointer-events-auto flex items-center gap-3 px-5 flex-wrap">
-            <TopicFilterChips value={topicFilter} onChange={setTopicFilter} />
+            <TopicFilterChips value={topicFilter} onChange={setTopicFilter} activeTopics={activeTopics} />
           </div>
         </div>
 
