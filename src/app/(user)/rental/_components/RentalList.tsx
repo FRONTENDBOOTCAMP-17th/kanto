@@ -39,6 +39,7 @@ export function RentalList({ initialPosts, initialLikedIds, currentUserId, curre
             likeCount={post.like_count ?? 0}
             initialIsLiked={likedSet.has(post.id)}
             currentUserId={currentUserId}
+            isPopular={post.is_popular ?? false}
           />
         );
       })}
