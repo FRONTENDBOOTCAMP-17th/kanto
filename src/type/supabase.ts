@@ -7,6 +7,8 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
@@ -233,9 +235,9 @@ export type Database = {
       common_notifications: {
         Row: {
           body: string | null
-          created_at: string | null
+          created_at: string
           id: number
-          is_read: boolean | null
+          is_read: boolean
           receiver_id: number
           related_id: number | null
           related_type: string | null
@@ -244,9 +246,9 @@ export type Database = {
         }
         Insert: {
           body?: string | null
-          created_at?: string | null
+          created_at?: string
           id?: number
-          is_read?: boolean | null
+          is_read?: boolean
           receiver_id: number
           related_id?: number | null
           related_type?: string | null
@@ -255,9 +257,9 @@ export type Database = {
         }
         Update: {
           body?: string | null
-          created_at?: string | null
+          created_at?: string
           id?: number
-          is_read?: boolean | null
+          is_read?: boolean
           receiver_id?: number
           related_id?: number | null
           related_type?: string | null
@@ -290,6 +292,8 @@ export type Database = {
           id: number
           post_deactivated: boolean
           resolved_at: string | null
+          sanction_expires_at: string | null
+          sanction_type: string | null
           status: string | null
           target_id: number | null
           target_type: string | null
@@ -303,6 +307,8 @@ export type Database = {
           id?: number
           post_deactivated?: boolean
           resolved_at?: string | null
+          sanction_expires_at?: string | null
+          sanction_type?: string | null
           status?: string | null
           target_id?: number | null
           target_type?: string | null
@@ -316,6 +322,8 @@ export type Database = {
           id?: number
           post_deactivated?: boolean
           resolved_at?: string | null
+          sanction_expires_at?: string | null
+          sanction_type?: string | null
           status?: string | null
           target_id?: number | null
           target_type?: string | null
@@ -600,6 +608,99 @@ export type Database = {
             columns: ["user_id_2"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meetup_participants: {
+        Row: {
+          id: number
+          joined_at: string
+          meetup_post_id: number
+          status: string
+          user_id: number
+        }
+        Insert: {
+          id?: never
+          joined_at?: string
+          meetup_post_id: number
+          status?: string
+          user_id: number
+        }
+        Update: {
+          id?: never
+          joined_at?: string
+          meetup_post_id?: number
+          status?: string
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meetup_participants_meetup_post_id_fkey"
+            columns: ["meetup_post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetup_participants_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetup_participants_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meetups: {
+        Row: {
+          description: string
+          end_at: string
+          location_address: string
+          location_detail: string | null
+          location_lat: number
+          location_lng: number
+          max_participants: number
+          post_id: number
+          start_at: string
+          topic: string
+        }
+        Insert: {
+          description: string
+          end_at: string
+          location_address: string
+          location_detail?: string | null
+          location_lat: number
+          location_lng: number
+          max_participants?: number
+          post_id: number
+          start_at: string
+          topic: string
+        }
+        Update: {
+          description?: string
+          end_at?: string
+          location_address?: string
+          location_detail?: string | null
+          location_lat?: number
+          location_lng?: number
+          max_participants?: number
+          post_id?: number
+          start_at?: string
+          topic?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meetups_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: true
+            referencedRelation: "posts"
             referencedColumns: ["id"]
           },
         ]
@@ -1118,13 +1219,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "user_sanctions_report_id_fkey"
-            columns: ["report_id"]
-            isOneToOne: false
-            referencedRelation: "common_reports"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "user_sanctions_admin_id_fkey"
             columns: ["admin_id"]
             isOneToOne: false
@@ -1136,6 +1230,13 @@ export type Database = {
             columns: ["admin_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_sanctions_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "common_reports"
             referencedColumns: ["id"]
           },
           {

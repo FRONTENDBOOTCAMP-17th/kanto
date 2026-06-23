@@ -1,0 +1,142 @@
+"use client";
+
+// 칸토 go! 지도 메인 페이지
+
+import { useState } from "react";
+import { APIProvider, Map, useMap } from "@vis.gl/react-google-maps";
+import { Search, Plus, Crosshair, Zap } from "lucide-react";
+import { useLiveMeetups } from "@/hooks/go/useLiveMeetups";
+import { MeetupPin } from "@/components/go/MeetupPin";
+import { MeetupDetailPanel } from "@/components/go/MeetupDetailPanel";
+import { MeetupCreateModal } from "@/components/go/MeetupCreateModal";
+import { TopicFilterChips } from "@/components/go/TopicFilterChips";
+import { useAuthStore } from "@/store/authStore";
+import type { Meetup } from "@/type/go";
+import type { MeetupTopicKey } from "@/constants/meetupTopics";
+
+// 마닐라 BGC/Makati 중심
+const MANILA_CENTER = { lat: 14.5547, lng: 121.0244 };
+const MAP_ID = "kanto-go-map";
+
+function RecenterButton() {
+  const map = useMap(MAP_ID);
+
+  const handleRecenter = () => {
+    if (!navigator.geolocation || !map) return;
+    navigator.geolocation.getCurrentPosition((pos) => {
+      map.panTo({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+      map.setZoom(15);
+    });
+  };
+
+  return (
+    <button
+      className="flex h-11 w-11 items-center justify-center rounded-[13px] border border-black/8 bg-white/92 shadow-md backdrop-blur-md hover:bg-white"
+      onClick={handleRecenter}
+    >
+      <Crosshair className="h-5 w-5 text-slate-900" strokeWidth={2} />
+    </button>
+  );
+}
+
+export default function GoPage() {
+  const [topicFilter, setTopicFilter] = useState<MeetupTopicKey | "all">("all");
+  const [selectedMeetupId, setSelectedMeetupId] = useState<number | null>(null);
+  const [showCreate, setShowCreate] = useState(false);
+  const currentUserId = useAuthStore((s) => s.user)?.id;
+
+  const { meetups, loading } = useLiveMeetups({ topicFilter });
+
+  // 실시간 목록과 동기화된 선택 모임 — 참여자 수/상태 변경이 패널에 즉시 반영됨
+  const selectedMeetup = meetups.find((m) => m.post_id === selectedMeetupId) ?? null;
+
+  const handlePinClick = (meetup: Meetup) => {
+    setSelectedMeetupId((prev) => (prev === meetup.post_id ? null : meetup.post_id));
+  };
+
+  const handleCreated = (_postId: number) => {
+    setShowCreate(false);
+    // 생성된 모임은 Realtime 구독으로 자동 갱신됨
+  };
+
+  return (
+    <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
+      {/* 지도 전체 화면 (nav 60px 제외) */}
+      <div className="relative overflow-hidden" style={{ height: "calc(100vh - 60px)" }}>
+
+        {/* Google Maps */}
+        <Map
+          id={MAP_ID}
+          mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID}
+          defaultCenter={MANILA_CENTER}
+          defaultZoom={14}
+          gestureHandling="greedy"
+          zoomControl={true}
+          disableDefaultUI={false}
+          className="h-full w-full"
+          onClick={() => setSelectedMeetupId(null)}
+        >
+          {meetups.map((m) => (
+            <MeetupPin
+              key={m.post_id}
+              meetup={m}
+              isSelected={selectedMeetup?.post_id === m.post_id}
+              onClick={() => handlePinClick(m)}
+            />
+          ))}
+        </Map>
+
+        {/* ── 상단 오버레이: 검색 + 필터 ── */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 bg-gradient-to-b from-[rgba(233,235,224,0.97)] to-transparent pb-8 pt-3.5">
+          <div className="pointer-events-auto flex items-center gap-3 px-5 flex-wrap">
+            {/* 검색바 */}
+            <div className="flex min-w-[220px] items-center gap-2.5 rounded-xl bg-white/90 px-4 py-2.5 shadow-md backdrop-blur-md">
+              <Search className="h-[17px] w-[17px] flex-shrink-0 text-slate-400" strokeWidth={2} />
+              <span className="text-[14px] text-slate-400">주변 번개모임 찾기...</span>
+            </div>
+            {/* 주제 필터 칩 */}
+            <TopicFilterChips value={topicFilter} onChange={setTopicFilter} />
+          </div>
+        </div>
+
+        {/* ── 진행 중 카운트 필 ── */}
+        <div className="pointer-events-none absolute left-5 top-[72px] z-10 flex items-center gap-1.5 rounded-full bg-slate-900/78 px-3.5 py-[7px] backdrop-blur-md">
+          <Zap className="h-3 w-3 text-emerald-400" strokeWidth={2.5} />
+          <span className="text-[13px] font-semibold text-white">
+            {loading ? "..." : `${meetups.length}개 모임 진행 중`}
+          </span>
+        </div>
+
+        {/* ── 우측 하단: FAB + 내 위치 ── */}
+        <div className="absolute bottom-7 right-7 z-10 flex flex-col items-end gap-3">
+          {/* 내 위치 버튼 */}
+          <RecenterButton />
+
+          {/* 번개모임 만들기 FAB */}
+          <button
+            onClick={() => setShowCreate(true)}
+            className="flex items-center gap-2 rounded-[16px] bg-slate-900 px-5 py-3.5 text-[14.5px] font-bold text-white shadow-[0_8px_28px_rgba(15,23,42,.4)] hover:bg-slate-800 active:scale-95 transition-all"
+          >
+            <Plus className="h-[18px] w-[18px]" strokeWidth={2.5} />
+            번개모임 만들기
+          </button>
+        </div>
+
+        {/* ── 상세 패널 ── */}
+        <MeetupDetailPanel
+          meetup={selectedMeetup}
+          onClose={() => setSelectedMeetupId(null)}
+          currentUserId={currentUserId}
+        />
+
+        {/* ── 생성 모달 ── */}
+        {showCreate && (
+          <MeetupCreateModal
+            onClose={() => setShowCreate(false)}
+            onCreated={handleCreated}
+          />
+        )}
+      </div>
+    </APIProvider>
+  );
+}

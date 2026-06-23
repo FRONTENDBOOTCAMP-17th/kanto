@@ -5,6 +5,7 @@ export const ROUTES = {
   rental: "/rental",
   community: "/community",
   dating: "/dating",
+  go: "/go",
   create: "/create",
   notifications: "/notifications",
   login: "/login",

@@ -5,7 +5,8 @@
       "jobs": "Jobs",
       "rental": "Rentals",
       "community": "Community",
-      "dating": "Random Chat"
+      "dating": "Random Chat",
+      "go": "Meetup"
     },
     "login": "Log in",
     "logout": "Log out",

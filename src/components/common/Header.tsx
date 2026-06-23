@@ -15,6 +15,7 @@ import {
   ShoppingBag,
   Briefcase,
   Home,
+  MapPin,
   Heart,
   Settings,
   ThumbsUp,
@@ -38,6 +39,7 @@ const NAV_ITEMS = [
   { key: "usedgoods", icon: ShoppingBag, href: ROUTES.usedgoods },
   { key: "jobs", icon: Briefcase, href: ROUTES.jobs },
   { key: "rental", icon: Home, href: ROUTES.rental },
+  { key: "go", icon: MapPin, href: ROUTES.go },
 ] as const;
 
 export function Header({ initialUser }: { initialUser: AppUser | null }) {
