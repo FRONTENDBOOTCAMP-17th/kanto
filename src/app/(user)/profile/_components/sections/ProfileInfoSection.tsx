@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import type { User as UserType } from "@/type/user";
 import { ProfileField } from "../ProfileField";
 import { useProfileInfo } from "@/hooks/profile/useProfileInfo";
+import ProfileScore from "../ProfileScore";
 
 export function ProfileInfoSection({
   user,
@@ -14,12 +15,15 @@ export function ProfileInfoSection({
 }) {
   const t = useTranslations("Profile.info");
   const {
-    name, setName,
-    phone, setPhone,
+    name,
+    setName,
+    phone,
+    setPhone,
     phoneSaved,
     phoneEditing,
     handleEditPhone,
-    showDeleteModal, setShowDeleteModal,
+    showDeleteModal,
+    setShowDeleteModal,
     deleteLoading,
     cancelButtonRef,
     handleSave,
@@ -29,10 +33,20 @@ export function ProfileInfoSection({
 
   return (
     <div className="flex flex-col divide-y divide-gray-100">
-      
       <div className="px-5 md:px-0 py-6">
         <div className="max-w-md mx-auto">
-          <h2 className="text-lg font-semibold text-gray-900 mb-6">{t("editTitle")}</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-6">
+            망고 지수
+          </h2>
+          <ProfileScore user={user} />
+        </div>
+      </div>
+
+      <div className="px-5 md:px-0 py-6">
+        <div className="max-w-md mx-auto">
+          <h2 className="text-lg font-semibold text-gray-900 mb-6">
+            {t("editTitle")}
+          </h2>
           <form className="flex flex-col gap-5">
             <ProfileField
               label={t("name")}
@@ -57,7 +71,9 @@ export function ProfileInfoSection({
             />
             <button
               type="button"
-              onClick={phoneSaved && !phoneEditing ? handleEditPhone : handleSave}
+              onClick={
+                phoneSaved && !phoneEditing ? handleEditPhone : handleSave
+              }
               className="cursor-pointer w-full py-3.5 rounded-lg bg-teal-500 text-white text-sm font-medium hover:bg-teal-600 transition-colors mt-2"
             >
               {phoneSaved && !phoneEditing ? t("edit") : t("save")}
@@ -66,15 +82,14 @@ export function ProfileInfoSection({
         </div>
       </div>
 
-      
       <div className="px-5 md:px-0 py-6">
         <div className="max-w-md mx-auto">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">{t("deleteTitle")}</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">
+            {t("deleteTitle")}
+          </h2>
           {user.deleted_at ? (
             <>
-              <p className="text-sm text-red-400 mb-4">
-                {t("pendingDelete")}
-              </p>
+              <p className="text-sm text-red-400 mb-4">{t("pendingDelete")}</p>
               <button
                 type="button"
                 onClick={handleRestoreAccount}
@@ -100,7 +115,6 @@ export function ProfileInfoSection({
         </div>
       </div>
 
-      
       {showDeleteModal && (
         <div
           role="dialog"
@@ -116,8 +130,16 @@ export function ProfileInfoSection({
           />
           <div className="relative bg-white rounded-2xl shadow-xl w-[90%] max-w-sm p-6 flex flex-col gap-4">
             <div>
-              <p id="delete-modal-title" className="text-base font-semibold text-gray-900">{t("confirmTitle")}</p>
-              <p id="delete-modal-desc" className="text-sm text-gray-500 mt-1.5 leading-relaxed">
+              <p
+                id="delete-modal-title"
+                className="text-base font-semibold text-gray-900"
+              >
+                {t("confirmTitle")}
+              </p>
+              <p
+                id="delete-modal-desc"
+                className="text-sm text-gray-500 mt-1.5 leading-relaxed"
+              >
                 {t("confirmDesc")}
               </p>
             </div>

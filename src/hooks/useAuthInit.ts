@@ -4,7 +4,7 @@ import { useAuthStore } from "@/store/authStore";
 import type { User } from "@/type/user";
 
 const USER_COLUMNS =
-  "id, name, email, phone, region, auth_id, avatar_url, provider, role, post_count, created_at, updated_at, deleted_at, suspended_until";
+  "id, name, email, phone, region, auth_id, avatar_url, provider, role, post_count, kts_score, kts_grade, created_at, updated_at, deleted_at, suspended_until";
 
 export function useAuthInit() {
   const { setUser, clearUser } = useAuthStore();
