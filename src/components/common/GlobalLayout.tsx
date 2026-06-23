@@ -28,6 +28,7 @@ export function GlobalLayout({ children, initialUser }: Props) {
   const isLogin = pathname.startsWith("/login");
   const isSignup = pathname.startsWith("/signup");
   const isAdmin = pathname.startsWith("/admin");
+  const isGo = pathname.startsWith("/go");
 
   const hideGlobalUI = isTerms || isLogin || isSignup || isAdmin;
 
@@ -44,7 +45,7 @@ export function GlobalLayout({ children, initialUser }: Props) {
       )}
       <SuspendedModal />
       <main className="flex-1">{children}</main>
-      {!hideGlobalUI && <Footer />}
+      {!hideGlobalUI && !isGo && <Footer />}
     </div>
   );
 }
