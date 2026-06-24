@@ -14,7 +14,7 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
   const form = useCreateJobForm(userId, userName, initialData);
 
   return (
-    <main className="flex-1 bg-gray-50 py-8 px-4">
+    <main className="flex-1 bg-gray-950 dark py-8 px-4">
       <div className="max-w-3xl mx-auto">
         <Button variant="ghost" onClick={form.handleBack} className="mb-6">
           <ArrowLeft className="w-4 h-4 mr-2" />
@@ -22,8 +22,8 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
         </Button>
         <Card className="p-8">
           <div className="flex items-center gap-3 mb-6">
-            <h1 className="page-title">{t("form.createTitle")}</h1>
-            <span className="text-sm font-medium bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full">
+            <h1 className="text-2xl font-normal text-white">{t("form.createTitle")}</h1>
+            <span className="text-xs font-normal bg-white/10 text-white/50 px-2 py-0.5 rounded-full">
               {form.step}/2
             </span>
           </div>

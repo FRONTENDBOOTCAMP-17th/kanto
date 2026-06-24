@@ -13,6 +13,7 @@ export const ROUTES = {
   favorites: "/favorites",
   myPosts: "/myposts",
   report: "/report",
+  business: "/business",
   termsOfService: "/terms/policy",
   privacyPolicy: "/terms/privacy",
   youthPolicy: "/terms/youth",
