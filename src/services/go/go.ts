@@ -5,7 +5,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
-import { getSessionUser } from "@/services/user/user";
+import { getSessionUser, requireAdmin } from "@/services/user/user";
 import type {
   Meetup,
   MeetupParticipant,
@@ -268,6 +268,7 @@ export async function hostEndMeetup(postId: number): Promise<void> {
  * 어드민용 전체 모임 목록 (RLS 우회 admin 클라이언트)
  */
 export async function adminGetMeetups(): Promise<AdminMeetup[]> {
+  await requireAdmin();
   const admin = createAdminClient();
 
   const { data, error } = await admin
@@ -345,6 +346,7 @@ export async function adminGetMeetups(): Promise<AdminMeetup[]> {
  * 어드민 강제 종료 — posts.status = 'inactive' (핀 자동 제거)
  */
 export async function adminForceEndMeetup(postId: number): Promise<void> {
+  await requireAdmin();
   const admin = createAdminClient();
   const { error } = await admin
     .from("posts")

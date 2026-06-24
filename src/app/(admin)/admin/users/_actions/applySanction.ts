@@ -1,7 +1,7 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { requireAdmin } from "@/services/user/user";
 import type { SanctionRecord } from "@/services/admin/adminUsers";
 
 const LABEL: Record<string, string> = {
@@ -20,24 +20,8 @@ export async function applySanction(
   userId: number,
   sanctionType: "7d" | "30d" | "perm",
 ): Promise<SanctionRecord & { expires_at: string | null }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const sessionUser = await requireAdmin();
   const admin = createAdminClient();
-
-  let adminId: number | null = null;
-  let adminName: string | null = null;
-  if (user) {
-    const { data } = await admin
-      .from("users")
-      .select("id, name")
-      .eq("auth_id", user.id)
-      .single();
-    adminId = data?.id ?? null;
-    adminName = data?.name ?? null;
-  }
 
   const expiresAt =
     sanctionType === "perm"
@@ -57,7 +41,7 @@ export async function applySanction(
     .from("user_sanctions")
     .insert({
       user_id: userId,
-      admin_id: adminId,
+      admin_id: sessionUser.id,
       sanction_type: sanctionType,
       expires_at: expiresAt,
     } as never)
@@ -77,6 +61,6 @@ export async function applySanction(
     sanction_type: sanctionType,
     expires_at: expiresAt,
     created_at: (inserted as { created_at: string } | null)?.created_at ?? new Date().toISOString(),
-    admin_name: adminName,
+    admin_name: sessionUser.name,
   };
 }

@@ -1,25 +1,11 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { requireAdmin } from "@/services/user/user";
 
 export async function liftSanction(userId: number): Promise<void> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const sessionUser = await requireAdmin();
   const admin = createAdminClient();
-
-  let adminId: number | null = null;
-  if (user) {
-    const { data } = await admin
-      .from("users")
-      .select("id")
-      .eq("auth_id", user.id)
-      .single();
-    adminId = data?.id ?? null;
-  }
 
   await admin
     .from("users")
@@ -28,7 +14,7 @@ export async function liftSanction(userId: number): Promise<void> {
 
   await admin.from("user_sanctions").insert({
     user_id: userId,
-    admin_id: adminId,
+    admin_id: sessionUser.id,
     sanction_type: "lifted",
     expires_at: null,
   } as never);
