@@ -1,32 +1,20 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { requireAdmin } from "@/services/user/user";
 
 export async function togglePostStatus(
   postId: number,
   status: "active" | "inactive",
 ) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
+  const sessionUser = await requireAdmin();
   const admin = createAdminClient();
-
-  let handledById: number | null = null;
-  if (user) {
-    const { data } = await admin
-      .from("users")
-      .select("id")
-      .eq("auth_id", user.id)
-      .single();
-    handledById = data?.id ?? null;
-  }
 
   const { error } = await admin
     .from("posts")
     .update({
       status,
-      handled_by: handledById,
+      handled_by: sessionUser.id,
       handled_at: new Date().toISOString(),
     } as never)
     .eq("id", postId);
