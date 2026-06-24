@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
   const trimmed = messages.slice(-10);
 
   const stream = await cerebras.chat.completions.create({
-    model: "llama-3.3-70b",
+    model: "gpt-oss-120b",
     messages: [{ role: "system", content: "SYSTEM_PROMPT" }, ...trimmed],
     stream: true,
     max_tokens: 1024,
