@@ -48,7 +48,7 @@ function findRelevantSections(query: string, sections: KBSection[], topN = 3) {
 }
 
 const raw = fs.readFileSync(
-  path.join(process.cwd(), "docs/설계/20260624-챗봇용.md"),
+  path.join(process.cwd(), "src/app/api/ai/chat/knowledge.md"),
   "utf-8",
 );
 const { preamble, sections } = parseKB(raw);
@@ -59,15 +59,21 @@ const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-const groq = new OpenAI({
-  apiKey: process.env.GROQ_API_KEY!,
-  baseURL: "https://api.groq.com/openai/v1",
-});
-const cerebras = new OpenAI({
-  apiKey: process.env.CEREBRAS_API_KEY!,
-  baseURL: "https://api.cerebras.ai/v1",
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? "");
+
+function getGroq() {
+  return new OpenAI({
+    apiKey: process.env.GROQ_API_KEY!,
+    baseURL: "https://api.groq.com/openai/v1",
+  });
+}
+
+function getCerebras() {
+  return new OpenAI({
+    apiKey: process.env.CEREBRAS_API_KEY!,
+    baseURL: "https://api.cerebras.ai/v1",
+  });
+}
 
 const RATE_LIMIT = 10;
 const RATE_WINDOW_SEC = 60;
@@ -100,7 +106,7 @@ async function streamGroq(
   systemPrompt: string,
   trimmed: { role: string; content: string }[],
 ) {
-  return groq.chat.completions.create({
+  return getGroq().chat.completions.create({
     model: "llama-3.3-70b-versatile",
     messages: [
       { role: "system", content: LLAMA_LANGUAGE_GUARD + systemPrompt },
@@ -117,7 +123,7 @@ async function streamCerebras(
   systemPrompt: string,
   trimmed: { role: string; content: string }[],
 ) {
-  return cerebras.chat.completions.create({
+  return getCerebras().chat.completions.create({
     model: "llama-3.3-70b",
     messages: [
       { role: "system", content: LLAMA_LANGUAGE_GUARD + systemPrompt },
