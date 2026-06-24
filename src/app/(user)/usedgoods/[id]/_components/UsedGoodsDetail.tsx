@@ -21,8 +21,12 @@ import RelatedItemsCarousel, { type RelatedItem } from "@/components/common/Rela
 
 type UsedGoods = Tables<"used_goods"> & {
   posts: Tables<"posts"> & {
-    users: Pick<Tables<"users">, "id" | "name" | "avatar_url" | "auth_id" | "role" | "post_count" | "created_at">;
+    users: Pick<Tables<"users">, "id" | "name" | "avatar_url" | "auth_id" | "created_at">;
   };
+};
+
+type RelatedUsedGoods = Tables<"used_goods"> & {
+  posts: Pick<Tables<"posts">, "title"> | null;
 };
 
 export default function UsedGoodsDetail({
@@ -33,7 +37,7 @@ export default function UsedGoodsDetail({
   initialReported,
 }: {
   data: UsedGoods;
-  relatedData: UsedGoods[] | null;
+  relatedData: RelatedUsedGoods[] | null;
   initialLiked: boolean;
   userId: number | undefined;
   initialReported: boolean;
