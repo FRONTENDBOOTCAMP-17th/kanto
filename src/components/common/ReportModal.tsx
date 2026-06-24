@@ -22,6 +22,8 @@ interface report {
   initialReported: boolean;
   categories?: readonly string[];
   targetType?: "post" | "user";
+  onToast?: (message: string, type?: "success" | "error", icon?: "check" | "x" | "alert") => void;
+  onReported?: () => void;
 }
 
 export const POST_REPORT_CATEGORIES = [
@@ -49,13 +51,14 @@ export default function ReportModal({
   initialReported,
   categories = POST_REPORT_CATEGORIES,
   targetType = "post",
+  onToast,
+  onReported,
 }: report) {
   const t = useTranslations("Report");
   const tc = useTranslations("Common");
   const [category, setCategory] = useState("");
   const [content, setContent] = useState("");
   const [isReported, setIsReported] = useState(initialReported);
-  const [justReported, setJustReported] = useState(false);
   const [submitError, setSubmitError] = useState(false);
 
   useEffect(() => {
@@ -67,15 +70,30 @@ export default function ReportModal({
     };
     document.addEventListener("keydown", onKeyDown);
 
+    if (initialReported || isReported) {
+      const alreadyText = targetType === "user" ? t("alreadyUser") : t("already");
+      onToast?.(alreadyText, "error", "x");
+      onClose();
+      return () => {
+        document.body.style.overflow = "";
+        document.removeEventListener("keydown", onKeyDown);
+      };
+    }
+
     checkReported(postId, userId, targetType).then((reported) => {
-      if (reported) setIsReported(true);
+      if (reported) {
+        setIsReported(true);
+        const alreadyText = targetType === "user" ? t("alreadyUser") : t("already");
+        onToast?.(alreadyText, "error", "x");
+        onClose();
+      }
     });
 
     return () => {
       document.body.style.overflow = "";
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [isOpen, onClose, postId, userId, targetType]);
+  }, [isOpen, onClose, postId, userId, targetType, initialReported, isReported, onToast, t]);
 
   if (!isOpen) return null;
 
@@ -89,36 +107,14 @@ export default function ReportModal({
       setSubmitError(true);
       return;
     }
-    setJustReported(true);
     setIsReported(true);
-  };
-
-  const handleClose = () => {
-    setJustReported(false);
+    onReported?.();
+    onToast?.(t("done"), "success", "check");
+    setCategory("");
+    setContent("");
     setSubmitError(false);
     onClose();
   };
-
-  if (isReported) {
-    return (
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-        onClick={handleClose}
-      >
-        <div
-          className="w-full max-w-sm mx-4 bg-white rounded-2xl shadow-xl p-6 flex flex-col gap-5 text-center"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <p className="text-base font-semibold text-gray-800">
-            {justReported ? t("done") : t("already")}
-          </p>
-          <Button variant="teal" onClick={handleClose}>
-            {tc("confirm")}
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div
