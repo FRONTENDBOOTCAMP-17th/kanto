@@ -50,7 +50,7 @@ export async function endRoom(meetupPostId: number): Promise<void> {
       .update({ status: "ended", expires_at: expiresAt } as never)
       .eq("id", room.id);
 
-    await postSystemMessage(room.id, "모임이 종료되었습니다.");
+    await postSystemMessage(room.id, "모임이 종료되었습니다. \n24시간내에 채팅방이 사라집니다.");
   } catch (e) {
     console.error("[groupChat] endRoom failed:", e);
   }
