@@ -420,6 +420,62 @@ export type Database = {
           },
         ]
       }
+      companies: {
+        Row: {
+          id: number
+          user_id: number
+          company_name: string
+          company_intro: string
+          company_logo: string | null
+          company_address: string | null
+          company_website: string | null
+          company_year: number | null
+          employee_count: number | null
+          industry: string | null
+          company_type: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          user_id: number
+          company_name: string
+          company_intro: string
+          company_logo?: string | null
+          company_address?: string | null
+          company_website?: string | null
+          company_year?: number | null
+          employee_count?: number | null
+          industry?: string | null
+          company_type?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          user_id?: number
+          company_name?: string
+          company_intro?: string
+          company_logo?: string | null
+          company_address?: string | null
+          company_website?: string | null
+          company_year?: number | null
+          employee_count?: number | null
+          industry?: string | null
+          company_type?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "companies_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dating_profiles: {
         Row: {
           age: number | null
