@@ -32,8 +32,10 @@ export function GlobalLayout({ children, initialUser }: Props) {
 
   // 채팅 위젯이 열리면 챗봇을 닫는다(챗봇을 열 때 채팅을 닫는 건 onToggle에서 처리).
   useEffect(() => {
-    if (chatOpen) setBotOpen(false);
-  }, [chatOpen]);
+    return useChatStore.subscribe((state) => {
+      if (state.isOpen) setBotOpen(false);
+    });
+  }, []);
 
   // 부팅 커버(layout.tsx 인라인 스크립트가 깔아둔 흰 화면)를 마운트 시 제거한다.
   // 위젯이 없는 페이지(로그인 등)에서도 항상 마운트되는 GlobalLayout에서 지워야
