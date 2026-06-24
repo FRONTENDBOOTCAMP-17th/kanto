@@ -171,6 +171,7 @@
     "submit": "Report",
     "done": "Your report has been submitted.",
     "already": "You have already reported this post.",
+    "alreadyUser": "You have already reported this user.",
     "categories": {
       "욕설": "Abusive language",
       "도배": "Spamming",
