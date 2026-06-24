@@ -17,11 +17,9 @@ export default function ReportTypes({ reportTypes, reportStats }: Props) {
         <p className="mt-0.5 text-[13px] text-slate-400">총 {total}건</p>
       </div>
       {reportTypes.length === 0 ? (
-        <div className="flex flex-col gap-4">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-8 animate-pulse rounded-lg bg-slate-100" />
-          ))}
-        </div>
+        <p className="py-8 text-center text-[14px] text-slate-400">
+          신고 내역이 없습니다
+        </p>
       ) : (
         <div className="flex flex-col gap-[15px]">
           {reportTypes.map((t) => (

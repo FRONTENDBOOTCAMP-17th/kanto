@@ -14,6 +14,7 @@ import TrendAndDonut from "./_components/TrendAndDonut";
 import RegionAndTopPosts from "./_components/RegionAndTopPosts";
 import ReportQueue from "./_components/ReportQueue";
 import ReportTypes from "./_components/ReportTypes";
+import DashboardReportCenter from "./_components/DashboardReportCenter";
 
 export default async function DashboardPage() {
   const admin = createAdminClient();
@@ -233,7 +234,10 @@ export default async function DashboardPage() {
       : [];
 
   return (
-    <>
+    <DashboardReportCenter
+      reportedUsers={(reportedUsersRes.data ?? []) as ReportedUser[]}
+      reportedPosts={(reportedPostsRes.data ?? []) as ReportedPost[]}
+    >
       <HeaderSection />
       <UrgentReportBanner
         pendingTotal={pendingTotal}
@@ -266,6 +270,6 @@ export default async function DashboardPage() {
         />
         <ReportTypes reportTypes={reportTypes} reportStats={reportStats} />
       </div>
-    </>
+    </DashboardReportCenter>
   );
 }
