@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@cerebras/cerebras_cloud_sdk": "^1.64.1",
+    "@google/generative-ai": "^0.24.1",
     "@notionhq/client": "^5.22.0",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.107.0",
@@ -24,6 +25,7 @@
     "next-intl": "^4.13.0",
     "nodemailer": "^9.0.1",
     "notion-to-md": "^3.1.9",
+    "openai": "^6.44.0",
     "radix-ui": "^1.4.3",
     "react": "19.2.4",
     "react-dom": "19.2.4",

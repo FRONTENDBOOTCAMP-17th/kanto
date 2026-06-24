@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { BotMessageSquare, X, Send, History, ChevronLeft, Plus } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   role: "user" | "assistant";
@@ -94,8 +95,7 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
     setView("history");
   };
 
-  const handleSend = async () => {
-    const text = input.trim();
+  const sendMessage = async (text: string) => {
     if (!text || isLoading) return;
 
     const userMessage: Message = { role: "user", content: text };
@@ -151,6 +151,12 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSend = () => {
+    const text = input.trim();
+    sendMessage(text);
+    setInput("");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -213,16 +219,6 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
-                <button
-                  onClick={() => {
-                    setMessages(INITIAL_MESSAGES);
-                    setView("chat");
-                  }}
-                  className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-violet-100 transition-colors text-violet-600"
-                  title="새 대화"
-                >
-                  <Plus className="w-4 h-4" />
-                </button>
                 <span className="text-sm font-medium text-gray-700">대화 기록</span>
               </div>
               {history.length === 0 ? (
@@ -279,7 +275,20 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
                           }
                         `}
                       >
-                        {msg.content}
+                        {msg.role === "assistant" ? (
+                          <ReactMarkdown
+                            components={{
+                              p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
+                              ul: ({ children }) => <ul className="list-disc pl-4 mb-1 space-y-0.5">{children}</ul>,
+                              ol: ({ children }) => <ol className="list-decimal pl-4 mb-1 space-y-0.5">{children}</ol>,
+                              strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                            }}
+                          >
+                            {msg.content}
+                          </ReactMarkdown>
+                        ) : (
+                          msg.content
+                        )}
                         {i === INITIAL_MESSAGES.length - 1 &&
                           messages.length === INITIAL_MESSAGES.length && (
                             <div className="flex flex-wrap gap-1.5 my-2">
@@ -290,12 +299,7 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
                               ].map((q) => (
                                 <button
                                   key={q}
-                                  onClick={() =>
-                                    setMessages((prev) => [
-                                      ...prev,
-                                      { role: "user", content: q },
-                                    ])
-                                  }
+                                  onClick={() => sendMessage(q)}
                                   className="text-xs px-2.5 py-1 rounded-full border border-violet-200 text-violet-600 hover:bg-violet-50 transition-colors whitespace-nowrap"
                                 >
                                   {q}

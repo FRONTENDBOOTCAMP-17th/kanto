@@ -19,30 +19,26 @@
 
 ## 2. 기술 스택 선택
 
-### LLM 제공자: Cerebras (무료)
+### LLM 제공자: Google Gemini 2.0 Flash (무료)
 
 | 항목 | 내용 |
 |------|------|
-| 모델 | `gpt-oss-120b` (120B, ~3000 tokens/s) |
-| 비용 | **무료** (하루 1,000,000 토큰, 신용카드 불필요) |
-| 요청 한도 | 분당 30회 |
-| 컨텍스트 | 8,192 토큰 (무료 제한) |
-| 다국어 지원 | 한국어 · 영어 · 필리핀어(Tagalog) 지원 |
+| 모델 | `gemini-2.0-flash` |
+| 비용 | **무료** (Google AI Studio 기준) |
+| 요청 한도 | 분당 15회 |
+| 컨텍스트 | **1,000,000 토큰** (지식베이스 전체 주입 가능) |
+| 다국어 지원 | 한국어 · 영어 · 필리핀어(Tagalog) 고품질 지원 |
 | Streaming | SSE 스트리밍 응답 지원 |
-| SDK | `@cerebras/cerebras_cloud_sdk` - Next.js API Routes에서 사용 |
-| API 키 발급 | inference.cerebras.ai 에서 무료 발급 |
+| SDK | `@google/generative-ai` - Next.js API Routes에서 사용 |
+| API 키 발급 | aistudio.google.com 에서 무료 발급 |
+
+### 지식베이스 주입 전략
+
+`docs/설계/20260624-챗봇용.md` 파일을 서버 시작 시 읽어 **시스템 프롬프트로 전체 주입**합니다. 1,000,000 토큰 컨텍스트 덕분에 별도 RAG 없이 전체 문서를 활용할 수 있습니다.
 
 ### 다국어 응답 전략
 
-사용자가 입력한 언어를 감지하여 **같은 언어로 응답**합니다. 별도 언어 감지 로직 없이 Llama 3.3이 자동 처리합니다.
-
-- 한국어로 질문 → 한국어로 답변
-- 영어로 질문 → 영어로 답변
-- 필리핀어(Tagalog)로 질문 → 필리핀어로 답변
-
-### 컨텍스트 관리 주의사항
-
-무료 티어의 컨텍스트 윈도우가 8,192 토큰으로 제한됩니다. API 호출 시 대화 이력이 한도를 초과하지 않도록 **최근 N개 메시지만 전송**하는 트리밍 처리가 필요합니다.
+사용자가 입력한 언어를 감지하여 **같은 언어로 응답**합니다. 지식베이스 내 운영 원칙에 명시되어 있어 별도 로직 없이 자동 처리됩니다.
 
 ---
 
@@ -157,7 +153,7 @@ src/
 
 ```bash
 # .env.local에 추가
-CEREBRAS_API_KEY=csk-...   # inference.cerebras.ai 에서 무료 발급
+GEMINI_API_KEY=AIza...   # aistudio.google.com 에서 무료 발급
 ```
 
 ---
@@ -165,8 +161,8 @@ CEREBRAS_API_KEY=csk-...   # inference.cerebras.ai 에서 무료 발급
 ## 8. 구현 단계
 
 ### Phase 1 (MVP) — 현재 범위
-- [ ] `npm install @cerebras/cerebras_cloud_sdk`
-- [ ] inference.cerebras.ai 에서 API 키 발급 후 `.env.local`에 `CEREBRAS_API_KEY` 추가
+- [ ] `npm install @google/generative-ai`
+- [ ] aistudio.google.com 에서 API 키 발급 후 `.env.local`에 `GEMINI_API_KEY` 추가
 - [ ] `src/app/api/ai/chat/route.ts` 생성 (스트리밍 + Rate Limit)
 - [ ] `Chatbot.tsx` 수정 (API 호출, 스트리밍 렌더링, 타이핑 인디케이터, sessionStorage 연동)
 
