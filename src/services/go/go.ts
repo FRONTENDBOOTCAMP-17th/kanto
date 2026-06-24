@@ -5,9 +5,8 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
-import { getSessionUser } from "@/services/user/user";
-import { createRoomForMeetup, endRoom, postSystemMessageForMeetup } from "@/services/go/groupChat";
 import { getSessionUser, requireAdmin } from "@/services/user/user";
+import { createRoomForMeetup, endRoom, postSystemMessageForMeetup } from "@/services/go/groupChat";
 import type {
   Meetup,
   MeetupParticipant,

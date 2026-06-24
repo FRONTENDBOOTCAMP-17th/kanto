@@ -4,7 +4,7 @@ import { useCallback, useState, useEffect, useLayoutEffect, useRef } from "react
 import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
 import { useChatStore, type PendingNewChat, type PendingGroupRoom } from "@/store/chatStore";
-import { useSuspended } from "@/hooks/useSuspended";
+import { useSuspended, useSuspendedModalStore } from "@/hooks/useSuspended";
 import { useChatListRealtime } from "@/hooks/chat/useChatListRealtime";
 import { getMyRooms } from "@/services/go/groupChat";
 import ChatBubbleButton from "./ChatBubbleButton";
@@ -36,11 +36,9 @@ export default function FloatingChatWidget({
   const { isSuspended, openModal } = useSuspended();
   const setUnreadCount = useChatStore((s) => s.setUnreadCount);
   const groupRoomsVersion = useChatStore((s) => s.groupRoomsVersion);
-  const [isOpen, setIsOpen] = useState(false);
-  const [view, setView] = useState<"list" | "room" | "group-room">("list");
   const isOpen = useChatStore((s) => s.isOpen);
   const setWidgetOpen = useChatStore((s) => s.setWidgetOpen);
-  const [view, setView] = useState<"list" | "room">("list");
+  const [view, setView] = useState<"list" | "room" | "group-room">("list");
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
   const [pendingNewChatMeta, setPendingNewChatMeta] =
     useState<PendingNewChat | null>(null);
@@ -91,7 +89,7 @@ export default function FloatingChatWidget({
         state.pendingGroupRoom &&
         state.pendingGroupRoom !== prev.pendingGroupRoom
       ) {
-        setIsOpen(true);
+        useChatStore.getState().setWidgetOpen(true);
         setView("group-room");
         setSelectedGroupRoom(state.pendingGroupRoom);
         useChatStore.getState().clearPendingGroupRoom();
@@ -325,6 +323,7 @@ export default function FloatingChatWidget({
                 setSelectedGroupRoom({ meetupPostId, title });
                 setView("group-room");
               }}
+              onClose={handleClose}
             />
           ) : view === "group-room" && selectedGroupRoom && currentUserForRoom ? (
             <GroupChatRoomBody
@@ -336,7 +335,6 @@ export default function FloatingChatWidget({
                 setView("list");
                 refreshGroupRooms();
               }}
-              onClose={handleClose}
             />
           ) : view === "room" &&
             (selectedChatId !== null || pendingNewChatMeta !== null) ? (
@@ -379,7 +377,6 @@ export default function FloatingChatWidget({
           ) : null}
         </div>
       )}
-      <div className={view === "room" || view === "group-room" ? "max-md:hidden" : ""}>
       <div className={isOpen ? "max-md:hidden" : ""}>
         <ChatBubbleButton
           isOpen={isOpen}

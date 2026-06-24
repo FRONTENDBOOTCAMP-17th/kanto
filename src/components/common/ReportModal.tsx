@@ -22,7 +22,6 @@ interface report {
   initialReported: boolean;
   categories?: readonly string[];
   targetType?: "post" | "user" | "message";
-  targetType?: "post" | "user";
   onToast?: (message: string, type?: "success" | "error", icon?: "check" | "x" | "alert") => void;
   onReported?: () => void;
 }
@@ -116,27 +115,6 @@ export default function ReportModal({
     setSubmitError(false);
     onClose();
   };
-
-  if (isReported) {
-    return (
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-        onClick={handleClose}
-      >
-        <div
-          className="w-full max-w-sm mx-4 bg-white rounded-2xl shadow-xl p-6 flex flex-col gap-5 text-center"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <p className="text-base font-semibold text-gray-800">
-            {justReported ? t("done") : t("already", { target: t(`targetNoun.${targetType}`) })}
-          </p>
-          <Button variant="teal" onClick={handleClose}>
-            {tc("confirm")}
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div

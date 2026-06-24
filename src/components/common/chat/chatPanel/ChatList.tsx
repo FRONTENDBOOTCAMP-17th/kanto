@@ -14,6 +14,7 @@ interface Props {
   currentUserId: number;
   onChatSelect: (id: number) => void;
   onGroupSelect: (meetupPostId: number, title: string) => void;
+  onClose: () => void;
 }
 
 type ListEntry =
@@ -26,11 +27,8 @@ export default function ChatListClient({
   currentUserId,
   onChatSelect,
   onGroupSelect,
+  onClose,
 }: Props) {
-  onClose: () => void;
-}
-
-export default function ChatListClient({ chats, currentUserId, onChatSelect, onClose }: Props) {
   const t = useTranslations("Chat");
   const tc = useTranslations("Common");
   const [search, setSearch] = useState("");
