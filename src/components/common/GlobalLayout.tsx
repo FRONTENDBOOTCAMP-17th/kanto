@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Header } from "@/components/common/Header";
 import { Footer } from "@/components/common/Footer";
@@ -10,6 +10,7 @@ import type { User } from "@/type/user";
 import { DeletionPendingBanner } from "@/components/common/DeletionPendingBanner";
 import { SuspendedModal } from "@/components/common/SuspendedModal";
 import FloatingChatWidget from "@/components/common/chat/FloatingChatWidget";
+import Chatbot from "@/components/common/aichatbot/Chatbot"
 
 interface Props {
   children: React.ReactNode;
@@ -18,6 +19,7 @@ interface Props {
 
 export function GlobalLayout({ children, initialUser }: Props) {
   const pathname = usePathname();
+  const [activeWidget, setActiveWidget] = useState<"chat" | "bot" | null>(null);
 
   const initialized = useRef<true | null>(null);
   if (initialized.current == null) {
@@ -40,7 +42,15 @@ export function GlobalLayout({ children, initialUser }: Props) {
       {!hideGlobalUI && (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
           <ScrollToTop />
-          <FloatingChatWidget />
+          <Chatbot
+            isOpen={activeWidget === "bot"}
+            onToggle={() => setActiveWidget((v) => (v === "bot" ? null : "bot"))}
+            mobileHidden={activeWidget === "chat"}
+          />
+          <FloatingChatWidget
+            isOpen={activeWidget === "chat"}
+            onOpenChange={(open) => setActiveWidget(open ? "chat" : null)}
+          />
         </div>
       )}
       <SuspendedModal />
