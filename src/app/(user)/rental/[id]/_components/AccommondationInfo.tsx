@@ -40,6 +40,10 @@ export default function AccommondationInfo({ rental }: { rental: Rental }) {
   const amenityLabel = (amenity: string) =>
     te.has(`amenities.${amenity}`) ? te(`amenities.${amenity}`) : amenity;
 
+  // 정식 값이 아닌 레거시 enum 값(예: rent_type "단기")은 번역 키가 없으므로 원본을 그대로 보여준다.
+  const enumLabel = (group: string, value: string | null) =>
+    value ? (te.has(`${group}.${value}`) ? te(`${group}.${value}`) : value) : "";
+
   return (
     <>
       <h2 className="text-xl font-medium">{t("accommodationInfo")}</h2>
@@ -65,12 +69,12 @@ export default function AccommondationInfo({ rental }: { rental: Rental }) {
         <dd className="text-gray-700">
           · ₱ {rental.deposit?.toLocaleString()}
         </dd>
-        <dt className="text-gray-500 font-medium">{rental.rent_type ? te(`rentType.${rental.rent_type}`) : ""}</dt>
+        <dt className="text-gray-500 font-medium">{enumLabel("rentType", rental.rent_type)}</dt>
         <dd className="text-orange-500">
           · ₱ {rental.price?.toLocaleString()}
         </dd>
         <dt className="text-gray-500 font-medium">{t("roomType")}</dt>
-        <dd>· {rental.room_type ? te(`roomType.${rental.room_type}`) : ""}</dd>
+        <dd>· {enumLabel("roomType", rental.room_type)}</dd>
         <dt className="text-gray-500 font-medium">{t("maxOccupants")}</dt>
         <dd>· {t("occupantsValue", { count: rental.max_occupants ?? 0 })}</dd>
         <dt className="text-gray-500 font-medium">{t("location")}</dt>

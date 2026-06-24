@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/utils/supabase/admin";
+import { REPORT_STATUS } from "@/constants/report";
 
 const SANCTION_LABEL: Record<string, string> = {
   "7d": "7일 정지",
@@ -16,6 +17,12 @@ export interface SanctionRecord {
   admin_name: string | null;
 }
 
+export interface PendingReport {
+  reason: string;
+  description: string | null;
+  created_at: string | null;
+}
+
 export interface User {
   id: number;
   name: string;
@@ -23,6 +30,8 @@ export interface User {
   post_count: number | null;
   created_at: string | null;
   report_count: number;
+  pending_report_count: number;
+  pending_reports: PendingReport[];
   suspended_until: string | null;
   sanctions: SanctionRecord[];
 }
@@ -48,7 +57,7 @@ export async function getAdminUsers(): Promise<User[]> {
     }>,
     admin
       .from("common_reports")
-      .select("target_id")
+      .select("target_id, status, category, description, created_at")
       .eq("target_type", "user"),
     admin
       .from("user_sanctions")
@@ -101,9 +110,25 @@ export async function getAdminUsers(): Promise<User[]> {
   }
 
   const reportCountMap = new Map<number, number>();
-  for (const r of reportsRes.data ?? []) {
+  const pendingByUser = new Map<number, PendingReport[]>();
+  for (const r of (reportsRes.data ?? []) as Array<{
+    target_id: number | null;
+    status: string | null;
+    category: string | null;
+    description: string | null;
+    created_at: string | null;
+  }>) {
     if (r.target_id == null) continue;
     reportCountMap.set(r.target_id, (reportCountMap.get(r.target_id) ?? 0) + 1);
+    if (r.status === REPORT_STATUS.PENDING) {
+      const arr = pendingByUser.get(r.target_id) ?? [];
+      arr.push({
+        reason: r.category ?? "기타",
+        description: r.description,
+        created_at: r.created_at,
+      });
+      pendingByUser.set(r.target_id, arr);
+    }
   }
 
   return (usersRes.data ?? []).map((user) => ({
@@ -114,6 +139,8 @@ export async function getAdminUsers(): Promise<User[]> {
     created_at: user.created_at,
     suspended_until: user.suspended_until ?? null,
     report_count: reportCountMap.get(user.id) ?? 0,
+    pending_report_count: (pendingByUser.get(user.id) ?? []).length,
+    pending_reports: pendingByUser.get(user.id) ?? [],
     sanctions: sanctionsByUser.get(user.id) ?? [],
   }));
 }

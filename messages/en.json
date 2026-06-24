@@ -1,4 +1,18 @@
 {
+  "PublicProfile": {
+    "title": "Profile",
+    "moreMenu": "More menu",
+    "report": "Report",
+    "block": "Block",
+    "blocked": "Blocked",
+    "blockConfirmMessage": "Block {name}?",
+    "identityVerified": "ID Verified",
+    "identityUnverified": "ID Not Verified",
+    "mangoIndex": "Mango Index",
+    "preparing": "Coming soon",
+    "posts": "Posts",
+    "reviews": "Reviews"
+  },
   "Header": {
     "nav": {
       "usedgoods": "Marketplace",
@@ -158,6 +172,7 @@
     "submit": "Report",
     "done": "Your report has been submitted.",
     "already": "You have already reported this post.",
+    "alreadyUser": "You have already reported this user.",
     "categories": {
       "욕설": "Abusive language",
       "도배": "Spamming",
@@ -187,6 +202,7 @@
     "blockConfirmMessage": "Block {name}? You will leave this chat after blocking.",
     "leave": "Leave chat",
     "moreMenu": "More menu",
+    "viewProfile": "View {name}'s profile",
     "messageInputLabel": "Message input",
     "messageSend": "Send message",
     "inputPlaceholder": "Type a message...",

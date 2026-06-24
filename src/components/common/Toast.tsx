@@ -1,17 +1,20 @@
-import { Check, AlertCircle } from "lucide-react";
+import { Check, AlertCircle, X } from "lucide-react";
 
 interface ToastProps {
   message: string;
   showMessage: boolean;
   type?: "success" | "error";
+  icon?: "check" | "x" | "alert";
 }
 
 export default function Toast({
   message,
   showMessage,
   type = "success",
+  icon,
 }: ToastProps) {
-  const Icon = type === "error" ? AlertCircle : Check;
+  const resolved = icon ?? (type === "error" ? "alert" : "check");
+  const Icon = resolved === "x" ? X : resolved === "alert" ? AlertCircle : Check;
   return (
     <div
       role="status"

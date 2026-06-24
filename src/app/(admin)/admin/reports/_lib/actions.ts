@@ -148,6 +148,12 @@ export async function updateReportResolution(
   if (userId != null) {
     const sanctionChanged = opts.sanction !== opts.prevSanction;
     if (sanctionChanged) {
+
+      await admin
+        .from("user_sanctions")
+        .delete()
+        .eq("report_id", reportId);
+
       await admin
         .from("users")
         .update({ suspended_until: expiresAt } as never)

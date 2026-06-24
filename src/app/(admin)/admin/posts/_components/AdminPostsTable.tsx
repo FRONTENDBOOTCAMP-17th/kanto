@@ -9,6 +9,10 @@ import {
 interface AdminPostsTableProps {
   posts: AdminPost[];
   onOpen: (postId: number) => void;
+  selectedIds: Set<number>;
+  onToggleSelect: (id: number) => void;
+  onToggleSelectAll: () => void;
+  allSelected: boolean;
 }
 
 const CATEGORY_STYLE: Record<string, { bg: string; fg: string }> = {
@@ -30,11 +34,23 @@ function formatDate(date: string | null) {
 export default function AdminPostsTable({
   posts,
   onOpen,
+  selectedIds,
+  onToggleSelect,
+  onToggleSelectAll,
+  allSelected,
 }: AdminPostsTableProps) {
   return (
     <table className="w-full min-w-[760px] border-collapse">
       <thead>
         <tr className="border-b border-[#f1f4f6] bg-slate-50">
+          <th className="w-[44px] px-[18px] py-[13px] text-left">
+            <input
+              type="checkbox"
+              checked={allSelected}
+              onChange={onToggleSelectAll}
+              className="h-4 w-4 cursor-pointer align-middle accent-teal-500"
+            />
+          </th>
           {["제목", "카테고리", "작성자", "조회", "작성일"].map((h) => (
             <th
               key={h}
@@ -58,6 +74,14 @@ export default function AdminPostsTable({
               key={post.id}
               className="border-t border-[#f3f5f7] hover:bg-slate-50"
             >
+              <td className="px-[18px] py-[15px]">
+                <input
+                  type="checkbox"
+                  checked={selectedIds.has(post.id)}
+                  onChange={() => onToggleSelect(post.id)}
+                  className="h-4 w-4 cursor-pointer align-middle accent-teal-500"
+                />
+              </td>
               <td className="px-[18px] py-[15px]">
                 {url ? (
                   <Link
