@@ -24,6 +24,14 @@ export interface MeetupParticipant {
   avatar_url: string | null;
 }
 
+// 장소 자동완성으로 선택된 위치 (좌표 + 주소)
+export interface PickedLocation {
+  lat: number;
+  lng: number;
+  address: string; // formattedAddress (없으면 displayName)
+  placeId?: string;
+}
+
 // 생성 모달 입력 (date/time → ISO 조합은 createMeetup에서 처리)
 export interface CreateMeetupInput {
   title: string;
