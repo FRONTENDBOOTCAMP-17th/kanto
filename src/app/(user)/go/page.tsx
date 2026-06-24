@@ -24,6 +24,9 @@ import type { MeetupTopicKey } from "@/constants/meetupTopics";
 const MANILA_CENTER = { lat: 14.5547, lng: 121.0244 };
 const MAP_ID = "kanto-go-map";
 
+// 필리핀 전역 — 이 경계 밖으로는 지도를 팬/줌 불가
+const PH_BOUNDS = { north: 21.2, south: 4.6, west: 116.9, east: 126.6 };
+
 function RecenterButton() {
   const map = useMap(MAP_ID);
 
@@ -102,7 +105,9 @@ export default function GoPage() {
           id={MAP_ID}
           mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID}
           defaultCenter={MANILA_CENTER}
-          defaultZoom={14}
+          defaultZoom={12}
+          minZoom={5}
+          restriction={{ latLngBounds: PH_BOUNDS, strictBounds: false }}
           gestureHandling="greedy"
           disableDefaultUI={true}
           zoomControl={false}

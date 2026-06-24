@@ -50,6 +50,9 @@ export function PlaceAutocomplete({ selected, onSelect }: Props) {
           input: query,
           sessionToken: sessionTokenRef.current,
           language: "ko",
+          region: "ph",
+          // 필리핀 외 지역 결과 제외 (locationBias는 우선순위일 뿐 필터가 아니므로 필수)
+          includedRegionCodes: ["ph"],
           locationBias: {
             center: MANILA_CENTER,
             radius: BIAS_RADIUS_M,
