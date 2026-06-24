@@ -10,6 +10,7 @@
     "gen:types": "supabase gen types typescript --project-id dhvvrtyzurouttlswpbq > src/type/supabase.ts"
   },
   "dependencies": {
+    "@cerebras/cerebras_cloud_sdk": "^1.64.1",
     "@notionhq/client": "^5.22.0",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.107.0",
