@@ -33,9 +33,9 @@
       "rental": "Paupahan",
       "community": "Komunidad ng Koreano"
     },
-    "business": {
-      "title": "Serbisyo sa Negosyo",
-      "home": "Home ng Negosyo"
+    "support": {
+      "title": "Suporta",
+      "report": "Makipag-ugnayan / Mag-ulat"
     },
     "contact": {
       "title": "Kontak",
@@ -807,12 +807,6 @@
       "used_goods": "Pumunta sa Marketplace",
       "jobs": "Pumunta sa Mga Trabaho",
       "rental": "Pumunta sa Mga Paupahan"
-    }
-  },
-  "Business": {
-    "header": {
-      "label": "Negosyo",
-      "home": "Pumunta sa Home"
     }
   }
 }

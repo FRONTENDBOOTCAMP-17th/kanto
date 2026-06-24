@@ -33,9 +33,9 @@
       "rental": "부동산",
       "community": "한인 커뮤니티"
     },
-    "business": {
-      "title": "기업 서비스",
-      "home": "기업 홈"
+    "support": {
+      "title": "고객지원",
+      "report": "문의/신고하기"
     },
     "contact": {
       "title": "연락처",
@@ -810,12 +810,6 @@
       "used_goods": "중고거래 보러가기",
       "jobs": "구인구직 보러가기",
       "rental": "부동산 보러가기"
-    }
-  },
-  "Business": {
-    "header": {
-      "label": "비즈니스",
-      "home": "홈으로"
     }
   }
 }

@@ -33,9 +33,9 @@
       "rental": "Rentals",
       "community": "Korean Community"
     },
-    "business": {
-      "title": "Business Services",
-      "home": "Business Home"
+    "support": {
+      "title": "Support",
+      "report": "Contact / Report"
     },
     "contact": {
       "title": "Contact",
@@ -802,12 +802,6 @@
       "used_goods": "Browse Marketplace",
       "jobs": "Browse Jobs",
       "rental": "Browse Rentals"
-    }
-  },
-  "Business": {
-    "header": {
-      "label": "Business",
-      "home": "Go to Home"
     }
   }
 }
