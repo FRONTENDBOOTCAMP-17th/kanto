@@ -8,6 +8,8 @@ import { ArrowLeft, MoreVertical } from "lucide-react";
 import type { SellerInfo } from "@/type/user";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import ReportModal, { USER_REPORT_CATEGORIES } from "@/components/common/ReportModal";
+import Toast from "@/components/common/Toast";
+import { checkReported } from "@/services/report";
 import { leaveChatAction } from "./leaveChatAction";
 import { blockUserAction } from "./blockUserAction";
 
@@ -34,12 +36,20 @@ export default function ChatHeader({
 }: Props) {
   const t = useTranslations("Chat");
   const tc = useTranslations("Common");
+  const tr = useTranslations("Report");
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const [isReported, setIsReported] = useState(false);
+  const [isCheckingReport, setIsCheckingReport] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+  const [toastIcon, setToastIcon] = useState<"check" | "x" | "alert">("check");
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
   const [isBlocking, setIsBlocking] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useClickOutside(menuRef, () => setMenuOpen(false));
 
@@ -52,11 +62,44 @@ export default function ChatHeader({
     onLeave?.();
   };
 
+  const showBottomToast = (
+    message: string,
+    type: "success" | "error" = "success",
+    icon: "check" | "x" | "alert" = type === "error" ? "alert" : "check",
+  ) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToastMessage(message);
+    setToastType(type);
+    setToastIcon(icon);
+    setShowToast(true);
+    toastTimerRef.current = setTimeout(() => setShowToast(false), 3000);
+  };
+
   const handleBlock = async () => {
     setIsBlocking(true);
     await blockUserAction(chatId, partner.id);
     setShowBlockConfirm(false);
     onLeave?.();
+  };
+
+  const handleReportClick = async () => {
+    setMenuOpen(false);
+    if (isReported) {
+      showBottomToast(tr("alreadyUser"), "error", "x");
+      return;
+    }
+
+    setIsCheckingReport(true);
+    const reported = await checkReported(partner.id, currentUserId, "user");
+    setIsCheckingReport(false);
+
+    if (reported) {
+      setIsReported(true);
+      showBottomToast(tr("alreadyUser"), "error", "x");
+      return;
+    }
+
+    setShowReport(true);
   };
 
   return (
@@ -121,7 +164,8 @@ export default function ChatHeader({
               </button>
             )}
             <button
-              onClick={() => { setShowReport(true); setMenuOpen(false); }}
+              onClick={handleReportClick}
+              disabled={isCheckingReport}
               className={`w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-gray-50 transition-colors ${onToggleReserve !== undefined ? "border-t border-gray-100" : ""}`}
             >
               {t("report")}
@@ -150,7 +194,11 @@ export default function ChatHeader({
         initialReported={false}
         categories={USER_REPORT_CATEGORIES}
         targetType="user"
+        onReported={() => setIsReported(true)}
+        onToast={showBottomToast}
       />
+
+      <Toast message={toastMessage} showMessage={showToast} type={toastType} icon={toastIcon} />
 
       {showBlockConfirm && (
         <div

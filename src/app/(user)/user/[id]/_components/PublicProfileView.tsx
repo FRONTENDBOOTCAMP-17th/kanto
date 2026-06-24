@@ -9,6 +9,8 @@ import { useChatStore } from "@/store/chatStore";
 import ReportModal, {
   USER_REPORT_CATEGORIES,
 } from "@/components/common/ReportModal";
+import Toast from "@/components/common/Toast";
+import { checkReported } from "@/services/report";
 import { blockUserStandaloneAction } from "@/services/user/blockUser";
 import { ProfileReviewsSection } from "@/app/(user)/profile/_components/sections/ProfileReviewsSection";
 import type { ReviewWithReviewer } from "@/type/review";
@@ -30,13 +32,21 @@ export function PublicProfileView({
 }: Props) {
   const t = useTranslations("PublicProfile");
   const tc = useTranslations("Common");
+  const tr = useTranslations("Report");
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const [isReported, setIsReported] = useState(false);
+  const [isCheckingReport, setIsCheckingReport] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+  const [toastIcon, setToastIcon] = useState<"check" | "x" | "alert">("check");
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
   const [isBlocking, setIsBlocking] = useState(false);
   const [blocked, setBlocked] = useState(initialBlocked);
   const menuRef = useRef<HTMLDivElement>(null);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useClickOutside(menuRef, () => setMenuOpen(false));
 
@@ -61,6 +71,41 @@ export function PublicProfileView({
       setIsBlocking(false);
       setShowBlockConfirm(false);
     }
+  };
+
+  const showBottomToast = (
+    message: string,
+    type: "success" | "error" = "success",
+    icon: "check" | "x" | "alert" = type === "error" ? "alert" : "check",
+  ) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToastMessage(message);
+    setToastType(type);
+    setToastIcon(icon);
+    setShowToast(true);
+    toastTimerRef.current = setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const handleReportClick = async () => {
+    setMenuOpen(false);
+    if (!currentUserId) return;
+
+    if (isReported) {
+      showBottomToast(tr("alreadyUser"), "error", "x");
+      return;
+    }
+
+    setIsCheckingReport(true);
+    const reported = await checkReported(profile.id, currentUserId, "user");
+    setIsCheckingReport(false);
+
+    if (reported) {
+      setIsReported(true);
+      showBottomToast(tr("alreadyUser"), "error", "x");
+      return;
+    }
+
+    setShowReport(true);
   };
 
   return (
@@ -92,10 +137,8 @@ export function PublicProfileView({
             {menuOpen && (
               <div className="absolute right-0 top-9 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden w-36 z-20">
                 <button
-                  onClick={() => {
-                    setShowReport(true);
-                    setMenuOpen(false);
-                  }}
+                  onClick={handleReportClick}
+                  disabled={isCheckingReport}
                   className="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-gray-50 transition-colors"
                 >
                   {t("report")}
@@ -134,7 +177,11 @@ export function PublicProfileView({
         initialReported={false}
         categories={USER_REPORT_CATEGORIES}
         targetType="user"
+        onReported={() => setIsReported(true)}
+        onToast={showBottomToast}
       />
+
+      <Toast message={toastMessage} showMessage={showToast} type={toastType} icon={toastIcon} />
 
       {showBlockConfirm && (
         <div
