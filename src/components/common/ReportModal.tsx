@@ -21,7 +21,7 @@ interface report {
   userId: number | undefined;
   initialReported: boolean;
   categories?: readonly string[];
-  targetType?: "post" | "user";
+  targetType?: "post" | "user" | "message";
   onToast?: (message: string, type?: "success" | "error", icon?: "check" | "x" | "alert") => void;
   onReported?: () => void;
 }

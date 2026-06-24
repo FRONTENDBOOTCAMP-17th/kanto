@@ -4,7 +4,7 @@ import { REPORTS_TABLE, REPORT_STATUS } from "@/constants/report";
 export async function checkReported(
   targetId: number,
   userId: number,
-  targetType: "post" | "user" = "post",
+  targetType: "post" | "user" | "message" = "post",
 ) {
   const { data } = await supabase
     .from(REPORTS_TABLE)
@@ -21,7 +21,7 @@ export async function submitReport(
   targetId: number,
   category: string,
   content: string,
-  targetType: "post" | "user" = "post",
+  targetType: "post" | "user" | "message" = "post",
 ) {
   const { error } = await supabase.from(REPORTS_TABLE).insert({
     user_id: userId,

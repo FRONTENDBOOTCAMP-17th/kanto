@@ -171,8 +171,12 @@
     "submitError": "May naganap na error habang nag-uulat. Pakisubukan muli mamaya.",
     "submit": "Mag-ulat",
     "done": "Naisumite na ang iyong ulat.",
-    "already": "Naiulat mo na ang post na ito.",
-    "alreadyUser": "Naiulat mo na ang user na ito.",
+    "already": "Naiulat mo na ang {target} na ito.",
+    "targetNoun": {
+      "post": "post",
+      "user": "user",
+      "message": "mensahe"
+    },
     "categories": {
       "욕설": "Pang-aabusong salita",
       "도배": "Spamming",
@@ -692,7 +696,8 @@
     },
     "blocked": {
       "title": "Mga Naka-block na User",
-      "empty": "Walang naka-block na user"
+      "empty": "Walang naka-block na user",
+      "unblock": "I-unblock"
     },
     "reviews": {
       "title": "Mga Review ng Transaksyon",

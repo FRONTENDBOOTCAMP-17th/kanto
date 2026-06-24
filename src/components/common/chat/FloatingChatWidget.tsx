@@ -3,13 +3,16 @@
 import { useCallback, useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
-import { useChatStore, type PendingNewChat } from "@/store/chatStore";
+import { useChatStore, type PendingNewChat, type PendingGroupRoom } from "@/store/chatStore";
 import { useSuspended, useSuspendedModalStore } from "@/hooks/useSuspended";
 import { useChatListRealtime } from "@/hooks/chat/useChatListRealtime";
+import { getMyRooms } from "@/services/go/groupChat";
 import ChatBubbleButton from "./ChatBubbleButton";
 import ChatList from "./chatPanel/ChatList";
 import ChatRoom from "./chatPanel/room/ChatRoom";
+import GroupChatRoomBody from "@/components/go/groupChat/GroupChatRoomBody";
 import type { ChatWithUsers } from "@/type/chat/chat";
+import type { MyGroupRoom } from "@/type/groupChat";
 import type { User } from "@/type/user";
 
 // 아직 생성 전(첫 메시지 전)인 새 채팅 초안을 새로고침 동안 보관하는 키
@@ -32,17 +35,25 @@ export default function FloatingChatWidget({
   const isLoggedIn = !!authUser;
   const { isSuspended, openModal } = useSuspended();
   const setUnreadCount = useChatStore((s) => s.setUnreadCount);
+  const groupRoomsVersion = useChatStore((s) => s.groupRoomsVersion);
   const isOpen = useChatStore((s) => s.isOpen);
   const setWidgetOpen = useChatStore((s) => s.setWidgetOpen);
-  const [view, setView] = useState<"list" | "room">("list");
+  const [view, setView] = useState<"list" | "room" | "group-room">("list");
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
   const [pendingNewChatMeta, setPendingNewChatMeta] =
     useState<PendingNewChat | null>(null);
+  const [selectedGroupRoom, setSelectedGroupRoom] = useState<PendingGroupRoom | null>(null);
   const [chats, setChats] = useState<ChatWithUsers[]>([]);
+  const [groupRooms, setGroupRooms] = useState<MyGroupRoom[]>([]);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
+  const refreshGroupRooms = () => {
+    getMyRooms()
+      .then(setGroupRooms)
+      .catch(() => {});
+  };
   const handleClose = useCallback(() => {
     setView("list");
     setSelectedChatId(null);
@@ -73,6 +84,15 @@ export default function FloatingChatWidget({
         setSelectedChatId(null);
         setPendingNewChatMeta(state.pendingNewChat);
         useChatStore.getState().clearNewChat();
+      }
+      if (
+        state.pendingGroupRoom &&
+        state.pendingGroupRoom !== prev.pendingGroupRoom
+      ) {
+        useChatStore.getState().setWidgetOpen(true);
+        setView("group-room");
+        setSelectedGroupRoom(state.pendingGroupRoom);
+        useChatStore.getState().clearPendingGroupRoom();
       }
     });
   }, []);
@@ -142,19 +162,25 @@ export default function FloatingChatWidget({
       });
   }, [isLoggedIn]);
 
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    refreshGroupRooms();
+  }, [isLoggedIn, groupRoomsVersion]);
+
   useChatListRealtime({ currentUserId: currentUserId ?? 0, setChats });
 
   useEffect(() => {
     if (!currentUserId) return;
-    const total = chats.reduce((acc, chat) => {
+    const directTotal = chats.reduce((acc, chat) => {
       const unread =
         currentUserId === chat.user_id_1
           ? (chat.user_id_1_unread ?? 0)
           : (chat.user_id_2_unread ?? 0);
       return acc + unread;
     }, 0);
-    setUnreadCount(total);
-  }, [chats, currentUserId, setUnreadCount]);
+    const groupTotal = groupRooms.reduce((acc, room) => acc + room.unread_count, 0);
+    setUnreadCount(directTotal + groupTotal);
+  }, [chats, groupRooms, currentUserId, setUnreadCount]);
 
   // 새로고침 시 열려 있던 1:1 채팅방/새 채팅 초안을 복원한다.
   // - 생성된 채팅방: URL의 ?chat=<id> (openWidget 경로)
@@ -286,13 +312,29 @@ export default function FloatingChatWidget({
           ) : view === "list" ? (
             <ChatList
               chats={chats}
+              groupRooms={groupRooms}
               currentUserId={currentUserId}
               onChatSelect={(id) => {
                 setSelectedChatId(id);
                 setPendingNewChatMeta(null);
                 setView("room");
               }}
+              onGroupSelect={(meetupPostId, title) => {
+                setSelectedGroupRoom({ meetupPostId, title });
+                setView("group-room");
+              }}
               onClose={handleClose}
+            />
+          ) : view === "group-room" && selectedGroupRoom && currentUserForRoom ? (
+            <GroupChatRoomBody
+              meetupPostId={selectedGroupRoom.meetupPostId}
+              meetupTitle={selectedGroupRoom.title}
+              currentUser={currentUserForRoom}
+              onBack={() => {
+                setSelectedGroupRoom(null);
+                setView("list");
+                refreshGroupRooms();
+              }}
             />
           ) : view === "room" &&
             (selectedChatId !== null || pendingNewChatMeta !== null) ? (
@@ -347,6 +389,7 @@ export default function FloatingChatWidget({
               setView("list");
               setSelectedChatId(null);
               setPendingNewChatMeta(null);
+              setSelectedGroupRoom(null);
             }
             setWidgetOpen(!isOpen);
           }}
