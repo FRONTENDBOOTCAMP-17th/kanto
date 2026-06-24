@@ -11,12 +11,16 @@ import ChatList from "./chatPanel/ChatList";
 import ChatRoom from "./chatPanel/room/ChatRoom";
 import type { ChatWithUsers } from "@/type/chat/chat";
 
-export default function FloatingChatWidget() {
+interface Props {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export default function FloatingChatWidget({ isOpen, onOpenChange }: Props) {
   const t = useTranslations("Chat");
   const { isLoggedIn, user: authUser } = useAuthStore();
   const { isSuspended, openModal } = useSuspended();
   const setUnreadCount = useChatStore((s) => s.setUnreadCount);
-  const [isOpen, setIsOpen] = useState(false);
   const [view, setView] = useState<"list" | "room">("list");
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
   const [pendingNewChatMeta, setPendingNewChatMeta] =
@@ -28,7 +32,7 @@ export default function FloatingChatWidget() {
   useEffect(() => {
     return useChatStore.subscribe((state, prev) => {
       if (state.pendingChatId && state.pendingChatId !== prev.pendingChatId) {
-        setIsOpen(true);
+        onOpenChange(true);
         setView("room");
         setSelectedChatId(state.pendingChatId);
         setPendingNewChatMeta(null);
@@ -43,7 +47,7 @@ export default function FloatingChatWidget() {
         state.pendingNewChat &&
         state.pendingNewChat !== prev.pendingNewChat
       ) {
-        setIsOpen(true);
+        onOpenChange(true);
         setView("room");
         setSelectedChatId(null);
         setPendingNewChatMeta(state.pendingNewChat);
@@ -120,14 +124,14 @@ export default function FloatingChatWidget() {
     : null;
 
   return (
-    <div className="flex flex-col items-end gap-2">
+    <div className="relative">
       {isOpen && (
         <div
           ref={panelRef}
           className="
+          absolute bottom-0 right-full mr-3
           w-80 h-120 flex flex-col bg-white rounded-2xl shadow-2xl shadow-black/40 border border-gray-100 overflow-hidden
-          md:w-80 md:h-120 md:rounded-2xl
-          max-md:fixed max-md:inset-0 max-md:w-full max-md:h-full max-md:rounded-none max-md:shadow-none max-md:border-0 max-md:z-40
+          max-md:fixed max-md:inset-0 max-md:mr-0 max-md:w-full max-md:h-full max-md:rounded-none max-md:shadow-none max-md:border-0 max-md:z-40
         "
         >
           {!currentUserId ? (
@@ -198,7 +202,7 @@ export default function FloatingChatWidget() {
               setSelectedChatId(null);
               setPendingNewChatMeta(null);
             }
-            setIsOpen((v) => !v);
+            onOpenChange(!isOpen);
           }}
         />
       </div>
