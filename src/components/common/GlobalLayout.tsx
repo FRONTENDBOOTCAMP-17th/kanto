@@ -29,9 +29,8 @@ export function GlobalLayout({ children, initialUser }: Props) {
   const isSignup = pathname.startsWith("/signup");
   const isAdmin = pathname.startsWith("/admin");
   const isGo = pathname.startsWith("/go");
-  const isBusiness = pathname.startsWith("/business");
 
-  const hideGlobalUI = isTerms || isLogin || isSignup || isAdmin || isBusiness;
+  const hideGlobalUI = isTerms || isLogin || isSignup || isAdmin;
 
   return (
     <div className="min-h-screen flex flex-col">
