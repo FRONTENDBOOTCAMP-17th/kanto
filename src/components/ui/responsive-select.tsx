@@ -22,16 +22,12 @@ interface Props {
   options: Option[];
   placeholder?: string;
   disabled?: boolean;
-  /** 트리거 너비 등 추가 클래스 */
+  
   className?: string;
-  /** 모바일 바텀시트 제목 (미지정 시 placeholder 사용) */
+  
   label?: string;
 }
 
-/**
- * md 미만에서는 검색 필터와 동일한 바텀시트 드롭다운을, md 이상에서는 Radix Select를 사용한다.
- * Radix 드롭다운은 항목이 많아도 max-h-60 내에서 스크롤된다.
- */
 export function ResponsiveSelect({
   value,
   onValueChange,
@@ -57,7 +53,7 @@ export function ResponsiveSelect({
 
   return (
     <>
-      {/* 모바일: 필드형 트리거 + 바텀시트 */}
+      
       <button
         type="button"
         disabled={disabled}
@@ -72,7 +68,7 @@ export function ResponsiveSelect({
         <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
       </button>
 
-      {/* 데스크탑: Radix Select */}
+      
       <Select value={value} onValueChange={onValueChange} disabled={disabled}>
         <SelectTrigger className={`hidden md:flex ${className ?? ""}`}>
           <SelectValue placeholder={placeholder} />
@@ -86,7 +82,7 @@ export function ResponsiveSelect({
         </SelectContent>
       </Select>
 
-      {/* 모바일 바텀시트 */}
+      
       {mounted &&
         mobileOpen &&
         createPortal(

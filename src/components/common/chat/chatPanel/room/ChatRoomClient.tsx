@@ -6,7 +6,7 @@ import { ShieldCheck } from "lucide-react";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
-import { checkBlockedAction, checkUserSuspendedAction, createChatAndSendAction, markChatReadAction, sendMessageAction } from "./actions";
+import { createChatAndSendAction, markChatReadAction, sendMessageAction } from "./actions";
 import { getChatBannerStateAction } from "./paymentActions";
 import { useSpamPrevention } from "@/hooks/chat/useSpamPrevention";
 import { useChatRoomRealtime } from "@/hooks/chat/useChatRoomRealtime";
@@ -15,7 +15,7 @@ import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList";
 import ChatInput from "./ChatInput";
 import PaymentRequestModal from "./PaymentRequestModal";
-import { toggleReserveAction } from "./toggleReserveAction";
+import { toggleReserveAction, sendReserveSystemMessageAction } from "./toggleReserveAction";
 import ReviewBanner from "./ReviewBanner";
 import Toast from "@/components/common/Toast";
 
@@ -62,10 +62,24 @@ export default function ChatRoomClient({
   const handleToggleReserve = async () => {
     const next = !isReserved;
     setIsReserved(next);
-    await toggleReserveAction(postId, next);
+    try {
+      await toggleReserveAction(postId, next);
+    } catch {
+      setIsReserved(!next);
+      setSendError("예약 상태 변경에 실패했습니다.");
+      setTimeout(() => setSendError(""), 3000);
+      return;
+    }
+    if (activeChatId !== null) {
+      try {
+        await sendReserveSystemMessageAction(postId, next, activeChatId);
+      } catch {
+        setSendError("채팅 알림 전송에 실패했습니다.");
+        setTimeout(() => setSendError(""), 3000);
+      }
+    }
   };
 
-  // 판매자이고 중고거래(가격 존재) 채팅이며, 진행 중/완료된 거래가 없을 때만 안전결제 요청 가능
   const [paymentRequestBlocked, setPaymentRequestBlocked] = useState(false);
   const canRequestPayment =
     sellerId !== null &&
@@ -101,18 +115,6 @@ export default function ChatRoomClient({
 
     const content = input.trim();
     setInput("");
-
-    if (await checkUserSuspendedAction(partner.id)) {
-      setSendError("정지된 사용자입니다.");
-      setTimeout(() => setSendError(""), 3000);
-      return;
-    }
-
-    if (await checkBlockedAction(partner.id)) {
-      setSendError("차단된 사용자와는 메시지를 주고받을 수 없습니다.");
-      setTimeout(() => setSendError(""), 3000);
-      return;
-    }
 
     const tempId = Date.now();
     const optimistic: MessageWithSender = {
@@ -176,12 +178,8 @@ export default function ChatRoomClient({
   useEffect(() => {
     if (activeChatId === null) return;
     markChatReadAction(activeChatId);
-    return () => {
-      markChatReadAction(activeChatId);
-    };
   }, [activeChatId]);
 
-  // 후기 작성 배너 대상 거래 / 안전결제 요청 차단 여부 — 서버에서 권위 있게 조회(페이지네이션·realtime 무관)
   const [reviewableTxId, setReviewableTxId] = useState<number | null>(null);
   const refreshBannerState = useCallback(() => {
     if (activeChatId === null) return;
@@ -193,7 +191,6 @@ export default function ChatRoomClient({
       .catch(() => {});
   }, [activeChatId]);
 
-  // 마운트 + released 시스템 메시지 도착(양쪽 모두 수신) 시 재조회
   const systemMsgCount = messages.filter((m) => m.type === "system").length;
   useEffect(() => {
     refreshBannerState();
@@ -256,7 +253,7 @@ export default function ChatRoomClient({
           onRequested={handlePaymentRequested}
         />
       )}
-      <Toast message={sendError} showMessage={!!sendError} />
+      <Toast message={sendError} showMessage={!!sendError} type="error" />
     </div>
   );
 }

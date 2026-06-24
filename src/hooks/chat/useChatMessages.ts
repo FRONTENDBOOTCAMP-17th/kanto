@@ -1,5 +1,4 @@
 import { loadMoreMessagesAction } from "@/components/common/chat/chatPanel/room/actions";
-import { supabase } from "@/lib/supabase";
 import { MessageWithSender } from "@/type/chat/message";
 import { SellerInfo } from "@/type/user";
 import { useEffect, useRef, useState } from "react";
@@ -28,18 +27,6 @@ export function useChatMessages({
   const isInitialScroll = useRef(true);
 
   useEffect(() => {
-    if (chatId === null) return;
-    (async () => {
-      await supabase
-        .from("messages")
-        .update({ is_read: true })
-        .eq("chat_id", chatId)
-        .neq("sender_id", currentUser.id)
-        .eq("is_read", false);
-    })();
-  }, [chatId, currentUser.id]);
-
-  useEffect(() => {
     if (wasLoadingMore.current) {
       wasLoadingMore.current = false;
       return;
@@ -63,7 +50,6 @@ export function useChatMessages({
       return;
     }
 
-    // sender 정보를 currentUser/partner로 매핑
     const older: MessageWithSender[] = data.map((msg) => ({
       ...msg,
       sender: msg.sender_id === currentUser.id ? currentUser : partner,

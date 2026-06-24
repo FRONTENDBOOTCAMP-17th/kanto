@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       banned_keywords: {
@@ -235,9 +260,9 @@ export type Database = {
       common_notifications: {
         Row: {
           body: string | null
-          created_at: string | null
+          created_at: string
           id: number
-          is_read: boolean | null
+          is_read: boolean
           receiver_id: number
           related_id: number | null
           related_type: string | null
@@ -246,9 +271,9 @@ export type Database = {
         }
         Insert: {
           body?: string | null
-          created_at?: string | null
+          created_at?: string
           id?: number
-          is_read?: boolean | null
+          is_read?: boolean
           receiver_id: number
           related_id?: number | null
           related_type?: string | null
@@ -257,9 +282,9 @@ export type Database = {
         }
         Update: {
           body?: string | null
-          created_at?: string | null
+          created_at?: string
           id?: number
-          is_read?: boolean | null
+          is_read?: boolean
           receiver_id?: number
           related_id?: number | null
           related_type?: string | null
@@ -292,6 +317,8 @@ export type Database = {
           id: number
           post_deactivated: boolean
           resolved_at: string | null
+          sanction_expires_at: string | null
+          sanction_type: string | null
           status: string | null
           target_id: number | null
           target_type: string | null
@@ -305,6 +332,8 @@ export type Database = {
           id?: number
           post_deactivated?: boolean
           resolved_at?: string | null
+          sanction_expires_at?: string | null
+          sanction_type?: string | null
           status?: string | null
           target_id?: number | null
           target_type?: string | null
@@ -318,6 +347,8 @@ export type Database = {
           id?: number
           post_deactivated?: boolean
           resolved_at?: string | null
+          sanction_expires_at?: string | null
+          sanction_type?: string | null
           status?: string | null
           target_id?: number | null
           target_type?: string | null
@@ -606,6 +637,99 @@ export type Database = {
           },
         ]
       }
+      meetup_participants: {
+        Row: {
+          id: number
+          joined_at: string
+          meetup_post_id: number
+          status: string
+          user_id: number
+        }
+        Insert: {
+          id?: never
+          joined_at?: string
+          meetup_post_id: number
+          status?: string
+          user_id: number
+        }
+        Update: {
+          id?: never
+          joined_at?: string
+          meetup_post_id?: number
+          status?: string
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meetup_participants_meetup_post_id_fkey"
+            columns: ["meetup_post_id"]
+            isOneToOne: false
+            referencedRelation: "meetups"
+            referencedColumns: ["post_id"]
+          },
+          {
+            foreignKeyName: "meetup_participants_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetup_participants_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meetups: {
+        Row: {
+          description: string
+          end_at: string
+          location_address: string
+          location_detail: string | null
+          location_lat: number
+          location_lng: number
+          max_participants: number
+          post_id: number
+          start_at: string
+          topic: string
+        }
+        Insert: {
+          description: string
+          end_at: string
+          location_address: string
+          location_detail?: string | null
+          location_lat: number
+          location_lng: number
+          max_participants?: number
+          post_id: number
+          start_at: string
+          topic: string
+        }
+        Update: {
+          description?: string
+          end_at?: string
+          location_address?: string
+          location_detail?: string | null
+          location_lat?: number
+          location_lng?: number
+          max_participants?: number
+          post_id?: number
+          start_at?: string
+          topic?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meetups_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: true
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           chat_id: number
@@ -684,8 +808,10 @@ export type Database = {
           handled_at: string | null
           handled_by: number | null
           id: number
+          is_popular: boolean | null
           is_reserved: boolean
           is_sold: boolean
+          kpps_score: number | null
           like_count: number
           post_type: string
           status: string
@@ -699,8 +825,10 @@ export type Database = {
           handled_at?: string | null
           handled_by?: number | null
           id?: number
+          is_popular?: boolean | null
           is_reserved?: boolean
           is_sold?: boolean
+          kpps_score?: number | null
           like_count?: number
           post_type: string
           status?: string
@@ -714,8 +842,10 @@ export type Database = {
           handled_at?: string | null
           handled_by?: number | null
           id?: number
+          is_popular?: boolean | null
           is_reserved?: boolean
           is_sold?: boolean
+          kpps_score?: number | null
           like_count?: number
           post_type?: string
           status?: string
@@ -1120,13 +1250,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "user_sanctions_report_id_fkey"
-            columns: ["report_id"]
-            isOneToOne: false
-            referencedRelation: "common_reports"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "user_sanctions_admin_id_fkey"
             columns: ["admin_id"]
             isOneToOne: false
@@ -1141,6 +1264,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "user_sanctions_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "common_reports"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "user_sanctions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -1149,6 +1279,42 @@ export type Database = {
           },
           {
             foreignKeyName: "user_sanctions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_trust_history: {
+        Row: {
+          grade_level: number
+          kts_score: number
+          user_id: number
+          week_date: string
+        }
+        Insert: {
+          grade_level: number
+          kts_score: number
+          user_id: number
+          week_date: string
+        }
+        Update: {
+          grade_level?: number
+          kts_score?: number
+          user_id?: number
+          week_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_trust_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_trust_history_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
@@ -1170,6 +1336,8 @@ export type Database = {
           email: string | null
           id: number
           interest_categories: string[] | null
+          kts_grade: string | null
+          kts_score: number | null
           like_count: number
           name: string
           phone: string | null
@@ -1193,6 +1361,8 @@ export type Database = {
           email?: string | null
           id?: number
           interest_categories?: string[] | null
+          kts_grade?: string | null
+          kts_score?: number | null
           like_count?: number
           name: string
           phone?: string | null
@@ -1216,6 +1386,8 @@ export type Database = {
           email?: string | null
           id?: number
           interest_categories?: string[] | null
+          kts_grade?: string | null
+          kts_score?: number | null
           like_count?: number
           name?: string
           phone?: string | null
@@ -1317,12 +1489,20 @@ export type Database = {
       }
       increment_view_count: { Args: { p_post_id: number }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
+      mark_chat_read: {
+        Args: { p_chat_id: number; p_user_id: number }
+        Returns: undefined
+      }
       my_role: { Args: never; Returns: string }
       my_user_id: { Args: never; Returns: number }
+      recalculate_kpps: { Args: never; Returns: undefined }
+      recalculate_kts: { Args: never; Returns: undefined }
       set_chat_active: {
         Args: { p_active: boolean; p_chat_id: number; p_user_id: number }
         Returns: undefined
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       product_condition: "미개봉" | "가벼운 사용감" | "사용감 있음"
@@ -1465,6 +1645,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       product_condition: ["미개봉", "가벼운 사용감", "사용감 있음"],

@@ -69,7 +69,7 @@ export function JobCard({
       className="bg-white px-5 py-4 flex justify-between gap-3 md:gap-4 hover:bg-gray-50 transition-colors cursor-pointer group"
       onClick={() => router.push(`/job/${id}${fromPage ? `?fromPage=${fromPage}` : ""}`)}
     >
-      {/* 모바일: 기존 세로 스택 */}
+      
       <div className="flex flex-col gap-2 flex-1 min-w-0 md:hidden">
         <div>
           <div className="flex items-center gap-2">
@@ -98,7 +98,7 @@ export function JobCard({
         </div>
       </div>
 
-      {/* 데스크탑: 4단 가로 (회사 / 제목 / 급여·위치 / 근무시간) */}
+      
       <div className="hidden md:flex items-center gap-4 flex-1 min-w-0">
         <div className="flex-2 min-w-0">
           <p className="text-sm lg:text-base font-bold text-gray-700 truncate">{companyName}</p>
@@ -129,7 +129,7 @@ export function JobCard({
         </div>
       </div>
 
-      {/* 우측: 찜 버튼 (데스크탑은 그 아래로 마감 배지·등록 시간) */}
+      
       <div className="shrink-0 md:w-24 flex flex-col items-end justify-between gap-2">
         <div onClick={(e) => e.stopPropagation()}>
           <LikeButton postId={id} initialIsLiked={initialIsLiked} currentUserId={currentUserId} />

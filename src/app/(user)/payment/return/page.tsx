@@ -8,9 +8,6 @@ import {
 } from "@/services/payment/transaction";
 import { getInvoice, isInvoicePaid } from "@/lib/xendit";
 
-// Xendit 결제 후 success/failure redirect 도착 지점.
-// webhook 이 닿지 않는 로컬 환경에서도 결제 상태를 보장하기 위해
-// 인보이스 상태를 재조회해 거래를 갱신한다.
 export default async function PaymentReturnPage({
   searchParams,
 }: {
@@ -30,14 +27,11 @@ export default async function PaymentReturnPage({
         try {
           const invoice = await getInvoice(transaction.xendit_invoice_id);
           if (isInvoicePaid(invoice.status)) {
-            // webhook이 먼저 paid로 바꿨다면 위 status==='paid' 분기로 빠져 여기 도달 안 함(멱등).
-            // 드물게 webhook과 동시 실행되면 메시지가 중복될 수 있으나 테스트 범위에서 허용.
             const updated = await updateTransaction(transaction.id, {
               status: "paid",
               paid_at: new Date().toISOString(),
             });
             paid = true;
-            // 시스템 메시지는 부가 UX — 실패해도 결제완료 표시(paid)는 유지
             try {
               await postSystemMessage(
                 updated,
@@ -48,7 +42,6 @@ export default async function PaymentReturnPage({
             }
           }
         } catch {
-          // 조회 실패 시 대기 상태로 안내 (webhook 이 추후 반영)
         }
       }
     }

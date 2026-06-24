@@ -62,7 +62,7 @@ export function ContentCard({
               : "flex flex-col p-0"
           }`}
         >
-          {/* 이미지 영역 */}
+          
           <div
             className={`relative overflow-hidden bg-gray-100 shrink-0 ${
               listOnMobile
@@ -122,7 +122,7 @@ export function ContentCard({
             {!soldOverlay && badge && <div className="absolute top-2 left-2 z-10">{badge}</div>}
           </div>
 
-          {/* 콘텐츠 영역 */}
+          
           <div
             className={`flex flex-col flex-1 min-w-0 ${
               listOnMobile ? "py-0.5 md:p-4" : "p-4"

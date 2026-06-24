@@ -15,6 +15,7 @@ import {
   ShoppingBag,
   Briefcase,
   Home,
+  MapPin,
   Heart,
   Settings,
   ThumbsUp,
@@ -31,20 +32,20 @@ import type { NotificationBellHandle } from "./header/NotificationBell";
 import type { User as AppUser } from "@/type/user";
 import { useTranslations } from "next-intl";
 import { useSuspended } from "@/hooks/useSuspended";
+import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 
-const HEADER_HEIGHT = 48; // 모바일 헤더 높이(h-12)
+const HEADER_HEIGHT = 48; 
 
 const NAV_ITEMS = [
   { key: "usedgoods", icon: ShoppingBag, href: ROUTES.usedgoods },
   { key: "jobs", icon: Briefcase, href: ROUTES.jobs },
   { key: "rental", icon: Home, href: ROUTES.rental },
+  { key: "go", icon: MapPin, href: ROUTES.go },
 ] as const;
 
 export function Header({ initialUser }: { initialUser: AppUser | null }) {
   const t = useTranslations("Header");
   const router = useRouter();
-  // 서버에서 확정된 initialUser를 첫 렌더(SSR 포함) fallback으로 사용해 깜빡임 제거.
-  // 이후 스토어가 갱신되면(아바타 변경 등) 스토어 값을 따른다.
   const user = useAuthStore((s) => s.user) ?? initialUser;
   useAuthInit();
 
@@ -52,6 +53,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const profileRef = useRef<HTMLDivElement>(null);
   const notificationBellRef = useRef<NotificationBellHandle>(null);
@@ -60,11 +62,11 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       if (currentScrollY <= HEADER_HEIGHT) {
-        setIsVisible(true); // 최상단 부근
+        setIsVisible(true); 
       } else if (currentScrollY > prevScrollY.current) {
-        setIsVisible(false); // 아래로 스크롤
+        setIsVisible(false); 
       } else if (currentScrollY < prevScrollY.current) {
-        setIsVisible(true); // 위로 스크롤
+        setIsVisible(true); 
       }
       prevScrollY.current = currentScrollY;
     };
@@ -110,7 +112,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
     >
       <div className="page-container">
         <div className="flex items-center justify-between h-12 md:h-16">
-          {/* 로고 */}
+          
           <Link
             href={ROUTES.home}
             className="flex items-center hover:opacity-80 transition-opacity shrink-0"
@@ -133,12 +135,12 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
 
           <div className="flex-1" />
 
-          {/* 우측 액션 버튼 */}
+          
           <div className="flex items-center shrink-0">
-            {/* 언어 전환 */}
+            
             <LanguageSwitcher />
 
-            {/* 알림 */}
+            
             {user && (
               <NotificationBell
                 ref={notificationBellRef}
@@ -146,7 +148,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
               />
             )}
 
-            {/* 프로필 드롭다운 — 데스크탑 */}
+            
             {user ? (
               <div className="relative hidden md:block" ref={profileRef}>
                 <Button
@@ -229,7 +231,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
               </Button>
             )}
 
-            {/* 모바일 햄버거 */}
+            
             <Button
               variant="ghost"
               size="icon"
@@ -247,7 +249,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
           </div>
         </div>
 
-        {/* 데스크탑 네비게이션 */}
+        
         <nav className="relative hidden md:flex items-center justify-center gap-1 border-t border-gray-100 py-1">
           {NAV_ITEMS.map(({ key, icon: Icon, href }) => (
             <Link
@@ -259,10 +261,14 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
               {t(`nav.${key}`)}
             </Link>
           ))}
-          {/* 글쓰기 버튼 — 메인 페이지에서만 노출 (모바일에서는 nav 자체가 숨겨짐) */}
+          
           {pathname === ROUTES.home && (
             <button
-              onClick={() => isSuspended ? openModal() : router.push(ROUTES.create)}
+              onClick={() => {
+                if (!user) { setShowLoginModal(true); return; }
+                if (isSuspended) { openModal(); return; }
+                router.push(ROUTES.create);
+              }}
               className="absolute right-0 flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition-colors"
             >
               <SquarePen className="w-4 h-4" />
@@ -271,7 +277,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
           )}
         </nav>
 
-        {/* 모바일 메뉴 */}
+        
         {isMobileOpen && (
           <div className="md:hidden border-t border-gray-200 py-3">
             <nav className="space-y-0.5">
@@ -343,6 +349,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
         )}
       </div>
       <SuspendedBanner />
+      <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <ConfirmModal
         isOpen={isLogoutModalOpen}
         title={t("logoutConfirm")}

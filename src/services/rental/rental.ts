@@ -1,12 +1,15 @@
 import { createClient } from "@/utils/supabase/server";
 import type { RentalWithPost } from "@/type/rental/rentalList";
 import type { RentalWithPost as RentalDetail } from "@/type/rental/rentalDetail";
+import type { Pagination, PagedResult } from "@/services/usedGoods/usedGoods";
+import type { TradeLocation } from "@/type/location";
 
 const RENTAL_DETAIL_SELECT =
   `*, posts(*, users!posts_user_id_fkey(id, name, avatar_url, auth_id, role, post_count, created_at))` as const;
+// 목록용: rentals 를 inner join 해 자식 컬럼(room_type/location)으로 DB 필터링 가능.
 const RENTAL_LIST_SELECT = `
   *,
-  rentals(*),
+  rentals!inner(*),
   users!posts_user_id_fkey(id, name, avatar_url, created_at)
 ` as const;
 
@@ -34,42 +37,38 @@ interface RentalListFilter {
 
 export async function getRentalList(
   filter?: RentalListFilter,
-): Promise<RentalWithPost[]> {
+  pagination?: Pagination,
+): Promise<PagedResult<RentalWithPost>> {
   const supabase = await createClient();
 
   let query = supabase
     .from("posts")
-    .select(RENTAL_LIST_SELECT)
+    .select(RENTAL_LIST_SELECT, { count: "exact" })
     .eq("post_type", "rental")
     .eq("status", "active")
-    .order("created_at", { ascending: false });
+    .order("is_popular", { ascending: false })
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false });
 
   if (filter?.targetIds !== undefined) {
-    if (filter.targetIds.length === 0) return [];
+    if (filter.targetIds.length === 0) return { posts: [], total: 0 };
     query = query.in("id", filter.targetIds);
   }
-  if (filter?.userId) {
-    query = query.eq("user_id", filter.userId);
-  }
-  if (filter?.search) {
-    query = query.ilike("title", `%${filter.search}%`);
+  if (filter?.userId) query = query.eq("user_id", filter.userId);
+  if (filter?.search) query = query.ilike("title", `%${filter.search}%`);
+  // 방 종류/지역 필터를 DB(inner join 자식 컬럼)로 push.
+  if (filter?.roomType) query = query.eq("rentals.room_type", filter.roomType);
+  if (filter?.location) query = query.eq("rentals.location", filter.location as TradeLocation);
+
+  if (pagination) {
+    const from = (pagination.page - 1) * pagination.pageSize;
+    query = query.range(from, from + pagination.pageSize - 1);
   }
 
-  const { data, error } = await query;
+  const { data, count, error } = await query;
   if (error) throw new Error(error.message);
 
-  let result = data as unknown as RentalWithPost[];
-
-  if (filter?.roomType) {
-    result = result.filter(
-      (p) => p.rentals?.[0]?.room_type === filter.roomType,
-    );
-  }
-  if (filter?.location) {
-    result = result.filter((p) => p.rentals?.[0]?.location === filter.location);
-  }
-
-  return result;
+  return { posts: (data as unknown as RentalWithPost[]) ?? [], total: count ?? 0 };
 }
 
 interface RentalCreate {

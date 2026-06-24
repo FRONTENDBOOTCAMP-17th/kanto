@@ -19,24 +19,23 @@ export default async function JobPage({
   const currentPage = Number(params.page ?? 1);
   const t = await getTranslations("Job");
 
-  const [posts, { likedIds, currentUserId }, popularPosts, sessionUser, isVerified] =
+  const [{ posts, total }, { likedIds, currentUserId }, popularPosts, sessionUser, isVerified] =
     await Promise.all([
-      getJobList({
-        search: params.search,
-        employeeType: params.type,
-        location: params.location,
-      }),
+      getJobList(
+        {
+          search: params.search,
+          employeeType: params.type,
+          location: params.location,
+        },
+        { page: currentPage, pageSize: ITEMS_PER_PAGE },
+      ),
       getLikeList("jobs"),
       getPopularJobs(),
       getSessionUser(),
       getIdentityVerified(),
     ]);
 
-  const totalPages = Math.ceil(posts.length / ITEMS_PER_PAGE);
-  const pagedPosts = posts.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE,
-  );
+  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
   return (
     <div className="page-wrapper">
@@ -69,7 +68,7 @@ export default async function JobPage({
         <PopularJobs posts={popularPosts} likedIds={likedIds} currentUserId={currentUserId} />
 
         <JobList
-          posts={pagedPosts}
+          posts={posts}
           likedIds={likedIds}
           currentUserId={currentUserId}
           currentPage={currentPage}

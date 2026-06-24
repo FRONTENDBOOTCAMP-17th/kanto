@@ -64,9 +64,8 @@ export default function InteractionButtons({
   };
 
   const handleShare = async () => {
-    const url = window.location.href;
-    await navigator.clipboard.writeText(url);
-    setToastMessage(`${t("urlCopied")}\n${url}`);
+    await navigator.clipboard.writeText(window.location.href);
+    setToastMessage(t("urlCopied"));
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
@@ -94,7 +93,11 @@ export default function InteractionButtons({
         <Button
           size={size}
           aria-label={t("report")}
-          onClick={() => { if (isSuspended) { openModal(); return; } setShowReportModal(true); }}
+          onClick={() => {
+            if (!userId) { setShowLoginModal(true); return; }
+            if (isSuspended) { openModal(); return; }
+            setShowReportModal(true);
+          }}
           className="cursor-pointer border rounded-lg bg-white hover:bg-red-300/50 border-gray-200"
         >
           <Siren className="text-black" />

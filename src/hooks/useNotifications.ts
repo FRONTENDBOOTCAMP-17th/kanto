@@ -11,8 +11,6 @@ export function useNotifications() {
   const { user } = useAuthStore();
   const userId = user?.id;
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  // 헤더 알림벨과 알림 페이지 등 여러 컴포넌트가 동시에 이 훅을 사용할 수 있어
-  // 채널명이 겹치지 않도록 컴포넌트 인스턴스별 고유 id를 부여한다.
   const instanceId = useId();
 
   useEffect(() => {
@@ -23,7 +21,8 @@ export function useNotifications() {
       .select("*")
       .eq("receiver_id", userId)
       .order("created_at", { ascending: false })
-      .limit(20)
+      .order("id", { ascending: false })
+      .limit(50)
       .then(({ data }) => {
         if (data) setNotifications(data);
       });
@@ -95,8 +94,7 @@ export function useNotifications() {
     const { error } = await supabase
       .from("common_notifications")
       .update({ is_read: true })
-      .eq("receiver_id", userId)
-      .eq("is_read", false);
+      .eq("receiver_id", userId);
 
     if (error) setNotifications(snapshot);
   };

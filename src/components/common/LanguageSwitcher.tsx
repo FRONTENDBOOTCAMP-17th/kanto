@@ -28,7 +28,6 @@ export function LanguageSwitcher() {
   const handleSelect = (locale: Locale) => {
     setIsOpen(false);
     if (locale === activeLocale) return;
-    // 쿠키를 클라이언트에서 직접 설정해, 바로 다음 요청(refresh)에 확정적으로 실리게 한다.
     setLocaleCookie(locale);
     startTransition(() => {
       router.refresh();

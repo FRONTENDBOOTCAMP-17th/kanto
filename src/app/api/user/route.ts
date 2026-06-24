@@ -22,7 +22,6 @@ export async function DELETE() {
     return NextResponse.json({ error: "사용자 정보를 찾을 수 없습니다." }, { status: 404 });
   }
 
-  // 중고거래, 구인구직, 방렌트 게시글 즉시 비공개 처리
   const { error: postError } = await supabaseAdmin
     .from("posts")
     .update({ status: "inactive" })
@@ -33,7 +32,6 @@ export async function DELETE() {
     return NextResponse.json({ error: "게시글 비공개 처리에 실패했습니다." }, { status: 500 });
   }
 
-  // deleted_at 기록
   const { error: markError } = await supabaseAdmin
     .from("users")
     .update({ deleted_at: new Date().toISOString() })
@@ -64,7 +62,6 @@ export async function PATCH() {
     return NextResponse.json({ error: "사용자 정보를 찾을 수 없습니다." }, { status: 404 });
   }
 
-  // deleted_at 초기화 (탈퇴 철회)
   const { error: restoreError } = await supabaseAdmin
     .from("users")
     .update({ deleted_at: null })
@@ -74,7 +71,6 @@ export async function PATCH() {
     return NextResponse.json({ error: "탈퇴 철회에 실패했습니다." }, { status: 500 });
   }
 
-  // 비공개 처리된 게시글 복구
   const { error: postError } = await supabaseAdmin
     .from("posts")
     .update({ status: "active" })

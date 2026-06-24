@@ -6,6 +6,15 @@
 /* 이미지 캐러셀 키프레임 */
 @import "../styles/carousel.css";
 
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {

@@ -5,7 +5,8 @@
       "jobs": "Trabaho",
       "rental": "Paupahan",
       "community": "Komunidad",
-      "dating": "Random na Chat"
+      "dating": "Random na Chat",
+      "go": "Kanto GO!"
     },
     "login": "Mag-log in",
     "logout": "Mag-log out",
@@ -78,6 +79,11 @@
     "ko": "한국어",
     "en": "English",
     "fil": "Filipino"
+  },
+  "NotFound": {
+    "title": "Hindi mahanap ang pahina",
+    "description": "Ang pahinang ito ay tinanggal o binago ang address.",
+    "backToMain": "Bumalik sa pangunahing pahina"
   },
   "Common": {
     "confirm": "Kumpirmahin",
@@ -421,7 +427,7 @@
     "title": "Trabaho",
     "subtitle": "Impormasyon ng trabaho para sa mga Koreano sa Pilipinas",
     "searchResult": "Mga resulta para sa \"{query}\"",
-    "write": "Mag-post ng trabaho",
+    "write": "Mag-post",
     "emptySearch": "Walang resulta ng paghahanap",
     "empty": "Wala pang job posting",
     "allTypes": "Lahat",

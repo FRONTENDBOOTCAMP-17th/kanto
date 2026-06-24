@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { BadgeCheck, Heart, Clock, Eye, MoveLeft, User } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -17,6 +16,8 @@ import { useSuspended } from "@/hooks/useSuspended";
 import InteractionButtons from "@/components/common/InteractionButtons";
 import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarresel";
 import { Button } from "@/components/ui/button";
+import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
+import RelatedItemsCarousel, { type RelatedItem } from "@/components/common/RelatedItemsCarousel";
 
 type UsedGoods = Tables<"used_goods"> & {
   posts: Tables<"posts"> & {
@@ -48,15 +49,25 @@ export default function UsedGoodsDetail({
   const isOwner = storeUser?.auth_id === data.posts.users?.auth_id;
   const images = (data.images as string[]) ?? [];
   const [likeCount, setLikeCount] = useState(data.posts.like_count ?? 0);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const { isSuspended, openModal } = useSuspended();
+
+  const relatedItems: RelatedItem[] = (relatedData ?? []).map((item) => ({
+    id: item.id,
+    href: `/usedgoods/${item.id}`,
+    imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
+    title: item.posts?.title ?? "",
+    priceText: `₱ ${item.price?.toLocaleString()}`,
+  }));
 
   const accession = data.posts.users?.created_at
     ? new Date(data.posts.users.created_at)
     : null;
 
   const handleChat = async () => {
+    if (!userId) { setShowLoginModal(true); return; }
     if (isSuspended) { openModal(); return; }
-    if (!userId || !data.posts.users) return;
+    if (!data.posts.users) return;
     const chatId = await findChat(userId, data.posts.users.id, data.post_id);
     if (chatId !== null) {
       useChatStore.getState().openWidget(chatId);
@@ -80,7 +91,7 @@ export default function UsedGoodsDetail({
 
   return (
     <div className="page-container pb-12">
-      {/* 네비게이션 */}
+      
       <div className="flex items-center justify-between mt-4">
         <button onClick={() => router.push(fromPage ? `/usedgoods?page=${fromPage}` : "/usedgoods")} className="flex gap-2 cursor-pointer">
           <MoveLeft />
@@ -94,7 +105,7 @@ export default function UsedGoodsDetail({
         />
       </div>
 
-      {/* 이미지 + 상품/판매자 정보 */}
+      
       {images.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 items-stretch gap-2 md:gap-4 mt-4">
           <div className="relative">
@@ -111,8 +122,8 @@ export default function UsedGoodsDetail({
               </div>
             ) : null}
           </div>
-          <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-[450px]">
-            {/* 상품 정보 */}
+          <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-112.5">
+            
             <div>
               <h2 className="text-xl font-semibold mb-3">{t("productInfo")}</h2>
               <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
@@ -135,7 +146,7 @@ export default function UsedGoodsDetail({
               </dl>
             </div>
             <hr className="border-gray-200" />
-            {/* 판매자 정보 */}
+            
             <div className="flex flex-col gap-4">
               <h2 className="text-xl font-semibold">{t("sellerInfo")}</h2>
               <div className="flex items-center gap-3">
@@ -165,7 +176,7 @@ export default function UsedGoodsDetail({
                 </div>
               </div>
               {!isOwner && (
-                <Button variant="teal" className="cursor-pointer w-full" onClick={handleChat}>
+                <Button variant="teal" className="cursor-pointer self-start min-w-72" onClick={handleChat}>
                   {t("chat")}
                 </Button>
               )}
@@ -173,7 +184,7 @@ export default function UsedGoodsDetail({
           </div>
         </div>
       ) : (
-        /* 이미지 없을 때: 구인구직처럼 2열 나란히 */
+        
         <div className="border border-gray-200 rounded-2xl overflow-hidden mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
             <div className="p-6">
@@ -226,7 +237,7 @@ export default function UsedGoodsDetail({
                 </div>
               </div>
               {!isOwner && (
-                <Button variant="teal" className="cursor-pointer w-full" onClick={handleChat}>
+                <Button variant="teal" className="cursor-pointer self-start min-w-72" onClick={handleChat}>
                   {t("chat")}
                 </Button>
               )}
@@ -235,7 +246,7 @@ export default function UsedGoodsDetail({
         </div>
       )}
 
-      {/* 제목 + 설명 카드 */}
+      
       <div className="mt-2 md:mt-4 border border-gray-200 rounded-2xl p-6">
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2">
@@ -283,32 +294,10 @@ export default function UsedGoodsDetail({
         <p className="text-gray-700 whitespace-pre-line">{data.content}</p>
       </div>
 
-      {/* 관련 매물 */}
-      {relatedData && relatedData.length > 0 && (
-        <div className="mt-2 md:mt-4 border border-gray-200 rounded-2xl p-6">
-          <h2 className="text-xl font-semibold mb-4">{t("related")}</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {relatedData.map((item) => {
-              const itemImages = (item.images as string[]) ?? [];
-              return (
-                <Link key={item.id} href={`/usedgoods/${item.id}`} className="block">
-                  <div className="relative w-full aspect-square overflow-hidden border rounded-xl">
-                    <ImageWithFallback
-                      src={itemImages[0] ?? "/fallback-image.svg"}
-                      alt={item.posts?.title ?? ""}
-                      fill
-                      sizes="(max-width: 768px) 50vw, 25vw"
-                      className="object-cover"
-                    />
-                  </div>
-                  <p className="text-sm font-medium line-clamp-1 mt-1">{item.posts?.title}</p>
-                  <p className="text-sm text-orange-500">₱ {item.price?.toLocaleString()}</p>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      
+      <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+
+      <RelatedItemsCarousel title={t("related")} items={relatedItems} />
     </div>
   );
 }

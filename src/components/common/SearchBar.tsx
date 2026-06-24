@@ -61,7 +61,7 @@ export function SearchBar({ givenSearch = "", defaultLocation = "all", onSearch,
   return (
     <div className="mb-8">
       <form onSubmit={handleSubmit}>
-        {/* 모바일 */}
+        
         <div className="md:hidden space-y-2">
           {showLocation && (
             <button
@@ -106,7 +106,7 @@ export function SearchBar({ givenSearch = "", defaultLocation = "all", onSearch,
           </div>
         </div>
 
-        {/* 데스크탑 */}
+        
         <div className="hidden md:flex items-center bg-white border-2 border-gray-200 rounded-full h-12 px-2 focus-within:border-teal-400 transition-colors max-w-lg mx-auto">
           {showLocation && <div className="relative shrink-0" ref={locationDropdownRef}>
             <button
@@ -175,7 +175,7 @@ export function SearchBar({ givenSearch = "", defaultLocation = "all", onSearch,
         </div>
       </form>
 
-      {/* 모바일 지역 선택 바텀시트 */}
+      
       {showLocation && mobileLocationOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex flex-col justify-end">
           <div

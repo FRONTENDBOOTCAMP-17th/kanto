@@ -1,16 +1,37 @@
+import { cache } from "react";
 import { createClient } from "@/utils/supabase/server";
 import type { User } from "@/type/user";
 
-export async function getSessionUser(): Promise<User | null> {
+// 한 요청 안에서 auth.getUser() 왕복을 공유한다.
+// 여러 서비스(getSessionUser/getLikeList/getIdentityVerified 등)가 각자 호출하던 것을 dedupe.
+export const getAuthUser = cache(async () => {
   const supabase = await createClient();
-  // 서버 컴포넌트에서는 getSession()이 로그인 상태인데도 null을 반환할 수 있어
-  // 인증 서버로 검증하는 getUser()를 사용한다. (새로고침 시 헤더 로그인 버튼 깜빡임 방지)
   const {
-    data: { user: authUser },
+    data: { user },
   } = await supabase.auth.getUser();
+  return user;
+});
 
+// auth_id → 내부 users.id 해석도 한 요청 1회로 공유.
+export const getCurrentUserId = cache(async (): Promise<number | null> => {
+  const authUser = await getAuthUser();
   if (!authUser) return null;
 
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("users")
+    .select("id")
+    .eq("auth_id", authUser.id)
+    .single();
+
+  return data?.id ?? null;
+});
+
+export const getSessionUser = cache(async (): Promise<User | null> => {
+  const authUser = await getAuthUser();
+  if (!authUser) return null;
+
+  const supabase = await createClient();
   const { data } = await supabase
     .from("users")
     .select(
@@ -20,14 +41,9 @@ export async function getSessionUser(): Promise<User | null> {
     .single();
 
   return (data as User) ?? null;
-}
+});
 
-// 본인인증 여부(auth 메타데이터)를 조회한다. 글쓰기 버튼의 인증 관문 분기에 사용한다.
 export async function getIdentityVerified(): Promise<boolean> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getAuthUser();
   return user?.user_metadata?.identity_verified === true;
 }

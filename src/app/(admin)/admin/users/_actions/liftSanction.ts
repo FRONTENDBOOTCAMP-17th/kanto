@@ -26,7 +26,6 @@ export async function liftSanction(userId: number): Promise<void> {
     .update({ suspended_until: null } as never)
     .eq("id", userId);
 
-  // 해제 이력도 기록
   await admin.from("user_sanctions").insert({
     user_id: userId,
     admin_id: adminId,

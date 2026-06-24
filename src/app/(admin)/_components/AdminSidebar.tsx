@@ -12,6 +12,7 @@ import {
   MessageSquare,
   MapPin,
   Menu,
+  Zap,
 } from "lucide-react";
 
 type NavItem = {
@@ -30,12 +31,13 @@ export default function AdminSidebar({ pendingCount }: { pendingCount: number })
     { icon: FileText, label: "글 관리", href: "/admin/posts" },
     { icon: Users, label: "유저 관리", href: "/admin/users" },
     { icon: Flag, label: "신고 내역", href: "/admin/reports", badge: pendingCount || undefined },
+    { icon: Zap, label: "번개모임 관리", href: "/admin/go" },
     { icon: MessageSquare, label: "채팅기록", href: "/admin/chats" },
   ];
 
   return (
     <>
-      {/* 모바일시 사이드바 숨겨짐 */}
+      
       <header className="fixed inset-x-0 top-0 z-50 hidden h-14.5 items-center justify-between border-b border-[#ebeef0] bg-white px-4 max-lg:flex">
         <div className="flex items-center gap-2.5">
           <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[9px] bg-teal-500">
@@ -70,7 +72,7 @@ export default function AdminSidebar({ pendingCount }: { pendingCount: number })
         />
       )}
 
-      {/* 사이드바 */}
+      
       <aside
         className={[
           "sticky top-0 flex h-screen w-62.5 shrink-0 flex-col border-r border-[#ebeef0] bg-white px-4 py-5.5",

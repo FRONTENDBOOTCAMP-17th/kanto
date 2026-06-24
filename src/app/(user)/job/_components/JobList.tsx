@@ -23,7 +23,7 @@ export function JobList({ posts, likedIds, currentUserId, currentPage, emptyMess
 
   return (
     <div className="border-t border-b border-gray-200">
-      {/* 데스크탑 테이블 헤더 */}
+      
       <div className="hidden md:flex justify-between gap-3 md:gap-4 px-5 py-3 bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wide">
         <div className="flex items-center gap-4 flex-1 min-w-0">
           <div className="flex-2">{t("colCompany")}</div>

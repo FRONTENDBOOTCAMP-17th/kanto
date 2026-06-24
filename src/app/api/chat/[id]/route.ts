@@ -1,4 +1,3 @@
-import { getChatDetail } from "@/services/chat/chat";
 import { getMessageList } from "@/services/chat/message";
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
@@ -26,41 +25,52 @@ export async function GET(
     return NextResponse.json({ error: "not found" }, { status: 404 });
 
   const chatId = Number(id);
-  const [chatRoom, messages] = await Promise.all([
-    getChatDetail(chatId, supabase),
+  const [{ data: chat, error }, messages] = await Promise.all([
+    supabase
+      .from("chats")
+      .select(`
+        *,
+        user1:users!chats_user_id_1_fkey(id, name, avatar_url, created_at),
+        user2:users!chats_user_id_2_fkey(id, name, avatar_url, created_at),
+        posts(title, post_type, user_id, is_reserved, used_goods(price), rentals(price))
+      `)
+      .eq("id", chatId)
+      .single(),
     getMessageList(chatId, supabase),
   ]);
 
+  if (error || !chat)
+    return NextResponse.json({ error: "not found" }, { status: 404 });
+
   const partner =
-    chatRoom.user_id_1 === currentUser.id ? chatRoom.user2 : chatRoom.user1;
+    chat.user_id_1 === currentUser.id ? chat.user2 : chat.user1;
 
-  // 판매자(글 작성자) id 와 중고거래 가격 — 안전결제 요청 게이팅/금액 prefill 용
-  const { data: post } = await supabase
-    .from("posts")
-    .select("user_id, is_reserved")
-    .eq("id", chatRoom.post_id)
-    .single();
+  const posts = chat.posts as {
+    title: string;
+    post_type: string;
+    user_id: number;
+    is_reserved: boolean;
+    used_goods: { price: number }[];
+    rentals: { price: number | null }[];
+  } | null;
 
-  let postPrice: number | null = null;
-  if (chatRoom.posts?.post_type === "used_goods") {
-    const { data: usedGoods } = await supabase
-      .from("used_goods")
-      .select("price")
-      .eq("post_id", chatRoom.post_id)
-      .single();
-    postPrice = usedGoods?.price ?? null;
-  }
+  const postPrice =
+    posts?.post_type === "used_goods"
+      ? (posts.used_goods[0]?.price ?? null)
+      : posts?.post_type === "rentals"
+        ? (posts.rentals[0]?.price ?? null)
+        : null;
 
   return NextResponse.json({
     messages,
     currentUser,
     chatId,
-    postId: chatRoom.post_id,
+    postId: chat.post_id,
     partner,
-    postTitle: chatRoom.posts?.title ?? "",
-    postType: chatRoom.posts?.post_type ?? "",
-    sellerId: post?.user_id ?? null,
+    postTitle: posts?.title ?? "",
+    postType: posts?.post_type ?? "",
+    sellerId: posts?.user_id ?? null,
     postPrice,
-    isReserved: post?.is_reserved ?? false,
+    isReserved: posts?.is_reserved ?? false,
   });
 }

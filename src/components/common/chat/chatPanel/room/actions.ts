@@ -62,8 +62,20 @@ export async function sendMessageAction(params: {
 
   const isUser1 = chat.user_id_1 === userData.id;
   const partnerId = isUser1 ? chat.user_id_2 : chat.user_id_1;
-  if (partnerId !== null && (await isBlockedPair(userData.id, partnerId))) {
-    throw new Error("차단된 사용자와는 메시지를 주고받을 수 없습니다.");
+
+  if (partnerId !== null) {
+    const { data: partnerData } = await supabase
+      .from("users")
+      .select("suspended_until")
+      .eq("id", partnerId)
+      .single();
+    if (partnerData?.suspended_until && new Date(partnerData.suspended_until) > new Date()) {
+      throw new Error("정지된 사용자입니다.");
+    }
+
+    if (await isBlockedPair(userData.id, partnerId)) {
+      throw new Error("차단된 사용자와는 메시지를 주고받을 수 없습니다.");
+    }
   }
 
   const result = await postMessage(
@@ -86,9 +98,6 @@ export async function sendMessageAction(params: {
   return result;
 }
 
-// 이전 메시지 페이지네이션 로드
-// before: 현재 화면에서 가장 오래된 메시지의 created_at (커서)
-// before 기준 이전 50개를 오름차순으로 반환
 export async function loadMoreMessagesAction(chatId: number, before: string) {
   const supabase = await createClient();
   return getMessageList(chatId, supabase, before);
@@ -117,7 +126,6 @@ export async function createChatAndSendAction(params: {
     throw new Error("차단된 사용자와는 메시지를 주고받을 수 없습니다.");
   }
 
-  // 레이스 컨디션 대비: 이미 존재하는 채팅방 확인 후 없으면 생성
   const { data: existing } = await supabase
     .from("chats")
     .select("id")
@@ -162,16 +170,8 @@ export async function markChatReadAction(chatId: number) {
     .single();
   if (!userData) return;
 
-  const { data: chat } = await supabase
-    .from("chats")
-    .select("user_id_1")
-    .eq("id", chatId)
-    .single();
-  if (!chat) return;
-
-  const isUser1 = chat.user_id_1 === userData.id;
-  await supabase
-    .from("chats")
-    .update(isUser1 ? { user_id_1_unread: 0 } : { user_id_2_unread: 0 })
-    .eq("id", chatId);
+  await supabase.rpc("mark_chat_read", {
+    p_chat_id: chatId,
+    p_user_id: userData.id,
+  });
 }

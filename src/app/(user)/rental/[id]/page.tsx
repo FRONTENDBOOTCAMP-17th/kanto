@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { after } from "next/server";
 import { getRentalDetail } from "@/services/rental/rental";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
 import BackButton from "@/app/(user)/rental/[id]/_components/BackButton";
@@ -8,6 +9,8 @@ import RentSellerInfo from "./_components/RentSellerInfo";
 import PostInfo from "./_components/PostInfo";
 import VerifyAuthor from "@/components/common/VerifyAuthor";
 import { viewCountUp } from "@/services/view";
+import { createClient } from "@/utils/supabase/server";
+import RelatedItemsCarousel, { type RelatedItem } from "@/components/common/RelatedItemsCarousel";
 
 export default async function RentalDetail({
   params,
@@ -24,10 +27,29 @@ export default async function RentalDetail({
   }
 
   const images = (rental.images as string[]) ?? [];
-  await viewCountUp(rental.post_id ?? 0);
-
   const postId = rental.post_id ?? 0;
+
+  // 조회수 증가는 응답 후로 미뤄 렌더를 막지 않는다.
+  after(() => viewCountUp(postId));
   const { userId, initialLiked, initialReported } = await getUserLikeReportStatus(postId);
+
+  let relatedItems: RelatedItem[] = [];
+  if (rental.location) {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("rentals")
+      .select("id, post_id, images, price, posts(title)")
+      .eq("location", rental.location)
+      .neq("id", rental.id)
+      .limit(8);
+    relatedItems = (data ?? []).map((item) => ({
+      id: item.id,
+      href: `/rental/${item.post_id}`,
+      imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
+      title: (item.posts as { title: string | null } | null)?.title ?? "",
+      priceText: item.price ? `₱ ${item.price.toLocaleString()}` : "가격 협의",
+    }));
+  }
 
   return (
     <div className="page-container pb-12">
@@ -50,7 +72,7 @@ export default async function RentalDetail({
           </div>
         </div>
       ) : (
-        /* 이미지 없을 때: 구인구직처럼 2열 나란히 */
+        
         <div className="border border-gray-200 rounded-2xl overflow-hidden mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
             <div className="p-6 flex flex-col gap-4">
@@ -69,6 +91,7 @@ export default async function RentalDetail({
         initialLiked={initialLiked}
         initialReported={initialReported}
       />
+      <RelatedItemsCarousel title="관련 매물" items={relatedItems} />
     </div>
   );
 }

@@ -26,22 +26,21 @@ export default async function UsedGoodsPage({
   const currentPage = Number(params.page ?? 1);
   const t = await getTranslations("UsedGoods");
 
-  const [posts, { likedIds, currentUserId }, sessionUser, isVerified] = await Promise.all([
-    getUsedGoodsList({
-      search: params.search,
-      category: params.category,
-      location: params.location,
-    }),
+  const [{ posts, total }, { likedIds, currentUserId }, sessionUser, isVerified] = await Promise.all([
+    getUsedGoodsList(
+      {
+        search: params.search,
+        category: params.category,
+        location: params.location,
+      },
+      { page: currentPage, pageSize: ITEMS_PER_PAGE },
+    ),
     getLikeList("used_goods"),
     getSessionUser(),
     getIdentityVerified(),
   ]);
 
-  const totalPages = Math.ceil(posts.length / ITEMS_PER_PAGE);
-  const pagedPosts = posts.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE,
-  );
+  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
   return (
     <div className="page-wrapper">
@@ -72,7 +71,7 @@ export default async function UsedGoodsPage({
         <div className="border-t border-gray-200 my-6" />
 
         <UsedGoodsList
-          initialPosts={pagedPosts}
+          initialPosts={posts}
           initialLikedIds={likedIds}
           currentUserId={currentUserId}
           currentPage={currentPage}

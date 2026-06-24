@@ -1,5 +1,6 @@
 import { Wifi, AirVent, Car, Utensils } from "lucide-react";
 import { ContentCard } from "@/components/common/ContentCard";
+import PopularBadge from "@/app/(user)/main/_components/PopularBadge";
 
 const AMENITY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   wifi: Wifi,
@@ -21,6 +22,7 @@ interface RentalCardProps {
   initialIsLiked: boolean;
   currentUserId: number | null;
   fromPage?: number;
+  isPopular?: boolean;
 }
 
 export function RentalCard({
@@ -36,6 +38,7 @@ export function RentalCard({
   initialIsLiked,
   currentUserId,
   fromPage,
+  isPopular,
 }: RentalCardProps) {
   const displayLocation =
     location === "그 외 지역" ? (locationDetail ?? location) : location;
@@ -71,6 +74,7 @@ export function RentalCard({
       initialIsLiked={initialIsLiked}
       currentUserId={currentUserId}
       tags={amenityTags}
+      badge={isPopular ? <PopularBadge /> : undefined}
     />
   );
 }

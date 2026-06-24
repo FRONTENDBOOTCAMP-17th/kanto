@@ -1,7 +1,3 @@
-// 이메일 인증번호 공용 유틸
-// - 본인인증(/api/profile/verification)과 비밀번호 재설정(/api/auth/reset-password)에서 공유한다.
-// - Redis가 있으면 Redis, 없으면 메모리 fallback에 인증번호를 저장한다.
-// - 메일 발송은 Gmail SMTP. GMAIL_USER/GMAIL_APP_PASSWORD가 없으면 발송을 건너뛰고 devCode를 표시한다.
 
 import nodemailer from "nodemailer";
 import { Redis } from "@upstash/redis";
@@ -49,7 +45,6 @@ export async function getSavedVerificationCode(key: string) {
       const redisCode = await redis.get<string>(key);
       if (redisCode) return redisCode;
     } catch {
-      // Use the local fallback below when Redis is unavailable in development.
     }
   }
 
@@ -73,7 +68,6 @@ export async function deleteVerificationCode(key: string) {
   try {
     await redis.del(key);
   } catch {
-    // Redis may be unavailable in local development.
   }
 }
 
@@ -91,7 +85,6 @@ export async function sendVerificationEmail(
   const user = process.env.GMAIL_USER;
   const pass = process.env.GMAIL_APP_PASSWORD;
 
-  // 메일 발송 키가 없으면 발송을 건너뛰고 개발용 코드를 화면에 표시한다.
   if (!user || !pass) {
     return { isEmailSent: false, isConfigured: false };
   }
