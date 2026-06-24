@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { BotMessageSquare, X, Send, Sparkles } from "lucide-react";
+import { BotMessageSquare, X, Send } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
@@ -11,7 +11,7 @@ interface Message {
 const INITIAL_MESSAGES: Message[] = [
   {
     role: "assistant",
-    content: "안녕하세요! 칸토 AI 어시스턴트입니다 🤖\n무엇이든 물어보세요!",
+    content: "안녕하세요! 칸토 AI 어시스턴트입니다\n무엇이든 편하게 물어보세요!",
   },
 ];
 
@@ -49,7 +49,7 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
       {isOpen && (
         <div
           className="
-            absolute bottom-0 right-full mr-3
+            absolute -bottom-14 right-full mr-3
             w-80 h-120 flex flex-col bg-white rounded-2xl shadow-2xl shadow-black/40 border border-gray-100 overflow-hidden
             max-md:fixed max-md:inset-0 max-md:mr-0 max-md:w-full max-md:h-full max-md:rounded-none max-md:shadow-none max-md:border-0 max-md:z-55
           "
@@ -76,54 +76,51 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
             data-chat-scroll
           >
             {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`flex gap-2 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}
-              >
-                {msg.role === "assistant" && (
-                  <div className="w-7 h-7 rounded-full bg-linear-to-br from-violet-500 to-indigo-500 flex items-center justify-center shrink-0 mt-0.5">
-                    <BotMessageSquare className="w-4 h-4 text-white" />
-                  </div>
-                )}
+              <div key={i}>
                 <div
-                  className={`
-                    max-w-[75%] px-3 py-2 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap
-                    ${
-                      msg.role === "user"
-                        ? "bg-violet-600 text-white rounded-tr-sm"
-                        : "bg-white text-gray-800 rounded-tl-sm shadow-sm border border-gray-100"
-                    }
-                  `}
+                  className={`flex gap-2 ${msg.role === "user" ? "flex-row-reverse" : "flex-row"}`}
                 >
-                  {msg.content}
+                  {msg.role === "assistant" && (
+                    <div className="w-7 h-7 rounded-full bg-linear-to-br from-violet-500 to-indigo-500 flex items-center justify-center shrink-0 mt-0.5">
+                      <BotMessageSquare className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+                  <div
+                    className={`
+                      max-w-[75%] px-3 py-2 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap
+                      ${
+                        msg.role === "user"
+                          ? "bg-violet-600 text-white rounded-tr-sm"
+                          : "bg-white text-gray-800 rounded-tl-sm shadow-sm border border-gray-100"
+                      }
+                    `}
+                  >
+                    {msg.content}
+                    {i === INITIAL_MESSAGES.length - 1 && messages.length === INITIAL_MESSAGES.length && (
+                      <div className="flex flex-wrap gap-1.5 my-2">
+                        {[
+                          "인증뱃지는 어떻게 받나요?",
+                          "안전거래 방법",
+                          "망고지수는 어떤건가요?",
+                        ].map((q) => (
+                          <button
+                            key={q}
+                            onClick={() =>
+                              setMessages((prev) => [...prev, { role: "user", content: q }])
+                            }
+                            className="text-xs px-2.5 py-1 rounded-full border border-violet-200 text-violet-600 hover:bg-violet-50 transition-colors whitespace-nowrap"
+                          >
+                            {q}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
             <div ref={messagesEndRef} />
           </div>
-
-          {/* 추천 질문 (첫 메시지만 있을 때) */}
-          {messages.length === 1 && (
-            <div className="px-4 py-2 bg-gray-50 border-t border-gray-100">
-              <p className="text-xs text-gray-400 mb-2 flex items-center gap-1">
-                <Sparkles className="w-3 h-3" />
-                추천 질문
-              </p>
-              <div className="flex flex-col gap-1.5">
-                {["칸토가 무엇인가요?", "어떤 서비스를 제공하나요?"].map((q) => (
-                  <button
-                    key={q}
-                    onClick={() => {
-                      setMessages((prev) => [...prev, { role: "user", content: q }]);
-                    }}
-                    className="text-left text-xs px-3 py-1.5 rounded-full border border-violet-200 text-violet-600 hover:bg-violet-50 transition-colors"
-                  >
-                    {q}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* 입력창 */}
           <div className="bg-white border-t border-gray-100 px-4 py-3 flex items-center gap-2 shrink-0">
