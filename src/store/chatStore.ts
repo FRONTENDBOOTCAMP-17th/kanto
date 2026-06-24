@@ -15,12 +15,19 @@ export interface PendingNewChat {
   partner: SellerInfo;
 }
 
+export interface PendingGroupRoom {
+  meetupPostId: number;
+  title: string;
+}
+
 interface ChatState {
   chatList: ChatWithUsers[];
   messages: MessageWithSender[];
   unreadCount: number;
   pendingChatId: number | null;
   pendingNewChat: PendingNewChat | null;
+  pendingGroupRoom: PendingGroupRoom | null;
+  groupRoomsVersion: number;
 
   setChatList: (chats: ChatWithUsers[]) => void;
   setMessages: (messages: MessageWithSender[]) => void;
@@ -31,6 +38,9 @@ interface ChatState {
   clearPendingChat: () => void;
   openNewChat: (meta: PendingNewChat) => void;
   clearNewChat: () => void;
+  openGroupRoom: (meta: PendingGroupRoom) => void;
+  clearPendingGroupRoom: () => void;
+  refreshGroupRoomsList: () => void;
 }
 
 export const useChatStore = create<ChatState>((set) => ({
@@ -39,6 +49,8 @@ export const useChatStore = create<ChatState>((set) => ({
   unreadCount: 0,
   pendingChatId: null,
   pendingNewChat: null,
+  pendingGroupRoom: null,
+  groupRoomsVersion: 0,
 
   setChatList: (chats) => set({ chatList: chats }),
   setMessages: (messages) => set({ messages }),
@@ -60,4 +72,15 @@ export const useChatStore = create<ChatState>((set) => ({
   clearPendingChat: () => set({ pendingChatId: null }),
   openNewChat: (meta) => set({ pendingNewChat: meta }),
   clearNewChat: () => set({ pendingNewChat: null }),
+  openGroupRoom: (meta) => {
+    const until = useAuthStore.getState().user?.suspended_until;
+    if (until && new Date(until) > new Date()) {
+      useSuspendedModalStore.getState().open();
+      return;
+    }
+    set({ pendingGroupRoom: meta });
+  },
+  clearPendingGroupRoom: () => set({ pendingGroupRoom: null }),
+  refreshGroupRoomsList: () =>
+    set((state) => ({ groupRoomsVersion: state.groupRoomsVersion + 1 })),
 }));

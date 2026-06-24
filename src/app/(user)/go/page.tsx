@@ -50,7 +50,7 @@ export default function GoPage() {
   const [selectedMeetupId, setSelectedMeetupId] = useState<number | null>(null);
   const [showCreate, setShowCreate] = useState(false);
   const [showList, setShowList] = useState(false);
-  const currentUserId = useAuthStore((s) => s.user)?.id;
+  const currentUserId = useAuthStore((s) => s.user?.id);
 
   const [bounds, setBounds] = useState<{
     north: number;
@@ -154,7 +154,7 @@ export default function GoPage() {
         </div>
 
         {/* ── 우측 하단: FAB ── */}
-        <div className="absolute bottom-7 right-7 z-10">
+        <div className="absolute bottom-7 right-7 z-10 flex flex-col items-end gap-2.5">
           <button
             onClick={() => setShowCreate(true)}
             className="flex items-center gap-2 rounded-[16px] bg-slate-900 px-5 py-3.5 text-[14.5px] font-bold text-white shadow-[0_8px_28px_rgba(15,23,42,.4)] hover:bg-slate-800 active:scale-95 transition-all"

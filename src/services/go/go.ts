@@ -6,6 +6,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { getSessionUser } from "@/services/user/user";
+import { createRoomForMeetup, endRoom, postSystemMessageForMeetup } from "@/services/go/groupChat";
 import type {
   Meetup,
   MeetupParticipant,
@@ -157,6 +158,8 @@ export async function createMeetup(input: CreateMeetupInput): Promise<number> {
 
   if (meetupError) throw meetupError;
 
+  await createRoomForMeetup(postId, endAt);
+
   return postId;
 }
 
@@ -175,6 +178,8 @@ export async function joinMeetup(meetupPostId: number): Promise<void> {
   } as never);
 
   if (error) throw error;
+
+  await postSystemMessageForMeetup(meetupPostId, `${sessionUser.name}님이 참여했습니다.`);
 
   // 주최자 알림 (RLS 우회를 위해 admin 클라이언트 — 기존 알림 insert 패턴과 동일)
   const { data: meetupData } = await supabase
@@ -225,6 +230,8 @@ export async function cancelJoin(meetupPostId: number): Promise<void> {
     .eq("user_id", sessionUser.id);
 
   if (error) throw error;
+
+  await postSystemMessageForMeetup(meetupPostId, `${sessionUser.name}님이 나갔습니다.`);
 }
 
 /**
@@ -260,6 +267,8 @@ export async function hostEndMeetup(postId: number): Promise<void> {
     .from("meetups")
     .update({ post_id: postId } as never)
     .eq("post_id", postId);
+
+  await endRoom(postId);
 }
 
 // ─── 어드민 API ──────────────────────────────────────────────
@@ -358,4 +367,6 @@ export async function adminForceEndMeetup(postId: number): Promise<void> {
     .from("meetups")
     .update({ post_id: postId } as never)
     .eq("post_id", postId);
+
+  await endRoom(postId);
 }

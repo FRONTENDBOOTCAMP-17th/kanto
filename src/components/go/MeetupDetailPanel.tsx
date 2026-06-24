@@ -3,11 +3,12 @@
 // 핀 클릭 시 우측에서 슬라이드 인하는 모임 상세 패널
 
 import { useEffect, useState } from "react";
-import { X, Calendar, MapPin, Users, Zap, Siren, AlertTriangle } from "lucide-react";
+import { X, Calendar, MapPin, Users, Zap, Siren, AlertTriangle, MessageCircle } from "lucide-react";
 import { TOPIC_META } from "@/constants/meetupTopics";
 import { joinMeetup, cancelJoin, getMeetupDetail, hostEndMeetup } from "@/services/go/go";
 import { checkReported } from "@/services/report";
 import ReportModal, { POST_REPORT_CATEGORIES } from "@/components/common/ReportModal";
+import { useChatStore } from "@/store/chatStore";
 import type { Meetup, MeetupParticipant } from "@/type/go";
 
 interface MeetupDetailPanelProps {
@@ -143,10 +144,11 @@ export function MeetupDetailPanel({ meetup, onClose, currentUserId, suppressOver
             <div className="flex flex-shrink-0 items-center gap-1.5">
               <button
                 onClick={() => setShowReportModal(true)}
-                aria-label="신고"
-                className="flex h-8 w-8 items-center justify-center rounded-[9px] border border-slate-200 text-slate-500 hover:bg-red-50 hover:text-red-600"
+                aria-label="모임 신고"
+                className="flex h-8 items-center gap-1.5 rounded-[9px] border border-slate-200 px-2.5 text-slate-500 hover:border-red-200 hover:bg-red-50 hover:text-red-600"
               >
                 <Siren className="h-4 w-4" strokeWidth={2.2} />
+                <span className="text-[12.5px] font-bold">신고</span>
               </button>
               <button
                 onClick={onClose}
@@ -243,7 +245,20 @@ export function MeetupDetailPanel({ meetup, onClose, currentUserId, suppressOver
         </div>
 
         {/* 참여 버튼 / 호스트 관리 버튼 */}
-        <div className="flex-shrink-0 border-t border-slate-100 px-6 py-4">
+        <div className="flex-shrink-0 border-t border-slate-100 px-6 py-4 flex flex-col gap-2.5">
+          {(isHost || joined) && meetup.status !== "inactive" && (
+            <button
+              onClick={() =>
+                useChatStore
+                  .getState()
+                  .openGroupRoom({ meetupPostId: meetup.post_id, title: meetup.title })
+              }
+              className="flex w-full items-center justify-center gap-2 rounded-[12px] border border-teal-200 bg-teal-50 py-3 text-[14px] font-bold text-teal-700 hover:bg-teal-100 transition-colors"
+            >
+              <MessageCircle className="h-4 w-4" strokeWidth={2.2} />
+              모임 채팅 입장
+            </button>
+          )}
           {isHost ? (
             meetup.status === "inactive" ? (
               <div className="flex items-center justify-center gap-2 rounded-[11px] bg-slate-50 py-3 text-[13.5px] font-semibold text-slate-500">

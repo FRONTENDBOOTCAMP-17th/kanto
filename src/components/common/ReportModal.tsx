@@ -21,7 +21,7 @@ interface report {
   userId: number | undefined;
   initialReported: boolean;
   categories?: readonly string[];
-  targetType?: "post" | "user";
+  targetType?: "post" | "user" | "message";
 }
 
 export const POST_REPORT_CATEGORIES = [
@@ -31,6 +31,14 @@ export const POST_REPORT_CATEGORIES = [
   "허위 매물",
   "불법 게시물",
   "성 범죄(성희롱/성추행 등)",
+] as const;
+
+export const USER_REPORT_CATEGORIES = [
+  "욕설/비방",
+  "성희롱/성적 불쾌감",
+  "사기/금전 요구",
+  "도배/광고/스팸",
+  "부적절한 행위",
 ] as const;
 
 export default function ReportModal({
@@ -102,7 +110,7 @@ export default function ReportModal({
           onClick={(e) => e.stopPropagation()}
         >
           <p className="text-base font-semibold text-gray-800">
-            {justReported ? t("done") : t("already")}
+            {justReported ? t("done") : t("already", { target: t(`targetNoun.${targetType}`) })}
           </p>
           <Button variant="teal" onClick={handleClose}>
             {tc("confirm")}

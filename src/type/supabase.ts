@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       banned_keywords: {
@@ -420,62 +395,6 @@ export type Database = {
           },
         ]
       }
-      companies: {
-        Row: {
-          id: number
-          user_id: number
-          company_name: string
-          company_intro: string
-          company_logo: string | null
-          company_address: string | null
-          company_website: string | null
-          company_year: number | null
-          employee_count: number | null
-          industry: string | null
-          company_type: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: number
-          user_id: number
-          company_name: string
-          company_intro: string
-          company_logo?: string | null
-          company_address?: string | null
-          company_website?: string | null
-          company_year?: number | null
-          employee_count?: number | null
-          industry?: string | null
-          company_type?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: number
-          user_id?: number
-          company_name?: string
-          company_intro?: string
-          company_logo?: string | null
-          company_address?: string | null
-          company_website?: string | null
-          company_year?: number | null
-          employee_count?: number | null
-          industry?: string | null
-          company_type?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "companies_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       dating_profiles: {
         Row: {
           age: number | null
@@ -690,6 +609,187 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      meetup_chat_blocks: {
+        Row: {
+          blocked_id: number
+          blocker_id: number
+          created_at: string
+          id: number
+          room_id: number
+        }
+        Insert: {
+          blocked_id: number
+          blocker_id: number
+          created_at?: string
+          id?: never
+          room_id: number
+        }
+        Update: {
+          blocked_id?: number
+          blocker_id?: number
+          created_at?: string
+          id?: never
+          room_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meetup_chat_blocks_blocked_id_fkey"
+            columns: ["blocked_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetup_chat_blocks_blocked_id_fkey"
+            columns: ["blocked_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetup_chat_blocks_blocker_id_fkey"
+            columns: ["blocker_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetup_chat_blocks_blocker_id_fkey"
+            columns: ["blocker_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetup_chat_blocks_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "meetup_chat_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meetup_chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: number
+          room_id: number
+          sender_id: number
+          type: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: never
+          room_id: number
+          sender_id: number
+          type?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: never
+          room_id?: number
+          sender_id?: number
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meetup_chat_messages_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "meetup_chat_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetup_chat_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetup_chat_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meetup_chat_reads: {
+        Row: {
+          last_read_at: string
+          room_id: number
+          user_id: number
+        }
+        Insert: {
+          last_read_at?: string
+          room_id: number
+          user_id: number
+        }
+        Update: {
+          last_read_at?: string
+          room_id?: number
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meetup_chat_reads_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "meetup_chat_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetup_chat_reads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetup_chat_reads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meetup_chat_rooms: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: number
+          meetup_post_id: number
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: never
+          meetup_post_id: number
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: never
+          meetup_post_id?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meetup_chat_rooms_meetup_post_id_fkey"
+            columns: ["meetup_post_id"]
+            isOneToOne: true
+            referencedRelation: "meetups"
+            referencedColumns: ["post_id"]
           },
         ]
       }
@@ -1545,6 +1645,10 @@ export type Database = {
       }
       increment_view_count: { Args: { p_post_id: number }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
+      is_meetup_chat_member: {
+        Args: { p_room_id: number; p_user_id: number }
+        Returns: boolean
+      }
       mark_chat_read: {
         Args: { p_chat_id: number; p_user_id: number }
         Returns: undefined
@@ -1701,9 +1805,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       product_condition: ["미개봉", "가벼운 사용감", "사용감 있음"],

@@ -157,7 +157,12 @@
     "submitError": "An error occurred while submitting the report. Please try again later.",
     "submit": "Report",
     "done": "Your report has been submitted.",
-    "already": "You have already reported this post.",
+    "already": "You have already reported this {target}.",
+    "targetNoun": {
+      "post": "post",
+      "user": "user",
+      "message": "message"
+    },
     "categories": {
       "욕설": "Abusive language",
       "도배": "Spamming",
@@ -671,7 +676,8 @@
     },
     "blocked": {
       "title": "Blocked Users",
-      "empty": "No blocked users"
+      "empty": "No blocked users",
+      "unblock": "Unblock"
     },
     "reviews": {
       "title": "Transaction Reviews",
