@@ -65,26 +65,26 @@ export function CreateJobFormPageTwo({
 
   return (
     <div className="space-y-6">
-      <p className="text-white/40">{t("form.page2Subtitle")}</p>
+      <p className="text-gray-500">{t("form.page2Subtitle")}</p>
 
       <div className="space-y-4">
-        <h2 className="font-normal text-white">{t("form.companyInfo")}</h2>
+        <h2 className="font-semibold text-gray-900">{t("form.companyInfo")}</h2>
         <div className="space-y-2">
-          <Label>{t("form.companyLogoLabel")} <span className="text-white/30 font-normal text-sm">{t("form.optional")}</span></Label>
+          <Label>{t("form.companyLogoLabel")} <span className="text-gray-400 font-normal text-sm">{t("form.optional")}</span></Label>
           <div className="flex items-center gap-4">
             <button
               type="button"
               onClick={() => logoInputRef.current?.click()}
-              className="w-20 h-20 rounded-xl border-2 border-dashed border-white/20 flex items-center justify-center overflow-hidden hover:border-white/50 transition-colors shrink-0"
+              className="w-20 h-20 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden hover:border-teal-400 transition-colors shrink-0"
             >
               {logoPreview ? (
                 <img src={logoPreview} alt="logo" className="w-full h-full object-contain" />
               ) : (
-                <span className="text-3xl text-white/20">+</span>
+                <span className="text-3xl text-gray-300">+</span>
               )}
             </button>
             <div className="space-y-1">
-              <p className="text-sm text-white/40">{t("form.companyLogoHint")}</p>
+              <p className="text-sm text-gray-500">{t("form.companyLogoHint")}</p>
               {companyLogoFile && (
                 <button type="button" onClick={() => setCompanyLogoFile(null)} className="text-xs text-red-400 hover:underline">
                   {t("form.companyLogoRemove")}
@@ -144,14 +144,14 @@ export function CreateJobFormPageTwo({
       </div>
 
       <div className="space-y-4">
-        <h2 className="font-normal text-white">{t("form.managerInfo")}</h2>
+        <h2 className="font-semibold text-gray-900">{t("form.managerInfo")}</h2>
         <div className="space-y-2">
           <Label htmlFor="managerName">{t("form.managerNameLabel")}</Label>
           <Input
             id="managerName"
             value={managerName}
             readOnly
-            className="bg-white/5 text-white/30 cursor-not-allowed"
+            className="bg-gray-100 text-gray-500 cursor-not-allowed"
           />
         </div>
         <div className="space-y-2">
@@ -169,8 +169,8 @@ export function CreateJobFormPageTwo({
       </div>
 
       <div>
-        <h2 className="font-normal text-white mb-4">
-          {t("form.photos")} <span className="text-white/30 font-normal text-sm">{t("form.optional")}</span>
+        <h2 className="font-semibold text-gray-900 mb-4">
+          {t("form.photos")} <span className="text-gray-400 font-normal text-sm">{t("form.optional")}</span>
         </h2>
         <ImageUploadField
           fileInputRef={imageUpload.fileInputRef}
@@ -183,7 +183,7 @@ export function CreateJobFormPageTwo({
 
       <div className="flex gap-3 pt-2">
         <Button type="button" variant="outline" onClick={handlePrevStep} className="flex-1" disabled={isSubmitting}>{t("form.prev")}</Button>
-        <Button type="button" variant="default" onClick={handleSubmit} className="flex-1" disabled={isSubmitting}>
+        <Button type="button" variant="teal" onClick={handleSubmit} className="flex-1" disabled={isSubmitting}>
           {isSubmitting ? t("form.submitting") : t("form.submit")}
         </Button>
       </div>

@@ -55,12 +55,12 @@ export function Footer() {
 
           <div>
             <h4 className="text-white font-semibold mb-4">
-              {t("business.title")}
+              {t("support.title")}
             </h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href={ROUTES.business} className="hover:text-teal-500 transition-colors">
-                  {t("business.home")}
+                <Link href={ROUTES.report} className="hover:text-teal-500 transition-colors">
+                  {t("support.report")}
                 </Link>
               </li>
             </ul>

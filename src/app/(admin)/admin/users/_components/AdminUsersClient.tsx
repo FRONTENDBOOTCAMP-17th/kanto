@@ -1,11 +1,15 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
-import { Users, ExternalLink, X } from "lucide-react";
-import { User, SanctionRecord } from "@/services/admin/adminUsers";
+import { Users } from "lucide-react";
+import { User } from "@/services/admin/adminUsers";
 import AdminUsersTable from "./AdminUsersTable";
-import { applySanction } from "@/app/(admin)/admin/users/_actions/applySanction";
-import { liftSanction } from "@/app/(admin)/admin/users/_actions/liftSanction";
+import UserDetailDrawer from "./UserDetailDrawer";
+import {
+  bulkApplySanction,
+  bulkDeleteUsers,
+} from "@/app/(admin)/admin/users/_actions/bulkUserActions";
+import { ConfirmModal } from "@/components/common/ConfirmModal";
 
 interface AdminUsersClientProps {
   users: User[];
@@ -19,32 +23,16 @@ const SANCTION_OPTIONS: { key: "7d" | "30d" | "perm"; label: string }[] = [
   { key: "perm", label: "영구 정지" },
 ];
 
-function formatDate(date: string | null) {
-  if (!date) return "-";
-  return new Intl.DateTimeFormat("ko-KR", {
-    year: "numeric", month: "2-digit", day: "2-digit",
-  }).format(new Date(date));
-}
-
-function formatDateTime(date: string | null) {
-  if (!date) return "-";
-  return new Intl.DateTimeFormat("ko-KR", {
-    year: "numeric", month: "2-digit", day: "2-digit",
-    hour: "2-digit", minute: "2-digit", second: "2-digit",
-    hour12: false,
-  }).format(new Date(date));
-}
-
 export default function AdminUsersClient({ users }: AdminUsersClientProps) {
+  const [items, setItems] = useState(users);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [selId, setSelId] = useState<number | null>(null);
-  const [sanctioning, setSanctioning] = useState(false);
-  const [pendingSanction, setPendingSanction] = useState<"7d" | "30d" | "perm">("7d");
-  const [localSanctions, setLocalSanctions] = useState<Record<number, SanctionRecord[]>>({});
-  const [localSuspended, setLocalSuspended] = useState<Record<number, string | null>>({});
   const [isPending, startTransition] = useTransition();
   const [toast, setToast] = useState("");
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [bulkSanctioning, setBulkSanctioning] = useState(false);
+  const [confirmBulkDelete, setConfirmBulkDelete] = useState(false);
 
   function showToast(msg: string) {
     setToast(msg);
@@ -57,91 +45,97 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
     setPage(1);
   }
 
-  const totalCount = users.length;
-  const reportedCount = users.filter((u) => u.report_count > 0).length;
+  const totalCount = items.length;
+  const reportedCount = items.filter((u) => u.pending_report_count > 0).length;
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return users;
-    return users.filter(
+    if (!q) return items;
+    return items.filter(
       (u) =>
         u.name.toLowerCase().includes(q) ||
         (u.email?.toLowerCase().includes(q) ?? false),
     );
-  }, [users, search]);
+  }, [items, search]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const curPage = Math.min(page, totalPages);
   const startIdx = (curPage - 1) * PAGE_SIZE;
   const pageItems = filtered.slice(startIdx, startIdx + PAGE_SIZE);
 
-  const baseUser = selId != null ? (users.find((u) => u.id === selId) ?? null) : null;
-  const sel = baseUser
-    ? {
-        ...baseUser,
-        suspended_until: localSuspended[baseUser.id] !== undefined ? localSuspended[baseUser.id] : baseUser.suspended_until,
-        sanctions: [...(localSanctions[baseUser.id] ?? []), ...baseUser.sanctions],
+  const sel = selId != null ? (items.find((u) => u.id === selId) ?? null) : null;
+
+  function patchUser(userId: number, patch: Partial<User>) {
+    setItems((prev) => prev.map((u) => (u.id === userId ? { ...u, ...patch } : u)));
+  }
+
+  const pageIds = pageItems.map((u) => u.id);
+  const allSelected = pageIds.length > 0 && pageIds.every((id) => selectedIds.has(id));
+  const selectedCount = selectedIds.size;
+
+  function toggleSelect(id: number) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function toggleSelectAll() {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (pageIds.every((id) => next.has(id))) {
+        pageIds.forEach((id) => next.delete(id));
+      } else {
+        pageIds.forEach((id) => next.add(id));
       }
-    : null;
-
-  const isPerm = sel?.suspended_until === "9999-12-31T23:59:59Z";
-  const isSuspended =
-    sel?.suspended_until != null &&
-    (isPerm || new Date(sel.suspended_until) > new Date());
-
-  function sanctionIsActive(s: SanctionRecord) {
-    if (s.sanction_type === "perm") return true;
-    if (!s.expires_at) return false;
-    return new Date(s.expires_at) > new Date();
+      return next;
+    });
   }
 
-  function closeDrawer() {
-    setSelId(null);
-    setSanctioning(false);
+  function bulkExpiresAt(type: "7d" | "30d" | "perm"): string {
+    if (type === "perm") return "9999-12-31T23:59:59Z";
+    const d = new Date();
+    d.setDate(d.getDate() + (type === "7d" ? 7 : 30));
+    return d.toISOString();
   }
 
-  function handleApplySanction() {
-    if (!sel) return;
-    const userId = sel.id;
+  function handleBulkSanction(type: "7d" | "30d" | "perm") {
+    const ids = [...selectedIds];
+    if (ids.length === 0) return;
     startTransition(async () => {
       try {
-        const record = await applySanction(userId, pendingSanction);
-        setLocalSanctions((prev) => ({
-          ...prev,
-          [userId]: [record, ...(prev[userId] ?? [])],
-        }));
-        setLocalSuspended((prev) => ({ ...prev, [userId]: record.expires_at }));
-        setSanctioning(false);
-        showToast(`${sel.name}에게 ${record.label} 제재를 부여했습니다`);
+        await bulkApplySanction(ids, type);
+        const exp = bulkExpiresAt(type);
+        setItems((prev) =>
+          prev.map((u) =>
+            selectedIds.has(u.id)
+              ? { ...u, suspended_until: exp, pending_report_count: 0, pending_reports: [] }
+              : u,
+          ),
+        );
+        setSelectedIds(new Set());
+        setBulkSanctioning(false);
+        showToast(`${ids.length}명에게 제재를 부여했습니다`);
       } catch {
         showToast("제재 적용 실패 — 다시 시도해주세요");
       }
     });
   }
 
-  function handleLiftSanction() {
-    if (!sel) return;
-    const userId = sel.id;
-    const userName = sel.name;
+  function handleBulkDeleteUsers() {
+    const ids = [...selectedIds];
+    if (ids.length === 0) return;
     startTransition(async () => {
       try {
-        await liftSanction(userId);
-        const liftRecord: SanctionRecord = {
-          id: Date.now(),
-          label: "제재 해제",
-          sanction_type: "lifted",
-          expires_at: null,
-          created_at: new Date().toISOString(),
-          admin_name: null,
-        };
-        setLocalSanctions((prev) => ({
-          ...prev,
-          [userId]: [liftRecord, ...(prev[userId] ?? [])],
-        }));
-        setLocalSuspended((prev) => ({ ...prev, [userId]: null }));
-        showToast(`${userName}의 제재를 해제했습니다`);
+        await bulkDeleteUsers(ids);
+        setItems((prev) => prev.filter((u) => !selectedIds.has(u.id)));
+        setSelectedIds(new Set());
+        setConfirmBulkDelete(false);
+        showToast(`${ids.length}명을 삭제했습니다`);
       } catch {
-        showToast("제재 해제 실패 — 다시 시도해주세요");
+        showToast("삭제 실패 — 다시 시도해주세요");
       }
     });
   }
@@ -153,7 +147,6 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
       `}</style>
 
-      
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
@@ -171,7 +164,6 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
         </div>
       </div>
 
-      
       <div className="flex items-center gap-2.5 rounded-[14px] border border-[#e7ebee] bg-white px-4 py-[13px] shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="11" cy="11" r="8" />
@@ -185,10 +177,68 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
         />
       </div>
 
-      
+      <div className="rounded-[14px] border border-[#e7ebee] bg-white px-4 py-3 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-[13px] text-slate-500">
+            {selectedCount > 0 ? (
+              <>
+                <span className="font-bold text-slate-900">{selectedCount}명</span> 선택됨
+              </>
+            ) : (
+              "일괄 처리할 회원을 선택하세요"
+            )}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setBulkSanctioning((v) => !v)}
+              disabled={selectedCount === 0 || isPending}
+              className="cursor-pointer whitespace-nowrap rounded-[9px] border border-[#e2e8eb] bg-white px-3.5 py-2 text-[13px] font-semibold text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              수정
+            </button>
+            <button
+              onClick={() => setConfirmBulkDelete(true)}
+              disabled={selectedCount === 0 || isPending}
+              className="cursor-pointer whitespace-nowrap rounded-[9px] border border-red-200 bg-red-50 px-3.5 py-2 text-[13px] font-bold text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              삭제
+            </button>
+          </div>
+        </div>
+        {bulkSanctioning && selectedCount > 0 && (
+          <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-[#f1f4f6] pt-3">
+            <span className="text-[12px] font-bold uppercase tracking-wide text-slate-400">
+              제재 유형
+            </span>
+            {SANCTION_OPTIONS.map((s) => (
+              <button
+                key={s.key}
+                onClick={() => handleBulkSanction(s.key)}
+                disabled={isPending}
+                className={[
+                  "cursor-pointer whitespace-nowrap rounded-[9px] border px-3 py-[7px] text-[12.5px] font-bold disabled:opacity-40",
+                  s.key === "perm"
+                    ? "border-red-300 bg-red-50 text-red-600 hover:bg-red-100"
+                    : "border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100",
+                ].join(" ")}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <div className="overflow-x-auto">
-          <AdminUsersTable users={pageItems} onOpen={(id) => { setSelId(id); setSanctioning(false); }} />
+          <AdminUsersTable
+            users={pageItems}
+            selectedIds={selectedIds}
+            onToggleSelect={toggleSelect}
+            onToggleSelectAll={toggleSelectAll}
+            allSelected={allSelected}
+            onOpen={(id) => setSelId(id)}
+          />
         </div>
 
         {filtered.length === 0 && (
@@ -218,204 +268,26 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
         )}
       </div>
 
-      
       {sel && (
-        <>
-          <div onClick={closeDrawer} className="fixed inset-0 z-[70] bg-slate-900/45" style={{ animation: "fadeIn .18s ease" }} />
-          <div className="fixed right-0 top-0 z-[71] flex h-screen w-[460px] max-w-full flex-col bg-white shadow-[-12px_0_44px_rgba(15,23,42,0.18)]" style={{ animation: "drawerIn .26s cubic-bezier(.4,0,.2,1)" }}>
-
-            
-            <div className="flex items-center justify-between gap-3 border-b border-[#f1f4f6] px-6 py-[22px]">
-              <div className="flex items-center gap-2.5">
-                <h2 className="text-[18px] font-extrabold tracking-tight text-slate-900">유저 상세</h2>
-                <span className="text-[12.5px] font-semibold text-slate-400">#{sel.id}</span>
-              </div>
-              <button onClick={closeDrawer} className="flex h-[34px] w-[34px] items-center justify-center rounded-[9px] border border-[#eef1f3] bg-white text-slate-500 hover:bg-slate-100">
-                <X className="h-[18px] w-[18px]" strokeWidth={2.2} />
-              </button>
-            </div>
-
-            
-            <div className="flex-1 overflow-y-auto overscroll-contain p-6">
-              
-              <div className="mb-5 flex flex-wrap items-center gap-2">
-                {isSuspended ? (
-                  <span className="inline-flex items-center whitespace-nowrap rounded-full px-[11px] py-1 text-[12px] font-bold" style={{ background: "#fef2f2", color: "#dc2626" }}>
-                    {isPerm ? "영구 정지" : "정지 중"}
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center whitespace-nowrap rounded-full px-[11px] py-1 text-[12px] font-bold" style={{ background: "#ecfdf5", color: "#059669" }}>
-                    정상
-                  </span>
-                )}
-                {sel.report_count > 0 && (
-                  <span className="inline-flex items-center whitespace-nowrap rounded-full px-[11px] py-1 text-[12px] font-semibold" style={{ background: "#fef2f2", color: "#dc2626" }}>
-                    신고 {sel.report_count}건
-                  </span>
-                )}
-              </div>
-
-              
-              <div className="mb-5 rounded-[14px] border border-[#eef1f3] bg-slate-50 p-[18px]">
-                <div className="mb-3 flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wide text-slate-400">
-                  <Users className="h-[17px] w-[17px] text-teal-600" strokeWidth={2} />
-                  회원
-                </div>
-                <div className="text-[15.5px] font-bold text-slate-900">{sel.name}</div>
-                {sel.email && <div className="mt-1 text-[13.5px] text-slate-500">{sel.email}</div>}
-                <a href={`/admin/users/${sel.id}`} target="_blank" rel="noreferrer" className="mt-3.5 inline-flex items-center gap-1.5 text-[13px] font-semibold text-orange-500">
-                  상세 프로필 보기
-                  <ExternalLink className="h-[14px] w-[14px]" strokeWidth={2.2} />
-                </a>
-              </div>
-
-              
-              <div className="mb-5 overflow-hidden rounded-xl border border-[#eef1f3]">
-                <div className="flex items-center justify-between border-b border-[#f3f5f7] px-4 py-[11px]">
-                  <span className="text-[13px] text-slate-400">작성 글</span>
-                  <span className="text-[13px] font-semibold text-slate-900">{(sel.post_count ?? 0).toLocaleString()}개</span>
-                </div>
-                <div className="flex items-center justify-between px-4 py-[11px]">
-                  <span className="text-[13px] text-slate-400">가입일</span>
-                  <span className="text-[13px] font-semibold text-slate-900">{formatDate(sel.created_at)}</span>
-                </div>
-              </div>
-
-              
-              <div className="overflow-hidden rounded-[14px] border border-[#eef1f3]">
-                <div className="flex items-center gap-2 border-b border-[#f1f4f6] bg-slate-50 px-4 py-[13px]">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={isSuspended ? "#dc2626" : "#94a3b8"} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
-                  </svg>
-                  <span className="text-[13px] font-extrabold text-slate-900">제재 이력</span>
-                  <span className="ml-auto inline-flex items-center rounded-full px-2.5 py-0.5 text-[11.5px] font-bold"
-                    style={sel.sanctions.length === 0 ? { background: "#f1f5f9", color: "#94a3b8" } : isSuspended ? { background: "#fef2f2", color: "#dc2626" } : { background: "#f1f5f9", color: "#94a3b8" }}>
-                    {sel.sanctions.length === 0 ? "없음" : `${sel.sanctions.length}건`}
-                  </span>
-                </div>
-                {sel.sanctions.length === 0 ? (
-                  <div className="px-4 py-5 text-[13px] text-slate-400">제재 이력이 없습니다</div>
-                ) : (
-                  <div className="divide-y divide-[#f3f5f7]">
-                    {sel.sanctions.map((s) => {
-                      const isLifted = s.sanction_type === "lifted";
-                      const active = !isLifted && sanctionIsActive(s);
-                      const isPermRecord = s.sanction_type === "perm";
-                      const pillStyle = isLifted
-                        ? { background: "#ecfdf5", color: "#059669", borderColor: "#a7f3d0" }
-                        : isPermRecord
-                          ? { background: "#fef2f2", color: "#dc2626", borderColor: "#fecaca" }
-                          : { background: "#fff7ed", color: "#c2410c", borderColor: "#fed7aa" };
-                      return (
-                        <div key={s.id} className="px-4 py-[13px]">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-[12px] font-bold" style={pillStyle}>
-                              {s.label}
-                            </span>
-                            {!isLifted && (
-                              <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold"
-                                style={active ? { background: "#fef2f2", color: "#dc2626" } : { background: "#f1f5f9", color: "#94a3b8" }}>
-                                {active ? "적용 중" : "만료"}
-                              </span>
-                            )}
-                          </div>
-                          <div className="mt-1.5 flex flex-col gap-0.5 text-[12px] text-slate-400">
-                            {s.admin_name && (
-                              <span>처리: <span className="font-semibold text-slate-600">{s.admin_name}</span></span>
-                            )}
-                            {s.created_at && <span>{formatDateTime(s.created_at)}</span>}
-                            {!isLifted && !isPermRecord && s.expires_at && <span>만료: {formatDateTime(s.expires_at)}</span>}
-                            {!isLifted && isPermRecord && <span>만료: 영구</span>}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            
-            <div className="border-t border-[#f1f4f6] px-6 py-[18px]">
-              {sanctioning ? (
-                <div>
-                  <div className="mb-3">
-                    <div className="mb-2 text-[12px] font-bold uppercase tracking-wide text-slate-400">
-                      제재 유형 선택
-                    </div>
-                    <div className="flex gap-[7px]">
-                      {SANCTION_OPTIONS.map((s) => {
-                        const selected = pendingSanction === s.key;
-                        const isPerm = s.key === "perm";
-                        return (
-                          <button
-                            key={s.key}
-                            onClick={() => setPendingSanction(s.key)}
-                            className="flex-1 whitespace-nowrap rounded-[9px] border py-[9px] text-center text-[12.5px] font-bold"
-                            style={
-                              selected
-                                ? isPerm
-                                  ? { borderColor: "#ef4444", background: "#ef4444", color: "#fff" }
-                                  : { borderColor: "#f97316", background: "#fff7ed", color: "#c2410c" }
-                                : { borderColor: "#e7ebee", background: "#fff", color: "#64748b" }
-                            }
-                          >
-                            {s.label}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  <div className="flex gap-2.5">
-                    <button
-                      onClick={() => setSanctioning(false)}
-                      className="flex-1 rounded-[11px] border border-[#e2e8eb] bg-slate-50 py-[13px] text-[14px] font-bold text-slate-600 hover:bg-slate-100"
-                    >
-                      취소
-                    </button>
-                    <button
-                      onClick={handleApplySanction}
-                      disabled={isPending}
-                      className="flex-[1.4] rounded-[11px] bg-red-500 py-[13px] text-[14px] font-bold text-white shadow-[0_4px_12px_rgba(239,68,68,0.3)] hover:bg-red-600 disabled:opacity-60"
-                    >
-                      {isPending ? "처리 중..." : "제재 확인"}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  <div className="flex gap-2.5">
-                    <button
-                      onClick={() => setSanctioning(true)}
-                      disabled={isPending}
-                      className="flex-1 rounded-[11px] border border-red-200 bg-red-50 py-[13px] text-[14px] font-bold text-red-600 hover:bg-red-100 disabled:opacity-60"
-                    >
-                      제재 부여
-                    </button>
-                    <button
-                      onClick={closeDrawer}
-                      className="flex-[1.4] rounded-[11px] border border-[#e2e8eb] bg-white py-[13px] text-[14px] font-bold text-slate-600 hover:bg-slate-50"
-                    >
-                      닫기
-                    </button>
-                  </div>
-                  {isSuspended && (
-                    <button
-                      onClick={handleLiftSanction}
-                      disabled={isPending}
-                      className="w-full rounded-[11px] border border-emerald-200 bg-emerald-50 py-[11px] text-[13.5px] font-bold text-emerald-700 hover:bg-emerald-100 disabled:opacity-60"
-                    >
-                      {isPending ? "처리 중..." : "제재 해제"}
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </>
+        <UserDetailDrawer
+          key={sel.id}
+          user={sel}
+          onClose={() => setSelId(null)}
+          onChanged={patchUser}
+          onToast={showToast}
+        />
       )}
 
-      
+      <ConfirmModal
+        isOpen={confirmBulkDelete}
+        title={`선택한 ${selectedCount}명을 삭제하시겠습니까?`}
+        description="삭제된 회원은 목록에서 제거됩니다."
+        confirmLabel="삭제"
+        cancelLabel="취소"
+        onConfirm={handleBulkDeleteUsers}
+        onCancel={() => setConfirmBulkDelete(false)}
+      />
+
       {toast && (
         <div className="fixed bottom-7 left-1/2 z-[80] flex -translate-x-1/2 items-center gap-2.5 rounded-xl bg-slate-900 px-5 py-[13px] text-white shadow-[0_10px_30px_rgba(15,23,42,0.3)]" style={{ animation: "fadeIn .18s ease" }}>
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">

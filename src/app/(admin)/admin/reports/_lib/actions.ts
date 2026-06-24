@@ -1,23 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { requireAdmin } from "@/services/user/user";
 import { REPORTS_TABLE, REPORT_STATUS } from "@/constants/report";
 import type { Sanction, ReportType } from "@/type/admin";
-
-async function getCurrentAdminId(): Promise<number | null> {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
-  const admin = createAdminClient();
-  const { data } = await admin
-    .from("users")
-    .select("id")
-    .eq("auth_id", user.id)
-    .single();
-  return data?.id ?? null;
-}
 
 function calcExpiresAt(sanction: Sanction): string | null {
   if (sanction === "none") return null;
@@ -53,7 +40,8 @@ export async function resolveReport(
     sanction: Sanction;
   },
 ): Promise<void> {
-  const [admin, adminId] = [createAdminClient(), await getCurrentAdminId()];
+  const sessionUser = await requireAdmin();
+  const [admin, adminId] = [createAdminClient(), sessionUser.id];
   const expiresAt = calcExpiresAt(opts.sanction);
 
   await admin
@@ -97,7 +85,8 @@ export async function resolveReport(
 }
 
 export async function dismissReport(reportId: number): Promise<void> {
-  const [admin, adminId] = [createAdminClient(), await getCurrentAdminId()];
+  const sessionUser = await requireAdmin();
+  const [admin, adminId] = [createAdminClient(), sessionUser.id];
 
   await admin
     .from(REPORTS_TABLE)
@@ -124,7 +113,8 @@ export async function updateReportResolution(
     sanction: Sanction;
   },
 ): Promise<void> {
-  const [admin, adminId] = [createAdminClient(), await getCurrentAdminId()];
+  const sessionUser = await requireAdmin();
+  const [admin, adminId] = [createAdminClient(), sessionUser.id];
   const expiresAt = calcExpiresAt(opts.sanction);
 
   await admin
@@ -148,6 +138,12 @@ export async function updateReportResolution(
   if (userId != null) {
     const sanctionChanged = opts.sanction !== opts.prevSanction;
     if (sanctionChanged) {
+
+      await admin
+        .from("user_sanctions")
+        .delete()
+        .eq("report_id", reportId);
+
       await admin
         .from("users")
         .update({ suspended_until: expiresAt } as never)

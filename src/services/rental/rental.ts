@@ -5,7 +5,7 @@ import type { Pagination, PagedResult } from "@/services/usedGoods/usedGoods";
 import type { TradeLocation } from "@/type/location";
 
 const RENTAL_DETAIL_SELECT =
-  `*, posts(*, users!posts_user_id_fkey(id, name, avatar_url, auth_id, role, post_count, created_at))` as const;
+  `*, posts(*, users!posts_user_id_fkey(id, name, avatar_url, created_at))` as const;
 // 목록용: rentals 를 inner join 해 자식 컬럼(room_type/location)으로 DB 필터링 가능.
 const RENTAL_LIST_SELECT = `
   *,

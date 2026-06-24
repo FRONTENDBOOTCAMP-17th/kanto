@@ -47,3 +47,10 @@ export async function getIdentityVerified(): Promise<boolean> {
   const user = await getAuthUser();
   return user?.user_metadata?.identity_verified === true;
 }
+
+export async function requireAdmin(): Promise<User> {
+  const user = await getSessionUser();
+  if (!user) throw new Error("UNAUTHORIZED");
+  if (user.role !== "admin") throw new Error("FORBIDDEN");
+  return user;
+}

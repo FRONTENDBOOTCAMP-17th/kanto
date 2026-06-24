@@ -1,4 +1,18 @@
 {
+  "PublicProfile": {
+    "title": "Profile",
+    "moreMenu": "Higit pang menu",
+    "report": "I-report",
+    "block": "I-block",
+    "blocked": "Naka-block",
+    "blockConfirmMessage": "I-block si {name}?",
+    "identityVerified": "Beripikadong ID",
+    "identityUnverified": "Hindi Beripikadong ID",
+    "mangoIndex": "Mango Index",
+    "preparing": "Malapit na",
+    "posts": "Mga Post",
+    "reviews": "Mga Review"
+  },
   "Header": {
     "nav": {
       "usedgoods": "Palengke",
@@ -33,9 +47,9 @@
       "rental": "Paupahan",
       "community": "Komunidad ng Koreano"
     },
-    "business": {
-      "title": "Serbisyo sa Negosyo",
-      "home": "Home ng Negosyo"
+    "support": {
+      "title": "Suporta",
+      "report": "Makipag-ugnayan / Mag-ulat"
     },
     "contact": {
       "title": "Kontak",
@@ -192,6 +206,7 @@
     "blockConfirmMessage": "I-block si {name}? Aalis ka sa chat na ito pagkatapos i-block.",
     "leave": "Umalis sa chat",
     "moreMenu": "Higit pang menu",
+    "viewProfile": "Tingnan ang profile ni {name}",
     "messageInputLabel": "Message input",
     "messageSend": "Ipadala ang mensahe",
     "inputPlaceholder": "Mag-type ng mensahe...",
@@ -813,12 +828,6 @@
       "used_goods": "Pumunta sa Marketplace",
       "jobs": "Pumunta sa Mga Trabaho",
       "rental": "Pumunta sa Mga Paupahan"
-    }
-  },
-  "Business": {
-    "header": {
-      "label": "Negosyo",
-      "home": "Pumunta sa Home"
     }
   }
 }

@@ -144,8 +144,8 @@ export function CreateJobFormPageOne({
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-white/40 text-sm">{t("form.page1Subtitle")}</p>
-        <h2 className="font-normal text-xl text-white mt-1">
+        <p className="text-gray-500 text-sm">{t("form.page1Subtitle")}</p>
+        <h2 className="font-semibold text-xl text-gray-900 mt-1">
           {t("form.jobInfo")}
         </h2>
       </div>
@@ -186,7 +186,7 @@ export function CreateJobFormPageOne({
               onChange={(e) => handleSalaryChange(e.target.value)}
               className="pr-12"
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 text-sm pointer-events-none">
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm pointer-events-none">
               PHP
             </span>
           </div>
@@ -234,7 +234,7 @@ export function CreateJobFormPageOne({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label>{t("form.workHoursLabel")}</Label>
-            <label className="flex items-center gap-2 text-sm text-white/50 cursor-pointer select-none">
+            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none">
               <Checkbox
                 checked={isTimeNegotiable}
                 onCheckedChange={(v) => handleTimeNegotiableChange(v === true)}
@@ -267,7 +267,7 @@ export function CreateJobFormPageOne({
               placeholder={t("form.minute")}
             />
 
-            <span className="text-white/30 mx-1">~</span>
+            <span className="text-gray-500 mx-1">~</span>
 
             
             <ResponsiveSelect
@@ -304,7 +304,7 @@ export function CreateJobFormPageOne({
                 type="button"
                 disabled={isTimeNegotiable}
                 onClick={() => setWorkDays([...preset.days])}
-                className="px-3 py-1 rounded-full border border-white/20 text-sm text-white/50 transition-colors hover:border-white/40 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1 rounded-full border border-gray-300 text-sm text-gray-600 transition-colors hover:border-teal-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {te(`dayPreset.${preset.id}`)}
               </button>
@@ -323,8 +323,8 @@ export function CreateJobFormPageOne({
                   onClick={() => toggleDay(day)}
                   className={`w-9 h-9 rounded-full border text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                     selected
-                      ? "bg-white text-black border-white"
-                      : "bg-transparent text-white/60 border-white/20 hover:border-white/40"
+                      ? "bg-teal-600 text-white border-teal-600"
+                      : "bg-white text-gray-700 border-gray-300 hover:border-teal-500"
                   }`}
                 >
                   {te(`workDay.${day}`)}
@@ -353,7 +353,7 @@ export function CreateJobFormPageOne({
         <button
           type="button"
           onClick={() => setShowPreferredModal(true)}
-          className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-dashed border-white/20 py-2.5 text-sm font-normal text-white/50 transition-colors hover:border-white/40 hover:bg-white/3"
+          className="flex w-full items-center justify-center gap-2 rounded-md border-2 border-dashed border-teal-400 py-2.5 text-sm font-medium text-teal-600 transition-colors hover:border-teal-500 hover:bg-teal-50"
         >
           <Plus className="h-4 w-4" />
           {preferredTags.length > 0
@@ -367,7 +367,7 @@ export function CreateJobFormPageOne({
             {preferredTags.map((key) => (
               <span
                 key={key}
-                className="flex items-center gap-1 rounded-full bg-white/10 py-1 pl-3 pr-2 text-sm text-white/60"
+                className="flex items-center gap-1 rounded-full bg-teal-50 py-1 pl-3 pr-2 text-sm text-teal-700"
               >
                 {te(`preferredItem.${key}`) ?? key}
                 <button
@@ -402,7 +402,7 @@ export function CreateJobFormPageOne({
         </Button>
         <Button
           type="button"
-          variant="default"
+          variant="teal"
           onClick={handleNextStep}
           className="flex-1"
         >

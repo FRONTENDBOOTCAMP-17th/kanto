@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import type { ChatWithUsers } from "@/type/chat/chat";
 import type { MyGroupRoom } from "@/type/groupChat";
 import ChatListItem from "./ChatListItem";
@@ -27,7 +27,12 @@ export default function ChatListClient({
   onChatSelect,
   onGroupSelect,
 }: Props) {
+  onClose: () => void;
+}
+
+export default function ChatListClient({ chats, currentUserId, onChatSelect, onClose }: Props) {
   const t = useTranslations("Chat");
+  const tc = useTranslations("Common");
   const [search, setSearch] = useState("");
 
   const filteredChats = chats.filter((chat) => {
@@ -51,8 +56,16 @@ export default function ChatListClient({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="px-4 py-3 border-b border-gray-100 shrink-0">
+      <div className="px-4 py-3 border-b border-gray-100 shrink-0 flex items-center justify-between gap-2">
         <h2 className="text-base md:text-sm font-semibold text-gray-900">{t("title")}</h2>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label={tc("close")}
+          className="md:hidden p-1 -mr-1 text-gray-500 hover:text-gray-800 transition-colors"
+        >
+          <X className="w-6 h-6" />
+        </button>
       </div>
 
       <div className="px-3 py-2 border-b border-gray-100 shrink-0">

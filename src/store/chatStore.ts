@@ -28,6 +28,7 @@ interface ChatState {
   pendingNewChat: PendingNewChat | null;
   pendingGroupRoom: PendingGroupRoom | null;
   groupRoomsVersion: number;
+  isOpen: boolean;
 
   setChatList: (chats: ChatWithUsers[]) => void;
   setMessages: (messages: MessageWithSender[]) => void;
@@ -41,6 +42,8 @@ interface ChatState {
   openGroupRoom: (meta: PendingGroupRoom) => void;
   clearPendingGroupRoom: () => void;
   refreshGroupRoomsList: () => void;
+  setWidgetOpen: (open: boolean) => void;
+  closeWidget: () => void;
 }
 
 export const useChatStore = create<ChatState>((set) => ({
@@ -51,6 +54,7 @@ export const useChatStore = create<ChatState>((set) => ({
   pendingNewChat: null,
   pendingGroupRoom: null,
   groupRoomsVersion: 0,
+  isOpen: false,
 
   setChatList: (chats) => set({ chatList: chats }),
   setMessages: (messages) => set({ messages }),
@@ -83,4 +87,6 @@ export const useChatStore = create<ChatState>((set) => ({
   clearPendingGroupRoom: () => set({ pendingGroupRoom: null }),
   refreshGroupRoomsList: () =>
     set((state) => ({ groupRoomsVersion: state.groupRoomsVersion + 1 })),
+  setWidgetOpen: (open) => set({ isOpen: open }),
+  closeWidget: () => set({ isOpen: false }),
 }));

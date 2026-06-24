@@ -22,6 +22,9 @@ interface report {
   initialReported: boolean;
   categories?: readonly string[];
   targetType?: "post" | "user" | "message";
+  targetType?: "post" | "user";
+  onToast?: (message: string, type?: "success" | "error", icon?: "check" | "x" | "alert") => void;
+  onReported?: () => void;
 }
 
 export const POST_REPORT_CATEGORIES = [
@@ -49,13 +52,14 @@ export default function ReportModal({
   initialReported,
   categories = POST_REPORT_CATEGORIES,
   targetType = "post",
+  onToast,
+  onReported,
 }: report) {
   const t = useTranslations("Report");
   const tc = useTranslations("Common");
   const [category, setCategory] = useState("");
   const [content, setContent] = useState("");
   const [isReported, setIsReported] = useState(initialReported);
-  const [justReported, setJustReported] = useState(false);
   const [submitError, setSubmitError] = useState(false);
 
   useEffect(() => {
@@ -67,15 +71,30 @@ export default function ReportModal({
     };
     document.addEventListener("keydown", onKeyDown);
 
+    if (initialReported || isReported) {
+      const alreadyText = targetType === "user" ? t("alreadyUser") : t("already");
+      onToast?.(alreadyText, "error", "x");
+      onClose();
+      return () => {
+        document.body.style.overflow = "";
+        document.removeEventListener("keydown", onKeyDown);
+      };
+    }
+
     checkReported(postId, userId, targetType).then((reported) => {
-      if (reported) setIsReported(true);
+      if (reported) {
+        setIsReported(true);
+        const alreadyText = targetType === "user" ? t("alreadyUser") : t("already");
+        onToast?.(alreadyText, "error", "x");
+        onClose();
+      }
     });
 
     return () => {
       document.body.style.overflow = "";
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [isOpen, onClose, postId, userId, targetType]);
+  }, [isOpen, onClose, postId, userId, targetType, initialReported, isReported, onToast, t]);
 
   if (!isOpen) return null;
 
@@ -89,12 +108,11 @@ export default function ReportModal({
       setSubmitError(true);
       return;
     }
-    setJustReported(true);
     setIsReported(true);
-  };
-
-  const handleClose = () => {
-    setJustReported(false);
+    onReported?.();
+    onToast?.(t("done"), "success", "check");
+    setCategory("");
+    setContent("");
     setSubmitError(false);
     onClose();
   };
