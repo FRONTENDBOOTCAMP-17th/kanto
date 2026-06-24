@@ -43,7 +43,17 @@
 
 | ID | 시나리오 | 단계 → 기대 | 최근 결과 |
 | -- | -------- | ----------- | --------- |
-| K30| 비관리자(user) 어드민 직접 진입 | role=user 로 `/admin/posts`·`/admin/chats`·`/admin/chats/11`·`/admin/users` 진입 → **차단(리다이렉트)되어야 함** | 2026-06-19 **fail — 전부 200 렌더, 차단 안 됨(남의 1:1 채팅 노출)** |
+| K30| 비관리자(user) 어드민 직접 진입 | role=user 로 `/admin/posts`·`/admin/chats`·`/admin/chats/11`·`/admin/users` 진입 → **차단(리다이렉트)되어야 함** | 2026-06-22 **pass — 4곳 모두 `/main` 리다이렉트(blocked). 9차 결함 해결**. (2026-06-19 fail) |
+
+## 발견 (2026-06-22) — 10차
+
+- **[부분해결·칭찬] 9차 [필수] 어드민 페이지 인가**: 가드를 `(admin)/layout.tsx` 라우트 그룹 레이아웃으로 모음.
+  K30 재실행 — role=user 로 어드민 4경로 직접 진입 시 전부 `/main` 리다이렉트(차단 확인). 페이지 읽기 인가 해결.
+- **[필수][미해결] 관리자 서버 액션 role 검증 누락**: `togglePostStatus`·`applySanction`·`liftSanction`·
+  `resolveReport`·`dismissReport`·`updateReportResolution`(+`getPostReports`)가 `getUser()`로 로그인만 확인, role 미검사.
+  서버 액션은 레이아웃 가드를 안 거치는 독립 엔드포인트 → service-role 권한상승 코드상 가능. 처방: `requireAdmin()` 헬퍼.
+- **[실측] anon RLS**: publishable 키로 민감 6테이블 직접 read → 전부 0행. `posts`만 공개. tsc `--noEmit` 0건.
+- 사용자 여정(K1~K12,K25)·관리자 여정(K20~24) 전부 pass. 옛 `kanto-2nd*` 2건 fail = i18n selector 드리프트(기능 무관).
 
 ## 발견 (2026-06-19) — 9차
 
