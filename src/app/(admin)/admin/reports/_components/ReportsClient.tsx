@@ -334,32 +334,18 @@ export default function ReportsClient({ reports }: Props) {
       
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] table-fixed border-collapse">
-            <colgroup>
-              <col className="w-1/6" />
-              <col className="w-1/6" />
-              <col className="w-1/6" />
-              <col className="w-1/6" />
-              <col className="w-1/6" />
-              <col className="w-1/6" />
-            </colgroup>
+          <table className="w-full min-w-[760px] border-collapse">
             <thead>
               <tr className="border-b border-[#f1f4f6] bg-slate-50">
-                {[
-                  { label: "유형", align: "text-center" },
-                  { label: "대상", align: "text-center" },
-                  { label: "신고 사유", align: "text-center" },
-                  { label: "신고일", align: "text-center" },
-                  { label: "상태", align: "text-center" },
-                ].map(({ label, align }) => (
+                {["유형", "대상", "신고 사유", "신고일", "상태"].map((h) => (
                   <th
-                    key={label}
-                    className={`px-[18px] py-[13px] ${align} text-[12px] font-bold uppercase tracking-wide text-slate-400`}
+                    key={h}
+                    className="px-[18px] py-[13px] text-left text-[12px] font-bold uppercase tracking-wide text-slate-400"
                   >
-                    {label}
+                    {h}
                   </th>
                 ))}
-                <th className="px-[18px] py-[13px] text-center text-[12px] font-bold uppercase tracking-wide text-slate-400">
+                <th className="px-[18px] py-[13px] text-right text-[12px] font-bold uppercase tracking-wide text-slate-400">
                   액션
                 </th>
               </tr>
@@ -377,7 +363,7 @@ export default function ReportsClient({ reports }: Props) {
                     className="cursor-pointer border-t border-[#f3f5f7] hover:bg-slate-50"
                   >
                     <td className="px-[18px] py-[15px]">
-                      <div className="flex items-center justify-center gap-2">
+                      <div className="flex items-center gap-2">
                         <span
                           style={{
                             color: r.type === "post" ? "#0d9488" : "#8b5cf6",
@@ -395,9 +381,9 @@ export default function ReportsClient({ reports }: Props) {
                         </span>
                       </div>
                     </td>
-                    <td className="px-[18px] py-[15px] text-center">
+                    <td className="px-[18px] py-[15px]">
                       <div className="min-w-0">
-                        <div className="truncate text-[14px] font-bold text-slate-900">
+                        <div className="max-w-[320px] truncate text-[14px] font-bold text-slate-900">
                           {r.targetName}
                         </div>
                         {cat && (
@@ -410,17 +396,17 @@ export default function ReportsClient({ reports }: Props) {
                         )}
                       </div>
                     </td>
-                    <td className="px-[18px] py-[15px] text-center">
+                    <td className="px-[18px] py-[15px]">
                       <Pill text={r.reason} fg={reason.fg} bg={reason.bg} />
                     </td>
-                    <td className="whitespace-nowrap px-[18px] py-[15px] text-center text-[13.5px] text-slate-500">
+                    <td className="whitespace-nowrap px-[18px] py-[15px] text-[13.5px] text-slate-500">
                       {r.reportDate}
                     </td>
-                    <td className="px-[18px] py-[15px] text-center">
+                    <td className="px-[18px] py-[15px]">
                       <Pill text={st.label} fg={st.fg} bg={st.bg} bold />
                     </td>
                     <td className="px-[18px] py-[15px]">
-                      <div className="flex items-center justify-center">
+                      <div className="flex items-center justify-end">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
