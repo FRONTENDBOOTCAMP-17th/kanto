@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { useCallback, useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
 import { useChatStore, type PendingNewChat } from "@/store/chatStore";
@@ -40,7 +40,15 @@ export default function FloatingChatWidget({
     useState<PendingNewChat | null>(null);
   const [chats, setChats] = useState<ChatWithUsers[]>([]);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+
+  const handleClose = useCallback(() => {
+    setView("list");
+    setSelectedChatId(null);
+    setPendingNewChatMeta(null);
+    setWidgetOpen(false);
+  }, [setWidgetOpen]);
 
   useEffect(() => {
     return useChatStore.subscribe((state, prev) => {
@@ -79,6 +87,29 @@ export default function FloatingChatWidget({
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const onPointerDown = (e: PointerEvent) => {
+      const target = e.target;
+      if (!(target instanceof Node)) return;
+      if (rootRef.current?.contains(target)) return;
+      if (
+        target instanceof Element &&
+        target.closest("[data-radix-popper-content-wrapper], [data-radix-portal]")
+      ) {
+        return;
+      }
+
+      handleClose();
+    };
+
+    document.addEventListener("pointerdown", onPointerDown, true);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown, true);
+    };
+  }, [handleClose, isOpen]);
 
   useEffect(() => {
     const el = panelRef.current;
@@ -237,15 +268,8 @@ export default function FloatingChatWidget({
       }
     : null;
 
-  const handleClose = () => {
-    setView("list");
-    setSelectedChatId(null);
-    setPendingNewChatMeta(null);
-    setWidgetOpen(false);
-  };
-
   return (
-    <div className="flex flex-col items-end gap-2">
+    <div ref={rootRef} className="flex flex-col items-end gap-2">
       {isOpen && (
         <div
           ref={panelRef}
