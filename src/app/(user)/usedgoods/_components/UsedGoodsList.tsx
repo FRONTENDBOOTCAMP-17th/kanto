@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import type { UsedGoodsWithPost } from "@/type/usedGoods";
 import { ContentCard } from "@/components/common/ContentCard";
 import { EmptyState } from "@/components/common/EmptyState";
+import PopularBadge from "@/app/(user)/main/_components/PopularBadge";
 
 interface Props {
   initialPosts: UsedGoodsWithPost[];
@@ -38,6 +39,8 @@ export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId, cu
           </span>
         ) : undefined;
 
+        const badge = post.is_popular ? <PopularBadge /> : reservedBadge;
+
         return (
           <ContentCard
             key={post.id}
@@ -52,7 +55,7 @@ export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId, cu
             currentUserId={currentUserId}
             postId={post.id}
             subtitle={post.users?.name || undefined}
-            badge={reservedBadge}
+            badge={badge}
             soldOverlay={post.is_sold}
           />
         );

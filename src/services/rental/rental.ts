@@ -46,6 +46,7 @@ export async function getRentalList(
     .select(RENTAL_LIST_SELECT, { count: "exact" })
     .eq("post_type", "rental")
     .eq("status", "active")
+    .order("is_popular", { ascending: false })
     .order("created_at", { ascending: false })
     .order("id", { ascending: false });
 

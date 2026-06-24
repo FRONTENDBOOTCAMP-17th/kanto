@@ -15,6 +15,7 @@
     "@supabase/supabase-js": "^2.107.0",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
+    "@vis.gl/react-google-maps": "^1.8.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.17.0",
