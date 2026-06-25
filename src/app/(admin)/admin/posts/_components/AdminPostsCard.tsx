@@ -9,6 +9,7 @@ import {
   POST_TYPE_LABEL,
   getPostDetailUrl,
 } from "@/services/admin/adminPosts";
+import { formatDate } from "@/utils/formatTime";
 
 interface AdminPostsCardProps {
   posts: AdminPost[];
