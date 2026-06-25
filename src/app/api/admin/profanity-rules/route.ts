@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
-import { getNotices, createNotice } from "@/services/admin/adminNotices";
+import { getProfanityRules, createProfanityRule } from "@/services/admin/adminContent";
 import { insertAuditLog } from "@/services/admin/auditLog";
 
 async function getAdminUser() {
   const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  const { data: { user }, error } = await supabase.auth.getUser();
   if (error || !user) return null;
 
   const { data } = await supabaseAdmin
@@ -24,7 +21,7 @@ async function getAdminUser() {
 
 export async function GET() {
   try {
-    const data = await getNotices();
+    const data = await getProfanityRules();
     return NextResponse.json(data);
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });
@@ -36,15 +33,15 @@ export async function POST(req: NextRequest) {
   if (!admin) return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
 
   const body = await req.json();
-  const { title, starts_at, ends_at } = body;
+  const { scopes, words } = body;
 
-  if (!title || !starts_at || !ends_at) {
-    return NextResponse.json({ error: "필수 항목이 누락되었습니다." }, { status: 400 });
+  if (!scopes?.length || !words?.length) {
+    return NextResponse.json({ error: "범위와 금칙어를 입력해주세요." }, { status: 400 });
   }
 
   try {
-    const data = await createNotice({ title, starts_at, ends_at }, admin.id);
-    insertAuditLog(admin, "write_notice", { targetType: "notice", targetId: data.id, detail: { title, starts_at, ends_at } });
+    const data = await createProfanityRule({ scopes, words }, admin.id);
+    insertAuditLog(admin, "add_profanity", { targetType: "profanity", targetId: data.id, detail: { scopes, words } });
     return NextResponse.json(data, { status: 201 });
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });

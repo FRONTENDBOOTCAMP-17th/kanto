@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
@@ -80,6 +80,15 @@ export default function RentalCreateForm({
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>(initialData?.images ?? []);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [urlError, setUrlError] = useState("");
+  const maxUrlsRef = useRef(3);
+
+  useEffect(() => {
+    fetch("/api/admin/spam-config")
+      .then((r) => r.json())
+      .then((d) => { if (d?.max_urls_per_post != null) maxUrlsRef.current = d.max_urls_per_post; })
+      .catch(() => {});
+  }, []);
   const [isCheckingImages, setIsCheckingImages] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showToast, setShowToast] = useState(false);
@@ -153,6 +162,13 @@ export default function RentalCreateForm({
   const handleSubmit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
     if (!rentType || !roomType || !location) return;
+
+    const urlCount = (description.match(/https?:\/\/[^\s]+/g) ?? []).length;
+    if (urlCount > maxUrlsRef.current) {
+      setUrlError(`게시물에 URL은 최대 ${maxUrlsRef.current}개까지 허용됩니다.`);
+      return;
+    }
+    setUrlError("");
     setIsSubmitting(true);
 
     if (initialData) {
@@ -441,6 +457,9 @@ export default function RentalCreateForm({
               />
             </div>
 
+            {urlError && (
+              <p className="text-[13px] text-red-500">{urlError}</p>
+            )}
             <div className="flex gap-3 pt-4">
               <Button
                 type="button"

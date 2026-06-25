@@ -10,6 +10,7 @@ import type { Transaction } from "@/type/transaction";
 import { createChatAndSendAction, markChatReadAction, sendMessageAction } from "./actions";
 import { getChatBannerStateAction } from "./paymentActions";
 import { useSpamPrevention } from "@/hooks/chat/useSpamPrevention";
+import { useSpamConfig } from "@/hooks/useSpamConfig";
 import { useChatRoomRealtime } from "@/hooks/chat/useChatRoomRealtime";
 import { useChatMessages } from "@/hooks/chat/useChatMessages";
 import ChatHeader from "./ChatHeader";
@@ -90,7 +91,12 @@ export default function ChatRoomClient({
     postPrice !== null &&
     !paymentRequestBlocked;
 
-  const { isCooldown, cooldownSeconds, recordSend } = useSpamPrevention();
+  const spamConfig = useSpamConfig();
+  const { isCooldown, cooldownSeconds, recordSend } = useSpamPrevention({
+    windowMs: spamConfig.chat_window_sec * 1000,
+    maxCount: spamConfig.chat_max_count,
+    cooldownSec: spamConfig.chat_cooldown_sec,
+  });
   const {
     messages,
     setMessages,

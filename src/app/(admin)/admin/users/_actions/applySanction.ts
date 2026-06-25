@@ -2,6 +2,7 @@
 
 import { createAdminClient } from "@/utils/supabase/admin";
 import { requireAdmin } from "@/services/user/user";
+import { insertAuditLog } from "@/services/admin/auditLog";
 import type { SanctionRecord } from "@/services/admin/adminUsers";
 
 const LABEL: Record<string, string> = {
@@ -54,6 +55,12 @@ export async function applySanction(
     body: MESSAGE[sanctionType],
     type: "suspension",
   } as never);
+
+  insertAuditLog(sessionUser, "sanction_user", {
+    targetType: "user",
+    targetId: userId,
+    detail: { sanction_type: sanctionType },
+  });
 
   return {
     id: (inserted as { id: number } | null)?.id ?? Date.now(),

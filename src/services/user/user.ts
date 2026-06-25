@@ -51,6 +51,13 @@ export async function getIdentityVerified(): Promise<boolean> {
 export async function requireAdmin(): Promise<User> {
   const user = await getSessionUser();
   if (!user) throw new Error("UNAUTHORIZED");
-  if (user.role !== "admin") throw new Error("FORBIDDEN");
+  if (user.role !== "admin" && user.role !== "super_admin") throw new Error("FORBIDDEN");
+  return user;
+}
+
+export async function requireSuperAdmin(): Promise<User> {
+  const user = await getSessionUser();
+  if (!user) throw new Error("UNAUTHORIZED");
+  if (user.role !== "super_admin") throw new Error("FORBIDDEN");
   return user;
 }

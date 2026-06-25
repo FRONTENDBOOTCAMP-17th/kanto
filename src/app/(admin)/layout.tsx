@@ -20,7 +20,7 @@ export default async function AdminLayout({
     .select("role")
     .eq("auth_id", user.id)
     .single();
-  if (userRow?.role !== "admin") redirect("/");
+  if (!["admin", "super_admin"].includes(userRow?.role ?? "")) redirect("/");
 
   const admin = createAdminClient();
   const { count } = await admin
