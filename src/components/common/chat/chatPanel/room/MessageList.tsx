@@ -43,6 +43,12 @@ export default function MessageList({
 }: Props) {
   const t = useTranslations("Chat");
   const locale = useLocale() as Locale;
+  const minuteKey = (dateStr: string) => {
+    const date = new Date(dateStr);
+    date.setSeconds(0, 0);
+    return date.getTime();
+  };
+
   return (
     <div
       ref={scrollContainerRef}
@@ -66,6 +72,12 @@ export default function MessageList({
         const msgDate = new Date(msg.created_at).toDateString();
         const prevDate = index > 0 ? new Date(messages[index - 1].created_at).toDateString() : null;
         const showDivider = msgDate !== prevDate;
+        const next = messages[index + 1];
+        const showMeta =
+          !next ||
+          next.type === "system" ||
+          next.sender_id !== msg.sender_id ||
+          minuteKey(next.created_at) !== minuteKey(msg.created_at);
 
         return (
           <Fragment key={msg.id}>
@@ -127,7 +139,7 @@ export default function MessageList({
                     {msg.content}
                   </div>
                 )}
-                <div className={`flex flex-col shrink-0 ${isMine ? "items-end" : "items-start"}`}>
+                <div className={`flex flex-col shrink-0 ${isMine ? "items-end" : "items-start"} ${showMeta ? "" : "invisible"}`}>
                   {isMine && !msg.is_read && <UnreadMark partnerOnline={partnerOnline} />}
                   <time dateTime={msg.created_at} className="text-xs md:text-[10px] text-gray-400">
                     {formatMessageTime(msg.created_at, locale)}

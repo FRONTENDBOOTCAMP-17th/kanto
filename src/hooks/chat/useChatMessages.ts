@@ -57,6 +57,7 @@ export function useChatMessages({
 
     const container = scrollContainerRef.current;
     const prevScrollHeight = container?.scrollHeight ?? 0;
+    const prevScrollTop = container?.scrollTop ?? 0;
 
     wasLoadingMore.current = true;
     setMessages((prev) => [...older, ...prev]);
@@ -65,7 +66,7 @@ export function useChatMessages({
 
     requestAnimationFrame(() => {
       if (container) {
-        container.scrollTop = container.scrollHeight - prevScrollHeight;
+        container.scrollTop = prevScrollTop + (container.scrollHeight - prevScrollHeight);
       }
     });
   };

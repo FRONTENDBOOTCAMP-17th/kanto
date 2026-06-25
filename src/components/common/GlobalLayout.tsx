@@ -7,6 +7,7 @@ import { Footer } from "@/components/common/Footer";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
 import { useAuthStore } from "@/store/authStore";
 import { useChatStore } from "@/store/chatStore";
+import { useGoUiStore } from "@/store/goUiStore";
 import type { User } from "@/type/user";
 import { DeletionPendingBanner } from "@/components/common/DeletionPendingBanner";
 import { SuspendedModal } from "@/components/common/SuspendedModal";
@@ -29,6 +30,11 @@ export function GlobalLayout({ children, initialUser }: Props) {
   const [botOpen, setBotOpen] = useState(false);
   const chatOpen = useChatStore((s) => s.isOpen);
   const setWidgetOpen = useChatStore((s) => s.setWidgetOpen);
+  // 칸토 go! 패널 상태 → 우측 하단 위젯 표시 제어.
+  // detailOpen: 데스크톱·모바일 모두 숨김(상세 패널과 겹침).
+  // listOpen: 모바일에서만 숨김(하단 시트가 올라오면 위젯도 가림).
+  const goDetailOpen = useGoUiStore((s) => s.detailOpen);
+  const goListOpen = useGoUiStore((s) => s.listOpen);
 
   // 채팅 위젯이 열리면 챗봇을 닫는다(챗봇을 열 때 채팅을 닫는 건 onToggle에서 처리).
   useEffect(() => {
@@ -64,8 +70,13 @@ export function GlobalLayout({ children, initialUser }: Props) {
       {!hideGlobalUI && <div className="h-12 md:h-0" aria-hidden="true" />}
       {!hideGlobalUI && <DeletionPendingBanner />}
       {!hideGlobalUI && (
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
-          <ScrollToTop />
+        <div
+          className={`fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2 ${
+            goDetailOpen ? "hidden" : goListOpen ? "max-md:hidden" : ""
+          }`}
+        >
+          {/* 지도(go) 화면은 스크롤이 없어 위로가기/글쓰기 FAB를 띄우지 않는다 */}
+          {!isGo && <ScrollToTop />}
           <Chatbot
             isOpen={botOpen}
             onToggle={() => {

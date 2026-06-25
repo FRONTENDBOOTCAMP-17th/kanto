@@ -8,9 +8,16 @@ interface Props {
   currentUser: SellerInfo;
   blockedIds: Set<number>;
   setMessages: React.Dispatch<React.SetStateAction<GroupMessageWithSender[]>>;
+  onMessageInserted?: (message: GroupMessage) => void;
 }
 
-export function useGroupChatRealtime({ roomId, currentUser, blockedIds, setMessages }: Props) {
+export function useGroupChatRealtime({
+  roomId,
+  currentUser,
+  blockedIds,
+  setMessages,
+  onMessageInserted,
+}: Props) {
   const senderCacheRef = useRef<Map<number, SellerInfo>>(new Map([[currentUser.id, currentUser]]));
 
   useEffect(() => {
@@ -28,6 +35,7 @@ export function useGroupChatRealtime({ roomId, currentUser, blockedIds, setMessa
         },
         async (payload) => {
           const newMsg = payload.new as GroupMessage;
+          onMessageInserted?.(newMsg);
 
           if (newMsg.type !== "system" && newMsg.sender_id === currentUser.id) return;
           if (newMsg.type !== "system" && blockedIds.has(newMsg.sender_id)) return;
@@ -56,5 +64,5 @@ export function useGroupChatRealtime({ roomId, currentUser, blockedIds, setMessa
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [roomId, currentUser.id, blockedIds, setMessages]);
+  }, [roomId, currentUser.id, blockedIds, setMessages, onMessageInserted]);
 }
