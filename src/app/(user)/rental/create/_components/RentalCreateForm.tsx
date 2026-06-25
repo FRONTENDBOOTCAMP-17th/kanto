@@ -81,7 +81,6 @@ export default function RentalCreateForm({
   const [imagePreviews, setImagePreviews] = useState<string[]>(initialData?.images ?? []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [urlError, setUrlError] = useState("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const maxUrlsRef = useRef(3);
 
   useEffect(() => {
