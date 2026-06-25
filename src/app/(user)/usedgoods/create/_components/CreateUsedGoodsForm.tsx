@@ -89,7 +89,6 @@ export function CreateUsedGoodsForm({
       .catch(() => {});
   }, []);
   const [isCheckingImages, setIsCheckingImages] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
