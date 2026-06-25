@@ -94,6 +94,20 @@ export async function updateTransaction(
   return data as Transaction;
 }
 
+export async function claimTransactionRelease(
+  id: number,
+): Promise<Transaction | null> {
+  const { data } = await supabaseAdmin
+    .from("transactions")
+    .update({ status: "released", released_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq("status", "paid")
+    .select()
+    .single();
+
+  return (data as Transaction) ?? null;
+}
+
 export async function postSystemMessage(
   transaction: Transaction,
   content: string,

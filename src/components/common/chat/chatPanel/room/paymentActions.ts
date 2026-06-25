@@ -6,6 +6,7 @@ import {
   createTransaction,
   getTransaction,
   updateTransaction,
+  claimTransactionRelease,
   postSystemMessage,
   getReleasedTransactionsForChat,
   hasBlockingTransactionForChat,
@@ -66,6 +67,9 @@ export async function createPaymentRequestAction(params: {
   if (!seller?.bank_code || !seller?.bank_account_number) {
     throw new Error("정산 계좌를 먼저 등록해주세요");
   }
+
+  const blocked = await hasBlockingTransactionForChat(params.chatId);
+  if (blocked) throw new Error("이미 진행 중인 거래가 있습니다.");
 
   const { data: chat } = await supabase
     .from("chats")
@@ -180,31 +184,28 @@ export async function confirmReceiptAction(
     );
   }
 
-  const released = await updateTransaction(transaction.id, {
-    status: "released",
-    released_at: new Date().toISOString(),
+  const released = await claimTransactionRelease(transaction.id);
+  if (!released) {
+    throw new Error("이미 처리 중인 거래입니다. 잠시 후 확인해주세요.");
+  }
+
+  const disbursement = await createDisbursement({
+    externalId: `release_${transaction.id}`,
+    bankCode: seller.bank_code,
+    accountNumber: seller.bank_account_number,
+    accountHolderName: seller.bank_account_name ?? seller.name ?? "",
+    amount: transaction.amount,
+    description: `칸토 에스크로 정산 #${transaction.id}`,
+  });
+
+  await updateTransaction(transaction.id, {
+    xendit_disbursement_id: disbursement.id,
   });
 
   await supabase
     .from("posts")
     .update({ is_sold: true, is_reserved: false })
     .eq("id", transaction.post_id);
-
-  try {
-    const disbursement = await createDisbursement({
-      externalId: `release_${transaction.id}`,
-      bankCode: seller.bank_code,
-      accountNumber: seller.bank_account_number,
-      accountHolderName: seller.bank_account_name ?? seller.name ?? "",
-      amount: transaction.amount,
-      description: `칸토 에스크로 정산 #${transaction.id}`,
-    });
-    await updateTransaction(transaction.id, {
-      xendit_disbursement_id: disbursement.id,
-    });
-  } catch (e) {
-    console.error("Xendit disbursement 호출 실패:", e);
-  }
 
   try {
     await postSystemMessage(
