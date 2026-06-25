@@ -85,6 +85,22 @@ export function getDeadlineDiff(deadline: string): number {
   );
 }
 
+export function formatDate(date: string | null): string {
+  if (!date) return "-";
+  return new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric", month: "2-digit", day: "2-digit",
+  }).format(new Date(date));
+}
+
+export function formatDateTime(date: string | null | undefined): string {
+  if (!date) return "-";
+  return new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit",
+    hour12: false,
+  }).format(new Date(date));
+}
+
 export function formatDateDivider(
   dateStr: string,
   locale: Locale = defaultLocale,

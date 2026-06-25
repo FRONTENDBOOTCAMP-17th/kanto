@@ -6,6 +6,7 @@ import { User, SanctionRecord } from "@/services/admin/adminUsers";
 import { applySanction } from "@/app/(admin)/admin/users/_actions/applySanction";
 import { liftSanction } from "@/app/(admin)/admin/users/_actions/liftSanction";
 import { resolveUserReports } from "@/app/(admin)/admin/users/_actions/resolveUserReports";
+import { formatDate, formatDateTime } from "@/utils/formatTime";
 
 const SANCTION_OPTIONS: { key: "7d" | "30d" | "perm"; label: string }[] = [
   { key: "7d", label: "7일 정지" },
@@ -13,21 +14,6 @@ const SANCTION_OPTIONS: { key: "7d" | "30d" | "perm"; label: string }[] = [
   { key: "perm", label: "영구 정지" },
 ];
 
-function formatDate(date: string | null) {
-  if (!date) return "-";
-  return new Intl.DateTimeFormat("ko-KR", {
-    year: "numeric", month: "2-digit", day: "2-digit",
-  }).format(new Date(date));
-}
-
-function formatDateTime(date: string | null) {
-  if (!date) return "-";
-  return new Intl.DateTimeFormat("ko-KR", {
-    year: "numeric", month: "2-digit", day: "2-digit",
-    hour: "2-digit", minute: "2-digit", second: "2-digit",
-    hour12: false,
-  }).format(new Date(date));
-}
 
 const SANCTION_PAGE_SIZE = 5;
 

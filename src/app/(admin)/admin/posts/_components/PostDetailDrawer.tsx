@@ -16,6 +16,7 @@ import {
 } from "@/app/(admin)/admin/posts/_actions/getPostReports";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { SANCTION_LABEL } from "@/app/(admin)/admin/reports/_lib/constants";
+import { formatDate, formatDateTime } from "@/utils/formatTime";
 
 const CATEGORY_STYLE: Record<string, { bg: string; fg: string }> = {
   used_goods: { bg: "#f0fdfa", fg: "#0d9488" },
@@ -29,21 +30,6 @@ const POST_STATUS_STYLE: Record<string, { label: string; bg: string; fg: string 
   inactive: { label: "비공개", bg: "#f1f5f9", fg: "#94a3b8" },
 };
 
-function formatDate(date: string | null) {
-  if (!date) return "-";
-  return new Intl.DateTimeFormat("ko-KR", {
-    year: "numeric", month: "2-digit", day: "2-digit",
-  }).format(new Date(date));
-}
-
-function formatDateTime(date: string | null) {
-  if (!date) return "-";
-  return new Intl.DateTimeFormat("ko-KR", {
-    year: "numeric", month: "2-digit", day: "2-digit",
-    hour: "2-digit", minute: "2-digit", second: "2-digit",
-    hour12: false,
-  }).format(new Date(date));
-}
 
 function Pill({ text, fg, bg, bold }: { text: string; fg: string; bg: string; bold?: boolean }) {
   return (

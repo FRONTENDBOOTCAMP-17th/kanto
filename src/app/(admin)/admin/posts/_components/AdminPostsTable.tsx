@@ -23,15 +23,6 @@ const CATEGORY_STYLE: Record<string, { bg: string; fg: string }> = {
   community: { bg: "#fff7ed", fg: "#c2410c" },
 };
 
-function formatDate(date: string | null) {
-  if (!date) return "-";
-  return new Intl.DateTimeFormat("ko-KR", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date(date));
-}
-
 export default function AdminPostsTable({
   posts,
   onOpen,
