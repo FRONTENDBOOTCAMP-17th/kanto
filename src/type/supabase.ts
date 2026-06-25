@@ -1108,6 +1108,48 @@ export type Database = {
           },
         ]
       }
+      profanity_rules: {
+        Row: {
+          created_at: string
+          created_by: number | null
+          id: number
+          scopes: string[]
+          updated_at: string
+          words: string[]
+        }
+        Insert: {
+          created_at?: string
+          created_by?: number | null
+          id?: never
+          scopes?: string[]
+          updated_at?: string
+          words?: string[]
+        }
+        Update: {
+          created_at?: string
+          created_by?: number | null
+          id?: never
+          scopes?: string[]
+          updated_at?: string
+          words?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profanity_rules_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profanity_rules_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rentals: {
         Row: {
           amenities: Json | null
@@ -1251,6 +1293,102 @@ export type Database = {
             columns: ["transaction_id"]
             isOneToOne: false
             referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sanction_templates: {
+        Row: {
+          body: string
+          id: number
+          title: string
+          trigger: string
+          updated_at: string
+          updated_by: number | null
+        }
+        Insert: {
+          body: string
+          id?: never
+          title: string
+          trigger: string
+          updated_at?: string
+          updated_by?: number | null
+        }
+        Update: {
+          body?: string
+          id?: never
+          title?: string
+          trigger?: string
+          updated_at?: string
+          updated_by?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sanction_templates_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sanction_templates_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spam_config: {
+        Row: {
+          auto_sanction_enabled: boolean
+          chat_cooldown_sec: number
+          chat_max_count: number
+          chat_window_sec: number
+          id: number
+          max_urls_per_post: number
+          profanity_strike_max: number
+          report_strike_max: number
+          updated_at: string
+          updated_by: number | null
+        }
+        Insert: {
+          auto_sanction_enabled?: boolean
+          chat_cooldown_sec?: number
+          chat_max_count?: number
+          chat_window_sec?: number
+          id?: number
+          max_urls_per_post?: number
+          profanity_strike_max?: number
+          report_strike_max?: number
+          updated_at?: string
+          updated_by?: number | null
+        }
+        Update: {
+          auto_sanction_enabled?: boolean
+          chat_cooldown_sec?: number
+          chat_max_count?: number
+          chat_window_sec?: number
+          id?: number
+          max_urls_per_post?: number
+          profanity_strike_max?: number
+          report_strike_max?: number
+          updated_at?: string
+          updated_by?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spam_config_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spam_config_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
