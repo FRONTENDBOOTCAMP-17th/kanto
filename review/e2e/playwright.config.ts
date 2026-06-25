@@ -20,7 +20,8 @@ export default defineConfig({
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
     command: `PORT=${PORT} npm run dev`,
-    url: BASE,
+    // 헬스체크는 DB 목록 조회에 의존하지 않는 /login(항상 200)으로. (메인/목록이 500이어도 기동 판정 가능)
+    url: `${BASE}/login`,
     cwd: "../../",
     reuseExistingServer: true,
     timeout: 120_000,

@@ -50,6 +50,18 @@
 | -- | -------- | ----------- | --------- |
 | K30| 비관리자(user) 어드민 직접 진입 | role=user 로 `/admin/posts`·`/admin/chats`·`/admin/chats/11`·`/admin/users` 진입 → **차단(리다이렉트)되어야 함** | 2026-06-22 **pass — 4곳 모두 `/main` 리다이렉트(blocked). 9차 결함 해결**. (2026-06-19 fail) |
 
+## 발견 (2026-06-25) — 역할별 라이브 E2E (사용자 / 관리자)
+
+테스트 계정(id 198)을 일시 admin 승격 → 실행 → user 원복. dev 3126. 캡처 `review/images/2026-06-25/`.
+
+- **[필수][신규·치명] 비로그인 목록 페이지 전부 500 — `permission denied for table users`.**
+  실측(curl, 비로그인): `/main`·`/usedgoods`·`/rental`·`/job` 모두 **HTTP 500**. 서버 로그 `getJobList`(`src/services/job/job.ts:46`)→`getPopularList`(`main.ts:21`)→`Popular.tsx`에서 `permission denied for table users` throw. 즉 익명 방문자가 메인·카테고리 목록을 아예 볼 수 없음(공개 마켓플레이스에 치명적). **로그인 후에는 정상**(S04 로그인→`/main` 진입, 마이페이지·GO! 정상) — SSR 클라이언트가 세션이 있으면 users를 읽지만, 익명 세션(anon)에선 임베드 조인이 거부됨. 단 anon 키로 `GET /rest/v1/users`는 200(`[{"id":197}]`)이라 단순 전체 revoke는 아니고, **목록 쿼리의 users 임베드 경로에서만** 막힘. 9차부터 지적된 anon users 노출을 막다가 목록 SSR이 깨진 것으로 추정 — 콘솔에서 어떤 GRANT/RLS/정책을 바꿨는지 확인 필요. (S01·S02가 데일리 스펙에선 느슨한 `includes` 단언이라 "pass"로 떴지만, 캡처는 Next 에러 오버레이 — 단언을 `expect(status).toBe(200)`로 강화 권장.)
+- **[필수][신규] `src/app/layout.tsx:43` RootLayout 안 raw `<script>`** — React/Next16에서 "Encountered a script tag while rendering React component. Scripts inside React components are never executed when rendering on the client." 콘솔 에러. 모바일 흰 커버 깜빡임 방지 인라인 스크립트가 **실제로 실행되지 않음** + 에러 오버레이 유발. `next/script`(beforeInteractive) 또는 `<head>` 인라인으로 옮기는 처방.
+- **[칭찬] 관리자 여정 전부 정상.** admin 승격 계정으로 `/admin`(대시보드: 회원21·게시글89·카테고리 도넛)·`/admin/go`(드로어)·`/admin/reports`·`/admin/users`·`/admin/chats`·`/admin/posts` 모두 렌더(S08~S13). service-role(createAdminClient)로 RLS 우회라 anon 목록 장애와 무관하게 동작.
+- **[칭찬] 가드 정상.** 비로그인 `/admin` → `/login` 307 리다이렉트.
+- **결과: 14건 중 13 pass(단, S01·S02는 거짓 pass) / 1 fail(S03 상세 — `/usedgoods/164` 404로 페이지 닫힘).**
+- (참고) 12차 [필수] GO! 서버액션 role 검증 누락(`go.ts:270,347`)·anon users/meetups 노출은 이번에 재검증 안 함(다음 회차).
+
 ## 발견 (2026-06-24) — 12차
 
 - **[필수][신규·치명] GO! 어드민 서버 액션 role 검증 누락**: `adminGetMeetups()`·`adminForceEndMeetup()`
