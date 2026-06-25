@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { moderateImage } from "@/lib/moderateImage";
 
 export function useImageUpload(initialUrls: string[] = [], maxCount = 10) {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>(initialUrls);
+  const [isChecking, setIsChecking] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imagePreviewsRef = useRef<string[]>([]);
 
@@ -22,16 +24,37 @@ export function useImageUpload(initialUrls: string[] = [], maxCount = 10) {
     fileInputRef.current?.click();
   };
 
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    onBlocked?: (reason: string) => void,
+  ) => {
     const files = Array.from(e.target.files ?? []);
-    const allowed = files.slice(0, maxCount - imageFiles.length);
-
-    setImageFiles((prev) => [...prev, ...allowed]);
-    setImagePreviews((prev) => [
-      ...prev,
-      ...allowed.map((file) => URL.createObjectURL(file)),
-    ]);
+    const candidates = files.slice(0, maxCount - imageFiles.length);
     e.target.value = "";
+
+    setIsChecking(true);
+    try {
+      const passed: File[] = [];
+      let reason: string | null = null;
+
+      for (const file of candidates) {
+        const outcome = await moderateImage(file);
+        if (outcome.allowed) {
+          passed.push(file);
+        } else {
+          reason = outcome.reason;
+        }
+      }
+
+      if (reason) onBlocked?.(reason);
+      setImageFiles((prev) => [...prev, ...passed]);
+      setImagePreviews((prev) => [
+        ...prev,
+        ...passed.map((file) => URL.createObjectURL(file)),
+      ]);
+    } finally {
+      setIsChecking(false);
+    }
   };
 
   const removeImage = (index: number) => {
@@ -50,6 +73,7 @@ export function useImageUpload(initialUrls: string[] = [], maxCount = 10) {
     imageFiles,
     imagePreviews,
     fileInputRef,
+    isChecking,
     handleImageUpload,
     handleImageSelect,
     removeImage,
