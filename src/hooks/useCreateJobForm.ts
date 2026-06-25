@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
@@ -42,7 +42,16 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   const [companyLogoUrl, setCompanyLogoUrl] = useState(initialData?.company_logo ?? "");
   const [companyLogoFile, setCompanyLogoFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [urlError, setUrlError] = useState("");
   const imageUpload = useImageUpload(initialData?.images as string[] ?? []);
+  const maxUrlsRef = useRef(3);
+
+  useEffect(() => {
+    fetch("/api/admin/spam-config")
+      .then((r) => r.json())
+      .then((d) => { if (d?.max_urls_per_post != null) maxUrlsRef.current = d.max_urls_per_post; })
+      .catch(() => {});
+  }, []);
 
   const handleNextStep = () => {
     if (!title || !employeeType || !salary || !locationType || !deadline || !mainTask) {
@@ -66,6 +75,14 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       alert(t("errorRequired"));
       return;
     }
+
+    const checkText = [mainTask, companyIntro].join(" ");
+    const urlCount = (checkText.match(/https?:\/\/[^\s]+/g) ?? []).length;
+    if (urlCount > maxUrlsRef.current) {
+      setUrlError(`게시물에 URL은 최대 ${maxUrlsRef.current}개까지 허용됩니다.`);
+      return;
+    }
+    setUrlError("");
     setIsSubmitting(true);
 
     const uploadLogo = async (postId: number): Promise<string | null> => {
@@ -222,6 +239,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     companyLogoUrl, setCompanyLogoUrl,
     companyLogoFile, setCompanyLogoFile,
     isSubmitting,
+    urlError,
     imageUpload,
     handleSubmit,
     handleBack: () => router.back(),

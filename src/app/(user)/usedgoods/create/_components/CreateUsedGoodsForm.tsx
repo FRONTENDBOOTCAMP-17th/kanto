@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
@@ -76,7 +76,16 @@ export function CreateUsedGoodsForm({
     initialData?.images ?? [],
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [urlError, setUrlError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const maxUrlsRef = useRef(3);
+
+  useEffect(() => {
+    fetch("/api/admin/spam-config")
+      .then((r) => r.json())
+      .then((d) => { if (d?.max_urls_per_post != null) maxUrlsRef.current = d.max_urls_per_post; })
+      .catch(() => {});
+  }, []);
 
   const isFormValid =
     title.trim() !== "" &&
@@ -91,6 +100,13 @@ export function CreateUsedGoodsForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!productCategory || !condition || !preferredLocation) return;
+
+    const urlCount = (content.match(/https?:\/\/[^\s]+/g) ?? []).length;
+    if (urlCount > maxUrlsRef.current) {
+      setUrlError(`게시물에 URL은 최대 ${maxUrlsRef.current}개까지 허용됩니다.`);
+      return;
+    }
+    setUrlError("");
     setIsSubmitting(true);
 
     if (initialData) {
@@ -374,6 +390,9 @@ export function CreateUsedGoodsForm({
               </Label>
             </div>
 
+            {urlError && (
+              <p className="text-[13px] text-red-500">{urlError}</p>
+            )}
             <div className="flex gap-3 pt-4">
               <Button
                 type="button"

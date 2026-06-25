@@ -26,6 +26,7 @@ interface CreateJobFormPageTwoProps {
   managerPhone: string; setManagerPhone: (v: string) => void;
   managerEmail: string; setManagerEmail: (v: string) => void;
   isSubmitting: boolean;
+  urlError?: string;
   imageUpload: ReturnType<typeof useImageUpload>;
   handleSubmit: () => void;
   handlePrevStep: () => void;
@@ -46,6 +47,7 @@ export function CreateJobFormPageTwo({
   managerPhone, setManagerPhone,
   managerEmail, setManagerEmail,
   isSubmitting,
+  urlError,
   imageUpload,
   handleSubmit,
   handlePrevStep,
@@ -181,6 +183,9 @@ export function CreateJobFormPageTwo({
         />
       </div>
 
+      {urlError && (
+        <p className="text-[13px] text-red-500">{urlError}</p>
+      )}
       <div className="flex gap-3 pt-2">
         <Button type="button" variant="outline" onClick={handlePrevStep} className="flex-1" disabled={isSubmitting}>{t("form.prev")}</Button>
         <Button type="button" variant="teal" onClick={handleSubmit} className="flex-1" disabled={isSubmitting}>

@@ -15,6 +15,7 @@ import {
 import { blockMemberAction, unblockMemberAction } from "@/components/go/groupChat/blockMemberAction";
 import { useGroupChatRealtime } from "@/hooks/go/useGroupChatRealtime";
 import { useSpamPrevention } from "@/hooks/chat/useSpamPrevention";
+import { useSpamConfig } from "@/hooks/useSpamConfig";
 import ReportModal, { USER_REPORT_CATEGORIES } from "@/components/common/ReportModal";
 import GroupMessageList from "./GroupMessageList";
 import GroupChatInput from "./GroupChatInput";
@@ -53,7 +54,12 @@ export default function GroupChatRoomBody({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const { isCooldown, cooldownSeconds, recordSend } = useSpamPrevention();
+  const spamConfig = useSpamConfig();
+  const { isCooldown, cooldownSeconds, recordSend } = useSpamPrevention({
+    windowMs: spamConfig.chat_window_sec * 1000,
+    maxCount: spamConfig.chat_max_count,
+    cooldownSec: spamConfig.chat_cooldown_sec,
+  });
 
   useEffect(() => {
     let active = true;
