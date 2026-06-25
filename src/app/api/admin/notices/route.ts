@@ -1,0 +1,50 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/server";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { getNotices, createNotice } from "@/services/admin/adminNotices";
+
+async function getAdminUser() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+  if (error || !user) return null;
+
+  const { data } = await supabaseAdmin
+    .from("users")
+    .select("id, role")
+    .eq("auth_id", user.id)
+    .single();
+
+  if (!data || data.role !== "admin") return null;
+  return data as { id: number; role: string };
+}
+
+export async function GET() {
+  try {
+    const data = await getNotices();
+    return NextResponse.json(data);
+  } catch (e) {
+    return NextResponse.json({ error: (e as Error).message }, { status: 500 });
+  }
+}
+
+export async function POST(req: NextRequest) {
+  const admin = await getAdminUser();
+  if (!admin) return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
+
+  const body = await req.json();
+  const { title, starts_at, ends_at } = body;
+
+  if (!title || !starts_at || !ends_at) {
+    return NextResponse.json({ error: "필수 항목이 누락되었습니다." }, { status: 400 });
+  }
+
+  try {
+    const data = await createNotice({ title, starts_at, ends_at }, admin.id);
+    return NextResponse.json(data, { status: 201 });
+  } catch (e) {
+    return NextResponse.json({ error: (e as Error).message }, { status: 500 });
+  }
+}
