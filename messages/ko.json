@@ -851,6 +851,20 @@
       "home": "홈으로 이동"
     }
   },
+  "Chatbot": {
+    "title": "AI 어시스턴트",
+    "newChat": "새 대화",
+    "history": "대화 기록",
+    "historyEmpty": "최근 대화가 없습니다",
+    "placeholder": "메시지를 입력하세요...",
+    "errorMessage": "죄송합니다, 잠시 후 다시 시도해주세요.",
+    "greeting": "안녕하세요! 칸토 AI 어시스턴트입니다\n무엇이든 편하게 물어보세요!",
+    "suggestions": {
+      "badge": "인증뱃지는 어떻게 받나요?",
+      "safeTrade": "안전거래 방법",
+      "mangoIndex": "망고지수는 어떤건가요?"
+    }
+  },
   "Favorites": {
     "title": "찜 목록",
     "myPostsTitle": "내 게시글",

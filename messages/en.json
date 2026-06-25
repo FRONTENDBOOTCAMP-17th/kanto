@@ -843,6 +843,20 @@
       "home": "Go home"
     }
   },
+  "Chatbot": {
+    "title": "AI Assistant",
+    "newChat": "New chat",
+    "history": "Chat history",
+    "historyEmpty": "No recent conversations",
+    "placeholder": "Type a message...",
+    "errorMessage": "Sorry, please try again in a moment.",
+    "greeting": "Hello! I'm the Kanto AI Assistant.\nFeel free to ask me anything!",
+    "suggestions": {
+      "badge": "How do I get a verified badge?",
+      "safeTrade": "Safe trading tips",
+      "mangoIndex": "What is the Mango Index?"
+    }
+  },
   "Favorites": {
     "title": "Favorites",
     "myPostsTitle": "My Posts",
