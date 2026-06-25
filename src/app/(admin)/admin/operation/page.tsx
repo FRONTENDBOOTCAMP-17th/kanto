@@ -12,31 +12,31 @@ const sections = [
     icon: Bell,
     label: "공지 & 점검",
     description: "전체 공지 등록·관리 및 서비스 점검 일정을 설정합니다.",
-    href: "/admin/notices",
+    href: "/admin/operation/notices",
   },
   {
     icon: ShieldCheck,
     label: "콘텐츠 관리",
     description: "금칙어 필터 룰과 스팸 감지 설정을 관리합니다.",
-    href: "/admin/profanity",
+    href: "/admin/operation/content",
   },
   {
     icon: BarChart2,
     label: "통계 & 모니터링",
     description: "DAU/MAU 추이, 실시간 접속자 수, 오류 로그를 확인합니다.",
-    href: "/admin/monitoring",
+    href: "/admin/operation/monitoring",
   },
   {
     icon: KeyRound,
     label: "권한 관리",
     description: "어드민 계정과 기능별 접근 권한을 관리합니다. (슈퍼어드민 전용)",
-    href: "/admin/permissions",
+    href: "/admin/operation/permissions",
   },
   {
     icon: ScrollText,
     label: "감사 로그",
     description: "어드민 활동 이력을 조회합니다. (슈퍼어드민 전용)",
-    href: "/admin/audit-logs",
+    href: "/admin/operation/audit-logs",
   },
 ];
 
