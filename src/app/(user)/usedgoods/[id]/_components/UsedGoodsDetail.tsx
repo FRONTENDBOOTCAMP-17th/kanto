@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Tables } from "@/type/supabase";
-import { formatTimeAgo } from "@/utils/formatTime";
+import { formatTimeAgo, formatPrice } from "@/utils/formatTime";
 import type { Locale } from "@/i18n/config";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import VerifyAuthor from "@/components/common/VerifyAuthor";
@@ -61,7 +61,7 @@ export default function UsedGoodsDetail({
     href: `/usedgoods/${item.id}`,
     imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
     title: item.posts?.title ?? "",
-    priceText: `₱ ${item.price?.toLocaleString()}`,
+    priceText: formatPrice(item.price),
   }));
 
   const accession = data.posts.users?.created_at
@@ -136,7 +136,7 @@ export default function UsedGoodsDetail({
                 <dt className="text-gray-500 font-medium">{t("condition")}</dt>
                 <dd className="text-gray-700">· {data.condition ? te(`productCondition.${data.condition}`) : ""}</dd>
                 <dt className="text-gray-500 font-medium">{t("price")}</dt>
-                <dd className="text-orange-500">· ₱ {data.price?.toLocaleString()}</dd>
+                <dd className="text-orange-500">· {formatPrice(data.price)}</dd>
                 <dt className="text-gray-500 font-medium">{t("tradeLocation")}</dt>
                 <dd className="text-gray-700">· {data.location_type === "그 외 지역" ? te("tradeLocation.otherAreas") : data.location_type}</dd>
                 {data.safe_payment !== null && (
@@ -199,7 +199,7 @@ export default function UsedGoodsDetail({
                 <dt className="text-gray-500 font-medium">{t("condition")}</dt>
                 <dd className="text-gray-700">· {data.condition ? te(`productCondition.${data.condition}`) : ""}</dd>
                 <dt className="text-gray-500 font-medium">{t("price")}</dt>
-                <dd className="text-orange-500">· ₱ {data.price?.toLocaleString()}</dd>
+                <dd className="text-orange-500">· {formatPrice(data.price)}</dd>
                 <dt className="text-gray-500 font-medium">{t("tradeLocation")}</dt>
                 <dd className="text-gray-700">· {data.location_type === "그 외 지역" ? te("tradeLocation.otherAreas") : data.location_type}</dd>
                 {data.safe_payment !== null && (

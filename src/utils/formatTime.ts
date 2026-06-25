@@ -85,6 +85,10 @@ export function getDeadlineDiff(deadline: string): number {
   );
 }
 
+export function formatPrice(v?: number | null): string {
+  return v == null ? "가격 협의" : `₱ ${v.toLocaleString()}`;
+}
+
 export function formatDate(date: string | null): string {
   if (!date) return "-";
   return new Intl.DateTimeFormat("ko-KR", {

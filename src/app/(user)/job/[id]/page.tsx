@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { formatPrice } from "@/utils/formatTime";
 import { after } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getJobDetail } from "@/services/job/jobDetail";
@@ -48,7 +49,7 @@ export default async function JobDetailPage({
     href: `/job/${item.post_id}`,
     imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
     title: (item.posts as { title: string | null } | null)?.title ?? "",
-    priceText: `₱ ${item.salary.toLocaleString()}`,
+    priceText: formatPrice(item.salary),
   }));
 
   return (

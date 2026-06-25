@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { formatPrice } from "@/utils/formatTime";
 import { after } from "next/server";
 import { getRentalDetail } from "@/services/rental/rental";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
@@ -47,7 +48,7 @@ export default async function RentalDetail({
       href: `/rental/${item.post_id}`,
       imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
       title: (item.posts as { title: string | null } | null)?.title ?? "",
-      priceText: item.price ? `₱ ${item.price.toLocaleString()}` : "가격 협의",
+      priceText: formatPrice(item.price),
     }));
   }
 

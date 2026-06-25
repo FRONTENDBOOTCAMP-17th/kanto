@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { ReactNode } from "react";
 import { useTranslations } from "next-intl";
+import { formatPrice } from "@/utils/formatTime";
 
 const AMENITY_ICONS: Record<string, ReactNode> = {
   와이파이: <Wifi className="w-4 h-4" />,
@@ -67,11 +68,11 @@ export default function AccommondationInfo({ rental }: { rental: Rental }) {
       <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
         <dt className="text-gray-500 font-medium">{t("deposit")}</dt>
         <dd className="text-gray-700">
-          · ₱ {rental.deposit?.toLocaleString()}
+          · {formatPrice(rental.deposit)}
         </dd>
         <dt className="text-gray-500 font-medium">{enumLabel("rentType", rental.rent_type)}</dt>
         <dd className="text-orange-500">
-          · ₱ {rental.price?.toLocaleString()}
+          · {formatPrice(rental.price)}
         </dd>
         <dt className="text-gray-500 font-medium">{t("roomType")}</dt>
         <dd>· {enumLabel("roomType", rental.room_type)}</dd>
