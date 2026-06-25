@@ -13,6 +13,7 @@ import {
   MapPin,
   Menu,
   Zap,
+  Settings,
 } from "lucide-react";
 
 type NavItem = {
@@ -33,6 +34,7 @@ export default function AdminSidebar({ pendingCount }: { pendingCount: number })
     { icon: Flag, label: "신고 내역", href: "/admin/reports", badge: pendingCount || undefined },
     { icon: Zap, label: "번개모임 관리", href: "/admin/go" },
     { icon: MessageSquare, label: "채팅기록", href: "/admin/chats" },
+    { icon: Settings, label: "운영 관리", href: "/admin/operation" },
   ];
 
   return (
