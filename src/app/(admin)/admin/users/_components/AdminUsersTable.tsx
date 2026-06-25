@@ -1,4 +1,5 @@
 import { User } from "@/services/admin/adminUsers";
+import { formatDate } from "@/utils/formatTime";
 
 interface AdminUsersTableProps {
   users: User[];
@@ -9,14 +10,6 @@ interface AdminUsersTableProps {
   allSelected: boolean;
 }
 
-function formatDate(date: string | null) {
-  if (!date) return "-";
-  return new Intl.DateTimeFormat("ko-KR", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date(date));
-}
 
 export default function AdminUsersTable({
   users,

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { MapPin, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { LikeButton } from "@/components/common/LikeButton";
 import type { JobWithPost } from "@/type/job/jobList";
+import { formatPrice } from "@/utils/formatTime";
 
 interface Props {
   posts: JobWithPost[];
@@ -42,7 +43,7 @@ function PopularJobCard({ post, initialIsLiked, currentUserId }: CardProps) {
       <div className="flex items-end justify-between gap-1">
         <div className="flex flex-col gap-1">
           <p className="text-xs font-medium text-teal-600">
-            ₱ {job.salary.toLocaleString()}
+            {formatPrice(job.salary)}
             {job.salary_type && (
               <span className="text-gray-400 font-normal ml-1">/ {te(`salaryType.${job.salary_type}`)}</span>
             )}

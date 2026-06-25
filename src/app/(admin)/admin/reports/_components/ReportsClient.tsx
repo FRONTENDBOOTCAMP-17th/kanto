@@ -11,6 +11,7 @@ import {
   SANCTION_LABEL,
   PAGE_SIZE,
 } from "../_lib/constants";
+import { formatDateTime } from "@/utils/formatTime";
 import type { Report, Outcome, ReportType, Status, Sanction } from "@/type/admin";
 import {
   resolveReport,
@@ -855,15 +856,6 @@ export default function ReportsClient({ reports }: Props) {
 
                     
                     {(() => {
-                      function formatDateTime(d: string | null | undefined) {
-                        if (!d) return "-";
-                        return new Intl.DateTimeFormat("ko-KR", {
-                          year: "numeric", month: "2-digit", day: "2-digit",
-                          hour: "2-digit", minute: "2-digit", second: "2-digit",
-                          hour12: false,
-                        }).format(new Date(d));
-                      }
-
                       type LogEntry = { key: string; color: string; bg: string; label: string; by: string | null; at: string | null };
                       const logs: LogEntry[] = [];
 

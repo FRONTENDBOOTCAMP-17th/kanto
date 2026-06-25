@@ -1,12 +1,6 @@
 import { createAdminClient } from "@/utils/supabase/admin";
 import { REPORT_STATUS } from "@/constants/report";
-
-const SANCTION_LABEL: Record<string, string> = {
-  "7d": "7일 정지",
-  "30d": "30일 정지",
-  perm: "영구 정지",
-  lifted: "제재 해제",
-};
+import { SANCTION_LABEL } from "@/app/(admin)/admin/reports/_lib/constants";
 
 export interface SanctionRecord {
   id: number;
