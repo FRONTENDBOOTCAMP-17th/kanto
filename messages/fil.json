@@ -848,6 +848,20 @@
       "home": "Pumunta sa home"
     }
   },
+  "Chatbot": {
+    "title": "AI Assistant",
+    "newChat": "Bagong chat",
+    "history": "Kasaysayan ng chat",
+    "historyEmpty": "Walang mga kamakailang pag-uusap",
+    "placeholder": "Mag-type ng mensahe...",
+    "errorMessage": "Paumanhin, pakisubukang muli sa ilang sandali.",
+    "greeting": "Kamusta! Ako ang Kanto AI Assistant.\nHuwag mag-alinlangang magtanong!",
+    "suggestions": {
+      "badge": "Paano makakuha ng verified badge?",
+      "safeTrade": "Mga tip sa ligtas na kalakalan",
+      "mangoIndex": "Ano ang Mango Index?"
+    }
+  },
   "Favorites": {
     "title": "Mga Paborito",
     "myPostsTitle": "Aking mga Post",
