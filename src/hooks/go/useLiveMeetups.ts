@@ -2,7 +2,7 @@
 
 // 지도에 표시할 진행 중 모임 목록 — Supabase Realtime 구독
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { getActiveMeetups } from "@/services/go/go";
 import type { Meetup } from "@/type/go";
@@ -17,21 +17,39 @@ export function useLiveMeetups({ topicFilter }: UseLiveMeetupsOptions = {}) {
   const [meetups, setMeetups] = useState<Meetup[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const inFlightRef = useRef(false);
+  const queuedRef = useRef(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const load = useCallback(async () => {
-    try {
-      const data = await getActiveMeetups();
-      setMeetups(data);
-    } catch (e) {
-      setError(e as Error);
-    } finally {
-      setLoading(false);
+    if (inFlightRef.current) {
+      queuedRef.current = true;
+      return;
     }
+    inFlightRef.current = true;
+    do {
+      try {
+        queuedRef.current = false;
+        const data = await getActiveMeetups();
+        setMeetups(data);
+        setError(null);
+      } catch (e) {
+        setError(e as Error);
+      }
+    } while (queuedRef.current);
+    inFlightRef.current = false;
+    setLoading(false);
   }, []);
+
+  const scheduleLoad = useCallback(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(load, 180);
+  }, [load]);
 
   // 초기 로드
   useEffect(() => {
-    load();
+    const id = setTimeout(load, 0);
+    return () => clearTimeout(id);
   }, [load]);
 
   // Realtime 구독 — meetups / meetup_participants 변경 시 재조회
@@ -44,19 +62,20 @@ export function useLiveMeetups({ topicFilter }: UseLiveMeetupsOptions = {}) {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "meetups" },
-        load,
+        scheduleLoad,
       )
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "meetup_participants" },
-        load,
+        scheduleLoad,
       )
       .subscribe();
 
     return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
       supabase.removeChannel(channel);
     };
-  }, [load]);
+  }, [scheduleLoad]);
 
   // 클라이언트 사이드 필터
   const filtered =

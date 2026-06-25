@@ -3,6 +3,7 @@
 // 장소명/주소 입력 → Google Places 자동완성 → 선택 시 좌표+주소 확보
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { MapPin, Loader2, Search } from "lucide-react";
 import { useMapsLibrary } from "@vis.gl/react-google-maps";
 import type { PickedLocation } from "@/type/go";
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export function PlaceAutocomplete({ selected, onSelect }: Props) {
+  const t = useTranslations("Go.place");
   const placesLib = useMapsLibrary("places");
 
   const [input, setInput] = useState("");
@@ -112,7 +114,7 @@ export function PlaceAutocomplete({ selected, onSelect }: Props) {
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
-          placeholder={placesLib ? "장소명 또는 주소를 입력하세요 (예: SM Aura)" : "지도 로딩 중…"}
+          placeholder={placesLib ? t("placeholder") : t("loading")}
           disabled={!placesLib}
           className="w-full rounded-[11px] border-[1.5px] border-slate-200 py-3 pl-9 pr-9 text-[14.5px] text-slate-900 outline-none focus:border-teal-400 disabled:bg-slate-50"
         />
@@ -158,7 +160,7 @@ export function PlaceAutocomplete({ selected, onSelect }: Props) {
           <span className="text-[13px] font-semibold text-teal-800">{selected.address}</span>
         </div>
       ) : (
-        <p className="mt-1.5 text-[12.5px] text-slate-400">아직 위치가 선택되지 않았습니다</p>
+        <p className="mt-1.5 text-[12.5px] text-slate-400">{t("empty")}</p>
       )}
     </div>
   );
