@@ -80,7 +80,7 @@ function DetailDrawer({ log, onClose }: { log: AuditLog; onClose: () => void }) 
   const entries = Object.entries(log.detail);
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-end bg-black/20 backdrop-blur-sm sm:items-start"
+      className="fixed inset-0 z-50 flex cursor-pointer items-end justify-end bg-black/20 backdrop-blur-sm sm:items-start"
       onClick={onClose}
     >
       <div
@@ -95,7 +95,7 @@ function DetailDrawer({ log, onClose }: { log: AuditLog; onClose: () => void }) 
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-slate-300 hover:bg-slate-100 hover:text-slate-500"
+            className="cursor-pointer rounded-lg p-1.5 text-slate-300 hover:bg-slate-100 hover:text-slate-500"
           >
             <X className="h-4 w-4" strokeWidth={2.5} />
           </button>
@@ -184,6 +184,9 @@ export function AuditLogsClient({ initialLogs }: Props) {
   const [page, setPage] = useState(1);
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
   const [actionDropdownOpen, setActionDropdownOpen] = useState(false);
+  const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
+  const [filterDateFrom, setFilterDateFrom] = useState("");
+  const [filterDateTo, setFilterDateTo] = useState("");
 
   const today = new Date().toISOString().slice(0, 10);
 
@@ -197,7 +200,10 @@ export function AuditLogsClient({ initialLogs }: Props) {
     const matchRole = filterRole === "all" || log.actor_role === filterRole;
     const matchAction = filterAction === "all" || log.action === filterAction;
     const matchTarget = filterTarget === "all" || log.target_type === filterTarget;
-    return matchSearch && matchRole && matchAction && matchTarget;
+    const logDate = log.created_at.slice(0, 10);
+    const matchDateFrom = !filterDateFrom || logDate >= filterDateFrom;
+    const matchDateTo = !filterDateTo || logDate <= filterDateTo;
+    return matchSearch && matchRole && matchAction && matchTarget && matchDateFrom && matchDateTo;
   });
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
@@ -208,11 +214,19 @@ export function AuditLogsClient({ initialLogs }: Props) {
     setFilterRole("all");
     setFilterAction("all");
     setFilterTarget("all");
+    setFilterDateFrom("");
+    setFilterDateTo("");
     setPage(1);
   }
 
+  const hasActiveDate = filterDateFrom || filterDateTo;
+
+  function formatShortDate(iso: string) {
+    return iso.replace(/-/g, ".").slice(2);
+  }
+
   const hasActiveFilters =
-    searchQuery || filterRole !== "all" || filterAction !== "all" || filterTarget !== "all";
+    searchQuery || filterRole !== "all" || filterAction !== "all" || filterTarget !== "all" || hasActiveDate;
 
   const todayCount = initialLogs.filter((l) => l.created_at.startsWith(today)).length;
   const sanctionDeleteCount = initialLogs.filter((l) =>
@@ -232,7 +246,7 @@ export function AuditLogsClient({ initialLogs }: Props) {
         <div className="mb-7">
           <Link
             href="/admin/operation"
-            className="mb-2 flex items-center gap-1 text-[13px] text-slate-400 hover:text-slate-600"
+            className="mb-2 flex cursor-pointer items-center gap-1 text-[13px] text-slate-400 hover:text-slate-600"
           >
             <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.5} />
             운영 관리
@@ -277,7 +291,7 @@ export function AuditLogsClient({ initialLogs }: Props) {
               className="w-40 bg-transparent text-[13.5px] text-slate-800 outline-none placeholder:text-slate-300"
             />
             {searchQuery && (
-              <button onClick={() => { setSearchQuery(""); setPage(1); }} className="text-slate-300 hover:text-slate-500">
+              <button onClick={() => { setSearchQuery(""); setPage(1); }} className="cursor-pointer text-slate-300 hover:text-slate-500">
                 <X className="h-3.5 w-3.5" strokeWidth={2.5} />
               </button>
             )}
@@ -289,7 +303,7 @@ export function AuditLogsClient({ initialLogs }: Props) {
                 key={role}
                 onClick={() => { setFilterRole(role); setPage(1); }}
                 className={[
-                  "flex items-center gap-1 rounded-lg px-3 py-1.5 text-[12.5px] font-semibold transition-colors",
+                  "flex cursor-pointer items-center gap-1 rounded-lg px-3 py-1.5 text-[12.5px] font-semibold transition-colors",
                   filterRole === role
                     ? "bg-white text-slate-800 shadow-sm"
                     : "text-slate-400 hover:text-slate-600",
@@ -316,7 +330,7 @@ export function AuditLogsClient({ initialLogs }: Props) {
             <button
               onClick={() => setActionDropdownOpen((v) => !v)}
               className={[
-                "flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-[13px] font-medium transition-colors",
+                "flex cursor-pointer items-center gap-1.5 rounded-xl border px-3.5 py-2 text-[13px] font-medium transition-colors",
                 filterAction !== "all"
                   ? "border-teal-300 bg-teal-50 text-teal-700"
                   : "border-[#ebeef0] bg-white text-slate-500 hover:bg-slate-50",
@@ -332,7 +346,7 @@ export function AuditLogsClient({ initialLogs }: Props) {
                 <button
                   onClick={() => { setFilterAction("all"); setActionDropdownOpen(false); setPage(1); }}
                   className={[
-                    "flex w-full items-center px-4 py-2 text-[13px] transition-colors hover:bg-slate-50",
+                    "flex w-full cursor-pointer items-center px-4 py-2 text-[13px] transition-colors hover:bg-slate-50",
                     filterAction === "all" ? "font-semibold text-slate-800" : "text-slate-500",
                   ].join(" ")}
                 >
@@ -343,7 +357,7 @@ export function AuditLogsClient({ initialLogs }: Props) {
                     key={key}
                     onClick={() => { setFilterAction(key); setActionDropdownOpen(false); setPage(1); }}
                     className={[
-                      "flex w-full items-center gap-2 px-4 py-2 text-[13px] transition-colors hover:bg-slate-50",
+                      "flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-[13px] transition-colors hover:bg-slate-50",
                       filterAction === key ? "font-semibold text-slate-800" : "text-slate-500",
                     ].join(" ")}
                   >
@@ -359,7 +373,7 @@ export function AuditLogsClient({ initialLogs }: Props) {
             <select
               value={filterTarget}
               onChange={(e) => { setFilterTarget(e.target.value as AuditTargetType | "all"); setPage(1); }}
-              className="appearance-none rounded-xl border border-[#ebeef0] bg-white px-3.5 py-2 pr-8 text-[13px] font-medium text-slate-500 outline-none hover:bg-slate-50 focus:border-teal-300 focus:ring-2 focus:ring-teal-100"
+              className="cursor-pointer appearance-none rounded-xl border border-[#ebeef0] bg-white px-3.5 py-2 pr-8 text-[13px] font-medium text-slate-500 outline-none hover:bg-slate-50 focus:border-teal-300 focus:ring-2 focus:ring-teal-100"
             >
               <option value="all">대상 전체</option>
               {(Object.keys(TARGET_LABELS) as AuditTargetType[]).map((t) => (
@@ -369,10 +383,65 @@ export function AuditLogsClient({ initialLogs }: Props) {
             <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" strokeWidth={2} />
           </div>
 
-          <button className="flex items-center gap-1.5 rounded-xl border border-[#ebeef0] bg-white px-3.5 py-2 text-[13px] font-medium text-slate-500 hover:bg-slate-50">
-            <Calendar className="h-3.5 w-3.5" strokeWidth={2} />
-            날짜 범위
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setDateDropdownOpen((v) => !v)}
+              className={[
+                "flex cursor-pointer items-center gap-1.5 rounded-xl border px-3.5 py-2 text-[13px] font-medium transition-colors",
+                hasActiveDate
+                  ? "border-teal-300 bg-teal-50 text-teal-700"
+                  : "border-[#ebeef0] bg-white text-slate-500 hover:bg-slate-50",
+              ].join(" ")}
+            >
+              <Calendar className="h-3.5 w-3.5" strokeWidth={2} />
+              {hasActiveDate
+                ? `${filterDateFrom ? formatShortDate(filterDateFrom) : "시작"} ~ ${filterDateTo ? formatShortDate(filterDateTo) : "종료"}`
+                : "날짜 범위"}
+            </button>
+
+            {dateDropdownOpen && (
+              <div className="absolute left-0 top-full z-20 mt-1.5 w-64 rounded-2xl border border-[#ebeef0] bg-white p-4 shadow-[0_8px_30px_rgba(0,0,0,0.1)]">
+                <p className="mb-3 text-[12px] font-semibold uppercase tracking-wide text-slate-400">날짜 범위 선택</p>
+                <div className="flex flex-col gap-2.5">
+                  <div>
+                    <label className="mb-1 block text-[12px] font-medium text-slate-500">시작일</label>
+                    <input
+                      type="date"
+                      value={filterDateFrom}
+                      max={filterDateTo || today}
+                      onChange={(e) => { setFilterDateFrom(e.target.value); setPage(1); }}
+                      className="w-full rounded-xl border border-[#ebeef0] px-3 py-2 text-[13px] text-slate-700 outline-none focus:border-teal-300 focus:ring-2 focus:ring-teal-100"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-[12px] font-medium text-slate-500">종료일</label>
+                    <input
+                      type="date"
+                      value={filterDateTo}
+                      min={filterDateFrom || undefined}
+                      max={today}
+                      onChange={(e) => { setFilterDateTo(e.target.value); setPage(1); }}
+                      className="w-full rounded-xl border border-[#ebeef0] px-3 py-2 text-[13px] text-slate-700 outline-none focus:border-teal-300 focus:ring-2 focus:ring-teal-100"
+                    />
+                  </div>
+                  <div className="flex gap-2 pt-1">
+                    <button
+                      onClick={() => { setFilterDateFrom(""); setFilterDateTo(""); setPage(1); }}
+                      className="flex-1 cursor-pointer rounded-xl border border-[#ebeef0] py-2 text-[12.5px] font-semibold text-slate-500 hover:bg-slate-50"
+                    >
+                      초기화
+                    </button>
+                    <button
+                      onClick={() => setDateDropdownOpen(false)}
+                      className="flex-1 rounded-xl bg-teal-500 py-2 text-[12.5px] font-semibold text-white hover:bg-teal-600"
+                    >
+                      적용
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
 
           {hasActiveFilters && (
             <button
