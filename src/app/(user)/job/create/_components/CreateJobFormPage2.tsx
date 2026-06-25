@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUploadField } from "@/components/common/ImageUploadField";
 import { useImageUpload } from "@/hooks/useImageUpload";
+import Toast from "@/components/common/Toast";
 
 const URL_REGEX = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&/=]*)$/i;
 
@@ -51,9 +52,23 @@ export function CreateJobFormPageTwo({
   handlePrevStep,
 }: CreateJobFormPageTwoProps) {
   const t = useTranslations("Job");
+  const tc = useTranslations("Common");
   const [websiteError, setWebsiteError] = useState("");
   const logoInputRef = useRef<HTMLInputElement>(null);
   const logoPreview = companyLogoFile ? URL.createObjectURL(companyLogoFile) : companyLogoUrl || null;
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleImageSelectWithToast = (e: React.ChangeEvent<HTMLInputElement>) =>
+    imageUpload.handleImageSelect(e, (reason) => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+      setToastMessage(
+        reason === "unavailable" ? tc("imageUpload.unavailable") : tc("imageUpload.blocked"),
+      );
+      setShowToast(true);
+      toastTimerRef.current = setTimeout(() => setShowToast(false), 3000);
+    });
 
   const handleWebsiteBlur = () => {
     if (companyWebsite && !URL_REGEX.test(companyWebsite)) {
@@ -175,8 +190,9 @@ export function CreateJobFormPageTwo({
         <ImageUploadField
           fileInputRef={imageUpload.fileInputRef}
           imagePreviews={imageUpload.imagePreviews}
+          isChecking={imageUpload.isChecking}
           onUploadClick={imageUpload.handleImageUpload}
-          onSelect={imageUpload.handleImageSelect}
+          onSelect={handleImageSelectWithToast}
           onRemove={imageUpload.removeImage}
         />
       </div>
@@ -187,6 +203,7 @@ export function CreateJobFormPageTwo({
           {isSubmitting ? t("form.submitting") : t("form.submit")}
         </Button>
       </div>
+      <Toast message={toastMessage} showMessage={showToast} type="error" icon="alert" />
     </div>
   );
 }

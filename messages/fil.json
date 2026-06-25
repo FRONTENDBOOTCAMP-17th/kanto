@@ -132,7 +132,10 @@
       "labelWithMin": "Mga larawan (min {minCount}, max {maxCount})",
       "add": "Magdagdag ng larawan",
       "removeImage": "Alisin ang larawan {index}",
-      "goToImage": "Pumunta sa larawan {index}"
+      "goToImage": "Pumunta sa larawan {index}",
+      "checking": "Kinakapatas ang larawan...",
+      "blocked": "May mga larawan na hindi pinayagan kaya hindi idinagdag.",
+      "unavailable": "Hindi namin masuri ngayon ang larawan. Pakisubukan ulit mamaya."
     },
     "carousel": {
       "noImage": "Walang larawan",
