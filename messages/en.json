@@ -240,6 +240,8 @@
       "completed": "Transaction Complete",
       "cancelledStatus": "Transaction has been cancelled",
       "expiredStatus": "Payment time has expired",
+      "pendingNotice": "Payment will expire if not completed within 24 hours",
+      "expiredNotice": "The payment period has expired",
       "close": "Close"
     }
   },
@@ -611,6 +613,8 @@
     "menu": {
       "ariaMenu": "Profile menu",
       "info": "Info",
+      "payment": "Payment",
+      "history": "Transactions",
       "reviews": "Reviews",
       "alerts": "Alerts",
       "blocked": "Blocked",
@@ -665,6 +669,31 @@
       "confirmDesc": "Deleting your account erases all data including your posts and chat history, and cannot be undone.",
       "cancel": "Cancel",
       "confirmDelete": "Delete"
+    },
+    "history": {
+      "title": "Transaction History",
+      "loading": "Loading...",
+      "empty": "No transactions yet",
+      "buyer": "Buyer",
+      "seller": "Seller",
+      "statusPending": "Pending",
+      "statusPaid": "Payment Complete",
+      "statusReleased": "Completed",
+      "statusCancelled": "Cancelled",
+      "statusExpired": "Expired",
+      "deletedPost": "Deleted post"
+    },
+    "bank": {
+      "title": "Payout Account",
+      "hint": "Funds will be automatically sent to this account upon trade completion",
+      "bankCode": "Select bank",
+      "accountNumber": "Account number",
+      "accountName": "Account holder name",
+      "save": "Save account",
+      "edit": "Edit account",
+      "selectPlaceholder": "Select a bank",
+      "accountNumberHint": "Please enter without hyphens (-)",
+      "accountNamePlaceholder": "Enter account holder name"
     },
     "alerts": {
       "title": "Notification Settings",
@@ -731,7 +760,9 @@
       "linkFailedCode": "Failed to link. ({code})",
       "linkFailedMessage": "Failed to link: {message}",
       "identityAlreadyExists": "This social account is already linked to another account.",
-      "sameIdentity": "This social account is already linked to your account."
+      "sameIdentity": "This social account is already linked to your account.",
+      "bankSaved": "Account saved successfully.",
+      "bankSaveFailed": "Failed to save account."
     }
   },
   "Signup": {

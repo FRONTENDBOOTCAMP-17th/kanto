@@ -88,11 +88,34 @@ export default function MessageList({
             <div className={`flex flex-col gap-0.5 ${isMine ? "items-end" : "items-start"}`}>
               <div className={`flex items-end gap-1 ${isMine ? "flex-row-reverse" : ""}`}>
                 {msg.type === "payment" && msg.transaction ? (
-                  <PaymentCard
-                    transaction={msg.transaction}
-                    currentUser={currentUser}
-                    onTransactionChange={onTransactionChange}
-                  />
+                  <div className="flex flex-col items-center gap-1.5">
+                    <PaymentCard
+                      transaction={msg.transaction}
+                      currentUser={currentUser}
+                      onTransactionChange={onTransactionChange}
+                    />
+                    {(() => {
+                      const tx = msg.transaction;
+                      const timedOut =
+                        tx.status === "pending" &&
+                        Date.now() - new Date(tx.created_at).getTime() > 24 * 60 * 60 * 1000;
+                      if (timedOut || tx.status === "expired") {
+                        return (
+                          <span className="rounded-full bg-gray-200/70 px-3 py-1 text-center text-xs md:text-[11px] text-gray-500 break-keep">
+                            {t("payment.expiredNotice")}
+                          </span>
+                        );
+                      }
+                      if (tx.status === "pending") {
+                        return (
+                          <span className="rounded-full bg-gray-200/70 px-3 py-1 text-center text-xs md:text-[11px] text-gray-500 break-keep">
+                            {t("payment.pendingNotice")}
+                          </span>
+                        );
+                      }
+                      return null;
+                    })()}
+                  </div>
                 ) : (
                   <div
                     className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm md:text-xs leading-relaxed break-keep ${
