@@ -17,6 +17,7 @@ export interface MyGroupRoom {
   title: string; // posts.title
   topic: MeetupTopicKey;
   status: "active" | "ended";
+  member_count: number;
   last_message_content: string | null;
   last_message_at: string | null;
   unread_count: number;

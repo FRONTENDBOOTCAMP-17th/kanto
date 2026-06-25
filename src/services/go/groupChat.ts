@@ -29,14 +29,14 @@ export async function createRoomForMeetup(meetupPostId: number, endAtISO: string
       status: "active",
     } as never);
     if (error) throw error;
-  } catch (e) {
-    console.error("[groupChat] createRoomForMeetup failed:", e);
+  } catch {
+    // 방 생성 실패는 모임 생성 자체를 막지 않는다.
   }
 }
 
 /**
- * 모임 종료 시 호출 — 방 상태를 'ended'로 바꾸고 유예를 실제 종료 시점부터 24h 재설정.
- * 종료 안내 system 메시지 1행 삽입.
+ * 모임 종료 시 호출 — 모임 채팅방을 즉시 삭제한다.
+ * 메시지/읽음 상태는 FK cascade로 함께 제거되어 채팅 목록에서도 사라진다.
  */
 export async function endRoom(meetupPostId: number): Promise<void> {
   try {
@@ -44,15 +44,14 @@ export async function endRoom(meetupPostId: number): Promise<void> {
     const room = await getRoomRowByMeetup(meetupPostId, admin);
     if (!room) return;
 
-    const expiresAt = new Date(Date.now() + GRACE_PERIOD_MS).toISOString();
+    await postSystemMessage(room.id, "모임이 종료되었습니다.");
+
     await admin
       .from("meetup_chat_rooms")
-      .update({ status: "ended", expires_at: expiresAt } as never)
+      .delete()
       .eq("id", room.id);
-
-    await postSystemMessage(room.id, "모임이 종료되었습니다. \n24시간내에 채팅방이 사라집니다.");
-  } catch (e) {
-    console.error("[groupChat] endRoom failed:", e);
+  } catch {
+    // 종료 처리 중 채팅방 정리에 실패해도 모임 종료 자체는 유지한다.
   }
 }
 
@@ -83,8 +82,12 @@ export async function getRoomByMeetup(meetupPostId: number): Promise<GroupChatRo
   if (!room) return null;
 
   if (new Date(room.expires_at) < new Date()) {
-    const admin = createAdminClient();
-    await admin.from("meetup_chat_rooms").delete().eq("id", room.id);
+    try {
+      const admin = createAdminClient();
+      await admin.from("meetup_chat_rooms").delete().eq("id", room.id);
+    } catch {
+      // 만료 정리는 best-effort로 처리한다.
+    }
     return null;
   }
 
@@ -188,18 +191,20 @@ export async function postGroupMessage(roomId: number, content: string): Promise
 export async function postSystemMessage(roomId: number, content: string): Promise<void> {
   try {
     const admin = createAdminClient();
-    const { data: room } = await admin
+    const { data: room, error: roomError } = await admin
       .from("meetup_chat_rooms")
       .select("meetup_post_id")
       .eq("id", roomId)
       .single();
-    if (!room) return;
+    if (roomError || !room) return;
 
-    const { data: meetup } = await admin
+    const { data: meetup, error: meetupError } = await admin
       .from("meetups")
       .select("posts!inner(user_id)")
       .eq("post_id", room.meetup_post_id)
       .single();
+    if (meetupError || !meetup) return;
+
     const hostId = (meetup as { posts: { user_id: number } } | null)?.posts.user_id;
     if (!hostId) return;
 
@@ -209,8 +214,8 @@ export async function postSystemMessage(roomId: number, content: string): Promis
       content,
       type: "system",
     } as never);
-  } catch (e) {
-    console.error("[groupChat] postSystemMessage failed:", e);
+  } catch {
+    // 시스템 메시지는 보조 기능이라 실패해도 사용자 플로우를 깨지 않는다.
   }
 }
 
@@ -223,8 +228,8 @@ export async function postSystemMessageForMeetup(meetupPostId: number, content: 
     const room = await getRoomRowByMeetup(meetupPostId, admin);
     if (!room) return;
     await postSystemMessage(room.id, content);
-  } catch (e) {
-    console.error("[groupChat] postSystemMessageForMeetup failed:", e);
+  } catch {
+    // 시스템 메시지는 보조 기능이라 실패해도 사용자 플로우를 깨지 않는다.
   }
 }
 
@@ -241,21 +246,27 @@ export async function getMyRooms(): Promise<MyGroupRoom[]> {
     .from("meetup_chat_rooms")
     .select(
       `id, meetup_post_id, status, expires_at,
-       meetups!inner(topic, posts!inner(title))`,
+       meetups!inner(topic, posts!inner(title), meetup_participants(status))`,
     )
     .order("created_at", { ascending: false });
 
   if (error) throw error;
 
   const now = new Date();
-  const validRooms = (rooms ?? []).filter((r) => new Date(r.expires_at) >= now);
+  const validRooms = (rooms ?? []).filter(
+    (r) => r.status === "active" && new Date(r.expires_at) >= now,
+  );
   const expiredRoomIds = (rooms ?? [])
     .filter((r) => new Date(r.expires_at) < now)
     .map((r) => r.id);
 
   if (expiredRoomIds.length > 0) {
-    const admin = createAdminClient();
-    await admin.from("meetup_chat_rooms").delete().in("id", expiredRoomIds);
+    try {
+      const admin = createAdminClient();
+      await admin.from("meetup_chat_rooms").delete().in("id", expiredRoomIds);
+    } catch {
+      // 만료 정리는 목록 표시를 막지 않는다.
+    }
   }
 
   if (validRooms.length === 0) return [];
@@ -290,14 +301,23 @@ export async function getMyRooms(): Promise<MyGroupRoom[]> {
   }
 
   return validRooms.map((r) => {
-    const meetup = (r as unknown as { meetups: { topic: string; posts: { title: string } } }).meetups;
+    const meetup = (r as unknown as {
+      meetups: {
+        topic: string;
+        posts: { title: string };
+        meetup_participants?: Array<{ status: string }> | null;
+      };
+    }).meetups;
     const last = lastMessageMap.get(r.id);
+    const participantCount =
+      meetup.meetup_participants?.filter((p) => p.status === "joined").length ?? 0;
     return {
       room_id: r.id,
       meetup_post_id: r.meetup_post_id,
       title: meetup.posts.title,
       topic: meetup.topic as MyGroupRoom["topic"],
       status: r.status as "active" | "ended",
+      member_count: participantCount + 1,
       last_message_content: last?.content ?? null,
       last_message_at: last?.created_at ?? null,
       unread_count: unreadCountMap.get(r.id) ?? 0,
@@ -320,6 +340,24 @@ export async function markRoomRead(roomId: number): Promise<void> {
 }
 
 /**
+ * 현재 사용자의 이 방 마지막 읽음 시각.
+ */
+export async function getRoomLastReadAt(roomId: number): Promise<string | null> {
+  const supabase = await createClient();
+  const sessionUser = await getSessionUser();
+  if (!sessionUser) return null;
+
+  const { data } = await supabase
+    .from("meetup_chat_reads")
+    .select("last_read_at")
+    .eq("room_id", roomId)
+    .eq("user_id", sessionUser.id)
+    .maybeSingle();
+
+  return data?.last_read_at ?? null;
+}
+
+/**
  * 방 멤버 목록 — 호스트 + joined 참여자.
  */
 export async function getRoomMembers(meetupPostId: number): Promise<MeetupParticipant[]> {
@@ -334,6 +372,7 @@ export async function getRoomMembers(meetupPostId: number): Promise<MeetupPartic
     display_name: meetup.host_name,
     avatar_url: null,
     is_host: true,
+    is_deleted: false,
   };
 
   return [host, ...participants.map((p) => ({ ...p, is_host: false }))];
