@@ -5,14 +5,15 @@ import { CreditCard } from "lucide-react";
 import type { AdminTransaction } from "@/services/admin/adminTransactions";
 
 const STATUS_META: Record<string, { label: string; className: string }> = {
-  pending:   { label: "결제대기", className: "bg-yellow-50 text-yellow-600" },
-  paid:      { label: "결제완료", className: "bg-blue-50 text-blue-600" },
-  released:  { label: "거래완료", className: "bg-teal-50 text-teal-600" },
-  cancelled: { label: "취소됨",   className: "bg-gray-100 text-gray-400" },
-  expired:   { label: "만료됨",   className: "bg-gray-100 text-gray-400" },
+  pending:   { label: "결제대기",  className: "bg-yellow-50 text-yellow-600" },
+  paid:      { label: "결제완료",  className: "bg-blue-50 text-blue-600" },
+  released:  { label: "거래완료",  className: "bg-teal-50 text-teal-600" },
+  cancelled: { label: "취소됨",    className: "bg-gray-100 text-gray-400" },
+  expired:   { label: "만료됨",    className: "bg-gray-100 text-gray-400" },
 };
 
 const STATUS_FILTERS = ["전체", "pending", "paid", "released", "cancelled", "expired"];
+const PAGE_SIZE = 20;
 
 interface Props {
   transactions: AdminTransaction[];
@@ -21,6 +22,7 @@ interface Props {
 export default function AdminPaymentsClient({ transactions }: Props) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("전체");
+  const [page, setPage] = useState(1);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -28,120 +30,192 @@ export default function AdminPaymentsClient({ transactions }: Props) {
       if (statusFilter !== "전체" && tx.status !== statusFilter) return false;
       if (!q) return true;
       return (
-        tx.external_id.toLowerCase().includes(q) ||
-        tx.buyer?.name.toLowerCase().includes(q) ||
-        tx.seller?.name.toLowerCase().includes(q) ||
-        tx.post?.title.toLowerCase().includes(q) ||
-        String(tx.id).includes(q)
+        tx.buyer?.name?.toLowerCase().includes(q) ||
+        tx.seller?.name?.toLowerCase().includes(q) ||
+        tx.post?.title?.toLowerCase().includes(q)
       );
     });
   }, [transactions, search, statusFilter]);
 
-  const totalAmount = filtered
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const curPage = Math.min(page, totalPages);
+  const startIdx = (curPage - 1) * PAGE_SIZE;
+  const pageItems = filtered.slice(startIdx, startIdx + PAGE_SIZE);
+
+  const releasedTotal = filtered
     .filter((tx) => tx.status === "released")
     .reduce((sum, tx) => sum + tx.amount, 0);
 
+  function handleSearch(value: string) {
+    setSearch(value);
+    setPage(1);
+  }
+
+  function handleStatusFilter(s: string) {
+    setStatusFilter(s);
+    setPage(1);
+  }
+
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <div className="flex items-center gap-3">
-        <CreditCard className="h-5 w-5 text-teal-500" />
-        <h1 className="text-xl font-extrabold text-slate-900">결제내역 관리</h1>
-        <span className="ml-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-semibold text-slate-500">
-          총 {transactions.length}건
-        </span>
+    <>
+      {/* 헤더 */}
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <h1 className="whitespace-nowrap text-[31px] font-extrabold tracking-tight text-slate-900">
+              결제내역 관리
+            </h1>
+          </div>
+          <p className="mt-2 text-[15px] text-slate-500">
+            플랫폼 내 모든 거래 내역을 조회하세요
+          </p>
+        </div>
+        <div className="whitespace-nowrap rounded-[11px] border border-[#e7ebee] bg-white px-[14px] py-[9px] text-[13px] font-medium text-slate-500">
+          총 <span className="font-bold text-slate-900">{transactions.length}</span>건
+          {releasedTotal > 0 && (
+            <span className="ml-2 font-bold text-teal-600">
+              · 완료 ₱{releasedTotal.toLocaleString()}
+            </span>
+          )}
+        </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
+      {/* 검색 */}
+      <div className="flex items-center gap-2.5 rounded-[14px] border border-[#e7ebee] bg-white px-4 py-[13px] shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
         <input
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="거래ID · 게시글 · 구매자 · 판매자 검색"
-          className="h-9 w-72 rounded-lg border border-slate-200 bg-white px-3 text-sm outline-none focus:border-teal-400"
+          onChange={(e) => handleSearch(e.target.value)}
+          placeholder="게시글 · 구매자 · 판매자 검색..."
+          className="flex-1 border-none bg-transparent text-[14px] text-slate-900 outline-none"
         />
-        <div className="flex gap-1">
-          {STATUS_FILTERS.map((s) => (
-            <button
-              key={s}
-              onClick={() => setStatusFilter(s)}
-              className={[
-                "rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors",
-                statusFilter === s
-                  ? "bg-teal-500 text-white"
-                  : "bg-white text-slate-500 border border-slate-200 hover:bg-slate-50",
-              ].join(" ")}
-            >
-              {s === "전체" ? s : (STATUS_META[s]?.label ?? s)}
-            </button>
-          ))}
-        </div>
-        {statusFilter === "released" || statusFilter === "전체" ? (
-          <span className="ml-auto text-sm font-semibold text-slate-600">
-            완료 합계:{" "}
-            <span className="text-teal-600">₱{totalAmount.toLocaleString()}</span>
-          </span>
-        ) : null}
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-[#edf0f2] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
-        <table className="w-full min-w-205 text-sm">
-          <thead>
-            <tr className="border-b border-slate-100 text-left text-[12px] font-bold text-slate-400">
-              <th className="px-4 py-3">ID</th>
-              <th className="px-4 py-3">게시글</th>
-              <th className="px-4 py-3">구매자</th>
-              <th className="px-4 py-3">판매자</th>
-              <th className="px-4 py-3 text-right">금액</th>
-              <th className="px-4 py-3 text-center">상태</th>
-              <th className="px-4 py-3">생성일</th>
-              <th className="px-4 py-3">완료일</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="py-16 text-center text-sm text-slate-400">
-                  검색 결과가 없습니다
-                </td>
+      {/* 상태 필터 */}
+      <div className="flex flex-wrap gap-1.5">
+        {STATUS_FILTERS.map((s) => (
+          <button
+            key={s}
+            onClick={() => handleStatusFilter(s)}
+            className={[
+              "rounded-[9px] px-3.5 py-[7px] text-[13px] font-semibold transition-colors",
+              statusFilter === s
+                ? "bg-teal-500 text-white"
+                : "border border-[#e7ebee] bg-white text-slate-500 hover:bg-slate-50",
+            ].join(" ")}
+          >
+            {s === "전체" ? "전체" : (STATUS_META[s]?.label ?? s)}
+          </button>
+        ))}
+      </div>
+
+      {/* 테이블 */}
+      <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[760px] border-collapse">
+            <thead>
+              <tr className="border-b border-[#f1f4f6] bg-slate-50">
+                {["ID", "게시글", "구매자", "판매자", "금액", "상태", "생성일", "완료일"].map((h) => (
+                  <th
+                    key={h}
+                    className="px-[18px] py-[13px] text-left text-[12px] font-bold uppercase tracking-wide text-slate-400"
+                  >
+                    {h}
+                  </th>
+                ))}
               </tr>
-            ) : (
-              filtered.map((tx) => {
+            </thead>
+            <tbody>
+              {pageItems.map((tx) => {
                 const meta = STATUS_META[tx.status] ?? { label: tx.status, className: "bg-gray-100 text-gray-400" };
                 return (
-                  <tr
-                    key={tx.id}
-                    className="border-b border-slate-50 hover:bg-slate-50/60 transition-colors"
-                  >
-                    <td className="px-4 py-3 font-mono text-xs text-slate-400">#{tx.id}</td>
-                    <td className="max-w-40 px-4 py-3">
-                      <span className="block truncate font-medium text-slate-800">
+                  <tr key={tx.id} className="border-t border-[#f3f5f7] hover:bg-slate-50">
+                    <td className="px-[18px] py-[15px] font-mono text-[12px] text-slate-400">
+                      #{tx.id}
+                    </td>
+                    <td className="max-w-40 px-[18px] py-[15px]">
+                      <span className="block truncate text-[13.5px] text-slate-700">
                         {tx.post?.title ?? <span className="text-slate-300">삭제된 게시글</span>}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-slate-600">{tx.buyer?.name ?? "-"}</td>
-                    <td className="px-4 py-3 text-slate-600">{tx.seller?.name ?? "-"}</td>
-                    <td className="px-4 py-3 text-right font-semibold text-slate-800">
+                    <td className="px-[18px] py-[15px] text-[13.5px] text-slate-600">
+                      {tx.buyer?.name ?? "-"}
+                    </td>
+                    <td className="px-[18px] py-[15px] text-[13.5px] text-slate-600">
+                      {tx.seller?.name ?? "-"}
+                    </td>
+                    <td className="px-[18px] py-[15px] text-[13.5px] font-semibold text-slate-800">
                       ₱{tx.amount.toLocaleString()}
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-[18px] py-[15px]">
                       <span className={`inline-block rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${meta.className}`}>
                         {meta.label}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-xs text-slate-400">
-                      {new Date(tx.created_at).toLocaleDateString("ko-KR")}
+                    <td className="whitespace-nowrap px-[18px] py-[15px] text-[13.5px] text-slate-400">
+                      {tx.created_at.split("T")[0]}
                     </td>
-                    <td className="px-4 py-3 text-xs text-slate-400">
-                      {tx.released_at
-                        ? new Date(tx.released_at).toLocaleDateString("ko-KR")
-                        : "-"}
+                    <td className="whitespace-nowrap px-[18px] py-[15px] text-[13.5px] text-slate-400">
+                      {tx.released_at ? tx.released_at.split("T")[0] : "-"}
                     </td>
                   </tr>
                 );
-              })
-            )}
-          </tbody>
-        </table>
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {filtered.length === 0 && (
+          <div className="flex flex-col items-center justify-center px-5 py-16 text-center">
+            <CreditCard className="h-12 w-12 text-slate-200" strokeWidth={1.8} />
+            <div className="mt-4 text-[15px] font-bold text-slate-500">거래 내역이 없습니다</div>
+            <div className="mt-[5px] text-[13.5px] text-slate-400">검색어나 필터를 변경해보세요</div>
+          </div>
+        )}
+
+        {totalPages > 1 && (
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#f1f4f6] px-[22px] py-4">
+            <span className="text-[13px] text-slate-400">
+              총 <span className="font-semibold text-slate-600">{filtered.length}</span>건 중{" "}
+              <span className="font-semibold text-slate-600">
+                {filtered.length === 0 ? "0" : `${startIdx + 1}–${startIdx + pageItems.length}`}
+              </span>{" "}표시
+            </span>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="h-[34px] rounded-[9px] border border-[#e7ebee] bg-white px-[13px] text-[13px] font-semibold"
+                style={{ color: curPage <= 1 ? "#cbd5e1" : "#475569" }}
+              >
+                이전
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+                <button
+                  key={n}
+                  onClick={() => setPage(n)}
+                  className={[
+                    "h-[34px] min-w-[34px] rounded-[9px] px-2 text-[13px]",
+                    n === curPage
+                      ? "border-none bg-teal-500 font-bold text-white"
+                      : "border border-[#e7ebee] bg-white font-semibold text-slate-600",
+                  ].join(" ")}
+                >
+                  {n}
+                </button>
+              ))}
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                className="h-[34px] rounded-[9px] border border-[#e7ebee] bg-white px-[13px] text-[13px] font-semibold"
+                style={{ color: curPage >= totalPages ? "#cbd5e1" : "#475569" }}
+              >
+                다음
+              </button>
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+    </>
   );
 }
