@@ -132,7 +132,10 @@
       "labelWithMin": "Photos (min {minCount}, max {maxCount})",
       "add": "Add photos",
       "removeImage": "Remove image {index}",
-      "goToImage": "Go to image {index}"
+      "goToImage": "Go to image {index}",
+      "checking": "Checking image...",
+      "blocked": "Some images were not allowed and were not added.",
+      "unavailable": "We couldn't check this image right now. Please try again shortly."
     },
     "carousel": {
       "noImage": "No image",

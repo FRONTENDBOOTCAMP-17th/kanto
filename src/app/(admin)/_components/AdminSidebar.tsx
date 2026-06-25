@@ -35,6 +35,7 @@ export default function AdminSidebar({ pendingCount }: { pendingCount: number })
     { icon: CreditCard, label: "결제 관리", href: "/admin/payments" },
     { icon: Zap, label: "번개모임 관리", href: "/admin/go" },
     { icon: MessageSquare, label: "채팅기록", href: "/admin/chats" },
+    { icon: Settings, label: "운영 관리", href: "/admin/operation" },
   ];
 
   return (
