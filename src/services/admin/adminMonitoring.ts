@@ -137,6 +137,72 @@ export interface SentryResult {
   issues: SentryIssue[];
 }
 
+export interface SentryTransaction {
+  transaction: string;
+  count: number;
+  avgDuration: number;
+  p95Duration: number;
+  failureRate: number;
+}
+
+export interface SentryWebVitals {
+  lcp: number | null;
+  fcp: number | null;
+  cls: number | null;
+  ttfb: number | null;
+}
+
+export interface SentryPerformance {
+  configured: boolean;
+  transactions: SentryTransaction[];
+  webVitals: SentryWebVitals;
+}
+
+export async function getSentryPerformance(): Promise<SentryPerformance> {
+  const token = process.env.SENTRY_AUTH_TOKEN;
+  const org = process.env.SENTRY_ORG;
+
+  if (!token || !org) return { configured: false, transactions: [], webVitals: { lcp: null, fcp: null, cls: null, ttfb: null } };
+
+  try {
+    const txParams = new URLSearchParams({ dataset: "discover", query: "event.type:transaction !transaction:*sentry* !transaction:*supabase*", sort: "-count()", limit: "10", statsPeriod: "24h" });
+    ["transaction", "count()", "avg(transaction.duration)", "p95(transaction.duration)", "failure_rate()"].forEach((f) => txParams.append("field", f));
+
+    const vitalParams = new URLSearchParams({ dataset: "discover", query: "event.type:transaction transaction.op:pageload", limit: "1", statsPeriod: "24h" });
+    ["p75(measurements.lcp)", "p75(measurements.fcp)", "p75(measurements.cls)", "p75(measurements.ttfb)"].forEach((f) => vitalParams.append("field", f));
+
+    const [txRes, vitalRes] = await Promise.all([
+      fetch(`https://sentry.io/api/0/organizations/${org}/events/?${txParams}`, { headers: { Authorization: `Bearer ${token}` }, next: { revalidate: 60 } }),
+      fetch(`https://sentry.io/api/0/organizations/${org}/events/?${vitalParams}`, { headers: { Authorization: `Bearer ${token}` }, next: { revalidate: 60 } }),
+    ]);
+
+    const txData = txRes.ok ? await txRes.json() : { data: [] };
+    const vitalData = vitalRes.ok ? await vitalRes.json() : { data: [] };
+
+    const transactions: SentryTransaction[] = (txData.data ?? [])
+      .filter((r: Record<string, unknown>) => !String(r.transaction).startsWith("https://"))
+      .map((r: Record<string, unknown>) => ({
+        transaction: String(r.transaction),
+        count: Number(r["count()"]),
+        avgDuration: Math.round(Number(r["avg(transaction.duration)"])),
+        p95Duration: Math.round(Number(r["p95(transaction.duration)"])),
+        failureRate: Number(r["failure_rate()"]),
+      }));
+
+    const v = vitalData.data?.[0] ?? {};
+    const webVitals: SentryWebVitals = {
+      lcp: v["p75(measurements.lcp)"] != null ? Math.round(Number(v["p75(measurements.lcp)"])) : null,
+      fcp: v["p75(measurements.fcp)"] != null ? Math.round(Number(v["p75(measurements.fcp)"])) : null,
+      cls: v["p75(measurements.cls)"] != null ? Number(Number(v["p75(measurements.cls)"]).toFixed(3)) : null,
+      ttfb: v["p75(measurements.ttfb)"] != null ? Math.round(Number(v["p75(measurements.ttfb)"])) : null,
+    };
+
+    return { configured: true, transactions, webVitals };
+  } catch {
+    return { configured: true, transactions: [], webVitals: { lcp: null, fcp: null, cls: null, ttfb: null } };
+  }
+}
+
 export async function getSentryIssues(): Promise<SentryResult> {
   const token = process.env.SENTRY_AUTH_TOKEN;
   const org = process.env.SENTRY_ORG;
