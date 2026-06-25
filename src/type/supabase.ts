@@ -1201,6 +1201,7 @@ export type Database = {
           released_at: string | null
           seller_id: number
           status: Database["public"]["Enums"]["transaction_status"]
+          xendit_disbursement_id: string | null
           xendit_invoice_id: string | null
           xendit_invoice_url: string | null
         }
@@ -1216,6 +1217,7 @@ export type Database = {
           released_at?: string | null
           seller_id: number
           status?: Database["public"]["Enums"]["transaction_status"]
+          xendit_disbursement_id?: string | null
           xendit_invoice_id?: string | null
           xendit_invoice_url?: string | null
         }
@@ -1231,6 +1233,7 @@ export type Database = {
           released_at?: string | null
           seller_id?: number
           status?: Database["public"]["Enums"]["transaction_status"]
+          xendit_disbursement_id?: string | null
           xendit_invoice_id?: string | null
           xendit_invoice_url?: string | null
         }
@@ -1487,6 +1490,9 @@ export type Database = {
           auth_id: string | null
           avatar_url: string | null
           avg_rating: number | null
+          bank_account_name: string | null
+          bank_account_number: string | null
+          bank_code: string | null
           created_at: string | null
           deleted_at: string | null
           email: string | null
@@ -1512,6 +1518,9 @@ export type Database = {
           auth_id?: string | null
           avatar_url?: string | null
           avg_rating?: number | null
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_code?: string | null
           created_at?: string | null
           deleted_at?: string | null
           email?: string | null
@@ -1537,6 +1546,9 @@ export type Database = {
           auth_id?: string | null
           avatar_url?: string | null
           avg_rating?: number | null
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_code?: string | null
           created_at?: string | null
           deleted_at?: string | null
           email?: string | null

@@ -1,12 +1,13 @@
 "use client";
 
-import { User, Star, Bell, UserX, Settings2 } from "lucide-react";
+import { User, Star, Bell, UserX, Settings2, CreditCard } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-export type Tab = "info" | "reviews" | "alerts" | "blocked" | "settings";
+export type Tab = "info" | "payment" | "reviews" | "alerts" | "blocked" | "settings";
 
 const TABS: { key: Tab; icon: React.ElementType }[] = [
   { key: "info", icon: User },
+  { key: "payment", icon: CreditCard },
   { key: "reviews", icon: Star },
   { key: "alerts", icon: Bell },
   { key: "blocked", icon: UserX },

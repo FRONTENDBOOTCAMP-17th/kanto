@@ -78,6 +78,7 @@ export async function updateTransaction(
     status?: TransactionStatus;
     xendit_invoice_id?: string;
     xendit_invoice_url?: string;
+    xendit_disbursement_id?: string;
     paid_at?: string;
     released_at?: string;
   },
