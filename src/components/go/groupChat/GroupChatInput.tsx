@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Send } from "lucide-react";
 
 interface Props {
@@ -17,6 +18,7 @@ export default function GroupChatInput({
   isCooldown,
   cooldownSeconds,
 }: Props) {
+  const t = useTranslations("Go.chat");
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.nativeEvent.isComposing) return;
     if (e.key === "Enter" && !e.shiftKey) {
@@ -29,18 +31,18 @@ export default function GroupChatInput({
     <div className="bg-white border-t border-gray-100 px-4 py-3 flex items-center gap-2 shrink-0">
       <input
         type="text"
-        aria-label="메시지 입력"
+        aria-label={t("messageInput")}
         value={input}
         disabled={isCooldown}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder={isCooldown ? `${cooldownSeconds}초 후 다시 시도하세요` : "메시지를 입력하세요"}
+        placeholder={isCooldown ? t("cooldown", { seconds: cooldownSeconds }) : t("inputPlaceholder")}
         className="flex-1 min-w-0 text-sm bg-gray-50 rounded-full px-4 py-2.5 outline-none border border-gray-200 focus:border-teal-400 focus:bg-white transition-colors disabled:opacity-50"
       />
       <button
         onClick={onSend}
         disabled={!input.trim() || isCooldown}
-        aria-label="전송"
+        aria-label={t("send")}
         className="w-9 h-9 rounded-full bg-teal-500 flex items-center justify-center shrink-0 disabled:opacity-30 hover:bg-teal-600 transition-colors"
       >
         <Send className="w-4 h-4 text-white" />
