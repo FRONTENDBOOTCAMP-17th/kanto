@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       banned_keywords: {
@@ -958,6 +983,48 @@ export type Database = {
           },
         ]
       }
+      notices: {
+        Row: {
+          created_at: string
+          created_by: number | null
+          ends_at: string
+          id: number
+          starts_at: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: number | null
+          ends_at: string
+          id?: never
+          starts_at: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: number | null
+          ends_at?: string
+          id?: never
+          starts_at?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notices_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notices_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: {
           created_at: string
@@ -1201,6 +1268,7 @@ export type Database = {
           released_at: string | null
           seller_id: number
           status: Database["public"]["Enums"]["transaction_status"]
+          xendit_disbursement_id: string | null
           xendit_invoice_id: string | null
           xendit_invoice_url: string | null
         }
@@ -1216,6 +1284,7 @@ export type Database = {
           released_at?: string | null
           seller_id: number
           status?: Database["public"]["Enums"]["transaction_status"]
+          xendit_disbursement_id?: string | null
           xendit_invoice_id?: string | null
           xendit_invoice_url?: string | null
         }
@@ -1231,6 +1300,7 @@ export type Database = {
           released_at?: string | null
           seller_id?: number
           status?: Database["public"]["Enums"]["transaction_status"]
+          xendit_disbursement_id?: string | null
           xendit_invoice_id?: string | null
           xendit_invoice_url?: string | null
         }
@@ -1487,6 +1557,9 @@ export type Database = {
           auth_id: string | null
           avatar_url: string | null
           avg_rating: number | null
+          bank_account_name: string | null
+          bank_account_number: string | null
+          bank_code: string | null
           created_at: string | null
           deleted_at: string | null
           email: string | null
@@ -1512,6 +1585,9 @@ export type Database = {
           auth_id?: string | null
           avatar_url?: string | null
           avg_rating?: number | null
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_code?: string | null
           created_at?: string | null
           deleted_at?: string | null
           email?: string | null
@@ -1537,6 +1613,9 @@ export type Database = {
           auth_id?: string | null
           avatar_url?: string | null
           avg_rating?: number | null
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_code?: string | null
           created_at?: string | null
           deleted_at?: string | null
           email?: string | null
@@ -1805,6 +1884,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       product_condition: ["미개봉", "가벼운 사용감", "사용감 있음"],

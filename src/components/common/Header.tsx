@@ -26,7 +26,7 @@ import {
 import { ROUTES } from "@/constants/routes";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
-import { SuspendedBanner } from "@/components/common/SuspendedBanner";
+import { UnifiedBanner } from "@/components/common/UnifiedBanner";
 import { NotificationBell } from "./header/NotificationBell";
 import type { NotificationBellHandle } from "./header/NotificationBell";
 import type { User as AppUser } from "@/type/user";
@@ -348,7 +348,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
           </div>
         )}
       </div>
-      <SuspendedBanner />
+      <UnifiedBanner />
       <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <ConfirmModal
         isOpen={isLogoutModalOpen}
