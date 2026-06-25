@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { GlobalLayout } from "@/components/common/GlobalLayout";
+import { Providers } from "@/components/common/Providers";
 import { getSessionUser } from "@/services/user/user";
 import { BCP47_LOCALE, type Locale } from "@/i18n/config";
 import "./globals.css";
@@ -46,7 +47,9 @@ export default async function RootLayout({
           }}
         />
         <NextIntlClientProvider>
-          <GlobalLayout initialUser={initialUser}>{children}</GlobalLayout>
+          <Providers>
+            <GlobalLayout initialUser={initialUser}>{children}</GlobalLayout>
+          </Providers>
         </NextIntlClientProvider>
       </body>
     </html>
