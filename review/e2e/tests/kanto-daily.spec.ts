@@ -7,7 +7,7 @@ import fs from "node:fs";
 
 const EMAIL = "kanto-review@example.com";
 const PASSWORD = "Review!2026";
-const DATE = "2026-06-24";
+const DATE = "2026-06-25";
 const IMG = `../images/${DATE}`;
 
 test.beforeAll(() => {
