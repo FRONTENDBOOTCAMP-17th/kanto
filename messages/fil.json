@@ -614,6 +614,7 @@
       "ariaMenu": "Menu ng profile",
       "info": "Impormasyon",
       "payment": "Pagbabayad",
+      "history": "Mga Transaksyon",
       "reviews": "Mga review",
       "alerts": "Mga abiso",
       "blocked": "Naka-block",
@@ -668,6 +669,19 @@
       "confirmDesc": "Ang pagtanggal ng account ay magbubura sa lahat ng data kabilang ang iyong mga post at kasaysayan ng chat, at hindi na maibabalik.",
       "cancel": "Kanselahin",
       "confirmDelete": "Tanggalin"
+    },
+    "history": {
+      "title": "Kasaysayan ng Transaksyon",
+      "loading": "Naglo-load...",
+      "empty": "Wala pang mga transaksyon",
+      "buyer": "Mamimili",
+      "seller": "Nagbebenta",
+      "statusPending": "Naghihintay",
+      "statusPaid": "Bayad na",
+      "statusReleased": "Natapos",
+      "statusCancelled": "Nakansela",
+      "statusExpired": "Nag-expire",
+      "deletedPost": "Tinanggal na post"
     },
     "bank": {
       "title": "Account sa Payout",

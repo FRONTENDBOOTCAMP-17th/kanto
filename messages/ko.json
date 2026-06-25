@@ -617,6 +617,7 @@
       "ariaMenu": "프로필 메뉴",
       "info": "정보",
       "payment": "결제",
+      "history": "거래내역",
       "reviews": "후기",
       "alerts": "알림",
       "blocked": "차단",
@@ -671,6 +672,19 @@
       "confirmDesc": "탈퇴 시 작성하신 게시글, 채팅 내역 등 모든 데이터가 삭제되며 복구할 수 없습니다.",
       "cancel": "취소",
       "confirmDelete": "탈퇴하기"
+    },
+    "history": {
+      "title": "거래내역",
+      "loading": "불러오는 중...",
+      "empty": "거래 내역이 없습니다",
+      "buyer": "구매자",
+      "seller": "판매자",
+      "statusPending": "결제대기",
+      "statusPaid": "결제완료",
+      "statusReleased": "거래완료",
+      "statusCancelled": "취소됨",
+      "statusExpired": "만료됨",
+      "deletedPost": "삭제된 게시글"
     },
     "bank": {
       "title": "정산 계좌",

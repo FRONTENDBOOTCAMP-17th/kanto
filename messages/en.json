@@ -609,6 +609,7 @@
       "ariaMenu": "Profile menu",
       "info": "Info",
       "payment": "Payment",
+      "history": "Transactions",
       "reviews": "Reviews",
       "alerts": "Alerts",
       "blocked": "Blocked",
@@ -663,6 +664,19 @@
       "confirmDesc": "Deleting your account erases all data including your posts and chat history, and cannot be undone.",
       "cancel": "Cancel",
       "confirmDelete": "Delete"
+    },
+    "history": {
+      "title": "Transaction History",
+      "loading": "Loading...",
+      "empty": "No transactions yet",
+      "buyer": "Buyer",
+      "seller": "Seller",
+      "statusPending": "Pending",
+      "statusPaid": "Payment Complete",
+      "statusReleased": "Completed",
+      "statusCancelled": "Cancelled",
+      "statusExpired": "Expired",
+      "deletedPost": "Deleted post"
     },
     "bank": {
       "title": "Payout Account",

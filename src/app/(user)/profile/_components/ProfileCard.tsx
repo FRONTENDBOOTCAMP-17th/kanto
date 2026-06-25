@@ -17,6 +17,7 @@ import type { AlertSettings } from "@/hooks/profile/useAlertSettings";
 import { ProfileBlockedSection } from "./sections/ProfileBlockedSection";
 import { ProfileSettingsSection } from "./sections/ProfileSettingsSection";
 import { ProfilePaymentSection } from "./sections/ProfilePaymentSection";
+import { ProfileTransactionsSection } from "./sections/ProfileTransactionsSection";
 import type { UserIdentity } from "@supabase/supabase-js";
 import type { ReviewWithReviewer } from "@/type/review";
 import { IdentityVerificationModal } from "./IdentityVerificationModal";
@@ -156,6 +157,7 @@ function ProfileForm({
         <div className="flex-1 md:pl-8">
           {activeTab === "info" && <ProfileInfoSection user={user} avatarFile={avatarFile} />}
           {activeTab === "payment" && <ProfilePaymentSection user={user} />}
+          {activeTab === "history" && <ProfileTransactionsSection />}
           {activeTab === "reviews" && <ProfileReviewsSection reviews={reviews} avgRating={avgRating} reviewCount={reviewCount} />}
           {activeTab === "alerts" && <ProfileAlertsSection initialSettings={alertSettings} />}
           {activeTab === "blocked" && <ProfileBlockedSection />}
