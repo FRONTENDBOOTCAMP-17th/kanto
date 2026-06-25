@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { getProfanityRules, createProfanityRule } from "@/services/admin/adminContent";
+import { insertAuditLog } from "@/services/admin/auditLog";
 
 async function getAdminUser() {
   const supabase = await createClient();
@@ -14,7 +15,7 @@ async function getAdminUser() {
     .eq("auth_id", user.id)
     .single();
 
-  if (!data || data.role !== "admin") return null;
+  if (!data || (data.role !== "admin" && data.role !== "super_admin")) return null;
   return data as { id: number; role: string };
 }
 
@@ -40,6 +41,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const data = await createProfanityRule({ scopes, words }, admin.id);
+    insertAuditLog(admin, "add_profanity", { targetType: "profanity", targetId: data.id, detail: { scopes, words } });
     return NextResponse.json(data, { status: 201 });
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });

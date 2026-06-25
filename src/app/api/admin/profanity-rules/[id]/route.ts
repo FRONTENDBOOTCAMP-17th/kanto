@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { updateProfanityRule, deleteProfanityRule } from "@/services/admin/adminContent";
+import { insertAuditLog } from "@/services/admin/auditLog";
 
 async function getAdminUser() {
   const supabase = await createClient();
@@ -14,7 +15,7 @@ async function getAdminUser() {
     .eq("auth_id", user.id)
     .single();
 
-  if (!data || data.role !== "admin") return null;
+  if (!data || (data.role !== "admin" && data.role !== "super_admin")) return null;
   return data as { id: number; role: string };
 }
 
@@ -46,6 +47,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
 
   try {
     await deleteProfanityRule(Number(id));
+    insertAuditLog(admin, "delete_profanity", { targetType: "profanity", targetId: Number(id) });
     return new NextResponse(null, { status: 204 });
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });

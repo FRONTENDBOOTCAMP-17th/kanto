@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { getSpamConfig, updateSpamConfig } from "@/services/admin/adminContent";
+import { insertAuditLog } from "@/services/admin/auditLog";
 
 async function getAdminUser() {
   const supabase = await createClient();
@@ -14,7 +15,7 @@ async function getAdminUser() {
     .eq("auth_id", user.id)
     .single();
 
-  if (!data || data.role !== "admin") return null;
+  if (!data || (data.role !== "admin" && data.role !== "super_admin")) return null;
   return data as { id: number; role: string };
 }
 
@@ -67,6 +68,11 @@ export async function PUT(req: NextRequest) {
       },
       admin.id,
     );
+    insertAuditLog(admin, "update_spam", {
+      targetType: "spam_config",
+      targetId: 1,
+      detail: { chat_window_sec, chat_max_count, chat_cooldown_sec, max_urls_per_post, profanity_strike_max, report_strike_max, auto_sanction_enabled },
+    });
     return NextResponse.json(data);
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });

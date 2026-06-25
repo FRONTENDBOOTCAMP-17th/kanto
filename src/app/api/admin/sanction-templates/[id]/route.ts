@@ -14,7 +14,7 @@ async function getAdminUser() {
     .eq("auth_id", user.id)
     .single();
 
-  if (!data || data.role !== "admin") return null;
+  if (!data || (data.role !== "admin" && data.role !== "super_admin")) return null;
   return data as { id: number; role: string };
 }
 
