@@ -2,9 +2,13 @@
 
 // 지도 위 번개모임 핀 컴포넌트 (@vis.gl/react-google-maps AdvancedMarker 사용)
 
-import { AdvancedMarker } from "@vis.gl/react-google-maps";
+import { AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
+import { useTranslations } from "next-intl";
 import { TOPIC_META } from "@/constants/meetupTopics";
 import type { Meetup } from "@/type/go";
+
+// page.tsx의 <Map id> 와 동일해야 useMap이 인스턴스를 찾는다.
+const MAP_ID = "kanto-go-map";
 
 interface MeetupPinProps {
   meetup: Meetup;
@@ -13,6 +17,7 @@ interface MeetupPinProps {
 }
 
 export function MeetupPin({ meetup, isSelected, onClick }: MeetupPinProps) {
+  const t = useTranslations("Go.pin");
   const meta = TOPIC_META[meetup.topic] ?? TOPIC_META.other;
   const totalCount = meetup.participant_count + 1; // 주최자 포함
   const isFull = totalCount >= meetup.max_participants;
@@ -33,7 +38,7 @@ export function MeetupPin({ meetup, isSelected, onClick }: MeetupPinProps) {
             className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded px-1.5 py-0.5 text-[10px] font-bold text-white"
             style={{ background: isFull ? "#ef4444" : "#f97316" }}
           >
-            {isFull ? "마감" : "마감임박"}
+            {isFull ? t("full") : t("almostFull")}
           </div>
         )}
 
@@ -54,6 +59,35 @@ export function MeetupPin({ meetup, isSelected, onClick }: MeetupPinProps) {
           />
           <circle cx="0" cy="-32" r="10" fill="rgba(255,255,255,0.9)" />
         </svg>
+      </div>
+    </AdvancedMarker>
+  );
+}
+
+// 좌표가 겹치는(≈11m 이내) 모임들을 하나로 묶어 개수를 표시하는 클러스터 핀.
+// 클릭 시 해당 위치로 확대해 개별 핀으로 분리한다.
+export function ClusterPin({ meetups }: { meetups: Meetup[] }) {
+  const t = useTranslations("Go.map");
+  const map = useMap(MAP_ID);
+
+  const lat = meetups.reduce((s, m) => s + m.location_lat, 0) / meetups.length;
+  const lng = meetups.reduce((s, m) => s + m.location_lng, 0) / meetups.length;
+
+  const handleClick = () => {
+    if (!map) return;
+    map.panTo({ lat, lng });
+    map.setZoom(Math.min((map.getZoom() ?? 14) + 3, 20));
+  };
+
+  return (
+    <AdvancedMarker
+      position={{ lat, lng }}
+      onClick={handleClick}
+      zIndex={20}
+      title={t("clusterCount", { count: meetups.length })}
+    >
+      <div className="flex h-9 w-9 cursor-pointer select-none items-center justify-center rounded-full bg-slate-900 text-[13px] font-bold text-white shadow-[0_3px_8px_rgba(0,0,0,0.3)] ring-2 ring-white">
+        {meetups.length}
       </div>
     </AdvancedMarker>
   );

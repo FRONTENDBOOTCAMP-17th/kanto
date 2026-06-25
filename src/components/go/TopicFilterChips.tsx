@@ -3,6 +3,7 @@
 // 주제 필터 칩 바 (지도 상단 오버레이)
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { SlidersHorizontal } from "lucide-react";
 import { TOPIC_OPTIONS } from "@/constants/meetupTopics";
 import type { MeetupTopicKey } from "@/constants/meetupTopics";
@@ -14,6 +15,7 @@ interface TopicFilterChipsProps {
 }
 
 export function TopicFilterChips({ value, onChange, activeTopics }: TopicFilterChipsProps) {
+  const t = useTranslations("Go");
   const [isOpen, setIsOpen] = useState(true);
 
   const visibleOptions = activeTopics
@@ -21,17 +23,18 @@ export function TopicFilterChips({ value, onChange, activeTopics }: TopicFilterC
     : TOPIC_OPTIONS;
 
   const all = [
-    { value: "all" as const, label: "전체", color: "#0f172a", bg: "#0f172a", border: "#0f172a" },
+    { value: "all" as const, color: "#0f172a", border: "#0f172a" },
     ...visibleOptions,
   ];
 
   const hasFilter = value !== "all";
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex min-w-0 max-w-full items-center gap-2">
       {/* 토글 버튼 */}
       <button
         onClick={() => setIsOpen((prev) => !prev)}
+        aria-label={t("filter.toggle")}
         className="relative flex-none flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border bg-white/92 shadow-md backdrop-blur-md transition-colors hover:bg-white"
         style={{ borderColor: hasFilter ? "#0f172a" : "#e2e8f0" }}
       >
@@ -43,7 +46,7 @@ export function TopicFilterChips({ value, onChange, activeTopics }: TopicFilterC
 
       {/* 칩 목록 — 가로 슬라이드 */}
       <div
-        className="overflow-hidden transition-all duration-300 ease-in-out"
+        className="relative min-w-0 max-w-full overflow-hidden transition-all duration-300 ease-in-out"
         style={{ maxWidth: isOpen ? "1000px" : "0px", opacity: isOpen ? 1 : 0 }}
       >
         <div className="flex gap-2 overflow-x-auto pb-0.5 pr-1 scrollbar-none [&::-webkit-scrollbar]:hidden">
@@ -60,7 +63,7 @@ export function TopicFilterChips({ value, onChange, activeTopics }: TopicFilterC
                   borderColor: active ? opt.color : opt.border ?? "#e2e8f0",
                 }}
               >
-                {opt.label}
+                {opt.value === "all" ? t("filter.all") : t(`topics.${opt.value}`)}
               </button>
             );
           })}
