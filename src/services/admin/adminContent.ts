@@ -154,7 +154,13 @@ export async function searchPostsByWords(words: string[]): Promise<AffectedPost[
   }));
 
   for (const cm of contentMatches ?? []) {
-    const post = cm.post as { id: number; title: string; post_type: string; status: string; created_at: string } | null;
+    const post = cm.post?.[0] as {
+  id: number;
+  title: string;
+  post_type: string;
+  status: string;
+  created_at: string;
+} | undefined;
     if (!post || titleMatchIds.has(post.id)) continue;
     results.push({
       id: post.id,
