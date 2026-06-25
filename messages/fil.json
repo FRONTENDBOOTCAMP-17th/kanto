@@ -237,6 +237,8 @@
       "completed": "Nakumpleto ang Transaksyon",
       "cancelledStatus": "Nakansela ang transaksyon",
       "expiredStatus": "Nag-expire ang oras ng bayad",
+      "pendingNotice": "Mag-e-expire ang bayad kung hindi makumpleto sa loob ng 24 na oras",
+      "expiredNotice": "Nag-expire na ang panahon ng pagbabayad",
       "close": "Isara"
     }
   },

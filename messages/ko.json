@@ -236,7 +236,9 @@
       "waitingReceipt": "구매자 수령확인 대기 중",
       "completed": "거래 완료",
       "cancelledStatus": "거래가 취소되었습니다",
-      "expiredStatus": "결제 시간이 만료되었습니다",
+      "expiredStatus": "결제 시간 만료",
+      "pendingNotice": "24시간 내에 결제하지 않으면 만료됩니다",
+      "expiredNotice": "결제 기간이 만료되었습니다",
       "close": "닫기"
     }
   },

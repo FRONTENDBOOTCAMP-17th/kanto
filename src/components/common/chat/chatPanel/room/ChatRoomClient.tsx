@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, CreditCard } from "lucide-react";
+import { useAuthStore } from "@/store/authStore";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
@@ -51,9 +52,11 @@ export default function ChatRoomClient({
   onChatCreated,
 }: Props) {
   const router = useRouter();
+  const { user } = useAuthStore();
   const [activeChatId, setActiveChatId] = useState<number | null>(chatIdProp);
   const [input, setInput] = useState("");
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showNoBankModal, setShowNoBankModal] = useState(false);
   const [isReserved, setIsReserved] = useState(initialIsReserved);
   const [sendError, setSendError] = useState("");
 
@@ -229,7 +232,13 @@ export default function ChatRoomClient({
       {canRequestPayment && (
         <div className="bg-white border-t border-gray-100 px-4 py-2 md:px-3 shrink-0">
           <button
-            onClick={() => setShowPaymentModal(true)}
+            onClick={() => {
+                if (!user?.bank_code || !user?.bank_account_number) {
+                  setShowNoBankModal(true);
+                } else {
+                  setShowPaymentModal(true);
+                }
+              }}
             className="flex w-full items-center justify-center gap-1.5 rounded-full border border-teal-200 bg-teal-50 py-2 text-sm md:text-xs font-medium text-teal-700 hover:bg-teal-100 transition-colors cursor-pointer"
           >
             <ShieldCheck className="w-4 h-4" />
@@ -244,6 +253,36 @@ export default function ChatRoomClient({
         isCooldown={isCooldown}
         cooldownSeconds={cooldownSeconds}
       />
+      {showNoBankModal && (
+        <div
+          className="absolute inset-0 z-20 flex items-center justify-center bg-black/40 p-4"
+          onClick={() => setShowNoBankModal(false)}
+        >
+          <div
+            className="w-full max-w-xs rounded-2xl bg-white p-5 shadow-xl flex flex-col items-center gap-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-50">
+              <CreditCard className="h-6 w-6 text-teal-500" />
+            </div>
+            <p className="text-center text-base font-semibold text-gray-800">
+              정산 계좌를 먼저 등록해주세요
+            </p>
+            <button
+              onClick={() => router.push("/profile")}
+              className="w-full rounded-full bg-teal-500 py-2.5 text-sm font-medium text-white hover:bg-teal-600 transition-colors cursor-pointer"
+            >
+              계좌 등록하러 가기
+            </button>
+            <button
+              onClick={() => setShowNoBankModal(false)}
+              className="text-sm text-gray-400 hover:text-gray-600"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
       {showPaymentModal && postPrice !== null && activeChatId !== null && (
         <PaymentRequestModal
           chatId={activeChatId}

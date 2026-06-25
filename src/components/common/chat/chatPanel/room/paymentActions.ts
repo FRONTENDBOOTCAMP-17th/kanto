@@ -58,6 +58,15 @@ export async function createPaymentRequestAction(params: {
     throw new Error("안전결제는 판매자만 요청할 수 있습니다.");
   }
 
+  const { data: seller } = await supabase
+    .from("users")
+    .select("bank_code, bank_account_number")
+    .eq("id", me.id)
+    .single();
+  if (!seller?.bank_code || !seller?.bank_account_number) {
+    throw new Error("정산 계좌를 먼저 등록해주세요");
+  }
+
   const { data: chat } = await supabase
     .from("chats")
     .select("user_id_1, user_id_2, user_id_1_left, user_id_2_left")
@@ -252,7 +261,10 @@ export async function createReviewAction(input: {
   }
   const content = input.content.trim();
 
-  const existing = await getReviewByTransactionAndReviewer(transaction.id, me.id);
+  const existing = await getReviewByTransactionAndReviewer(
+    transaction.id,
+    me.id,
+  );
   if (existing) throw new Error("이미 이 거래에 후기를 작성했습니다.");
 
   const revieweeId = isBuyer ? transaction.seller_id : transaction.buyer_id;

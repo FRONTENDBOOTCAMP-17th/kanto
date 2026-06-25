@@ -237,6 +237,8 @@
       "completed": "Transaction Complete",
       "cancelledStatus": "Transaction has been cancelled",
       "expiredStatus": "Payment time has expired",
+      "pendingNotice": "Payment will expire if not completed within 24 hours",
+      "expiredNotice": "The payment period has expired",
       "close": "Close"
     }
   },
