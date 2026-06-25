@@ -14,6 +14,7 @@ import {
   Menu,
   Zap,
   CreditCard,
+  Settings,
 } from "lucide-react";
 
 type NavItem = {
