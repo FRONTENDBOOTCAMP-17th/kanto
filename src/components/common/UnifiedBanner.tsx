@@ -23,18 +23,24 @@ function isHiddenToday(noticeId: number): boolean {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (!stored) return false;
-    const { id, date } = JSON.parse(stored);
-    return id === noticeId && date === new Date().toDateString();
+    const { ids, date } = JSON.parse(stored);
+    return date === new Date().toDateString() && Array.isArray(ids) && ids.includes(noticeId);
   } catch {
     return false;
   }
 }
 
 function saveHideToday(noticeId: number) {
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify({ id: noticeId, date: new Date().toDateString() }),
-  );
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    let ids: number[] = [];
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (parsed.date === new Date().toDateString()) ids = parsed.ids ?? [];
+    }
+    if (!ids.includes(noticeId)) ids.push(noticeId);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ids, date: new Date().toDateString() }));
+  } catch {}
 }
 
 export function UnifiedBanner() {
@@ -43,8 +49,8 @@ export function UnifiedBanner() {
   const t = useTranslations("Common");
   const locale = useLocale();
 
-  const [notice, setNotice] = useState<Notice | null>(null);
-  const [noticeDismissed, setNoticeDismissed] = useState(false);
+  const [notices, setNotices] = useState<Notice[]>([]);
+  const [dismissedIds, setDismissedIds] = useState<number[]>([]);
   const [hideTodayChecked, setHideTodayChecked] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -53,17 +59,17 @@ export function UnifiedBanner() {
       .then((res) => res.json())
       .then((data: Notice[]) => {
         const now = new Date();
-        const active = data.find(
+        const active = data.filter(
           (n) => new Date(n.starts_at) <= now && now <= new Date(n.ends_at),
         );
-        setNotice(active ?? null);
+        setNotices(active);
       })
       .catch(() => {});
   }, []);
 
   // 페이지 이동 시 공지 닫힘 상태 리셋
   useEffect(() => {
-    setNoticeDismissed(false);
+    setDismissedIds([]);
     setHideTodayChecked(false);
   }, [pathname]);
 
@@ -71,14 +77,16 @@ export function UnifiedBanner() {
     const result: BannerItem[] = [];
     const suspendedUntil = user?.suspended_until;
 
-    if (notice && !noticeDismissed && !isHiddenToday(notice.id)) {
-      result.push({ type: "notice", notice });
+    for (const n of notices) {
+      if (!dismissedIds.includes(n.id) && !isHiddenToday(n.id)) {
+        result.push({ type: "notice", notice: n });
+      }
     }
     if (suspendedUntil && new Date(suspendedUntil) > new Date()) {
       result.push({ type: "suspension", suspendedUntil });
     }
     return result;
-  }, [notice, noticeDismissed, user]);
+  }, [notices, dismissedIds, user]);
 
   // items가 줄면 인덱스 보정
   useEffect(() => {
@@ -87,9 +95,10 @@ export function UnifiedBanner() {
     }
   }, [items.length, currentIndex]);
 
-  function handleDismissNotice() {
-    if (hideTodayChecked && notice) saveHideToday(notice.id);
-    setNoticeDismissed(true);
+  function handleDismissNotice(noticeId: number) {
+    if (hideTodayChecked) saveHideToday(noticeId);
+    setDismissedIds((prev) => [...prev, noticeId]);
+    setHideTodayChecked(false);
   }
 
   if (items.length === 0) return null;
@@ -171,7 +180,7 @@ export function UnifiedBanner() {
               <span className="text-xs opacity-90">오늘 하루 안보기</span>
             </label>
             <button
-              onClick={handleDismissNotice}
+              onClick={() => handleDismissNotice(current.notice.id)}
               className="p-1 hover:opacity-70 transition-opacity"
               aria-label="공지 닫기"
             >
