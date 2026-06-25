@@ -71,7 +71,10 @@ export default function ReportModal({
     document.addEventListener("keydown", onKeyDown);
 
     if (initialReported || isReported) {
-      const alreadyText = targetType === "user" ? t("alreadyUser") : t("already");
+      const alreadyText =
+        targetType === "user"
+          ? t("alreadyUser")
+          : t("already", { target: t(`targetNoun.${targetType}`) });
       onToast?.(alreadyText, "error", "x");
       onClose();
       return () => {
@@ -80,14 +83,19 @@ export default function ReportModal({
       };
     }
 
-    checkReported(postId, userId, targetType).then((reported) => {
-      if (reported) {
-        setIsReported(true);
-        const alreadyText = targetType === "user" ? t("alreadyUser") : t("already");
-        onToast?.(alreadyText, "error", "x");
-        onClose();
-      }
-    });
+    checkReported(postId, userId, targetType)
+      .then((reported) => {
+        if (reported) {
+          setIsReported(true);
+          const alreadyText =
+          targetType === "user"
+            ? t("alreadyUser")
+            : t("already", { target: t(`targetNoun.${targetType}`) });
+          onToast?.(alreadyText, "error", "x");
+          onClose();
+        }
+      })
+      .catch(() => {});
 
     return () => {
       document.body.style.overflow = "";
@@ -103,7 +111,6 @@ export default function ReportModal({
 
     const { error } = await submitReport(userId, postId, category, content, targetType);
     if (error) {
-      console.error("[ReportModal] insert error:", error);
       setSubmitError(true);
       return;
     }
