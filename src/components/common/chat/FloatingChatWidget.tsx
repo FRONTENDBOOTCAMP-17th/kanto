@@ -295,14 +295,14 @@ export default function FloatingChatWidget({
     : null;
 
   return (
-    <div ref={rootRef} className="flex flex-col items-end gap-2">
+    <div ref={rootRef} className="relative">
       {isOpen && (
         <div
           ref={panelRef}
           className="
+          absolute bottom-0 right-full mr-3
           w-80 h-120 flex flex-col bg-white rounded-2xl shadow-2xl shadow-black/40 border border-gray-100 overflow-hidden
-          md:w-80 md:h-120 md:rounded-2xl
-          max-md:fixed max-md:inset-0 max-md:w-full max-md:h-full max-md:rounded-none max-md:shadow-none max-md:border-0 max-md:z-40
+          max-md:fixed max-md:inset-0 max-md:mr-0 max-md:w-full max-md:h-full max-md:rounded-none max-md:shadow-none max-md:border-0 max-md:z-40
         "
         >
           {!currentUserId ? (

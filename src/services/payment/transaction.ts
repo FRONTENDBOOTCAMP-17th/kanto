@@ -78,6 +78,7 @@ export async function updateTransaction(
     status?: TransactionStatus;
     xendit_invoice_id?: string;
     xendit_invoice_url?: string;
+    xendit_disbursement_id?: string;
     paid_at?: string;
     released_at?: string;
   },
@@ -91,6 +92,20 @@ export async function updateTransaction(
 
   if (error) throw new Error(error.message);
   return data as Transaction;
+}
+
+export async function claimTransactionRelease(
+  id: number,
+): Promise<Transaction | null> {
+  const { data } = await supabaseAdmin
+    .from("transactions")
+    .update({ status: "released", released_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq("status", "paid")
+    .select()
+    .single();
+
+  return (data as Transaction) ?? null;
 }
 
 export async function postSystemMessage(

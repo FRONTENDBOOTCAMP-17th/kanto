@@ -132,7 +132,10 @@
       "labelWithMin": "Mga larawan (min {minCount}, max {maxCount})",
       "add": "Magdagdag ng larawan",
       "removeImage": "Alisin ang larawan {index}",
-      "goToImage": "Pumunta sa larawan {index}"
+      "goToImage": "Pumunta sa larawan {index}",
+      "checking": "Kinakapatas ang larawan...",
+      "blocked": "May mga larawan na hindi pinayagan kaya hindi idinagdag.",
+      "unavailable": "Hindi namin masuri ngayon ang larawan. Pakisubukan ulit mamaya."
     },
     "carousel": {
       "noImage": "Walang larawan",
@@ -237,6 +240,8 @@
       "completed": "Nakumpleto ang Transaksyon",
       "cancelledStatus": "Nakansela ang transaksyon",
       "expiredStatus": "Nag-expire ang oras ng bayad",
+      "pendingNotice": "Mag-e-expire ang bayad kung hindi makumpleto sa loob ng 24 na oras",
+      "expiredNotice": "Nag-expire na ang panahon ng pagbabayad",
       "close": "Isara"
     }
   },
@@ -613,6 +618,8 @@
     "menu": {
       "ariaMenu": "Menu ng profile",
       "info": "Impormasyon",
+      "payment": "Pagbabayad",
+      "history": "Mga Transaksyon",
       "reviews": "Mga review",
       "alerts": "Mga abiso",
       "blocked": "Naka-block",
@@ -667,6 +674,31 @@
       "confirmDesc": "Ang pagtanggal ng account ay magbubura sa lahat ng data kabilang ang iyong mga post at kasaysayan ng chat, at hindi na maibabalik.",
       "cancel": "Kanselahin",
       "confirmDelete": "Tanggalin"
+    },
+    "history": {
+      "title": "Kasaysayan ng Transaksyon",
+      "loading": "Naglo-load...",
+      "empty": "Wala pang mga transaksyon",
+      "buyer": "Mamimili",
+      "seller": "Nagbebenta",
+      "statusPending": "Naghihintay",
+      "statusPaid": "Bayad na",
+      "statusReleased": "Natapos",
+      "statusCancelled": "Nakansela",
+      "statusExpired": "Nag-expire",
+      "deletedPost": "Tinanggal na post"
+    },
+    "bank": {
+      "title": "Account sa Payout",
+      "hint": "Awtomatikong ipapadala ang pondo sa account na ito kapag natapos ang transaksyon",
+      "bankCode": "Piliin ang bangko",
+      "accountNumber": "Numero ng account",
+      "accountName": "Pangalan ng may-ari ng account",
+      "save": "I-save ang account",
+      "edit": "I-edit ang account",
+      "selectPlaceholder": "Pumili ng bangko",
+      "accountNumberHint": "Ilagay nang walang gitling (-)",
+      "accountNamePlaceholder": "Ilagay ang pangalan ng may-ari ng account"
     },
     "alerts": {
       "title": "Mga Setting ng Abiso",
@@ -733,7 +765,9 @@
       "linkFailedCode": "Nabigong i-link. ({code})",
       "linkFailedMessage": "Nabigong i-link: {message}",
       "identityAlreadyExists": "Naka-link na ang social account na ito sa ibang account.",
-      "sameIdentity": "Naka-link na ang social account na ito sa iyong account."
+      "sameIdentity": "Naka-link na ang social account na ito sa iyong account.",
+      "bankSaved": "Nai-save na ang account.",
+      "bankSaveFailed": "Nabigo ang pag-save ng account."
     }
   },
   "Signup": {

@@ -6,6 +6,7 @@ import {
   createTransaction,
   getTransaction,
   updateTransaction,
+  claimTransactionRelease,
   postSystemMessage,
   getReleasedTransactionsForChat,
   hasBlockingTransactionForChat,
@@ -14,7 +15,7 @@ import {
   createReview,
   getReviewByTransactionAndReviewer,
 } from "@/services/review/review";
-import { createInvoice } from "@/lib/xendit";
+import { createInvoice, createDisbursement } from "@/lib/xendit";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
@@ -57,6 +58,18 @@ export async function createPaymentRequestAction(params: {
   if (!post || post.user_id !== me.id) {
     throw new Error("안전결제는 판매자만 요청할 수 있습니다.");
   }
+
+  const { data: seller } = await supabase
+    .from("users")
+    .select("bank_code, bank_account_number")
+    .eq("id", me.id)
+    .single();
+  if (!seller?.bank_code || !seller?.bank_account_number) {
+    throw new Error("정산 계좌를 먼저 등록해주세요");
+  }
+
+  const blocked = await hasBlockingTransactionForChat(params.chatId);
+  if (blocked) throw new Error("이미 진행 중인 거래가 있습니다.");
 
   const { data: chat } = await supabase
     .from("chats")
@@ -159,9 +172,34 @@ export async function confirmReceiptAction(
     throw new Error("결제 완료된 거래만 수령 확인할 수 있습니다.");
   }
 
-  const released = await updateTransaction(transaction.id, {
-    status: "released",
-    released_at: new Date().toISOString(),
+  const { data: seller } = await supabase
+    .from("users")
+    .select("bank_code, bank_account_number, bank_account_name, name")
+    .eq("id", transaction.seller_id)
+    .single();
+
+  if (!seller?.bank_code || !seller?.bank_account_number) {
+    throw new Error(
+      "판매자가 정산 계좌를 등록하지 않았습니다. 판매자에게 프로필에서 계좌를 등록해달라고 요청해주세요.",
+    );
+  }
+
+  const released = await claimTransactionRelease(transaction.id);
+  if (!released) {
+    throw new Error("이미 처리 중인 거래입니다. 잠시 후 확인해주세요.");
+  }
+
+  const disbursement = await createDisbursement({
+    externalId: `release_${transaction.id}`,
+    bankCode: seller.bank_code,
+    accountNumber: seller.bank_account_number,
+    accountHolderName: seller.bank_account_name ?? seller.name ?? "",
+    amount: transaction.amount,
+    description: `칸토 에스크로 정산 #${transaction.id}`,
+  });
+
+  await updateTransaction(transaction.id, {
+    xendit_disbursement_id: disbursement.id,
   });
 
   await supabase
@@ -224,7 +262,10 @@ export async function createReviewAction(input: {
   }
   const content = input.content.trim();
 
-  const existing = await getReviewByTransactionAndReviewer(transaction.id, me.id);
+  const existing = await getReviewByTransactionAndReviewer(
+    transaction.id,
+    me.id,
+  );
   if (existing) throw new Error("이미 이 거래에 후기를 작성했습니다.");
 
   const revieweeId = isBuyer ? transaction.seller_id : transaction.buyer_id;

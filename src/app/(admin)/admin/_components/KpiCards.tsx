@@ -4,6 +4,8 @@ interface Props {
   todaySignups: number;
   totalPosts: number;
   todayPosts: number;
+  totalReleasedTx: number;
+  totalReleasedAmount: number;
 }
 
 export default function KpiCards({
@@ -12,6 +14,8 @@ export default function KpiCards({
   todaySignups,
   totalPosts,
   todayPosts,
+  totalReleasedTx,
+  totalReleasedAmount,
 }: Props) {
   const KPIS = [
     { label: "총 회원수", value: totalUsers.toLocaleString(), unit: "명" },
@@ -19,6 +23,8 @@ export default function KpiCards({
     { label: "오늘 신규 가입", value: `+${todaySignups}`, unit: "명" },
     { label: "총 게시글", value: totalPosts.toLocaleString(), unit: "건" },
     { label: "오늘 신규 게시글", value: `+${todayPosts}`, unit: "건" },
+    { label: "완료 거래 건수", value: totalReleasedTx.toLocaleString(), unit: "건" },
+    { label: "총 거래 금액", value: `₱${totalReleasedAmount.toLocaleString()}`, unit: "" },
   ];
 
   return (

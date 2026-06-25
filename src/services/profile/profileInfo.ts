@@ -18,6 +18,14 @@ export async function updateProfile(
   return data as User;
 }
 
+export async function saveBankAccount(
+  userId: number,
+  payload: { bank_code: string; bank_account_number: string; bank_account_name: string },
+): Promise<void> {
+  const { error } = await supabase.from("users").update(payload).eq("id", userId);
+  if (error) throw new Error("계좌 저장에 실패했습니다.");
+}
+
 export async function fetchRestoredUser(authId: string): Promise<User | null> {
   const { data } = await supabase
     .from("users")

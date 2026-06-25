@@ -39,6 +39,8 @@ export default async function DashboardPage() {
     regionsRes,
     reportStatsRes,
     signupTrendRes,
+    releasedTxCountRes,
+    releasedTxAmountRes,
   ] = await Promise.all([
     admin
       .from("users")
@@ -80,6 +82,14 @@ export default async function DashboardPage() {
       .select("status, created_at, resolved_at")
       .gte("created_at", thirtyDaysAgo),
     admin.rpc("get_daily_signups", { days: 30 }),
+    admin
+      .from("transactions")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "released"),
+    admin
+      .from("transactions")
+      .select("amount")
+      .eq("status", "released"),
   ]);
 
   
@@ -87,6 +97,11 @@ export default async function DashboardPage() {
   const activeUsers = Number(activeRes.data?.[0]?.count ?? 0);
   const todaySignups = todaySignupsRes.count ?? 0;
   const totalPosts = totalPostsRes.count ?? 0;
+  const totalReleasedTx = releasedTxCountRes.count ?? 0;
+  const totalReleasedAmount = (releasedTxAmountRes.data ?? []).reduce(
+    (sum, row) => sum + (row.amount ?? 0),
+    0,
+  );
 
   
   let todayPosts = 0;
@@ -251,6 +266,8 @@ export default async function DashboardPage() {
         todaySignups={todaySignups}
         totalPosts={totalPosts}
         todayPosts={todayPosts}
+        totalReleasedTx={totalReleasedTx}
+        totalReleasedAmount={totalReleasedAmount}
       />
       <TrendAndDonut
         signupValues={signupValues}

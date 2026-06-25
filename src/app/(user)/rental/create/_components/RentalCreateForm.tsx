@@ -11,6 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { ImageUploadField } from "@/components/common/ImageUploadField";
+import { moderateImage } from "@/lib/moderateImage";
+import Toast from "@/components/common/Toast";
 import {
   Select,
   SelectContent,
@@ -88,6 +90,18 @@ export default function RentalCreateForm({
       .then((d) => { if (d?.max_urls_per_post != null) maxUrlsRef.current = d.max_urls_per_post; })
       .catch(() => {});
   }, []);
+  const [isCheckingImages, setIsCheckingImages] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showErrorToast = (message: string) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToastMessage(message);
+    setShowToast(true);
+    toastTimerRef.current = setTimeout(() => setShowToast(false), 3000);
+  };
 
   const toggleAmenity = (item: Amenity) => {
     setAmenities((prev) =>
@@ -99,17 +113,42 @@ export default function RentalCreateForm({
     fileInputRef.current?.click();
   };
 
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
     const remaining = 10 - imageFiles.length;
-    const allowedFiles = files.slice(0, remaining);
-
-    setImageFiles((prev) => [...prev, ...allowedFiles]);
-    setImagePreviews((prev) => [
-      ...prev,
-      ...allowedFiles.map((file) => URL.createObjectURL(file)),
-    ]);
+    const candidates = files.slice(0, remaining);
     e.target.value = "";
+
+    setIsCheckingImages(true);
+    try {
+      const allowedFiles: File[] = [];
+      let blockedReason: string | null = null;
+
+      for (const file of candidates) {
+        const outcome = await moderateImage(file);
+        if (outcome.allowed) {
+          allowedFiles.push(file);
+        } else {
+          blockedReason = outcome.reason;
+        }
+      }
+
+      if (blockedReason) {
+        showErrorToast(
+          blockedReason === "unavailable"
+            ? tc("imageUpload.unavailable")
+            : tc("imageUpload.blocked"),
+        );
+      }
+
+      setImageFiles((prev) => [...prev, ...allowedFiles]);
+      setImagePreviews((prev) => [
+        ...prev,
+        ...allowedFiles.map((file) => URL.createObjectURL(file)),
+      ]);
+    } finally {
+      setIsCheckingImages(false);
+    }
   };
 
   const removeImage = (index: number) => {
@@ -402,6 +441,7 @@ export default function RentalCreateForm({
             <ImageUploadField
               fileInputRef={fileInputRef}
               imagePreviews={imagePreviews}
+              isChecking={isCheckingImages}
               onUploadClick={handleImageUpload}
               onSelect={handleImageSelect}
               onRemove={removeImage}
@@ -451,6 +491,7 @@ export default function RentalCreateForm({
           </form>
         </Card>
       </div>
+      <Toast message={toastMessage} showMessage={showToast} type="error" icon="alert" />
     </main>
   );
 }

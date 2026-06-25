@@ -35,7 +35,7 @@ export const getSessionUser = cache(async (): Promise<User | null> => {
   const { data } = await supabase
     .from("users")
     .select(
-      "id, name, email, phone, region, auth_id, avatar_url, provider, role, post_count, created_at, updated_at",
+      "id, name, email, phone, region, auth_id, avatar_url, provider, role, post_count, bank_code, bank_account_number, bank_account_name, created_at, updated_at",
     )
     .eq("auth_id", authUser.id)
     .single();

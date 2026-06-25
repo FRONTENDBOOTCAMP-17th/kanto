@@ -6,13 +6,18 @@ import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
 import type { User as UserType } from "@/type/user";
-import { uploadAvatar, updateProfile, fetchRestoredUser } from "@/services/profile/profileInfo";
+import { uploadAvatar, updateProfile, fetchRestoredUser, saveBankAccount } from "@/services/profile/profileInfo";
 
 export function useProfileInfo(user: UserType, avatarFile: File | null) {
   const [name, setName] = useState(user.name ?? "");
   const [phone, setPhone] = useState(user.phone ?? "");
   const [phoneSaved, setPhoneSaved] = useState(!!user.phone);
   const [phoneEditing, setPhoneEditing] = useState(!user.phone);
+  const [bankCode, setBankCode] = useState(user.bank_code ?? "");
+  const [bankAccountNumber, setBankAccountNumber] = useState(user.bank_account_number ?? "");
+  const [bankAccountName, setBankAccountName] = useState(user.bank_account_name ?? "");
+  const [bankSaved, setBankSaved] = useState(!!user.bank_code);
+  const [bankEditing, setBankEditing] = useState(!user.bank_code);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const { setUser, clearUser } = useAuthStore();
@@ -45,6 +50,27 @@ export function useProfileInfo(user: UserType, avatarFile: File | null) {
   };
 
   const handleEditPhone = () => setPhoneEditing(true);
+
+  const handleSaveBank = async () => {
+    if (!bankCode || !bankAccountNumber || !bankAccountName) {
+      alert("은행, 계좌번호, 예금주명을 모두 입력해주세요.");
+      return;
+    }
+    try {
+      await saveBankAccount(user.id, {
+        bank_code: bankCode,
+        bank_account_number: bankAccountNumber,
+        bank_account_name: bankAccountName,
+      });
+      setBankSaved(true);
+      setBankEditing(false);
+      alert(t("bankSaved"));
+    } catch {
+      alert(t("bankSaveFailed"));
+    }
+  };
+
+  const handleEditBank = () => setBankEditing(true);
 
   const handleDeleteAccount = async () => {
     setDeleteLoading(true);
@@ -80,6 +106,13 @@ export function useProfileInfo(user: UserType, avatarFile: File | null) {
     phoneSaved,
     phoneEditing,
     handleEditPhone,
+    bankCode, setBankCode,
+    bankAccountNumber, setBankAccountNumber,
+    bankAccountName, setBankAccountName,
+    bankSaved,
+    bankEditing,
+    handleSaveBank,
+    handleEditBank,
     showDeleteModal, setShowDeleteModal,
     deleteLoading,
     cancelButtonRef,
