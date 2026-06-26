@@ -934,6 +934,7 @@
       "joined": "You've joined! The host has been notified",
       "cancelled": "Participation cancelled",
       "reentryForbidden": "Rejoining is not allowed.",
+      "cancelAfterStart": "The meetup has already started, so you can't cancel.",
       "ended": "Meetup ended",
       "error": "An error occurred",
       "withdrawn": "This user has withdrawn."

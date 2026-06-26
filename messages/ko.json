@@ -942,6 +942,7 @@
       "joined": "모임에 참여했습니다! 주최자에게 알림이 전송됩니다",
       "cancelled": "참여를 취소했습니다",
       "reentryForbidden": "재입장이 불가합니다.",
+      "cancelAfterStart": "모임이 시작되어 취소할 수 없습니다.",
       "ended": "모임을 종료했습니다",
       "error": "오류가 발생했습니다",
       "withdrawn": "탈퇴한 사용자입니다."

@@ -939,6 +939,7 @@
       "joined": "Sumali ka na! Naabisuhan na ang host",
       "cancelled": "Nakansela ang pagsali",
       "reentryForbidden": "Hindi pinapayagan ang muling pagsali.",
+      "cancelAfterStart": "Nagsimula na ang meetup, kaya hindi mo na ito makakansela.",
       "ended": "Natapos ang meetup",
       "error": "May naganap na error",
       "withdrawn": "Umalis na ang user na ito."
