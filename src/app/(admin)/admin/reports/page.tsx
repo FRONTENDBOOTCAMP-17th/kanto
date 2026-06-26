@@ -148,7 +148,7 @@ export default async function ReportsPage() {
         authorId: post?.user_id,
         postType: post?.post_type,
         targetName: post?.title ?? "(삭제된 게시글)",
-        category: POST_TYPE_LABEL[post?.post_type ?? ""] ?? "커뮤니티",
+        category: POST_TYPE_LABEL[post?.post_type ?? ""] ?? "Kanto Go!",
         author: author?.name ?? "알 수 없음",
         reason,
         description,
