@@ -38,7 +38,6 @@ export function CreatePageClient({ initialIsVerified }: CreatePageClientProps) {
   const [isVerified, setIsVerified] = useState(initialIsVerified);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isVerificationOpen, setIsVerificationOpen] = useState(false);
-  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [pendingHref, setPendingHref] = useState<string | null>(null);
   const router = useRouter();
   const t = useTranslations("Create");
@@ -67,12 +66,8 @@ export function CreatePageClient({ initialIsVerified }: CreatePageClientProps) {
     setIsVerificationOpen(false);
     router.refresh();
     if (pendingHref) {
-      setIsSuccessOpen(true);
-      window.setTimeout(() => {
-        setIsSuccessOpen(false);
-        router.push(pendingHref);
-        setPendingHref(null);
-      }, 1500);
+      router.push(pendingHref);
+      setPendingHref(null);
     }
   };
 
@@ -171,17 +166,6 @@ export function CreatePageClient({ initialIsVerified }: CreatePageClientProps) {
         />
       )}
 
-      {isSuccessOpen && (
-        <div className="fixed inset-0 z-200 flex items-center justify-center bg-black/45 px-4">
-          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl text-center">
-            <ShieldCheck className="w-10 h-10 text-teal-500 mx-auto mb-3" />
-            <h2 className="text-base font-semibold text-gray-900 mb-1">
-              본인인증 완료!
-            </h2>
-            <p className="text-sm text-gray-500">글쓰기 페이지로 이동합니다.</p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
