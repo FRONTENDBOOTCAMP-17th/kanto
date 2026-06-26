@@ -12,7 +12,7 @@ export const REASON_STYLE: Record<string, { fg: string; bg: string }> = {
 
 export const CATEGORY_STYLE: Record<string, { fg: string; bg: string }> = {
   중고거래: { fg: "#ea580c", bg: "#fff7ed" },
-  커뮤니티: { fg: "#7c3aed", bg: "#f5f3ff" },
+  "Kanto Go!": { fg: "#7c3aed", bg: "#f5f3ff" },
   구인구직: { fg: "#2563eb", bg: "#eff6ff" },
   부동산: { fg: "#16a34a", bg: "#f0fdf4" },
 };

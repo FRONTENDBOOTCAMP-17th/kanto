@@ -7,6 +7,7 @@ import {
   POST_TYPE_LABEL,
 } from "@/services/admin/adminPosts";
 import AdminPostsTable from "./AdminPostsTable";
+import AdminPostsCard from "./AdminPostsCard";
 import PostDetailDrawer from "./PostDetailDrawer";
 import {
   bulkTogglePostStatus,
@@ -22,10 +23,9 @@ const PAGE_SIZE = 20;
 
 const CATEGORY_OPTIONS = [
   { value: "all", label: "전체" },
-  { value: "used_goods", label: POST_TYPE_LABEL.used_goods },
-  { value: "jobs", label: POST_TYPE_LABEL.jobs },
-  { value: "rental", label: POST_TYPE_LABEL.rental },
-  { value: "community", label: POST_TYPE_LABEL.community },
+  { value: "used_goods", label: "중고" },
+  { value: "jobs", label: "구인" },
+  { value: "rental", label: "부동산" },
 ] as const;
 
 const STATUS_OPTIONS = [
@@ -252,7 +252,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between gap-3 rounded-[14px] border border-[#e7ebee] bg-white px-4 py-3 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+      <div className="hidden md:flex items-center justify-between gap-3 rounded-[14px] border border-[#e7ebee] bg-white px-4 py-3 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <span className="text-[13px] text-slate-500">
           {selectedCount > 0 ? (
             <>
@@ -281,7 +281,8 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
       </div>
 
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
-        <div className="overflow-x-auto">
+        {/* 데스크탑: 테이블 */}
+        <div className="hidden overflow-x-auto md:block">
           <AdminPostsTable
             posts={pageItems}
             selectedIds={selectedIds}
@@ -291,6 +292,13 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
             onOpen={(id) => setSelId(id)}
           />
         </div>
+
+        {/* 모바일: 카드 */}
+        {pageItems.length > 0 && (
+          <div className="md:hidden">
+            <AdminPostsCard posts={pageItems} onOpen={(id) => setSelId(id)} />
+          </div>
+        )}
 
         {filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center px-5 py-16 text-center">

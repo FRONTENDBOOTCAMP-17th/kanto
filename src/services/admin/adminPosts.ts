@@ -37,6 +37,7 @@ export async function getAdminPosts(): Promise<AdminPost[]> {
     .select(
       "id, title, post_type, status, view_count, created_at, handled_at, author:users!posts_user_id_fkey(name), admin_user:users!posts_handled_by_fkey(name)"
     )
+    .neq("post_type", "meetup")
     .order("created_at", { ascending: false }) as unknown as {
       data: Array<{
         id: number;

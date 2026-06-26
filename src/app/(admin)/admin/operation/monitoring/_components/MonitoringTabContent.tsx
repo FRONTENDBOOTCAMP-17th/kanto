@@ -9,6 +9,7 @@ import type { MonitoringStats, SentryResult, SentryPerformance } from "@/service
 
 type Tab = "stats" | "perf" | "errors";
 
+
 interface Props {
   stats: Pick<MonitoringStats, "dailySignups" | "monthlySignups" | "yearlySignups" | "postTypes" | "regions">;
   sentry: SentryResult;

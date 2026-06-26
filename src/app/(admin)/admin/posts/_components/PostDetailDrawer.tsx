@@ -22,7 +22,6 @@ const CATEGORY_STYLE: Record<string, { bg: string; fg: string }> = {
   used_goods: { bg: "#f0fdfa", fg: "#0d9488" },
   jobs: { bg: "#faf5ff", fg: "#7c3aed" },
   rental: { bg: "#eff6ff", fg: "#2563eb" },
-  community: { bg: "#fff7ed", fg: "#c2410c" },
 };
 
 const POST_STATUS_STYLE: Record<string, { label: string; bg: string; fg: string }> = {
