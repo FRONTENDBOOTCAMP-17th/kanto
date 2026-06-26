@@ -113,7 +113,11 @@ export default function InteractionButtons({
             if (!userId) { setShowLoginModal(true); return; }
             if (isSuspended) { openModal(); return; }
             if (isReported) {
-              showBottomToast(tr("already"), "error", "x");
+              showBottomToast(
+                tr("already", { target: tr("targetNoun.post") }),
+                "error",
+                "x",
+              );
               return;
             }
             setShowReportModal(true);
