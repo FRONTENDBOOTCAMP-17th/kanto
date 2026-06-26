@@ -25,10 +25,9 @@ create index if not exists idx_common_reports_handled_by on public.common_report
 create index if not exists idx_user_sanctions_user on public.user_sanctions (user_id);
 create index if not exists idx_user_sanctions_admin on public.user_sanctions (admin_id);
 
--- 댓글 / 커뮤니티 FK
+-- 댓글 FK
 create index if not exists idx_comments_post on public.comments (post_id);
 create index if not exists idx_comments_user on public.comments (user_id);
-create index if not exists idx_community_posts_post on public.community_posts (post_id);
 
 -- 제목 부분검색(ilike '%검색%') 트라이그램 인덱스
 create extension if not exists pg_trgm;

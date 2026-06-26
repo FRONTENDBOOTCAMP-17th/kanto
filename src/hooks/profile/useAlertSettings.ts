@@ -12,7 +12,6 @@ export const CATEGORIES = [
   { key: "usedgoods" },
   { key: "jobs" },
   { key: "rental" },
-  { key: "community" },
   { key: "dating" },
 ];
 

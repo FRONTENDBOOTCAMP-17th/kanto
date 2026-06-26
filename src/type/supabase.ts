@@ -451,41 +451,6 @@ export type Database = {
           },
         ]
       }
-      community_posts: {
-        Row: {
-          category: string | null
-          comment_count: number | null
-          content: string | null
-          id: number
-          images: Json | null
-          post_id: number | null
-        }
-        Insert: {
-          category?: string | null
-          comment_count?: number | null
-          content?: string | null
-          id?: number
-          images?: Json | null
-          post_id?: number | null
-        }
-        Update: {
-          category?: string | null
-          comment_count?: number | null
-          content?: string | null
-          id?: number
-          images?: Json | null
-          post_id?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "community_posts_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       dating_profiles: {
         Row: {
           age: number | null

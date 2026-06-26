@@ -7,7 +7,6 @@ const SERVICES = [
   { href: ROUTES.usedgoods, key: "usedgoods" },
   { href: ROUTES.jobs, key: "jobs" },
   { href: ROUTES.rental, key: "rental" },
-  { href: ROUTES.community, key: "community" },
 ] as const;
 
 const LEGAL_LINKS = [

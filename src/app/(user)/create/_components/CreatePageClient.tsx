@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ShieldCheck, ShoppingBag, Briefcase, Home, Users } from "lucide-react";
+import { ShieldCheck, ShoppingBag, Briefcase, Home } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { IdentityVerificationModal } from "@/app/(user)/profile/_components/IdentityVerificationModal";
 
@@ -27,13 +27,6 @@ const CATEGORIES = [
     href: "/rental/create",
     color: "text-teal-500",
     bg: "bg-teal-50",
-  },
-  {
-    key: "community",
-    icon: Users,
-    href: "/community/create",
-    color: "text-purple-500",
-    bg: "bg-purple-50",
   },
 ] as const;
 
