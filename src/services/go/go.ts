@@ -7,6 +7,7 @@ import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { getSessionUser, requireAdmin } from "@/services/user/user";
 import { createRoomForMeetup, endRoom, postSystemMessageForMeetup } from "@/services/go/groupChat";
+import { manilaWallTimeToISO } from "@/utils/goTime";
 import type {
   Meetup,
   MeetupParticipant,
@@ -176,10 +177,11 @@ export async function getMeetupDetail(postId: number): Promise<{
 export async function createMeetup(input: CreateMeetupInput): Promise<number> {
   const supabase = await createClient();
   const sessionUser = await getSessionUser();
-  if (!sessionUser) throw new Error("로그인이 필요합니다");
+  if (!sessionUser) throw new Error("MUST_LOGIN");
 
-  const startAt = new Date(`${input.date}T${input.startTime}:00`).toISOString();
-  const endAt = new Date(`${input.date}T${input.endTime}:00`).toISOString();
+  // 입력은 마닐라 현지 벽시계 — 서버 TZ에 의존하지 않도록 +08:00 오프셋으로 해석한다.
+  const startAt = manilaWallTimeToISO(input.date, input.startTime);
+  const endAt = manilaWallTimeToISO(input.date, input.endTime);
 
   // 1) posts 행 생성 (post_type = 'meetup')
   const { data: post, error: postError } = await supabase
@@ -245,7 +247,7 @@ export async function getMyMeetupStatus(
 export async function joinMeetup(meetupPostId: number): Promise<void> {
   const supabase = await createClient();
   const sessionUser = await getSessionUser();
-  if (!sessionUser) throw new Error("로그인이 필요합니다");
+  if (!sessionUser) throw new Error("MUST_LOGIN");
 
   // 취소 이력이 있으면 재입장 차단(코드로 throw → 클라이언트가 토스트 매핑)
   const { data: existing, error: existingError } = await supabase
@@ -304,7 +306,7 @@ export async function joinMeetup(meetupPostId: number): Promise<void> {
 export async function cancelJoin(meetupPostId: number): Promise<void> {
   const supabase = await createClient();
   const sessionUser = await getSessionUser();
-  if (!sessionUser) throw new Error("로그인이 필요합니다");
+  if (!sessionUser) throw new Error("MUST_LOGIN");
 
   const { data: meetup } = await supabase
     .from("meetups")
@@ -313,7 +315,7 @@ export async function cancelJoin(meetupPostId: number): Promise<void> {
     .single();
 
   if (meetup && new Date(meetup.start_at) <= new Date()) {
-    throw new Error("모임 시작 후에는 참여를 취소할 수 없습니다");
+    throw new Error("CANCEL_AFTER_START");
   }
 
   const { error } = await supabase
@@ -334,7 +336,7 @@ export async function cancelJoin(meetupPostId: number): Promise<void> {
 export async function hostEndMeetup(postId: number): Promise<void> {
   const supabase = await createClient();
   const sessionUser = await getSessionUser();
-  if (!sessionUser) throw new Error("로그인이 필요합니다");
+  if (!sessionUser) throw new Error("MUST_LOGIN");
 
   const { data: post, error: fetchError } = await supabase
     .from("posts")
@@ -344,7 +346,7 @@ export async function hostEndMeetup(postId: number): Promise<void> {
 
   if (fetchError) throw fetchError;
   if (!post || (post as { user_id: number }).user_id !== sessionUser.id) {
-    throw new Error("모임 주최자만 종료할 수 있습니다");
+    throw new Error("NOT_HOST");
   }
 
   const { error } = await supabase
