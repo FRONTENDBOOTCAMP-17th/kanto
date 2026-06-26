@@ -10,11 +10,9 @@ import {
   MapPin,
   Zap,
   Siren,
-  AlertTriangle,
   MessageCircle,
   ChevronLeft,
 } from "lucide-react";
-import { TOPIC_META } from "@/constants/meetupTopics";
 import {
   joinMeetup,
   cancelJoin,
@@ -23,6 +21,11 @@ import {
   hostEndMeetup,
 } from "@/services/go/go";
 import { checkReported } from "@/services/report";
+import { MANILA_TZ, formatManilaTimeRange } from "@/utils/goTime";
+import { MeetupAvatar } from "@/components/go/MeetupAvatar";
+import { TopicBadge } from "@/components/go/TopicBadge";
+import { ConfirmInline } from "@/components/go/ConfirmInline";
+import { GoToast } from "@/components/go/GoToast";
 import ReportModal, {
   POST_REPORT_CATEGORIES,
 } from "@/components/common/ReportModal";
@@ -42,29 +45,6 @@ type MeetupDetailPanelContentProps = Omit<MeetupDetailPanelProps, "meetup"> & {
 };
 
 type MyMeetupStatus = "loading" | "joined" | "cancelled" | "none";
-
-function Avatar({ name, size = 36 }: { name: string; size?: number }) {
-  const colors = [
-    { bg: "#fee2e2", fg: "#dc2626" },
-    { bg: "#dbeafe", fg: "#2563eb" },
-    { bg: "#ede9fe", fg: "#7c3aed" },
-    { bg: "#ffedd5", fg: "#ea580c" },
-    { bg: "#dcfce7", fg: "#16a34a" },
-    { bg: "#fce7f3", fg: "#db2777" },
-  ];
-  let idx = 0;
-  for (let i = 0; i < name.length; i++)
-    idx = (idx + name.charCodeAt(i)) % colors.length;
-  const { bg, fg } = colors[idx];
-  return (
-    <div
-      style={{ width: size, height: size, background: bg, color: fg }}
-      className="flex shrink-0 items-center justify-center rounded-full text-sm font-bold"
-    >
-      {name.charAt(0)}
-    </div>
-  );
-}
 
 export function MeetupDetailPanel({
   meetup,
@@ -157,7 +137,6 @@ function MeetupDetailPanelContent({
   const isHost =
     currentUserId !== undefined && currentUserId === meetup.host_id;
   const canReport = !isHost;
-  const meta = TOPIC_META[meetup.topic] ?? TOPIC_META.other;
   const totalCount = meetup.participant_count + 1;
   const isFull = totalCount >= meetup.max_participants && !joined;
   const capPct = Math.min(
@@ -168,13 +147,13 @@ function MeetupDetailPanelContent({
     capPct >= 90 ? "#ef4444" : capPct >= 70 ? "#f97316" : "#14b8a6";
 
   const startDate = new Date(meetup.start_at);
-  const endDate = new Date(meetup.end_at);
   const dateLabel = format.dateTime(startDate, {
     month: "long",
     day: "numeric",
     weekday: "short",
+    timeZone: MANILA_TZ,
   });
-  const timeRange = `${startDate.getHours().toString().padStart(2, "0")}:${startDate.getMinutes().toString().padStart(2, "0")} ~ ${endDate.getHours().toString().padStart(2, "0")}:${endDate.getMinutes().toString().padStart(2, "0")}`;
+  const timeRange = formatManilaTimeRange(meetup.start_at, meetup.end_at);
 
   const showToast = (msg: string, error = false) => {
     setToast({ msg, error });
@@ -217,8 +196,10 @@ function MeetupDetailPanelContent({
       });
       setConfirmCancel(false);
       showToast(t("toast.cancelled"));
-    } catch {
-      showToast(t("toast.error"), true);
+    } catch (e) {
+      const afterStart =
+        e instanceof Error && e.message === "CANCEL_AFTER_START";
+      showToast(afterStart ? t("toast.cancelAfterStart") : t("toast.error"), true);
     } finally {
       setJoining(false);
     }
@@ -299,16 +280,10 @@ function MeetupDetailPanelContent({
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span
-              className="inline-flex items-center rounded-full px-3 py-1 text-[12.5px] font-bold"
-              style={{
-                background: meta.bg,
-                color: meta.color,
-                border: `1px solid ${meta.border}`,
-              }}
-            >
-              {t(`topics.${meetup.topic}`)}
-            </span>
+            <TopicBadge
+              topic={meetup.topic}
+              label={t(`topics.${meetup.topic}`)}
+            />
             {isFull && (
               <span className="inline-flex items-center rounded-full border border-red-200 bg-red-50 px-3 py-1 text-[12px] font-bold text-red-600">
                 {t("detail.full")}
@@ -354,7 +329,7 @@ function MeetupDetailPanelContent({
                   style={{ boxShadow: "0 0 0 2.5px #14b8a6" }}
                   className="rounded-full"
                 >
-                  <Avatar name={meetup.host_name} size={38} />
+                  <MeetupAvatar name={meetup.host_name} size={38} />
                 </div>
                 <div>
                   <div className="text-[14px] font-bold text-slate-900">
@@ -387,7 +362,7 @@ function MeetupDetailPanelContent({
             {/* 참여자 아바타 */}
             <div className="flex flex-wrap gap-2">
               {participants.slice(0, 7).map((p) => (
-                <Avatar key={p.id} name={p.display_name} size={34} />
+                <MeetupAvatar key={p.id} name={p.display_name} size={34} />
               ))}
               {participants.length > 7 && (
                 <div className="flex h-8.5 w-8.5 items-center justify-center rounded-full bg-slate-200 text-xs font-bold text-slate-500">
@@ -435,37 +410,17 @@ function MeetupDetailPanelContent({
                 {t("detail.ended")}
               </div>
             ) : confirmEnd ? (
-              <div className="flex flex-col gap-3 rounded-[13px] border border-orange-200 bg-orange-50 p-4">
-                <div className="flex items-start gap-2.5">
-                  <AlertTriangle
-                    className="mt-0.5 h-5 w-5 shrink-0 text-orange-700"
-                    strokeWidth={2.1}
-                  />
-                  <div>
-                    <div className="text-[14px] font-bold text-slate-900">
-                      {t("detail.endTitle")}
-                    </div>
-                    <div className="mt-1 text-[13px] text-slate-500">
-                      {t("detail.endDesc")}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setConfirmEnd(false)}
-                    className="flex-1 rounded-[10px] border border-slate-200 bg-white py-2.5 text-[13.5px] font-bold text-slate-600 hover:bg-slate-50"
-                  >
-                    {t("detail.cancel")}
-                  </button>
-                  <button
-                    onClick={handleEnd}
-                    disabled={ending}
-                    className="flex-1 rounded-[10px] bg-orange-600 py-2.5 text-[13.5px] font-bold text-white hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    {ending ? t("detail.ending") : t("detail.endConfirm")}
-                  </button>
-                </div>
-              </div>
+              <ConfirmInline
+                tone="warning"
+                title={t("detail.endTitle")}
+                description={t("detail.endDesc")}
+                cancelLabel={t("detail.cancel")}
+                confirmLabel={t("detail.endConfirm")}
+                loadingLabel={t("detail.ending")}
+                loading={ending}
+                onCancel={() => setConfirmEnd(false)}
+                onConfirm={handleEnd}
+              />
             ) : (
               <button
                 onClick={() => setConfirmEnd(true)}
@@ -482,32 +437,16 @@ function MeetupDetailPanelContent({
               {t("detail.processing")}
             </button>
           ) : confirmCancel ? (
-            <div className="flex flex-col gap-3 rounded-[13px] border border-rose-200 bg-rose-50 p-4">
-              <div className="flex items-start gap-2.5">
-                <AlertTriangle
-                  className="mt-0.5 h-5 w-5 shrink-0 text-rose-600"
-                  strokeWidth={2.1}
-                />
-                <div className="text-[13.5px] font-bold leading-snug text-slate-900">
-                  {t("detail.cancelTitle")}
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setConfirmCancel(false)}
-                  className="flex-1 rounded-[10px] border border-slate-200 bg-white py-2.5 text-[13.5px] font-bold text-slate-600 hover:bg-slate-50"
-                >
-                  {t("detail.cancelStay")}
-                </button>
-                <button
-                  onClick={handleCancel}
-                  disabled={joining}
-                  className="flex-1 rounded-[10px] bg-rose-600 py-2.5 text-[13.5px] font-bold text-white hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {joining ? t("detail.processing") : t("detail.cancelConfirm")}
-                </button>
-              </div>
-            </div>
+            <ConfirmInline
+              tone="danger"
+              title={t("detail.cancelTitle")}
+              cancelLabel={t("detail.cancelStay")}
+              confirmLabel={t("detail.cancelConfirm")}
+              loadingLabel={t("detail.processing")}
+              loading={joining}
+              onCancel={() => setConfirmCancel(false)}
+              onConfirm={handleCancel}
+            />
           ) : (
             <button
               onClick={joined ? () => setConfirmCancel(true) : handleJoin}
@@ -539,16 +478,7 @@ function MeetupDetailPanelContent({
       </div>
 
       {/* 토스트 */}
-      {toast && (
-        <div className="fixed bottom-7 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2.5 whitespace-nowrap rounded-xl bg-slate-900 px-5 py-3.5 text-[13.5px] font-semibold text-white shadow-2xl">
-          {toast.error ? (
-            <X className="h-4 w-4 text-rose-400" strokeWidth={2.5} />
-          ) : (
-            <span className="text-emerald-400">✓</span>
-          )}
-          {toast.msg}
-        </div>
-      )}
+      {toast && <GoToast message={toast.msg} error={toast.error} showIcon />}
 
       {canReport && (
         <ReportModal

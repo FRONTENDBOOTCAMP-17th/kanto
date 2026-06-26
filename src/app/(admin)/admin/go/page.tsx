@@ -9,6 +9,10 @@ import {
 } from "lucide-react";
 import { adminGetMeetups, adminForceEndMeetup } from "@/services/go/go";
 import { TOPIC_META, TOPIC_OPTIONS } from "@/constants/meetupTopics";
+import { MANILA_TZ, formatManilaTimeRange } from "@/utils/goTime";
+import { MeetupAvatar } from "@/components/go/MeetupAvatar";
+import { TopicBadge } from "@/components/go/TopicBadge";
+import { GoToast } from "@/components/go/GoToast";
 import type { AdminMeetup } from "@/type/go";
 import type { MeetupTopicKey } from "@/constants/meetupTopics";
 
@@ -25,12 +29,12 @@ const STATUS_META = {
 function TopicPill({ topic }: { topic: MeetupTopicKey }) {
   const m = TOPIC_META[topic] ?? TOPIC_META.other;
   return (
-    <span
+    <TopicBadge
+      topic={topic}
+      label={m.label}
+      bordered={false}
       className="inline-flex items-center rounded-[7px] px-2.5 py-0.5 text-[12.5px] font-bold whitespace-nowrap"
-      style={{ background: m.bg, color: m.color }}
-    >
-      {m.label}
-    </span>
+    />
   );
 }
 
@@ -43,24 +47,6 @@ function StatusPill({ status }: { status: "active" | "upcoming" | "ended" }) {
     >
       {m.label}
     </span>
-  );
-}
-
-function Avatar({ name, size = 28 }: { name: string; size?: number }) {
-  const colors = [
-    { bg: "#fee2e2", fg: "#dc2626" }, { bg: "#dbeafe", fg: "#2563eb" },
-    { bg: "#ede9fe", fg: "#7c3aed" }, { bg: "#ffedd5", fg: "#ea580c" },
-    { bg: "#dcfce7", fg: "#16a34a" }, { bg: "#fce7f3", fg: "#db2777" },
-  ];
-  let i = 0;
-  for (let c = 0; c < name.length; c++) i = (i + name.charCodeAt(c)) % colors.length;
-  return (
-    <div
-      style={{ width: size, height: size, background: colors[i].bg, color: colors[i].fg }}
-      className="flex flex-shrink-0 items-center justify-center rounded-full text-xs font-bold"
-    >
-      {name.charAt(0)}
-    </div>
   );
 }
 
@@ -90,7 +76,16 @@ export default function AdminGoPage() {
     }
   };
 
-  useEffect(() => { load(); }, []);
+  // 초기 로드는 effect 내에서 직접 fetch — 동기 setState(setLoading) 호출을 피해
+  // react-hooks/set-state-in-effect(불필요한 cascading render) 경고를 방지한다.
+  // (loading 초기값이 이미 true라 진입 시 setLoading(true)가 필요 없음)
+  useEffect(() => {
+    let active = true;
+    adminGetMeetups()
+      .then((data) => { if (active) setMeetups(data); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, []);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -265,10 +260,8 @@ export default function AdminGoPage() {
               ) : pageItems.map((m) => {
                 const cap = Math.round(((m.participant_count + 1) / m.max_participants) * 100);
                 const capColor = cap >= 90 ? "#ef4444" : cap >= 70 ? "#f97316" : "#14b8a6";
-                const startDate = new Date(m.start_at);
-                const endDate   = new Date(m.end_at);
-                const dateStr   = `${startDate.getMonth()+1}/${startDate.getDate()}`;
-                const timeRange = `${startDate.getHours().toString().padStart(2,"0")}:${startDate.getMinutes().toString().padStart(2,"0")} ~ ${endDate.getHours().toString().padStart(2,"0")}:${endDate.getMinutes().toString().padStart(2,"0")}`;
+                const dateStr   = new Date(m.start_at).toLocaleDateString("en-US", { month: "numeric", day: "numeric", timeZone: MANILA_TZ });
+                const timeRange = formatManilaTimeRange(m.start_at, m.end_at);
                 return (
                   <tr
                     key={m.post_id}
@@ -303,7 +296,7 @@ export default function AdminGoPage() {
                     </td>
                     <td className="px-[18px] py-3.5">
                       <div className="flex items-center gap-2">
-                        <Avatar name={m.host_name} size={28} />
+                        <MeetupAvatar name={m.host_name} size={28} />
                         <span className="max-w-[64px] truncate text-[13.5px] font-semibold text-slate-700">{m.host_name}</span>
                       </div>
                     </td>
@@ -376,11 +369,11 @@ export default function AdminGoPage() {
             <div className="flex flex-1 flex-col gap-5 overflow-y-auto px-6 py-5">
               {/* 주최자 */}
               <div className="flex items-center gap-3.5 rounded-[14px] border border-slate-100 bg-slate-50 p-4">
-                <Avatar name={selected.host_name} size={44} />
+                <MeetupAvatar name={selected.host_name} size={44} />
                 <div>
                   <div className="text-[15px] font-bold text-slate-900">{selected.host_name}</div>
                   <div className="mt-0.5 text-[12.5px] text-slate-400">
-                    주최자 · {new Date(selected.created_at).toLocaleDateString("ko-KR")} 개설
+                    주최자 · {new Date(selected.created_at).toLocaleDateString("ko-KR", { timeZone: MANILA_TZ })} 개설
                   </div>
                 </div>
               </div>
@@ -391,7 +384,7 @@ export default function AdminGoPage() {
                   {
                     icon: Calendar,
                     label: "일시",
-                    content: `${new Date(selected.start_at).toLocaleDateString("ko-KR")} · ${new Date(selected.start_at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })} ~ ${new Date(selected.end_at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}`,
+                    content: `${new Date(selected.start_at).toLocaleDateString("ko-KR", { timeZone: MANILA_TZ })} · ${formatManilaTimeRange(selected.start_at, selected.end_at)}`,
                   },
                   {
                     icon: MapPin,
@@ -436,13 +429,13 @@ export default function AdminGoPage() {
                 <div className="flex flex-wrap gap-3">
                   <div className="flex flex-col items-center gap-1">
                     <div style={{ boxShadow: "0 0 0 2px #14b8a6" }} className="rounded-full">
-                      <Avatar name={selected.host_name} size={40} />
+                      <MeetupAvatar name={selected.host_name} size={40} />
                     </div>
                     <span className="text-[10.5px] font-bold text-teal-600">주최자</span>
                   </div>
                   {selected.participants.slice(0, 8).map((pt) => (
                     <div key={pt.id} className="flex flex-col items-center gap-1">
-                      <Avatar name={pt.display_name} size={40} />
+                      <MeetupAvatar name={pt.display_name} size={40} />
                       <span className="text-[10.5px] text-slate-400">참여자</span>
                     </div>
                   ))}
@@ -509,12 +502,7 @@ export default function AdminGoPage() {
       )}
 
       {/* 토스트 */}
-      {toast && (
-        <div className="fixed bottom-7 left-1/2 z-[90] flex -translate-x-1/2 items-center gap-2.5 whitespace-nowrap rounded-xl bg-slate-900 px-5 py-3.5 text-[13.5px] font-semibold text-white shadow-2xl">
-          <span className="text-emerald-400">✓</span>
-          {toast}
-        </div>
-      )}
+      {toast && <GoToast message={toast} showIcon />}
     </div>
   );
 }
