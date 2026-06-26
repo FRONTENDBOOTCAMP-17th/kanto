@@ -135,7 +135,7 @@ export default function ReportQueue({
               </p>
             ) : (
               reportedPosts.slice(0, 4).map((p) => {
-                const cat = (POST_TYPE_LABEL[p.post_type] ?? "커뮤니티") as Category;
+                const cat = (POST_TYPE_LABEL[p.post_type] ?? "Kanto Go!") as Category;
                 const ago = daysSince(p.first_reported_at);
                 return (
                   <div

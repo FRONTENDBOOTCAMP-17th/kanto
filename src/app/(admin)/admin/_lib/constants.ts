@@ -2,21 +2,21 @@ import type { Category } from "@/type/admin";
 
 export const POST_TYPE_LABEL: Record<string, string> = {
   used_goods: "중고거래",
-  community: "커뮤니티",
+  meetup: "Kanto Go!",
   jobs: "구인구직",
   rental: "부동산",
 };
 
 export const CATEGORY = {
   중고거래: { fg: "#ea580c", bg: "#fff7ed" },
-  커뮤니티: { fg: "#7c3aed", bg: "#f5f3ff" },
+  "Kanto Go!": { fg: "#7c3aed", bg: "#f5f3ff" },
   구인구직: { fg: "#2563eb", bg: "#eff6ff" },
   부동산: { fg: "#16a34a", bg: "#f0fdf4" },
 } as const;
 
 export const CAT_ORDER: Category[] = [
   "중고거래",
-  "커뮤니티",
+  "Kanto Go!",
   "구인구직",
   "부동산",
 ];

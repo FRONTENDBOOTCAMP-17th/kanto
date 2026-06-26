@@ -28,14 +28,12 @@ const POST_TYPE_BADGE: Record<string, string> = {
   used_goods: "bg-violet-50 text-violet-600",
   jobs: "bg-amber-50 text-amber-600",
   rental: "bg-sky-50 text-sky-600",
-  community: "bg-emerald-50 text-emerald-600",
 };
 
 const POST_TYPE_PATH: Record<string, string> = {
   used_goods: ROUTES.usedgoods,
   jobs: ROUTES.jobs,
   rental: ROUTES.rental,
-  community: ROUTES.community,
 };
 
 export default function AdminUsersPosts({ posts }: AdminUsersPostsProps) {

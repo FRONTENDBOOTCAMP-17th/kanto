@@ -158,7 +158,7 @@ export default async function DashboardPage() {
       id: p.id,
       post_type: p.post_type,
       title: p.title,
-      cat: (POST_TYPE_LABEL[p.post_type] ?? "커뮤니티") as Category,
+      cat: (POST_TYPE_LABEL[p.post_type] ?? "Kanto Go!") as Category,
       views: Number(p.view_count).toLocaleString(),
     }),
   );
