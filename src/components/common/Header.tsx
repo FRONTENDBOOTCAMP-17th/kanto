@@ -47,6 +47,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
   const t = useTranslations("Header");
   const router = useRouter();
   const user = useAuthStore((s) => s.user) ?? initialUser;
+  const clearUser = useAuthStore((s) => s.clearUser);
   useAuthInit();
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -81,18 +82,14 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
   };
 
   const pathname = usePathname();
-  const PROTECTED_PATHS = ["/create", "/myposts", "/favorites", "/profile"];
   const { isSuspended, openModal } = useSuspended();
 
   const handleLogoutConfirm = async () => {
     setIsLogoutModalOpen(false);
     await supabase.auth.signOut();
-    const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
-    if (isProtected) {
-      router.push(ROUTES.login);
-    } else {
-      router.refresh();
-    }
+    clearUser();
+    router.push(ROUTES.home);
+    router.refresh();
   };
 
   useEffect(() => {
