@@ -36,7 +36,7 @@ export function ScrollToTop() {
     !path.includes("/create") &&
     !path.startsWith("/profile") &&
     !path.startsWith("/favorites") &&
-    !/\/(usedgoods|rental|job)\/\d/.test(path);
+    !/^\/(usedgoods|rental|job)(\/|$)/.test(path);
 
   if (!isVisible) return null;
 
@@ -44,7 +44,7 @@ export function ScrollToTop() {
     <div className="flex flex-col items-center gap-3">
       {showPlus && isLoggedIn && (
         <button
-          className="cursor-pointer w-12 h-12 bg-gray-100 hover:bg-gray-300 text-black rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"
+          className="md:hidden cursor-pointer w-12 h-12 bg-gray-100 hover:bg-gray-300 text-black rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"
           aria-label={t("more")}
           onClick={handlePlus}
         >
