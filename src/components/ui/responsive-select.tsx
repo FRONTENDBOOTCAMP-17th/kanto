@@ -39,10 +39,7 @@ export function ResponsiveSelect({
   className,
   label,
 }: Props) {
-  const [mounted, setMounted] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
@@ -54,15 +51,13 @@ export function ResponsiveSelect({
   const selectedLabel = options.find((o) => o.value === value)?.label;
 
   return (
-    <>
-      
+    <div className={`relative ${className ?? "w-full"}`}>
+
       <button
         type="button"
         disabled={disabled}
         onClick={() => setMobileOpen(true)}
-        className={`flex h-9 items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:hidden ${
-          className ?? "w-full"
-        }`}
+        className="flex h-9 w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:hidden"
       >
         <span className={`truncate ${selectedLabel ? "" : "text-muted-foreground"}`}>
           {selectedLabel ?? placeholder}
@@ -70,14 +65,9 @@ export function ResponsiveSelect({
         <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
       </button>
 
-      
-      <Select
-        value={value}
-        onValueChange={onValueChange}
-        disabled={disabled}
-        required={required}
-      >
-        <SelectTrigger className={`hidden md:flex ${className ?? ""}`}>
+
+      <Select value={value} onValueChange={onValueChange} disabled={disabled}>
+        <SelectTrigger className="hidden w-full md:flex">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent className="max-h-60">
@@ -89,9 +79,28 @@ export function ResponsiveSelect({
         </SelectContent>
       </Select>
 
-      
-      {mounted &&
-        mobileOpen &&
+      {/* 모바일/데스크톱 모두에서 브라우저 기본 필수 검증이 동작하도록 하는 숨김 select */}
+      {required && (
+        <select
+          aria-hidden
+          tabIndex={-1}
+          required
+          disabled={disabled}
+          value={value}
+          onChange={() => {}}
+          className="absolute inset-0 h-full w-full opacity-0 pointer-events-none"
+        >
+          <option value="" />
+          {options.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </select>
+      )}
+
+
+      {mobileOpen &&
         createPortal(
           <div className="fixed inset-0 z-100 flex flex-col justify-end md:hidden">
             <div
@@ -153,6 +162,6 @@ export function ResponsiveSelect({
           </div>,
           document.body,
         )}
-    </>
+    </div>
   );
 }
