@@ -54,16 +54,8 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   }, []);
 
   const handleNextStep = () => {
-    if (!title || !employeeType || !salary || !locationType || !deadline || !mainTask) {
-      alert(t("errorRequired"));
-      return;
-    }
     if (!isTimeNegotiable && (!workHoursStart || !workHoursEnd || workDays.length === 0)) {
       alert("근무 시간과 근무 요일을 입력하거나 시간 협의를 선택해주세요.");
-      return;
-    }
-    if (locationType === "그 외 지역" && !locationCustom) {
-      alert(t("errorLocationDetail"));
       return;
     }
     setStep(2);
@@ -71,10 +63,6 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   };
 
   const handleSubmit = async () => {
-    if (!companyName || !companyIntro || !managerName) {
-      alert(t("errorRequired"));
-      return;
-    }
 
     const checkText = [mainTask, companyIntro].join(" ");
     const urlCount = (checkText.match(/https?:\/\/[^\s]+/g) ?? []).length;

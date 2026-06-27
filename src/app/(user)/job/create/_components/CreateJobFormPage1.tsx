@@ -142,15 +142,20 @@ export function CreateJobFormPageOne({
   };
 
   return (
-    <div className="space-y-4">
+    <form
+      className="space-y-4"
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleNextStep();
+      }}
+    >
       <div>
-        <p className="text-gray-500 text-sm">{t("form.page1Subtitle")}</p>
-        <h2 className="font-semibold text-xl text-gray-900 mt-1">
+        <h2 className="font-semibold text-xl text-gray-900">
           {t("form.jobInfo")}
         </h2>
       </div>
 
-      
+
       <div className="space-y-2">
         <Label htmlFor="title">{t("form.titleLabel")}</Label>
         <Input
@@ -158,6 +163,7 @@ export function CreateJobFormPageOne({
           placeholder={t("form.titlePlaceholder")}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          required
         />
       </div>
 
@@ -169,6 +175,7 @@ export function CreateJobFormPageOne({
           onValueChange={(v) => setEmployeeType(v as EmployeeType)}
           options={EMPLOYEE_OPTIONS}
           placeholder={t("form.employeeTypePlaceholder")}
+          required
         />
       </div>
 
@@ -185,6 +192,7 @@ export function CreateJobFormPageOne({
               value={salary ? Number(salary).toLocaleString() : ""}
               onChange={(e) => handleSalaryChange(e.target.value)}
               className="pr-12"
+              required
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm pointer-events-none">
               PHP
@@ -208,12 +216,14 @@ export function CreateJobFormPageOne({
           onValueChange={(v) => setLocationType(v as TradeLocation)}
           options={LOCATION_OPTIONS}
           placeholder={t("form.locationPlaceholder")}
+          required
         />
         {locationType === "그 외 지역" && (
           <Input
             placeholder={t("form.locationDetailPlaceholder")}
             value={locationCustom}
             onChange={(e) => setLocationCustom(e.target.value)}
+            required
           />
         )}
       </div>
@@ -226,6 +236,7 @@ export function CreateJobFormPageOne({
           type="date"
           value={deadline}
           onChange={(e) => setDeadline(e.target.value)}
+          required
         />
       </div>
 
@@ -344,6 +355,7 @@ export function CreateJobFormPageOne({
           value={mainTask}
           onChange={(e) => setMainTask(e.target.value)}
           className="resize-none min-h-28"
+          required
         />
       </div>
 
@@ -400,23 +412,18 @@ export function CreateJobFormPageOne({
         >
           {tc("cancel")}
         </Button>
-        <Button
-          type="button"
-          variant="teal"
-          onClick={handleNextStep}
-          className="flex-1"
-        >
+        <Button type="submit" variant="teal" className="flex-1">
           {t("form.next")}
         </Button>
       </div>
 
-      
+
       <JobPreferredModal
         isOpen={showPreferredModal}
         onClose={() => setShowPreferredModal(false)}
         selected={preferredTags}
         onToggle={toggleTag}
       />
-    </div>
+    </form>
   );
 }
