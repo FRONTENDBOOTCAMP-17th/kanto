@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: "칸토",
+    title: "Kanto",
     statusBarStyle: "default",
   },
   icons: {

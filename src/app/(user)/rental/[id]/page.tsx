@@ -53,8 +53,26 @@ export default async function RentalDetail({
     }));
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: rental.posts.title,
+    description: rental.description?.slice(0, 160),
+    image: images[0],
+    offers: {
+      "@type": "Offer",
+      price: rental.price,
+      priceCurrency: "PHP",
+      priceSpecification: { "@type": "UnitPriceSpecification", unitCode: "MON" },
+    },
+  };
+
   return (
     <div className="page-container pb-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="flex items-center justify-between">
         <BackButton />
         <VerifyAuthor
