@@ -63,7 +63,6 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   };
 
   const handleSubmit = async () => {
-
     const checkText = [mainTask, companyIntro].join(" ");
     const urlCount = (checkText.match(/https?:\/\/[^\s]+/g) ?? []).length;
     if (urlCount > maxUrlsRef.current) {

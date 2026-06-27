@@ -88,17 +88,15 @@ export default function JobTitle({
           )}
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <InteractionButtons
-            postId={job.post_id}
-            userId={userId}
-            initialLiked={initialLiked}
-            initialReported={initialReported}
-            onLikeChange={handleLikeChange}
-            size="sm"
-            className="md:hidden"
-          />
-        </div>
+        <InteractionButtons
+          postId={job.post_id}
+          userId={userId}
+          initialLiked={initialLiked}
+          initialReported={initialReported}
+          onLikeChange={handleLikeChange}
+          size="sm"
+          className="md:hidden shrink-0"
+        />
       </div>
     </div>
   );
