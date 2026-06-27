@@ -465,6 +465,7 @@
     "details": "Mga detalye",
     "mainTask": "Mga pangunahing gawain",
     "preferred": "Mga gustong kwalipikasyon",
+    "backToList": "Bumalik sa listahan",
     "viewCount": "{count}",
     "applicantCount": "Mga aplikante: {count}",
     "managerInfo": "Taong makokontak",
