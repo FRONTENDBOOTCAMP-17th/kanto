@@ -22,9 +22,10 @@ interface Props {
   options: Option[];
   placeholder?: string;
   disabled?: boolean;
-  
+  required?: boolean;
+
   className?: string;
-  
+
   label?: string;
 }
 
@@ -34,6 +35,7 @@ export function ResponsiveSelect({
   options,
   placeholder,
   disabled,
+  required,
   className,
   label,
 }: Props) {
@@ -69,7 +71,12 @@ export function ResponsiveSelect({
       </button>
 
       
-      <Select value={value} onValueChange={onValueChange} disabled={disabled}>
+      <Select
+        value={value}
+        onValueChange={onValueChange}
+        disabled={disabled}
+        required={required}
+      >
         <SelectTrigger className={`hidden md:flex ${className ?? ""}`}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
