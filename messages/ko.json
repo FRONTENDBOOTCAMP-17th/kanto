@@ -374,7 +374,7 @@
       },
       "rental": {
         "title": "초저가 방을 찾고 있다면",
-        "description": "합리적인 가격의 방 렌트 정보",
+        "description": "합리적인 가격의 부동산 정보",
         "button": "부동산 바로가기"
       },
       "dating": {
@@ -559,7 +559,7 @@
   },
   "Rental": {
     "title": "부동산",
-    "subtitle": "필리핀 현지 방 렌트 정보",
+    "subtitle": "필리핀 현지 부동산 정보",
     "searchResult": "\"{query}\" 검색 결과",
     "write": "글쓰기",
     "empty": "등록된 매물이 없습니다",
