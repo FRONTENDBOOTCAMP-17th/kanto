@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Clock, Eye, Heart, Users, MoveLeft } from "lucide-react";
+import { Clock, Eye, Heart, Users } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
-import { useRouter, useSearchParams } from "next/navigation";
 import { formatTimeAgo } from "@/utils/formatTime";
 import type { JobDetail } from "@/type/job/jobsDetail";
 import InteractionButtons from "@/components/common/InteractionButtons";
-import VerifyAuthor from "@/components/common/VerifyAuthor";
 import type { Locale } from "@/i18n/config";
 
 interface JobTitleProps {
@@ -25,9 +23,6 @@ export default function JobTitle({
 }: JobTitleProps) {
   const t = useTranslations("Job");
   const locale = useLocale() as Locale;
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const fromPage = searchParams.get("fromPage");
 
   const [likeCount, setLikeCount] = useState(
     job.posts.like_count ?? 0
@@ -40,13 +35,6 @@ export default function JobTitle({
 
   return (
     <div className="p-6 space-y-4">
-      <button
-        onClick={() => router.push(fromPage ? `/job?page=${fromPage}` : "/job")}
-        className="flex gap-2 cursor-pointer"
-      >
-        <MoveLeft />
-        {t("backToList")}
-      </button>
       <div className="flex items-start justify-between gap-2">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">
@@ -110,24 +98,8 @@ export default function JobTitle({
             size="sm"
             className="md:hidden"
           />
-
-          <VerifyAuthor
-            authorAuthId={job.posts.users?.auth_id}
-            editPath={`/job/${job.post_id}/edit`}
-            postId={job.post_id}
-            redirectPath="/job"
-            className="hidden md:flex gap-4 mr-2"
-          />
         </div>
       </div>
-
-      <VerifyAuthor
-        authorAuthId={job.posts.users?.auth_id}
-        editPath={`/job/${job.post_id}/edit`}
-        postId={job.post_id}
-        redirectPath="/job"
-        className="md:hidden gap-6"
-      />
     </div>
   );
 }
