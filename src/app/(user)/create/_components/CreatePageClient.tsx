@@ -88,7 +88,7 @@ export function CreatePageClient({ initialIsVerified }: CreatePageClientProps) {
         </div>
         <p className="text-sm text-gray-500 mb-8">{t("subtitle")}</p>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {CATEGORIES.map(({ key, icon: Icon, href, color, bg }) => (
             <button
               key={key}
