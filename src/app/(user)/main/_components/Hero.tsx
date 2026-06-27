@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { ChevronLeft, ChevronRight, ShoppingBag, Briefcase, Home, Heart, Users } from "lucide-react";
+import { ChevronLeft, ChevronRight, ShoppingBag, Briefcase, Home, Heart } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
@@ -9,7 +9,6 @@ const slides = [
   { key: "usedgoods", icon: ShoppingBag, link: "/usedgoods" },
   { key: "jobs", icon: Briefcase, link: "/job" },
   { key: "rental", icon: Home, link: "/rental" },
-  { key: "community", icon: Users, link: "/community" },
   { key: "dating", icon: Heart, link: "/dating" },
 ] as const;
 

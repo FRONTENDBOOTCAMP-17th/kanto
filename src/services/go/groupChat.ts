@@ -116,7 +116,7 @@ export async function getRoomBlockedIds(roomId: number, userId: number): Promise
 export async function blockMemberInRoom(roomId: number, blockedId: number): Promise<void> {
   const supabase = await createClient();
   const sessionUser = await getSessionUser();
-  if (!sessionUser) throw new Error("로그인이 필요합니다");
+  if (!sessionUser) throw new Error("MUST_LOGIN");
 
   await supabase
     .from("meetup_chat_blocks")
@@ -132,7 +132,7 @@ export async function blockMemberInRoom(roomId: number, blockedId: number): Prom
 export async function unblockMemberInRoom(roomId: number, blockedId: number): Promise<void> {
   const supabase = await createClient();
   const sessionUser = await getSessionUser();
-  if (!sessionUser) throw new Error("로그인이 필요합니다");
+  if (!sessionUser) throw new Error("MUST_LOGIN");
 
   await supabase
     .from("meetup_chat_blocks")
@@ -168,7 +168,7 @@ export async function getRoomMessages(
 export async function postGroupMessage(roomId: number, content: string): Promise<GroupMessageWithSender> {
   const supabase = await createClient();
   const sessionUser = await getSessionUser();
-  if (!sessionUser) throw new Error("로그인이 필요합니다");
+  if (!sessionUser) throw new Error("MUST_LOGIN");
 
   const { data, error } = await supabase
     .from("meetup_chat_messages")

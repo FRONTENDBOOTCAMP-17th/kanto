@@ -3,12 +3,11 @@ import { useAuthStore } from "@/store/authStore";
 import { useSuspended } from "@/hooks/useSuspended";
 import { ChevronUp, Plus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 
 export function ScrollToTop() {
   const t = useTranslations("Common");
-  const prevScrollY = useRef(0);
   const [isVisible, setIsVisible] = useState(false);
   const router = useRouter();
   const path = usePathname();
@@ -17,10 +16,9 @@ export function ScrollToTop() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      setIsVisible(prevScrollY.current > currentScrollY);
-      prevScrollY.current = currentScrollY;
+      setIsVisible(window.scrollY > 240);
     };
+    handleScroll();
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -43,7 +41,7 @@ export function ScrollToTop() {
   if (!isVisible) return null;
 
   return (
-    <div className="flex md:hidden flex-col items-center gap-3">
+    <div className="flex flex-col items-center gap-3">
       {showPlus && isLoggedIn && (
         <button
           className="cursor-pointer w-12 h-12 bg-gray-100 hover:bg-gray-300 text-black rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"

@@ -67,6 +67,7 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
   const [history, setHistory] = useState<ChatSession[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef<Message[]>(messages);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -87,6 +88,22 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
     setInput("");
     onToggle();
   };
+
+  // 최신 handleClose 참조 (바깥 클릭 리스너의 stale closure 방지)
+  const handleCloseRef = useRef(handleClose);
+  handleCloseRef.current = handleClose;
+
+  // 열려 있을 때 바깥 클릭 시 닫기
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+        handleCloseRef.current();
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [isOpen]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -169,7 +186,7 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={rootRef}>
       {isOpen && (
         <div
           className="
