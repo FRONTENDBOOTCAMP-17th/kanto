@@ -27,7 +27,7 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
               {form.step}/2
             </span>
           </div>
-          <p className="text-gray-600 mb-8">{t("form.page1Subtitle")}</p>
+          <p className="text-gray-600 mb-8">{t("form.requiredNotice")}</p>
 
           {form.step === 1 && (
             <CreateJobFormPageOne
