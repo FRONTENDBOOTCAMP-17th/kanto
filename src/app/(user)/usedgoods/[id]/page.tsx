@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import UsedGoodsDetail from "@/app/(user)/usedgoods/[id]/_components/UsedGoodsDetail";
 import { viewCountUp } from "@/services/view";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
+export { generateMetadata } from "./metadata";
 
 export default async function UsedGoodsDetailPage({
   params,

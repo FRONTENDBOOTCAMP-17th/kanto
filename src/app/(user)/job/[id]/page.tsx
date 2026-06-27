@@ -13,6 +13,7 @@ import CompanyInfo from "./_components/CompanyInfo";
 import { viewCountUp } from "@/services/view";
 import { createClient } from "@/utils/supabase/server";
 import RelatedItemsCarousel, { type RelatedItem } from "@/components/common/RelatedItemsCarousel";
+export { generateMetadata } from "./metadata";
 
 export default async function JobDetailPage({
   params,
