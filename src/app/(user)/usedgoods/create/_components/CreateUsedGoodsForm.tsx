@@ -100,19 +100,10 @@ export function CreateUsedGoodsForm({
     toastTimerRef.current = setTimeout(() => setShowToast(false), 3000);
   };
 
-  const isFormValid =
-    title.trim() !== "" &&
-    price !== "" &&
-    productCategory !== "" &&
-    condition !== "" &&
-    preferredLocation !== "" &&
-    (preferredLocation !== "그 외 지역" || preferredLocationDetail.trim() !== "") &&
-    content.trim() !== "" &&
-    imagePreviews.length > 0;
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!productCategory || !condition || !preferredLocation) return;
+    if (imagePreviews.length === 0) return;
 
     const urlCount = (content.match(/https?:\/\/[^\s]+/g) ?? []).length;
     if (urlCount > maxUrlsRef.current) {
@@ -307,10 +298,11 @@ export function CreateUsedGoodsForm({
               <div className="relative">
                 <Input
                   id="price"
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   placeholder="0"
                   value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  onChange={(e) => setPrice(e.target.value.replace(/[^0-9]/g, ""))}
                   className="pr-12"
                   required
                 />
@@ -407,6 +399,7 @@ export function CreateUsedGoodsForm({
               fileInputRef={fileInputRef}
               imagePreviews={imagePreviews}
               minCount={1}
+              required
               isChecking={isCheckingImages}
               onUploadClick={handleImageUpload}
               onSelect={handleImageSelect}
@@ -446,7 +439,7 @@ export function CreateUsedGoodsForm({
                 type="submit"
                 variant="teal"
                 className="flex-1"
-                disabled={isSubmitting || !isFormValid}
+                disabled={isSubmitting}
               >
                 {isSubmitting ? t("form.submitting") : t("form.submit")}
               </Button>
