@@ -4,12 +4,13 @@ import { useTranslations } from "next-intl";
 import { ROUTES } from "@/constants/routes";
 
 const NAV_LINKS = [
-  { href: ROUTES.usedgoods, key: "services.usedgoods" },
-  { href: ROUTES.jobs, key: "services.jobs" },
-  { href: ROUTES.rental, key: "services.rental" },
-  { href: ROUTES.termsOfService, key: "legal.termsOfService" },
-  { href: ROUTES.privacyPolicy, key: "legal.privacyPolicy" },
-  { href: ROUTES.youthPolicy, key: "legal.youthPolicy" },
+  { href: ROUTES.usedgoods, key: "services.usedgoods", newTab: false },
+  { href: ROUTES.jobs, key: "services.jobs", newTab: false },
+  { href: ROUTES.rental, key: "services.rental", newTab: false },
+  { href: ROUTES.go, key: "services.go", newTab: false },
+  { href: ROUTES.termsOfService, key: "legal.termsOfService", newTab: true },
+  { href: ROUTES.privacyPolicy, key: "legal.privacyPolicy", newTab: true },
+  { href: ROUTES.youthPolicy, key: "legal.youthPolicy", newTab: true },
 ] as const;
 
 export function Footer() {
@@ -30,7 +31,11 @@ export function Footer() {
           {NAV_LINKS.map((item, i) => (
             <span key={item.href} className="flex items-center gap-4">
               {i !== 0 && <span className="text-gray-300">|</span>}
-              <Link href={item.href} className="hover:text-teal-600 transition-colors">
+              <Link
+                href={item.href}
+                className="hover:text-teal-600 transition-colors"
+                {...(item.newTab && { target: "_blank", rel: "noopener noreferrer" })}
+              >
                 {t(item.key)}
               </Link>
             </span>
