@@ -1,15 +1,14 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
+import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
 import { ImageUploadField } from "@/components/common/ImageUploadField";
 import { moderateImage } from "@/lib/moderateImage";
 import Toast from "@/components/common/Toast";
@@ -82,13 +81,6 @@ export default function RentalCreateForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [urlError, setUrlError] = useState("");
   const maxUrlsRef = useRef(3);
-
-  useEffect(() => {
-    fetch("/api/admin/spam-config")
-      .then((r) => r.json())
-      .then((d) => { if (d?.max_urls_per_post != null) maxUrlsRef.current = d.max_urls_per_post; })
-      .catch(() => {});
-  }, []);
   const [isCheckingImages, setIsCheckingImages] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showToast, setShowToast] = useState(false);
@@ -117,6 +109,42 @@ export default function RentalCreateForm({
     const remaining = 10 - imageFiles.length;
     const candidates = files.slice(0, remaining);
     e.target.value = "";
+
+    setIsCheckingImages(true);
+    try {
+      const allowedFiles: File[] = [];
+      let blockedReason: string | null = null;
+
+      for (const file of candidates) {
+        const outcome = await moderateImage(file);
+        if (outcome.allowed) {
+          allowedFiles.push(file);
+        } else {
+          blockedReason = outcome.reason;
+        }
+      }
+
+      if (blockedReason) {
+        showErrorToast(
+          blockedReason === "unavailable"
+            ? tc("imageUpload.unavailable")
+            : tc("imageUpload.blocked"),
+        );
+      }
+
+      setImageFiles((prev) => [...prev, ...allowedFiles]);
+      setImagePreviews((prev) => [
+        ...prev,
+        ...allowedFiles.map((file) => URL.createObjectURL(file)),
+      ]);
+    } finally {
+      setIsCheckingImages(false);
+    }
+  };
+
+  const handleFilesDropped = async (files: File[]) => {
+    const remaining = 10 - imageFiles.length;
+    const candidates = files.slice(0, remaining);
 
     setIsCheckingImages(true);
     try {
@@ -277,26 +305,33 @@ export default function RentalCreateForm({
   };
 
   return (
-    <main className="flex-1 bg-gray-50 py-8 px-4">
-      <div className="max-w-3xl mx-auto">
-        <Button
-          variant="ghost"
-          onClick={() =>
-            router.push(initialData ? `/rental/${postId}` : "/rental")
-          }
-          className="mb-6"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          {t("form.back")}
-        </Button>
-
-        <Card className="p-8">
-          <h1 className="page-title-lg mb-2">
+    <main className="flex-1 bg-gray-50 py-8 px-4 pb-32">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            onClick={() => router.push(initialData ? `/rental/${postId}` : "/rental")}
+            className="hover:text-teal-500"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </Button>
+          <span className="text-lg font-semibold">
             {initialData ? t("form.editTitle") : t("form.createTitle")}
-          </h1>
-          <p className="text-gray-600 mb-8">{t("form.subtitle")}</p>
+          </span>
+        </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="p-8">
+          <form id="rental-create-form" onSubmit={handleSubmit} className="space-y-6">
+            <ImageUploadField
+              fileInputRef={fileInputRef}
+              imagePreviews={imagePreviews}
+              isChecking={isCheckingImages}
+              onUploadClick={handleImageUpload}
+              onSelect={handleImageSelect}
+              onRemove={removeImage}
+              onFilesDropped={handleFilesDropped}
+            />
+
             <div className="space-y-2">
               <Label htmlFor="title">{t("form.titleLabel")}</Label>
               <Input
@@ -304,17 +339,18 @@ export default function RentalCreateForm({
                 placeholder={t("form.titlePlaceholder")}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                className="h-12 rounded-sm"
                 required
               />
+              {title.length > 0 && title.trim().length < 2 && (
+                <p className="text-[13px] text-red-500">{t("form.titleMinLength")}</p>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="location">{t("form.locationLabel")}</Label>
-              <Select
-                value={location}
-                onValueChange={(v) => setLocation(v as Location)}
-              >
-                <SelectTrigger>
+              <Select value={location} onValueChange={(v) => setLocation(v as Location)}>
+                <SelectTrigger className="h-12 rounded-sm">
                   <SelectValue placeholder={t("form.locationPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -330,6 +366,7 @@ export default function RentalCreateForm({
                   placeholder={t("form.locationDetailPlaceholder")}
                   value={locationDetail}
                   onChange={(e) => setLocationDetail(e.target.value)}
+                  className="h-12 rounded-sm"
                   required
                 />
               )}
@@ -337,11 +374,8 @@ export default function RentalCreateForm({
 
             <div className="space-y-2">
               <Label htmlFor="rentType">{t("form.rentTypeLabel")}</Label>
-              <Select
-                value={rentType}
-                onValueChange={(v) => setRentType(v as RentType)}
-              >
-                <SelectTrigger>
+              <Select value={rentType} onValueChange={(v) => setRentType(v as RentType)}>
+                <SelectTrigger className="h-12 rounded-sm">
                   <SelectValue placeholder={t("form.rentTypePlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -356,16 +390,15 @@ export default function RentalCreateForm({
               <div className="relative">
                 <Input
                   id="price"
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   placeholder="0"
                   value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  className="pr-12"
+                  onChange={(e) => setPrice(e.target.value.replace(/[^0-9]/g, ""))}
+                  className="h-12 rounded-sm pr-12"
                   required
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
-                  PHP
-                </span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">PHP</span>
               </div>
             </div>
 
@@ -374,26 +407,21 @@ export default function RentalCreateForm({
               <div className="relative">
                 <Input
                   id="deposit"
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   placeholder="0"
                   value={deposit}
-                  onChange={(e) => setDeposit(e.target.value)}
-                  className="pr-12"
+                  onChange={(e) => setDeposit(e.target.value.replace(/[^0-9]/g, ""))}
+                  className="h-12 rounded-sm pr-12"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
-                  PHP
-                </span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">PHP</span>
               </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="roomType">{t("form.roomTypeLabel")}</Label>
-              <Select
-                value={roomType}
-                onValueChange={(v) => setRoomType(v as RoomType)}
-                required
-              >
-                <SelectTrigger>
+              <Select value={roomType} onValueChange={(v) => setRoomType(v as RoomType)} required>
+                <SelectTrigger className="h-12 rounded-sm">
                   <SelectValue placeholder={t("form.roomTypePlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -409,10 +437,12 @@ export default function RentalCreateForm({
               <Label htmlFor="maxOccupants">{t("form.maxOccupantsLabel")}</Label>
               <Input
                 id="maxOccupants"
-                type="number"
+                type="text"
+                inputMode="numeric"
                 placeholder="0"
                 value={maxOccupants}
-                onChange={(e) => setMaxOccupants(e.target.value)}
+                onChange={(e) => setMaxOccupants(e.target.value.replace(/[^0-9]/g, ""))}
+                className="h-12 rounded-sm"
                 required
               />
             </div>
@@ -437,58 +467,55 @@ export default function RentalCreateForm({
               </div>
             </div>
 
-            <ImageUploadField
-              fileInputRef={fileInputRef}
-              imagePreviews={imagePreviews}
-              isChecking={isCheckingImages}
-              onUploadClick={handleImageUpload}
-              onSelect={handleImageSelect}
-              onRemove={removeImage}
-            />
-
             <div className="space-y-2">
               <Label htmlFor="description">{t("form.descriptionLabel")}</Label>
               <Textarea
                 id="description"
                 placeholder={t("form.descriptionPlaceholder")}
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e) => setDescription(e.target.value.slice(0, 5000))}
+                className="resize-none min-h-56 rounded-sm p-5 text-xs md:text-sm"
                 rows={10}
+                maxLength={5000}
               />
-            </div>
-
-            {urlError && (
-              <p className="text-[13px] text-red-500">{urlError}</p>
-            )}
-            <div className="flex gap-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() =>
-                  router.push(initialData ? `/rental/${postId}` : "/rental")
-                }
-                className="flex-1"
-                disabled={isSubmitting}
-              >
-                {tc("cancel")}
-              </Button>
-              <Button
-                type="submit"
-                variant="teal"
-                className="flex-1"
-                disabled={isSubmitting}
-              >
-                {isSubmitting
-                  ? initialData
-                    ? t("form.editing")
-                    : t("form.submitting")
-                  : initialData
-                    ? t("form.editDone")
-                    : t("form.submit")}
-              </Button>
+              {description.length > 0 && description.trim().length < 10 && (
+                <p className="text-[13px] text-red-500">{t("form.descriptionMinLength")}</p>
+              )}
+              <p className="text-right text-xs text-gray-400">{description.length}/5000</p>
             </div>
           </form>
-        </Card>
+        </div>
+      </div>
+
+      <div className="sticky bottom-0 z-10 bg-gray-50 pb-4 -mx-4 px-4 md:static md:bg-transparent md:pb-0 md:max-w-7xl md:mx-auto md:px-8">
+        <hr className="border-gray-200" />
+        <p className="text-center text-xs md:text-sm text-gray-500 mt-4">{t("form.sellerDisclaimer")}</p>
+
+        {urlError && (
+          <p className="text-[13px] text-red-500 mt-2">{urlError}</p>
+        )}
+        <div className="flex gap-3 pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.push(initialData ? `/rental/${postId}` : "/rental")}
+            className="flex-1 h-12"
+            disabled={isSubmitting}
+          >
+            {tc("cancel")}
+          </Button>
+          <Button
+            type="submit"
+            form="rental-create-form"
+            variant="teal"
+            className="flex-1 h-12"
+            disabled={isSubmitting}
+          >
+            {isSubmitting
+              ? initialData ? t("form.editing") : t("form.submitting")
+              : initialData ? t("form.editDone") : t("form.submit")}
+          </Button>
+        </div>
       </div>
       <Toast message={toastMessage} showMessage={showToast} type="error" icon="alert" />
     </main>
