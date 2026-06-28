@@ -8,6 +8,7 @@ import {
   AlertTriangle, ExternalLink, CircleOff
 } from "lucide-react";
 import { AdminPagination } from "@/app/(admin)/admin/_components/AdminPagination";
+import { MeetupAvatar } from "@/components/go/MeetupAvatar";
 import { adminGetMeetups, adminForceEndMeetup } from "@/services/go/go";
 import { TOPIC_META, TOPIC_OPTIONS } from "@/constants/meetupTopics";
 import type { AdminMeetup } from "@/type/go";
@@ -44,24 +45,6 @@ function StatusPill({ status }: { status: "active" | "upcoming" | "ended" }) {
     >
       {m.label}
     </span>
-  );
-}
-
-function Avatar({ name, size = 28 }: { name: string; size?: number }) {
-  const colors = [
-    { bg: "#fee2e2", fg: "#dc2626" }, { bg: "#dbeafe", fg: "#2563eb" },
-    { bg: "#ede9fe", fg: "#7c3aed" }, { bg: "#ffedd5", fg: "#ea580c" },
-    { bg: "#dcfce7", fg: "#16a34a" }, { bg: "#fce7f3", fg: "#db2777" },
-  ];
-  let i = 0;
-  for (let c = 0; c < name.length; c++) i = (i + name.charCodeAt(c)) % colors.length;
-  return (
-    <div
-      style={{ width: size, height: size, background: colors[i].bg, color: colors[i].fg }}
-      className="flex flex-shrink-0 items-center justify-center rounded-full text-xs font-bold"
-    >
-      {name.charAt(0)}
-    </div>
   );
 }
 
@@ -305,7 +288,7 @@ export default function AdminGoPage() {
                     </td>
                     <td className="px-[18px] py-3.5">
                       <div className="flex items-center gap-2">
-                        <Avatar name={m.host_name} size={28} />
+                        <MeetupAvatar name={m.host_name} size={28} />
                         <span className="max-w-[64px] truncate text-[13.5px] font-semibold text-slate-700">{m.host_name}</span>
                       </div>
                     </td>
@@ -369,7 +352,7 @@ export default function AdminGoPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <Avatar name={m.host_name} size={22} />
+                      <MeetupAvatar name={m.host_name} size={22} />
                       <span className="max-w-[60px] truncate text-[12.5px] font-semibold text-slate-600">{m.host_name}</span>
                     </div>
                   </div>
@@ -419,7 +402,7 @@ export default function AdminGoPage() {
             <div className="flex flex-1 flex-col gap-5 overflow-y-auto px-6 py-5">
               {/* 주최자 */}
               <div className="flex items-center gap-3.5 rounded-[14px] border border-slate-100 bg-slate-50 p-4">
-                <Avatar name={selected.host_name} size={44} />
+                <MeetupAvatar name={selected.host_name} size={44} />
                 <div>
                   <div className="text-[15px] font-bold text-slate-900">{selected.host_name}</div>
                   <div className="mt-0.5 text-[12.5px] text-slate-400">
@@ -479,13 +462,13 @@ export default function AdminGoPage() {
                 <div className="flex flex-wrap gap-3">
                   <div className="flex flex-col items-center gap-1">
                     <div style={{ boxShadow: "0 0 0 2px #14b8a6" }} className="rounded-full">
-                      <Avatar name={selected.host_name} size={40} />
+                      <MeetupAvatar name={selected.host_name} size={40} />
                     </div>
                     <span className="text-[10.5px] font-bold text-teal-600">주최자</span>
                   </div>
                   {selected.participants.slice(0, 8).map((pt) => (
                     <div key={pt.id} className="flex flex-col items-center gap-1">
-                      <Avatar name={pt.display_name} size={40} />
+                      <MeetupAvatar name={pt.display_name} size={40} />
                       <span className="text-[10.5px] text-slate-400">참여자</span>
                     </div>
                   ))}
