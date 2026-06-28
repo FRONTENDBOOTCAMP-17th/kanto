@@ -129,6 +129,7 @@
       "label": "사진 (최대 {maxCount}장)",
       "labelWithMin": "사진 (최소 {minCount}장, 최대 {maxCount}장)",
       "add": "사진 추가하기",
+      "drop": "여기에 놓으세요",
       "removeImage": "이미지 {index} 삭제",
       "goToImage": "이미지 {index}로 이동",
       "checking": "이미지 확인 중...",

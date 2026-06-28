@@ -129,6 +129,7 @@
       "label": "Photos (up to {maxCount})",
       "labelWithMin": "Photos (min {minCount}, max {maxCount})",
       "add": "Add photos",
+      "drop": "Drop here",
       "removeImage": "Remove image {index}",
       "goToImage": "Go to image {index}",
       "checking": "Checking image...",

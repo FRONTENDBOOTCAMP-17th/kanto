@@ -227,6 +227,42 @@ export function CreateUsedGoodsForm({
     fileInputRef.current?.click();
   };
 
+  const handleFilesDropped = async (files: File[]) => {
+    const remaining = 10 - imageFiles.length;
+    const candidates = files.slice(0, remaining);
+
+    setIsCheckingImages(true);
+    try {
+      const allowedFiles: File[] = [];
+      let blockedReason: string | null = null;
+
+      for (const file of candidates) {
+        const outcome = await moderateImage(file);
+        if (outcome.allowed) {
+          allowedFiles.push(file);
+        } else {
+          blockedReason = outcome.reason;
+        }
+      }
+
+      if (blockedReason) {
+        showErrorToast(
+          blockedReason === "unavailable"
+            ? tc("imageUpload.unavailable")
+            : tc("imageUpload.blocked"),
+        );
+      }
+
+      setImageFiles((prev) => [...prev, ...allowedFiles]);
+      setImagePreviews((prev) => [
+        ...prev,
+        ...allowedFiles.map((file) => URL.createObjectURL(file)),
+      ]);
+    } finally {
+      setIsCheckingImages(false);
+    }
+  };
+
   const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
     const remaining = 10 - imageFiles.length;
@@ -294,6 +330,7 @@ export function CreateUsedGoodsForm({
               onUploadClick={handleImageUpload}
               onSelect={handleImageSelect}
               onRemove={removeImage}
+              onFilesDropped={handleFilesDropped}
             />
             {imagePreviews.length === 0 && (
               <p className="text-sm text-red-500">{t("form.errorNoImage")}</p>
