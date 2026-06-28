@@ -28,3 +28,26 @@ export async function blockUserStandaloneAction(blockedId: number) {
       { onConflict: "blocker_id,blocked_id", ignoreDuplicates: true },
     );
 }
+
+// 전역 차단 해제 — user_blocks에서 제거. (프로필 차단 목록·모임 채팅 등에서 공용 사용)
+export async function unblockUserStandaloneAction(blockedId: number) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const { data: userData } = await supabase
+    .from("users")
+    .select("id")
+    .eq("auth_id", user.id)
+    .single();
+  if (!userData) throw new Error("유저를 찾을 수 없습니다.");
+
+  await supabase
+    .from("user_blocks")
+    .delete()
+    .eq("blocker_id", userData.id)
+    .eq("blocked_id", blockedId);
+}

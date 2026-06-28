@@ -5,7 +5,7 @@ import { UserX } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
 import { getBlockedUsers, type BlockedUser } from "@/services/chat/block";
-import { unblockMemberAction } from "@/components/go/groupChat/blockMemberAction";
+import { unblockUserStandaloneAction } from "@/services/user/blockUser";
 
 export function ProfileBlockedSection() {
   const t = useTranslations("Profile.blocked");
@@ -21,7 +21,7 @@ export function ProfileBlockedSection() {
   }, [user]);
 
   const handleUnblock = async (blockedId: number) => {
-    await unblockMemberAction(blockedId);
+    await unblockUserStandaloneAction(blockedId);
     setBlocked((prev) => prev.filter((u) => u.id !== blockedId));
   };
 

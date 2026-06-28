@@ -106,7 +106,7 @@
 - 검증: 어드바이저 `auth_rls_initplan` WARN **전부 해소**.
 
 ### C-3. 중복 허용 정책 병합 — **보류**
-- `multiple_permissive_policies` WARN(posts/used_goods/jobs/rentals/users/comments/community_posts/dating_profiles, SELECT/UPDATE/DELETE)는 미적용.
+- `multiple_permissive_policies` WARN(posts/used_goods/jobs/rentals/users/comments/dating_profiles, SELECT/UPDATE/DELETE)는 미적용.
 - 사유: 8개 테이블 보안 정책을 OR 단일화하는 전면 재작성이라 보안 면적이 크고, 현재 규모에선 이득 미미. PERMISSIVE 정책은 어차피 OR로 평가되므로 기능 동일하나, 안전하게 별도 리뷰 회차(가능하면 팀과)로 진행 권장.
 
 ### 후속

@@ -21,9 +21,9 @@ import {
   unblockMemberInRoom,
 } from "@/services/go/groupChat";
 import {
-  blockMemberAction,
-  unblockMemberAction,
-} from "@/components/go/groupChat/blockMemberAction";
+  blockUserStandaloneAction,
+  unblockUserStandaloneAction,
+} from "@/services/user/blockUser";
 import { useGroupChatRealtime } from "@/hooks/go/useGroupChatRealtime";
 import { useSpamPrevention } from "@/hooks/chat/useSpamPrevention";
 import { useSpamConfig } from "@/hooks/useSpamConfig";
@@ -31,6 +31,7 @@ import ReportModal, {
   USER_REPORT_CATEGORIES,
 } from "@/components/common/ReportModal";
 import { useChatStore } from "@/store/chatStore";
+import { GoToast } from "@/components/go/GoToast";
 import GroupMessageList from "./GroupMessageList";
 import GroupChatInput from "./GroupChatInput";
 import GroupMemberList from "./GroupMemberList";
@@ -275,9 +276,10 @@ export default function GroupChatRoomBody({
           m.tempId === tempId ? { ...saved, tempId: undefined } : m,
         ),
       );
-    } catch (e) {
+    } catch {
       setMessages((prev) => prev.filter((m) => m.tempId !== tempId));
-      setSendError(e instanceof Error ? e.message : t("chat.sendFailed"));
+      // 서버 에러 원문(코드/한국어)을 노출하지 않고 현지화 메시지로 통일
+      setSendError(t("chat.sendFailed"));
       setTimeout(() => setSendError(""), 3000);
     }
   };
@@ -310,7 +312,7 @@ export default function GroupChatRoomBody({
         await blockMemberInRoom(roomId, userId);
         showToast(t("chat.blockedRoom"));
       } else {
-        await blockMemberAction(userId);
+        await blockUserStandaloneAction(userId);
         showToast(t("chat.blockedGlobal"));
       }
       setBlockedIds((prev) => new Set(prev).add(userId));
@@ -324,7 +326,7 @@ export default function GroupChatRoomBody({
     try {
       await Promise.all([
         unblockMemberInRoom(roomId, userId),
-        unblockMemberAction(userId),
+        unblockUserStandaloneAction(userId),
       ]);
       setBlockedIds((prev) => {
         const next = new Set(prev);
@@ -491,17 +493,8 @@ export default function GroupChatRoomBody({
         onToast={(msg) => showToast(msg)}
       />
 
-      {sendError && (
-        <div className="fixed bottom-7 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-xl bg-gray-900 px-5 py-3.5 text-[13.5px] font-semibold text-white shadow-2xl">
-          {sendError}
-        </div>
-      )}
-
-      {toast && (
-        <div className="fixed bottom-7 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-xl bg-gray-900 px-5 py-3.5 text-[13.5px] font-semibold text-white shadow-2xl">
-          {toast}
-        </div>
-      )}
+      {sendError && <GoToast message={sendError} />}
+      {toast && <GoToast message={toast} />}
     </div>
   );
 }

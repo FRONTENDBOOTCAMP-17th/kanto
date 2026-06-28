@@ -9,6 +9,8 @@ export interface PublicProfile {
   createdAt: string | null;
   postCount: number;
   avgRating: number | null;
+  ktsScore: number | null;
+  ktsGrade: string | null;
   identityVerified: boolean;
 }
 
@@ -26,13 +28,27 @@ export const getPublicProfile = cache(
     if (!data || data.id === null) return null;
 
     let identityVerified = false;
-    if (data.auth_id) {
-      const admin = createAdminClient();
-      const { data: authData } = await admin.auth.admin.getUserById(
-        data.auth_id,
-      );
+    let ktsScore: number | null = null;
+    let ktsGrade: string | null = null;
+    const admin = createAdminClient();
+
+    const [{ data: ktsData }, authResult] = await Promise.all([
+      admin
+        .from("users")
+        .select("kts_score, kts_grade")
+        .eq("id", data.id)
+        .maybeSingle(),
+      data.auth_id
+        ? admin.auth.admin.getUserById(data.auth_id)
+        : Promise.resolve({ data: null }),
+    ]);
+
+    ktsScore = ktsData?.kts_score ?? null;
+    ktsGrade = ktsData?.kts_grade ?? null;
+
+    if (authResult.data) {
       identityVerified =
-        authData?.user?.user_metadata?.identity_verified === true;
+        authResult.data.user?.user_metadata?.identity_verified === true;
     }
 
     return {
@@ -42,6 +58,8 @@ export const getPublicProfile = cache(
       createdAt: data.created_at,
       postCount: data.post_count ?? 0,
       avgRating: data.avg_rating,
+      ktsScore,
+      ktsGrade,
       identityVerified,
     };
   },
