@@ -12,7 +12,6 @@ import { MeetupAvatar } from "@/components/go/MeetupAvatar";
 import { adminGetMeetups, adminForceEndMeetup } from "@/services/go/go";
 import { TOPIC_META, TOPIC_OPTIONS } from "@/constants/meetupTopics";
 import { MANILA_TZ, formatManilaTimeRange } from "@/utils/goTime";
-import { MeetupAvatar } from "@/components/go/MeetupAvatar";
 import { TopicBadge } from "@/components/go/TopicBadge";
 import { GoToast } from "@/components/go/GoToast";
 import type { AdminMeetup } from "@/type/go";
