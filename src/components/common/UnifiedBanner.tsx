@@ -70,9 +70,12 @@ export function UnifiedBanner() {
   // 모바일 제재 모달
   const [suspensionModalOpen, setSuspensionModalOpen] = useState(false);
 
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const [lastPathname, setLastPathname] = useState(pathname);
+  if (lastPathname !== pathname) {
+    setLastPathname(pathname);
+    setDismissedIds([]);
+    setHideTodayChecked(false);
+  }
 
   useEffect(() => {
     fetch("/api/admin/notices")
@@ -86,11 +89,6 @@ export function UnifiedBanner() {
       })
       .catch(() => {});
   }, []);
-
-  useEffect(() => {
-    setDismissedIds([]);
-    setHideTodayChecked(false);
-  }, [pathname]);
 
   const items = useMemo<BannerItem[]>(() => {
     const result: BannerItem[] = [];
@@ -106,23 +104,10 @@ export function UnifiedBanner() {
     return result;
   }, [notices, dismissedIds, user]);
 
-  // 데스크톱 인덱스 보정
-  useEffect(() => {
-    if (items.length > 0 && desktopIndex >= items.length) {
-      setDesktopIndex(items.length - 1);
-    }
-  }, [items.length, desktopIndex]);
-
-  // 공지 모달 인덱스 보정
   const noticeItems = useMemo(
     () => items.filter((i): i is { type: "notice"; notice: Notice } => i.type === "notice"),
     [items],
   );
-  useEffect(() => {
-    if (noticeIndex >= noticeItems.length && noticeItems.length > 0) {
-      setNoticeIndex(noticeItems.length - 1);
-    }
-  }, [noticeItems.length, noticeIndex]);
 
   const suspensionItem = items.find(
     (i): i is { type: "suspension"; suspendedUntil: string } => i.type === "suspension",
@@ -199,7 +184,7 @@ export function UnifiedBanner() {
       </div>
 
       {/* ── 모바일: 공지 모달 ────────────────────────────────────────── */}
-      {mounted && noticeModalOpen && noticeCount > 0 && createPortal(
+      {noticeModalOpen && noticeCount > 0 && createPortal(
         <div
           className="fixed inset-0 z-9999 flex items-center justify-center p-6"
           onClick={() => setNoticeModalOpen(false)}
@@ -275,7 +260,7 @@ export function UnifiedBanner() {
       )}
 
       {/* ── 모바일: 제재 모달 ────────────────────────────────────────── */}
-      {mounted && suspensionModalOpen && hasSuspension && createPortal(
+      {suspensionModalOpen && hasSuspension && createPortal(
         <div
           className="fixed inset-0 z-9999 flex items-center justify-center p-6"
           onClick={() => setSuspensionModalOpen(false)}
