@@ -266,7 +266,8 @@
     "productCondition": {
       "미개봉": "Unopened",
       "가벼운 사용감": "Lightly used",
-      "사용감 있음": "Used"
+      "사용감 있음": "Used",
+      "기타": "Other"
     },
     "employeeType": {
       "정규직": "Full-time",
@@ -409,9 +410,11 @@
     "form": {
       "back": "Back",
       "editTitle": "Edit listing",
-      "createTitle": "Create listing",
+      "createTitle": "Sell Item",
       "subtitle": "Please enter the required information",
-      "titleLabel": "Title *",
+      "titleMinLength": "Product name must be at least 2 characters",
+      "contentMinLength": "Product description must be at least 10 characters",
+      "titleLabel": "Product Name *",
       "titlePlaceholder": "Enter the product name",
       "priceLabel": "Price *",
       "categoryLabel": "Category *",
@@ -421,11 +424,12 @@
       "locationLabel": "Trade area *",
       "locationPlaceholder": "Select an area",
       "locationDetailPlaceholder": "Enter a detailed area",
-      "contentLabel": "Description *",
-      "contentPlaceholder": "Enter a description of the product",
+      "contentLabel": "Product Description *",
+      "contentPlaceholder": "- Product name\n- Purchase date (year, month, day)\n- Duration of use\n- Any defects\n\n* Detailed product information\n* Please write in detail so various users can understand\n* Posting URLs, KakaoTalk IDs, or phone numbers may result in post deletion and service restrictions\n\nWe are committed to promoting healthy second-hand trading.",
       "safePaymentUse": "Use safe payment",
+      "sellerDisclaimer": "I agree that if the product information differs from the actual item, all responsibility lies with the seller",
       "submitting": "Submitting...",
-      "submit": "Done",
+      "submit": "List for Sale",
       "errorPost": "Failed to create the post.",
       "errorImage": "Failed to upload images.",
       "errorGoods": "Failed to register product info.",

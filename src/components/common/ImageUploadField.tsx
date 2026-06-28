@@ -68,7 +68,7 @@ export function ImageUploadField({
             type="button"
             onClick={onUploadClick}
             disabled={isChecking}
-            className="w-full border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-teal-500 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-teal-500 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
           >
             <div className="flex flex-col items-center gap-2 text-gray-500">
               {isChecking ? (

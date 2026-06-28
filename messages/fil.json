@@ -266,7 +266,8 @@
     "productCondition": {
       "미개봉": "Hindi pa nabubuksan",
       "가벼운 사용감": "Bahagyang nagamit",
-      "사용감 있음": "Nagamit na"
+      "사용감 있음": "Nagamit na",
+      "기타": "Iba pa"
     },
     "employeeType": {
       "정규직": "Full-time",
@@ -415,9 +416,11 @@
     "form": {
       "back": "Bumalik",
       "editTitle": "I-edit ang listing",
-      "createTitle": "Gumawa ng listing",
+      "createTitle": "Magbenta ng Item",
       "subtitle": "Pakilagay ang kinakailangang impormasyon",
-      "titleLabel": "Pamagat *",
+      "titleMinLength": "Ang pangalan ng produkto ay dapat na hindi bababa sa 2 character",
+      "contentMinLength": "Ang paglalarawan ng produkto ay dapat na hindi bababa sa 10 character",
+      "titleLabel": "Pangalan ng Produkto *",
       "titlePlaceholder": "Ilagay ang pangalan ng produkto",
       "priceLabel": "Presyo *",
       "categoryLabel": "Kategorya *",
@@ -427,11 +430,12 @@
       "locationLabel": "Lugar ng transaksyon *",
       "locationPlaceholder": "Pumili ng lugar",
       "locationDetailPlaceholder": "Ilagay ang detalyadong lugar",
-      "contentLabel": "Nilalaman *",
-      "contentPlaceholder": "Ilagay ang paglalarawan ng produkto",
+      "contentLabel": "Paglalarawan ng Produkto *",
+      "contentPlaceholder": "- Pangalan ng produkto\n- Petsa ng pagbili (taon, buwan, araw)\n- Tagal ng paggamit\n- Anumang depekto\n\n* Detalyadong impormasyon ng produkto\n* Mangyaring isulat nang detalyado para maunawaan ng iba't ibang user\n* Ang paglalagay ng URL, KakaoTalk ID, o numero ng telepono ay maaaring magresulta sa pagtanggal ng post at paghihigpit sa serbisyo\n\nMagtatrabaho kami para sa malusog na kalakalan ng mga ginamit na bagay.",
       "safePaymentUse": "Gamitin ang ligtas na bayad",
+      "sellerDisclaimer": "Sumasang-ayon ako na kung ang impormasyon ng produkto ay naiiba sa aktwal na item, ang lahat ng responsibilidad ay nasa nagbebenta",
       "submitting": "Isinusumite...",
-      "submit": "Tapos na",
+      "submit": "Ibenta",
       "errorPost": "Nabigo ang paggawa ng post.",
       "errorImage": "Nabigo ang pag-upload ng mga larawan.",
       "errorGoods": "Nabigo ang pagrehistro ng impormasyon ng produkto.",
