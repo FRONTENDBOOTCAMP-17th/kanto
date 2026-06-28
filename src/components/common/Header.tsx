@@ -103,11 +103,11 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
 
   return (
     <header
-      className={`fixed md:sticky top-0 z-50 w-full bg-white border-b border-gray-200 transition-transform duration-300 ${
+      className={`fixed md:sticky top-0 z-50 w-full bg-white transition-transform duration-300 ${
         isVisible || isMobileOpen ? "translate-y-0" : "-translate-y-full md:translate-y-0"
       }`}
     >
-      <div className="page-container">
+      <div className="page-container border-b border-gray-200 relative z-10 bg-white">
         <div className="flex items-center justify-between h-12 md:h-16">
           
           <Link
@@ -137,7 +137,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
             
             <LanguageSwitcher />
 
-            
+
             {user && (
               <NotificationBell
                 ref={notificationBellRef}
