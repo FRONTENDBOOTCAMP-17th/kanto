@@ -88,24 +88,20 @@ export function CreatePageClient({ initialIsVerified }: CreatePageClientProps) {
         </div>
         <p className="text-sm text-gray-500 mb-8">{t("subtitle")}</p>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:max-w-[80%] md:mx-auto">
           {CATEGORIES.map(({ key, icon: Icon, href, color, bg }) => (
             <button
               key={key}
               type="button"
               onClick={() => handleCategoryClick(href)}
-              className="flex flex-col gap-4 rounded-2xl border border-gray-200 p-5 md:p-8 hover:border-teal-400 hover:shadow-sm transition-all text-left cursor-pointer"
+              className="relative flex min-h-40 overflow-hidden rounded-2xl border border-gray-200 p-6 hover:border-teal-400 hover:bg-teal-50 hover:shadow-sm transition-all text-left cursor-pointer"
             >
-              <div
-                className={`w-10 h-10 md:w-10 md:h-10 rounded-xl ${bg} flex items-center justify-center`}
-              >
-                <Icon className={`w-5 h-5 md:w-7 md:h-7 ${color}`} />
-              </div>
-              <div>
+              <Icon className={`absolute right-4 top-1/2 -translate-y-1/2 w-24 h-24 ${color} opacity-15`} />
+              <div className="relative flex flex-col justify-start pr-24">
                 <p className="font-semibold text-gray-800 text-sm md:text-base">
                   {t(`categories.${key}.name`)}
                 </p>
-                <p className="text-xs md:text-sm text-gray-400 mt-0.5">
+                <p className="text-xs md:text-sm text-gray-400 mt-3">
                   {t(`categories.${key}.description`)}
                 </p>
               </div>

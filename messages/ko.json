@@ -331,15 +331,15 @@
     }
   },
   "Create": {
-    "title": "글쓰기",
-    "subtitle": "어떤 글을 작성할까요?",
+    "title": "등록하기",
+    "subtitle": "어떤 작업을 하시겠어요?",
     "categories": {
       "usedgoods": {
         "name": "중고거래",
         "description": "중고 물품을 사고 팔아요"
       },
       "jobs": {
-        "name": "구인구직",
+        "name": "구인 공고",
         "description": "일자리를 구하거나 직원을 모집해요"
       },
       "rental": {

@@ -331,8 +331,8 @@
     }
   },
   "Create": {
-    "title": "Create post",
-    "subtitle": "What would you like to post?",
+    "title": "Register",
+    "subtitle": "What would you like to do?",
     "categories": {
       "usedgoods": {
         "name": "Marketplace",

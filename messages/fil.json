@@ -331,8 +331,8 @@
     }
   },
   "Create": {
-    "title": "Gumawa ng post",
-    "subtitle": "Anong gusto mong i-post?",
+    "title": "Magrehistro",
+    "subtitle": "Ano ang gusto mong gawin?",
     "categories": {
       "usedgoods": {
         "name": "Palengke",
