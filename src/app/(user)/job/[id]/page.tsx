@@ -5,6 +5,8 @@ import { getTranslations } from "next-intl/server";
 import { getJobDetail } from "@/services/job/jobDetail";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
 import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarresel";
+import BackButton from "./_components/BackButton";
+import VerifyAuthor from "@/components/common/VerifyAuthor";
 import JobTitle from "./_components/JobTitle";
 import JobInfo from "./_components/JobInfo";
 import JobAuthorInfo from "./_components/JobAuthorInfo";
@@ -53,8 +55,17 @@ export default async function JobDetailPage({
   }));
 
   return (
-    <div className="page-container w-full py-6">
-      <div className="border border-gray-200 rounded-2xl overflow-hidden divide-y divide-gray-200">
+    <div className="page-container pb-12">
+      <div className="flex items-center justify-between mt-4">
+        <BackButton />
+        <VerifyAuthor
+          authorAuthId={job.posts.users?.auth_id}
+          editPath={`/job/${job.post_id}/edit`}
+          postId={job.post_id}
+          redirectPath="/job"
+        />
+      </div>
+      <div className="border border-gray-200 rounded-2xl overflow-hidden divide-y divide-gray-200 mt-4">
         <JobTitle job={job} userId={userId} initialLiked={initialLiked} initialReported={initialReported} />
         <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
           <JobInfo job={job} />
