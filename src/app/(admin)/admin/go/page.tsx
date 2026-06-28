@@ -5,8 +5,9 @@
 import { useEffect, useState, useMemo } from "react";
 import {
   Zap, Search, X, Calendar, MapPin, Users,
-  AlertTriangle, ChevronLeft, ChevronRight, ExternalLink, CircleOff
+  AlertTriangle, ExternalLink, CircleOff
 } from "lucide-react";
+import { AdminPagination } from "@/app/(admin)/admin/_components/AdminPagination";
 import { adminGetMeetups, adminForceEndMeetup } from "@/services/go/go";
 import { TOPIC_META, TOPIC_OPTIONS } from "@/constants/meetupTopics";
 import type { AdminMeetup } from "@/type/go";
@@ -238,7 +239,8 @@ export default function AdminGoPage() {
 
       {/* ── 테이블 ── */}
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
-        <div className="overflow-x-auto">
+        {/* 데스크탑: 테이블 */}
+        <div className="hidden overflow-x-auto lg:block">
           <table className="w-full min-w-[740px] border-collapse">
             <thead>
               <tr className="border-b border-[#f1f4f6] bg-[#f8fafc]">
@@ -320,29 +322,70 @@ export default function AdminGoPage() {
           </table>
         </div>
 
-        {/* 페이지네이션 */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between gap-3 border-t border-[#f1f4f6] px-5 py-4">
-            <span className="text-[13px] text-slate-400">
-              총 <span className="font-semibold text-slate-600">{filtered.length}</span>건
-            </span>
-            <div className="flex items-center gap-1.5">
-              <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={p <= 1}
-                className="flex h-8 items-center gap-1 rounded-[9px] border border-[#e7ebee] bg-white px-3 text-[13px] font-semibold text-slate-500 disabled:opacity-40 hover:bg-[#f7f9fa]">
-                <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.5} /> 이전
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-                <button key={n} onClick={() => setPage(n)}
-                  className={`h-8 min-w-[34px] rounded-[9px] border text-[13px] font-semibold ${p === n ? "border-teal-500 bg-teal-500 text-white" : "border-[#e7ebee] bg-white text-slate-500 hover:bg-[#f7f9fa]"}`}>
-                  {n}
-                </button>
-              ))}
-              <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={p >= totalPages}
-                className="flex h-8 items-center gap-1 rounded-[9px] border border-[#e7ebee] bg-white px-3 text-[13px] font-semibold text-slate-500 disabled:opacity-40 hover:bg-[#f7f9fa]">
-                다음 <ChevronRight className="h-3.5 w-3.5" strokeWidth={2.5} />
-              </button>
-            </div>
+        {/* 모바일: 카드 */}
+        {loading ? (
+          <div className="py-16 text-center text-[14px] text-slate-400 lg:hidden">불러오는 중...</div>
+        ) : pageItems.length === 0 ? (
+          <div className="flex flex-col items-center gap-3 py-16 text-center lg:hidden">
+            <Zap className="h-12 w-12 text-slate-200" strokeWidth={1.6} />
+            <div className="text-[15px] font-bold text-slate-500">조건에 맞는 모임이 없습니다</div>
+            <div className="text-[13.5px] text-slate-400">필터를 변경하거나 검색어를 지워보세요</div>
           </div>
+        ) : (
+          <div className="lg:hidden divide-y divide-[#f3f5f7]">
+            {pageItems.map((m) => {
+              const cap = Math.round(((m.participant_count + 1) / m.max_participants) * 100);
+              const capColor = cap >= 90 ? "#ef4444" : cap >= 70 ? "#f97316" : "#14b8a6";
+              const startDate = new Date(m.start_at);
+              const dateStr = `${startDate.getMonth() + 1}/${startDate.getDate()} ${startDate.getHours().toString().padStart(2, "0")}:${startDate.getMinutes().toString().padStart(2, "0")}`;
+              return (
+                <div
+                  key={m.post_id}
+                  onClick={() => { setSelectedId(m.post_id); setConfirmEnd(false); }}
+                  className="cursor-pointer px-4 py-3.5 hover:bg-[#f8fafc]"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <TopicPill topic={m.topic} />
+                      {m.reports > 0 && (
+                        <span className="shrink-0 rounded-md border border-red-200 bg-red-50 px-1.5 py-0.5 text-[11px] font-bold text-red-600">
+                          신고 {m.reports}건
+                        </span>
+                      )}
+                    </div>
+                    <StatusPill status={m.status} />
+                  </div>
+                  <div className="mt-1.5 truncate text-[14px] font-bold text-slate-900">{m.title}</div>
+                  <div className="mt-0.5 truncate text-[12.5px] text-slate-400">{m.location_address}</div>
+                  <div className="mt-2.5 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-[12.5px] text-slate-500">
+                      <span>{dateStr}</span>
+                      <span className="text-slate-300">·</span>
+                      <div className="flex items-center gap-1.5">
+                        <div className="h-1.5 w-9 overflow-hidden rounded-full bg-slate-100">
+                          <div className="h-full rounded-full" style={{ width: `${cap}%`, background: capColor }} />
+                        </div>
+                        <span className="font-bold text-slate-700">{m.participant_count + 1}/{m.max_participants}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Avatar name={m.host_name} size={22} />
+                      <span className="max-w-[60px] truncate text-[12.5px] font-semibold text-slate-600">{m.host_name}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {totalPages > 1 && (
+          <AdminPagination
+            currentPage={p}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            countLabel={<>총 <span className="font-semibold text-slate-600">{filtered.length}</span>건</>}
+          />
         )}
       </div>
 
