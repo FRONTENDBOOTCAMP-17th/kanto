@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Users, ExternalLink, X, AlertTriangle } from "lucide-react";
+import { AdminPagination } from "@/app/(admin)/admin/_components/AdminPagination";
 import { User, SanctionRecord } from "@/services/admin/adminUsers";
 import { applySanction } from "@/app/(admin)/admin/users/_actions/applySanction";
 import { liftSanction } from "@/app/(admin)/admin/users/_actions/liftSanction";
@@ -43,17 +44,6 @@ export default function UserDetailDrawer({ user, onClose, onChanged, onToast }: 
   const sanctionCurPage = Math.min(sanctionPage, sanctionTotalPages);
   const sanctionStart = (sanctionCurPage - 1) * SANCTION_PAGE_SIZE;
   const pagedSanctions = sanctions.slice(sanctionStart, sanctionStart + SANCTION_PAGE_SIZE);
-
-  const SANCTION_PAGE_WINDOW = 5;
-  const sanctionWinEnd = Math.min(
-    sanctionTotalPages,
-    Math.max(sanctionCurPage - 2, 1) + SANCTION_PAGE_WINDOW - 1,
-  );
-  const sanctionWinStart = Math.max(1, sanctionWinEnd - SANCTION_PAGE_WINDOW + 1);
-  const sanctionPageNumbers = Array.from(
-    { length: sanctionWinEnd - sanctionWinStart + 1 },
-    (_, i) => sanctionWinStart + i,
-  );
 
   function sanctionIsActive(s: SanctionRecord) {
     if (s.sanction_type === "perm") return true;
@@ -247,13 +237,11 @@ export default function UserDetailDrawer({ user, onClose, onChanged, onToast }: 
                 })}
               </div>
               {sanctionTotalPages > 1 && (
-                <div className="flex items-center justify-center gap-1 border-t border-[#f1f4f6] px-4 py-3">
-                  <button onClick={() => setSanctionPage((p) => Math.max(1, p - 1))} disabled={sanctionCurPage <= 1} className="h-[30px] rounded-[8px] border border-[#e7ebee] bg-white px-2.5 text-[12px] font-semibold disabled:opacity-40" style={{ color: sanctionCurPage <= 1 ? "#cbd5e1" : "#475569" }}>이전</button>
-                  {sanctionPageNumbers.map((nn) => (
-                    <button key={nn} onClick={() => setSanctionPage(nn)} className={["h-[30px] min-w-[30px] rounded-[8px] px-2 text-[12px]", nn === sanctionCurPage ? "border-none bg-teal-500 font-bold text-white" : "border border-[#e7ebee] bg-white font-semibold text-slate-600"].join(" ")}>{nn}</button>
-                  ))}
-                  <button onClick={() => setSanctionPage((p) => Math.min(sanctionTotalPages, p + 1))} disabled={sanctionCurPage >= sanctionTotalPages} className="h-[30px] rounded-[8px] border border-[#e7ebee] bg-white px-2.5 text-[12px] font-semibold disabled:opacity-40" style={{ color: sanctionCurPage >= sanctionTotalPages ? "#cbd5e1" : "#475569" }}>다음</button>
-                </div>
+                <AdminPagination
+                  currentPage={sanctionCurPage}
+                  totalPages={sanctionTotalPages}
+                  onPageChange={setSanctionPage}
+                />
               )}
               </>
             )}
