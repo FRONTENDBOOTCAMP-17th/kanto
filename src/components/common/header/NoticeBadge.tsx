@@ -27,6 +27,7 @@ function getHiddenIds(): number[] {
 
 export function NoticeBadge() {
   const [count, setCount] = useState(0);
+  const [animating, setAnimating] = useState(false);
   const user = useAuthStore((s) => s.user);
   const isSuspended =
     !!user?.suspended_until && new Date(user.suspended_until) > new Date();
@@ -64,7 +65,9 @@ export function NoticeBadge() {
         <Link
           href="/notices"
           aria-label={`공지사항 ${count}개`}
-          className="relative flex items-center gap-1 px-1.5 py-1 rounded-lg text-gray-600 hover:text-teal-600 hover:bg-teal-50 transition-colors"
+          onClick={() => setAnimating(true)}
+          onAnimationEnd={() => setAnimating(false)}
+          className={`relative flex items-center gap-1 px-1.5 py-1 rounded-lg text-gray-600 hover:text-teal-600 hover:bg-teal-50 transition-colors${animating ? " animate-[pullDown_0.35s_ease]" : ""}`}
         >
           <Megaphone className="w-5 h-5" />
           {count > 1 ? (

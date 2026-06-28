@@ -155,7 +155,7 @@ export function UnifiedBanner() {
   const safeDesktopIndex = Math.min(desktopIndex, items.length - 1);
   const desktopCurrent = items[safeDesktopIndex];
   const hasMultiple = items.length > 1;
-  const desktopBgColor = hasSuspension ? "bg-red-600" : "bg-teal-500";
+  const desktopBgColor = desktopCurrent.type === "suspension" ? "bg-red-600" : "bg-teal-500";
 
   // ── 모바일 공지 모달용 변수 ───────────────────────────────────────
   const safeNoticeIndex = Math.min(noticeIndex, Math.max(0, noticeItems.length - 1));
@@ -166,14 +166,14 @@ export function UnifiedBanner() {
     <>
       {/* ── 모바일: 공지 탭 + 제재 뱃지 ────────────────────────────── */}
       <div className="md:hidden relative h-0 overflow-visible">
-        <div className="absolute top-0 right-4 flex items-start gap-2">
+        <div className="absolute -top-1.5 right-4 flex items-start gap-2">
 
           {/* 공지 탭 */}
           {noticeCount > 0 && (
             <button
               onClick={() => setNoticeModalOpen(true)}
               aria-label="공지 보기"
-              className="flex flex-col items-center gap-1.5 bg-teal-500 text-white px-3 pt-3 pb-3.5 rounded-b-2xl shadow-md active:opacity-80 transition-opacity"
+              className="flex flex-col items-center gap-1.5 bg-teal-500 text-white px-3 pt-4 pb-3.5 rounded-b-2xl shadow-md active:translate-y-1.5 transition-transform"
             >
               <Megaphone className="w-4 h-4" />
               {noticeCount > 1 && (
@@ -189,7 +189,7 @@ export function UnifiedBanner() {
             <button
               onClick={() => setSuspensionModalOpen(true)}
               aria-label="제재 안내"
-              className="flex flex-col items-center gap-1.5 bg-red-600 text-white px-3 pt-3 pb-3.5 rounded-b-2xl shadow-md active:opacity-80 transition-opacity"
+              className="flex flex-col items-center gap-1.5 bg-red-600 text-white px-3 pt-4 pb-3.5 rounded-b-2xl shadow-md active:translate-y-1.5 transition-transform"
             >
               <ShieldAlert className="w-4 h-4" />
             </button>

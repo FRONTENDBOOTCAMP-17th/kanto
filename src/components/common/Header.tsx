@@ -110,7 +110,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
         isVisible || isMobileOpen ? "translate-y-0" : "-translate-y-full md:translate-y-0"
       }`}
     >
-      <div className="page-container border-b border-gray-200">
+      <div className="page-container border-b border-gray-200 relative z-10 bg-white">
         <div className="flex items-center justify-between h-12 md:h-16">
           
           <Link
