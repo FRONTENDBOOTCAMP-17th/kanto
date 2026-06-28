@@ -371,10 +371,10 @@
         "description": "Reasonably priced room rentals",
         "button": "Go to Rentals"
       },
-      "dating": {
-        "title": "Want to meet someone new?",
-        "description": "Start new connections with filtered random matching",
-        "button": "Go to Random Chat"
+      "go": {
+        "title": "Want to start a local meetup?",
+        "description": "Enjoy all kinds of meetups in the Philippines",
+        "button": "Go to Kanto GO!"
       }
     }
   },

@@ -377,10 +377,10 @@
         "description": "Makatuwirang presyo ng paupahan",
         "button": "Pumunta sa Paupahan"
       },
-      "dating": {
-        "title": "Gustong makakilala ng bago?",
-        "description": "Magsimula ng bagong koneksyon sa pamamagitan ng filtered random matching",
-        "button": "Pumunta sa Random na Chat"
+      "go": {
+        "title": "Gustong magsimula ng lokal na meetup?",
+        "description": "Mag-enjoy ng iba't ibang meetup sa Pilipinas",
+        "button": "Pumunta sa Kanto GO!"
       }
     }
   },
@@ -465,6 +465,7 @@
     "details": "Mga detalye",
     "mainTask": "Mga pangunahing gawain",
     "preferred": "Mga gustong kwalipikasyon",
+    "backToList": "Bumalik sa listahan",
     "viewCount": "{count}",
     "applicantCount": "Mga aplikante: {count}",
     "managerInfo": "Taong makokontak",

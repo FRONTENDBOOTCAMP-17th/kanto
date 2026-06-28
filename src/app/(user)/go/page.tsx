@@ -17,6 +17,7 @@ import { MeetupDetailPanel } from "@/components/go/MeetupDetailPanel";
 import { MeetupListPanel } from "@/components/go/MeetupListPanel";
 import { MeetupCreateModal } from "@/components/go/MeetupCreateModal";
 import { TopicFilterChips } from "@/components/go/TopicFilterChips";
+import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import { useAuthStore } from "@/store/authStore";
 import { useGoUiStore } from "@/store/goUiStore";
 import type { Meetup } from "@/type/go";
@@ -103,6 +104,7 @@ export default function GoPage() {
   const [topicFilter, setTopicFilter] = useState<MeetupTopicKey | "all">("all");
   const [selectedMeetupId, setSelectedMeetupId] = useState<number | null>(null);
   const [showCreate, setShowCreate] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [showList, setShowList] = useState(false);
   const [listEnterAnim, setListEnterAnim] = useState<"up" | "left">("up");
   const [detailFromList, setDetailFromList] = useState(false);
@@ -327,7 +329,9 @@ export default function GoPage() {
               />
             </div>
             <button
-              onClick={() => setShowCreate(true)}
+              onClick={() =>
+                currentUserId ? setShowCreate(true) : setShowLoginModal(true)
+              }
               className="absolute right-5 top-0 flex shrink-0 items-center gap-2 rounded-[14px] bg-slate-900 px-4 py-2.5 text-[14px] font-bold text-white shadow-[0_6px_20px_rgba(15,23,42,.35)] transition-all hover:bg-slate-800 active:scale-95"
             >
               <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
@@ -387,6 +391,11 @@ export default function GoPage() {
             onCreated={handleCreated}
           />
         )}
+
+        <LoginRequiredModal
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+        />
       </div>
     </APIProvider>
   );

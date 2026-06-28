@@ -374,13 +374,13 @@
       },
       "rental": {
         "title": "초저가 방을 찾고 있다면",
-        "description": "합리적인 가격의 방 렌트 정보",
+        "description": "합리적인 가격의 부동산 정보",
         "button": "부동산 바로가기"
       },
-      "dating": {
-        "title": "새로운 인연을 만나고 싶다면",
-        "description": "필터링된 랜덤 매칭으로 새로운 인연을 시작하세요",
-        "button": "랜덤채팅 바로가기"
+      "go": {
+        "title": "동네 모임을 만들고 싶다면",
+        "description": "필리핀에서 다양한 모임을 가져보세요",
+        "button": "Kanto GO! 바로가기"
       }
     }
   },
@@ -559,7 +559,7 @@
   },
   "Rental": {
     "title": "부동산",
-    "subtitle": "필리핀 현지 방 렌트 정보",
+    "subtitle": "필리핀 현지 부동산 정보",
     "searchResult": "\"{query}\" 검색 결과",
     "write": "글쓰기",
     "empty": "등록된 매물이 없습니다",

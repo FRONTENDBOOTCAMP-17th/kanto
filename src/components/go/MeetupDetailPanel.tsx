@@ -29,6 +29,7 @@ import { GoToast } from "@/components/go/GoToast";
 import ReportModal, {
   POST_REPORT_CATEGORIES,
 } from "@/components/common/ReportModal";
+import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import { useChatStore } from "@/store/chatStore";
 import type { Meetup, MeetupParticipant } from "@/type/go";
 
@@ -85,6 +86,7 @@ function MeetupDetailPanelContent({
   const [confirmEnd, setConfirmEnd] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [ending, setEnding] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -161,6 +163,10 @@ function MeetupDetailPanelContent({
   };
 
   const handleJoin = async () => {
+    if (!currentUserId) {
+      setShowLoginModal(true);
+      return;
+    }
     if (joining || statusLoading || isFull) return;
     // 한 번 취소한 모임은 재입장 불가 — 토스트만 띄운다
     if (myStatus === "cancelled") {
@@ -492,6 +498,11 @@ function MeetupDetailPanelContent({
           onToast={(msg, type) => showToast(msg, type === "error")}
         />
       )}
+
+      <LoginRequiredModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
     </>
   );
 }
