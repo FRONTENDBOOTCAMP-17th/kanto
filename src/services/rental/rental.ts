@@ -24,6 +24,11 @@ export async function getRentalDetail(postId: number): Promise<RentalDetail> {
 
   if (error) throw new Error(error.message);
 
+  const post = (data as unknown as RentalDetail).posts;
+  if (post && (post as unknown as { status: string }).status === "deleted") {
+    throw new Error("NOT_FOUND");
+  }
+
   return data as unknown as RentalDetail;
 }
 
