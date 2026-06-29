@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "홈",
@@ -14,8 +14,8 @@ import MainSearchBar from "./_components/MainSearchBar";
 import Hero from "./_components/Hero";
 import Popular from "./_components/popular/Popular";
 
-export default function MainPage() {
-  const t = useTranslations("Main");
+export default async function MainPage() {
+  const t = await getTranslations("Main");
   return (
     <div className="min-h-screen bg-gray-50">
       <Hero />

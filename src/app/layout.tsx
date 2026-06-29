@@ -36,20 +36,11 @@ export const metadata: Metadata = {
     siteName: "칸토",
     title: "칸토 | 필리핀 한인 중고거래 & 렌탈 플랫폼",
     description: "필리핀 한인 커뮤니티를 위한 중고거래, 렌탈, 구인구직 플랫폼입니다.",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "칸토 로고",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "칸토 | 필리핀 한인 중고거래 & 렌탈 플랫폼",
     description: "필리핀 한인 커뮤니티를 위한 중고거래, 렌탈, 구인구직 플랫폼입니다.",
-    images: ["/og-image.png"],
   },
   alternates: {
     canonical: BASE_URL,

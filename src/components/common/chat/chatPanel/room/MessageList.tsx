@@ -1,9 +1,9 @@
-import { Fragment, useEffect, useState, type RefObject } from "react";
+﻿import { Fragment, useEffect, useState, type RefObject } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
-import { formatDateDivider, formatMessageTime } from "@/utils/formatTime";
+import { formatDateDivider, formatMessageTime } from "@/utils/format";
 import type { Locale } from "@/i18n/config";
 import PaymentCard from "./PaymentCard";
 

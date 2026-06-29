@@ -1,11 +1,11 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import {
   AdminPost,
   POST_TYPE_LABEL,
   getPostDetailUrl,
 } from "@/services/admin/adminPosts";
-import { formatDate } from "@/utils/formatTime";
+import { formatDate } from "@/utils/format";
 
 interface AdminPostsTableProps {
   posts: AdminPost[];

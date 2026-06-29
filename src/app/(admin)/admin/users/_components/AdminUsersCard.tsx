@@ -1,6 +1,6 @@
-import { User } from "@/services/admin/adminUsers";
+﻿import { User } from "@/services/admin/adminUsers";
 import { CalendarDays, Mail, FileText } from "lucide-react";
-import { formatDate } from "@/utils/formatTime";
+import { formatDate } from "@/utils/format";
 
 interface AdminUsersCardProps {
   users: User[];

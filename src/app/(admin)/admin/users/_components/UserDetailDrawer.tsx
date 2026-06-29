@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import { Users, ExternalLink, X, AlertTriangle } from "lucide-react";
@@ -7,7 +7,7 @@ import { User, SanctionRecord } from "@/services/admin/adminUsers";
 import { applySanction } from "@/app/(admin)/admin/users/_actions/applySanction";
 import { liftSanction } from "@/app/(admin)/admin/users/_actions/liftSanction";
 import { resolveUserReports } from "@/app/(admin)/admin/users/_actions/resolveUserReports";
-import { formatDate, formatDateTime } from "@/utils/formatTime";
+import { formatDate, formatDateTime } from "@/utils/format";
 
 const SANCTION_OPTIONS: { key: "7d" | "30d" | "perm"; label: string }[] = [
   { key: "7d", label: "7일 정지" },

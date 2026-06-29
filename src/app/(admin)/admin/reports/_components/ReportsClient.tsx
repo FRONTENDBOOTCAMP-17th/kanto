@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -12,7 +12,7 @@ import {
   SANCTION_LABEL,
   PAGE_SIZE,
 } from "../_lib/constants";
-import { formatDateTime } from "@/utils/formatTime";
+import { formatDateTime } from "@/utils/format";
 import type { Report, Outcome, ReportType, Status, Sanction } from "@/type/admin";
 import {
   resolveReport,

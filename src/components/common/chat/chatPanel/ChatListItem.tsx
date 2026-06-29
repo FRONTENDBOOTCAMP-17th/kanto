@@ -1,6 +1,6 @@
-import { useTranslations, useLocale } from "next-intl";
+﻿import { useTranslations, useLocale } from "next-intl";
 import type { ChatWithUsers } from "@/type/chat/chat";
-import { formatChatListTime } from "@/utils/formatTime";
+import { formatChatListTime } from "@/utils/format";
 import type { Locale } from "@/i18n/config";
 
 const categoryStyle: Record<string, string> = {

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useTransition } from "react";
 import { FileText, ExternalLink, X } from "lucide-react";
@@ -16,7 +16,7 @@ import {
 } from "@/app/(admin)/admin/posts/_actions/getPostReports";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { SANCTION_LABEL } from "@/app/(admin)/admin/reports/_lib/constants";
-import { formatDate, formatDateTime } from "@/utils/formatTime";
+import { formatDate, formatDateTime } from "@/utils/format";
 
 const CATEGORY_STYLE: Record<string, { bg: string; fg: string }> = {
   used_goods: { bg: "#f0fdfa", fg: "#0d9488" },

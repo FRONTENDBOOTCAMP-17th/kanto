@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { formatPrice } from "@/utils/formatTime";
+import { formatPrice } from "@/utils/format";
 import { after } from "next/server";
 import { getRentalDetail } from "@/services/rental/rental";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";

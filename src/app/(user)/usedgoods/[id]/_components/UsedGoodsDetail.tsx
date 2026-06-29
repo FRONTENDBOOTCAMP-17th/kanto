@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Tables } from "@/type/supabase";
-import { formatTimeAgo, formatPrice } from "@/utils/formatTime";
+import { formatTimeAgo, formatPrice } from "@/utils/format";
 import type { Locale } from "@/i18n/config";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import VerifyAuthor from "@/components/common/VerifyAuthor";
@@ -104,6 +104,15 @@ export default function UsedGoodsDetail({
     }
   };
 
+  const approxMap = hasCoords && (
+    <div className="mt-4">
+      <ApproxAreaMapWithProvider
+        lat={data.location_lat as number}
+        lng={data.location_lng as number}
+      />
+    </div>
+  );
+
   return (
     <div className="page-container pb-12">
       
@@ -159,14 +168,7 @@ export default function UsedGoodsDetail({
                   </>
                 )}
               </dl>
-              {hasCoords && (
-                <div className="mt-4">
-                  <ApproxAreaMapWithProvider
-                    lat={data.location_lat as number}
-                    lng={data.location_lng as number}
-                  />
-                </div>
-              )}
+              {approxMap}
             </div>
             <hr className="border-gray-200" />
 
@@ -230,14 +232,7 @@ export default function UsedGoodsDetail({
                   </>
                 )}
               </dl>
-              {hasCoords && (
-                <div className="mt-4">
-                  <ApproxAreaMapWithProvider
-                    lat={data.location_lat as number}
-                    lng={data.location_lng as number}
-                  />
-                </div>
-              )}
+              {approxMap}
             </div>
             <div className="p-6 flex flex-col gap-4">
               <h2 className="text-xl font-semibold">{t("sellerInfo")}</h2>

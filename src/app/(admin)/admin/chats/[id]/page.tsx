@@ -1,10 +1,10 @@
-import { Fragment } from "react";
+﻿import { Fragment } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, MessageSquare } from "lucide-react";
 import { getAdminChatRoom, getAdminChatMessages } from "@/services/admin/adminChats";
 import { POST_TYPE_LABEL } from "@/app/(admin)/admin/_lib/constants";
-import { formatDateDivider, formatMessageTime } from "@/utils/formatTime";
+import { formatDateDivider, formatMessageTime } from "@/utils/format";
 
 export const dynamic = "force-dynamic";
 

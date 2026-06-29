@@ -1,6 +1,6 @@
-import { useLocale } from "next-intl";
+﻿import { useLocale } from "next-intl";
 import { TOPIC_META } from "@/constants/meetupTopics";
-import { formatChatListTime } from "@/utils/formatTime";
+import { formatChatListTime } from "@/utils/format";
 import type { Locale } from "@/i18n/config";
 import type { MyGroupRoom } from "@/type/groupChat";
 

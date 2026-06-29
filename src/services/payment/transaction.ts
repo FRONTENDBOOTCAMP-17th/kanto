@@ -96,11 +96,13 @@ export async function updateTransaction(
 
 export async function claimTransactionRelease(
   id: number,
+  buyerId: number,
 ): Promise<Transaction | null> {
   const { data } = await supabaseAdmin
     .from("transactions")
     .update({ status: "released", released_at: new Date().toISOString() })
     .eq("id", id)
+    .eq("buyer_id", buyerId)
     .eq("status", "paid")
     .select()
     .single();

@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import { type RefObject } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { formatMessageTime } from "@/utils/formatTime";
+import { formatMessageTime } from "@/utils/format";
 import type { Locale } from "@/i18n/config";
 import type { GroupMessageWithSender } from "@/type/groupChat";
 import type { SellerInfo } from "@/type/user";

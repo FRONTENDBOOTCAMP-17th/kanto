@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Clock, Eye, Heart, Users } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
-import { formatTimeAgo } from "@/utils/formatTime";
+import { formatTimeAgo } from "@/utils/format";
 import type { JobDetail } from "@/type/job/jobsDetail";
 import InteractionButtons from "@/components/common/InteractionButtons";
 import type { Locale } from "@/i18n/config";

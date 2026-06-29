@@ -17,7 +17,7 @@ import { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { ApproxAreaMapWithProvider } from "@/components/common/ApproxAreaMap";
 import { formatBarangayLabel } from "@/type/location";
-import { formatPrice } from "@/utils/formatTime";
+import { formatPrice } from "@/utils/format";
 
 const AMENITY_ICONS: Record<string, ReactNode> = {
   와이파이: <Wifi className="w-4 h-4" />,
