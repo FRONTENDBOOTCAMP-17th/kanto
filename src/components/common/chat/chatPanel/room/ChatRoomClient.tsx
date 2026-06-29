@@ -32,6 +32,7 @@ interface Props {
   sellerId: number | null;
   postPrice: number | null;
   isReserved: boolean;
+  isSold: boolean;
   onBack?: () => void;
   onLeave?: () => void;
   onChatCreated?: (chatId: number) => void;
@@ -48,6 +49,7 @@ export default function ChatRoomClient({
   sellerId,
   postPrice,
   isReserved: initialIsReserved,
+  isSold,
   onBack,
   onLeave,
   onChatCreated,
@@ -68,6 +70,8 @@ export default function ChatRoomClient({
     setIsReserved(next);
     try {
       await toggleReserveAction(postId, next);
+      // 목록 페이지(서버 컴포넌트)를 즉시 재요청해 예약중 배지가 새로고침 없이 반영되게 한다.
+      router.refresh();
     } catch {
       setIsReserved(!next);
       setSendError("예약 상태 변경에 실패했습니다.");
@@ -205,6 +209,12 @@ export default function ChatRoomClient({
     refreshBannerState();
   }, [refreshBannerState, systemMsgCount]);
 
+  // 거래 완료 여부: 방 로드 시점의 is_sold 거나, 방을 연 채로 수령확인되어
+  // 거래가 released 된 경우(메시지의 transaction 상태)를 함께 본다.
+  // 완료되면 예약중 변경/취소 버튼을 숨긴다.
+  const isCompleted =
+    isSold || messages.some((m) => m.transaction?.status === "released");
+
   return (
     <div className="relative flex flex-col h-full w-full bg-gray-50">
       <ChatHeader
@@ -214,8 +224,8 @@ export default function ChatRoomClient({
         currentUserId={currentUser.id}
         onBack={onBack ?? (() => router.back())}
         onLeave={onLeave}
-        isReserved={postType === "used_goods" && isSeller ? isReserved : undefined}
-        onToggleReserve={postType === "used_goods" && isSeller ? handleToggleReserve : undefined}
+        isReserved={postType === "used_goods" && isSeller && !isCompleted ? isReserved : undefined}
+        onToggleReserve={postType === "used_goods" && isSeller && !isCompleted ? handleToggleReserve : undefined}
       />
       <MessageList
         messages={messages}

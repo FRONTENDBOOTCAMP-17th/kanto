@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import type { JobDetail } from "@/type/job/jobsDetail";
+import CompanyLocationMap from "./CompanyLocationMap";
 
 const LOGO_COLORS = [
   "bg-teal-500", "bg-blue-500", "bg-violet-500",
@@ -76,6 +77,15 @@ export default function CompanyInfo({ job }: { job: JobDetail }) {
           </div>
         )}
       </div>
+      {job.company_lat != null && job.company_lng != null && (
+        <div className="pt-2">
+          <CompanyLocationMap
+            lat={job.company_lat}
+            lng={job.company_lng}
+            address={job.company_address}
+          />
+        </div>
+      )}
     </div>
   );
 }

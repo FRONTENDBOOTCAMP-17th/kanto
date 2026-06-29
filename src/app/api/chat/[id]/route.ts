@@ -32,7 +32,7 @@ export async function GET(
         *,
         user1:users!chats_user_id_1_fkey(id, name, avatar_url, created_at),
         user2:users!chats_user_id_2_fkey(id, name, avatar_url, created_at),
-        posts(title, post_type, user_id, is_reserved, used_goods(price), rentals(price))
+        posts(title, post_type, user_id, is_reserved, is_sold, used_goods(price), rentals(price))
       `)
       .eq("id", chatId)
       .single(),
@@ -50,6 +50,7 @@ export async function GET(
     post_type: string;
     user_id: number;
     is_reserved: boolean;
+    is_sold: boolean;
     used_goods: { price: number }[];
     rentals: { price: number | null }[];
   } | null;
@@ -72,5 +73,6 @@ export async function GET(
     sellerId: posts?.user_id ?? null,
     postPrice,
     isReserved: posts?.is_reserved ?? false,
+    isSold: posts?.is_sold ?? false,
   });
 }

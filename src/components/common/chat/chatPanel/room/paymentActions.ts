@@ -189,19 +189,8 @@ export async function confirmReceiptAction(
     throw new Error("이미 처리 중인 거래입니다. 잠시 후 확인해주세요.");
   }
 
-  const disbursement = await createDisbursement({
-    externalId: `release_${transaction.id}`,
-    bankCode: seller.bank_code,
-    accountNumber: seller.bank_account_number,
-    accountHolderName: seller.bank_account_name ?? seller.name ?? "",
-    amount: transaction.amount,
-    description: `칸토 에스크로 정산 #${transaction.id}`,
-  });
-
-  await updateTransaction(transaction.id, {
-    xendit_disbursement_id: disbursement.id,
-  });
-
+  // 거래는 이미 released(완료)로 확정됐으므로, 판매완료 처리와 완료 메시지를 먼저 끝낸다.
+  // 정산 송금(disbursement)은 별도 단계라, 실패해도 완료 상태를 되돌리거나 막지 않는다.
   await supabase
     .from("posts")
     .update({ is_sold: true, is_reserved: false })
@@ -214,6 +203,24 @@ export async function confirmReceiptAction(
     );
   } catch (e) {
     console.error("거래완료 시스템 메시지 발송 실패:", e);
+  }
+
+  // 정산 송금은 Xendit 계정/키 권한에 의존한다. 실패해도 사용자에게 에러로 노출하지 않고
+  // 로깅만 한다(거래 완료 자체는 유효). 송금은 권한 복구 후 재처리 대상이다.
+  try {
+    const disbursement = await createDisbursement({
+      externalId: `release_${transaction.id}`,
+      bankCode: seller.bank_code,
+      accountNumber: seller.bank_account_number,
+      accountHolderName: seller.bank_account_name ?? seller.name ?? "",
+      amount: transaction.amount,
+      description: `칸토 에스크로 정산 #${transaction.id}`,
+    });
+    await updateTransaction(transaction.id, {
+      xendit_disbursement_id: disbursement.id,
+    });
+  } catch (e) {
+    console.error("정산 송금(disbursement) 실패:", e);
   }
 
   return released;

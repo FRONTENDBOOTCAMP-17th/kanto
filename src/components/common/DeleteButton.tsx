@@ -17,8 +17,11 @@ export default function DeleteButton({ postId, redirectPath }: DeleteButtonProps
 
   const handleDelete = async () => {
     const res = await fetch(`/api/posts/${postId}`, { method: "DELETE" });
-    if (!res.ok) return;
     setIsOpen(false);
+    if (!res.ok) {
+      alert(t("deleteFailed"));
+      return;
+    }
     router.push(redirectPath);
   };
 

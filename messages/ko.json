@@ -105,6 +105,7 @@
     "edit": "수정",
     "close": "닫기",
     "deleteConfirm": "정말 삭제하시겠습니까?",
+    "deleteFailed": "삭제에 실패했습니다. 다시 시도해주세요.",
     "processing": "처리 중...",
     "loginRequired": "로그인 이후 이용 가능합니다",
     "goToLogin": "로그인 하러 가기",
@@ -456,6 +457,7 @@
     "write": "공고 등록",
     "emptySearch": "검색 결과가 없어요",
     "empty": "등록된 구인공고가 없습니다",
+    "emptyDescription": "첫 번째 구인공고를 등록해보세요!",
     "allTypes": "전체",
     "jobInfo": "채용 정보",
     "employeeType": "고용 형태",
@@ -881,6 +883,10 @@
       "rental": "부동산"
     },
     "empty": "찜한 목록이 없습니다.",
+    "emptyDescription": "마음에 드는 항목을 찜해보세요",
+    "myPostsEmpty": "등록한 게시글이 없습니다",
+    "myPostsEmptyDescription": "첫 번째 매물을 등록해보세요!",
+    "writePost": "게시글 작성하기",
     "goTo": {
       "used_goods": "중고거래 보러가기",
       "jobs": "구인구직 보러가기",

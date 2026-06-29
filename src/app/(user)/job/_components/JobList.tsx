@@ -18,7 +18,7 @@ export function JobList({ posts, likedIds, currentUserId, currentPage, emptyMess
   const likedSet = new Set(likedIds);
 
   if (posts.length === 0) {
-    return <EmptyState message={emptyMessage ?? t("empty")} />;
+    return <EmptyState message={emptyMessage ?? t("empty")} description={t("emptyDescription")} />;
   }
 
   return (

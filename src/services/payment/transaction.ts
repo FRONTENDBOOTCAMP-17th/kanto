@@ -49,16 +49,27 @@ export async function getReleasedTransactionsForChat(
   return (data as Transaction[]) ?? [];
 }
 
+// 결제 대기(pending)가 이 시간을 넘기면 만료로 간주한다. PaymentCard 의 isTimedOut 과 동일 기준.
+export const PAYMENT_PENDING_EXPIRY_MS = 24 * 60 * 60 * 1000;
+
 export async function hasBlockingTransactionForChat(
   chatId: number,
 ): Promise<boolean> {
   const { data } = await supabaseAdmin
     .from("transactions")
-    .select("id")
+    .select("id, status, created_at")
     .eq("chat_id", chatId)
-    .in("status", ["pending", "paid", "released"])
-    .limit(1);
-  return (data?.length ?? 0) > 0;
+    .in("status", ["pending", "paid", "released"]);
+
+  // pending 이 만료 시간(24h)을 지나면 차단에서 제외해 안전결제를 다시 요청할 수 있게 한다.
+  // paid(에스크로 입금)·released(완료)는 만료 없이 계속 차단한다.
+  const expiryThreshold = Date.now() - PAYMENT_PENDING_EXPIRY_MS;
+  const blocking = (data ?? []).filter((t) =>
+    t.status === "pending"
+      ? new Date(t.created_at).getTime() > expiryThreshold
+      : true,
+  );
+  return blocking.length > 0;
 }
 
 export async function getTransactionByExternalId(
