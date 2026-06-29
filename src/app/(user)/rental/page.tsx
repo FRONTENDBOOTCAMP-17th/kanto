@@ -4,10 +4,10 @@ import { getTranslations } from "next-intl/server";
 import { getRentalList, getRentalBarangays } from "@/services/rental/rental";
 
 export const metadata: Metadata = {
-  title: "렌탈",
+  title: "부동산",
   description: "필리핀 한인 렌탈 매물을 찾아보세요.",
   openGraph: {
-    title: "렌탈 | 칸토",
+    title: "부동산 | 칸토",
     description: "필리핀 한인 렌탈 매물을 찾아보세요.",
     images: [{ url: "/kantoLogo.png", alt: "칸토 로고" }],
   },
