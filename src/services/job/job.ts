@@ -56,6 +56,7 @@ export async function getPopularJobs(): Promise<JobWithPost[]> {
     .from("posts")
     .select("*, jobs!inner(*), users!posts_user_id_fkey(id, name, avatar_url, created_at)")
     .eq("post_type", "jobs")
+    .eq("status", "active")
     .not("jobs.popular_count", "is", null);
 
   if (error) throw new Error(error.message);

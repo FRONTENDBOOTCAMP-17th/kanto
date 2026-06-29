@@ -14,5 +14,10 @@ export async function getJobDetail(postId: number): Promise<JobDetail> {
 
   if (error) throw new Error(error.message);
 
+  const post = (data as unknown as JobDetail).posts;
+  if (post && (post as unknown as { status: string }).status === "deleted") {
+    throw new Error("NOT_FOUND");
+  }
+
   return data as unknown as JobDetail;
 }
