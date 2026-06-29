@@ -18,6 +18,10 @@ export default function DeleteButton({ postId, redirectPath }: DeleteButtonProps
   const handleDelete = async () => {
     const res = await fetch(`/api/posts/${postId}`, { method: "DELETE" });
     if (!res.ok) return;
+    await supabase
+      .from("posts")
+      .update({ status: "deleted", deleted_at: new Date().toISOString() })
+      .eq("id", postId);
     setIsOpen(false);
     router.push(redirectPath);
   };

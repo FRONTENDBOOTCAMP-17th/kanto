@@ -81,6 +81,7 @@ export async function getUsedGoodsDetail(
     .select(USED_GOODS_SELECT)
     .eq("id", postId)
     .eq("post_type", "used_goods")
+    .neq("status", "deleted")
     .single();
 
   if (error) throw new Error(error.message);

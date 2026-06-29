@@ -13,6 +13,7 @@ import PostDetailDrawer from "./PostDetailDrawer";
 import {
   bulkTogglePostStatus,
   bulkDeletePosts,
+  bulkRestorePosts,
 } from "@/app/(admin)/admin/posts/_actions/bulkPostActions";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 
@@ -33,6 +34,7 @@ const STATUS_OPTIONS = [
   { value: "all", label: "전체" },
   { value: "active", label: "활성" },
   { value: "inactive", label: "비공개" },
+  { value: "deleted", label: "삭제됨" },
 ] as const;
 
 function SegButton({
@@ -82,12 +84,14 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
     setPage(1);
   }
 
-  const totalCount = items.length;
+  const totalCount = items.filter((p) => p.status !== "deleted").length;
   const activeCount = items.filter((p) => p.status === "active").length;
+  const deletedCount = items.filter((p) => p.status === "deleted").length;
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return items.filter((post) => {
+      if (status === "all" && post.status === "deleted") return false;
       if (status !== "all" && post.status !== status) return false;
       if (category !== "all" && post.post_type !== category) return false;
       if (q)
@@ -162,7 +166,11 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
     startTransition(async () => {
       try {
         await bulkDeletePosts(ids);
-        setItems((prev) => prev.filter((p) => !selectedIds.has(p.id)));
+        setItems((prev) =>
+          prev.map((p) =>
+            selectedIds.has(p.id) ? { ...p, status: "deleted" } : p,
+          ),
+        );
         setSelectedIds(new Set());
         setConfirmBulkDelete(false);
         showToast(`${ids.length}개 게시글을 삭제했습니다`);
@@ -171,6 +179,26 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
       }
     });
   }
+
+  function handleBulkRestore() {
+    const ids = [...selectedIds];
+    if (ids.length === 0) return;
+    startTransition(async () => {
+      try {
+        await bulkRestorePosts(ids);
+        setItems((prev) =>
+          prev.map((p) =>
+            selectedIds.has(p.id) ? { ...p, status: "active", deleted_at: null } : p,
+          ),
+        );
+        setSelectedIds(new Set());
+        showToast(`${ids.length}개 게시글을 복구했습니다`);
+      } catch {
+        showToast("복구 실패 — 다시 시도해주세요");
+      }
+    });
+  }
+
 
   return (
     <>
@@ -192,7 +220,8 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
         </div>
         <div className="whitespace-nowrap rounded-[11px] border border-[#e7ebee] bg-white px-[14px] py-[9px] text-[13px] font-medium text-slate-500">
           총 <span className="font-bold text-slate-900">{totalCount}</span>건 ·{" "}
-          <span className="font-bold text-teal-600">{activeCount}</span>건 활성
+          <span className="font-bold text-teal-600">{activeCount}</span>건 활성 ·{" "}
+          <span className="font-bold text-red-400">{deletedCount}</span>건 삭제됨
         </div>
       </div>
 
@@ -264,20 +293,34 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
           )}
         </span>
         <div className="flex items-center gap-2">
-          <button
-            onClick={handleBulkToggle}
-            disabled={selectedCount === 0 || isPending}
-            className="cursor-pointer whitespace-nowrap rounded-[9px] border border-[#e2e8eb] bg-white px-3.5 py-2 text-[13px] font-semibold text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            수정
-          </button>
-          <button
-            onClick={() => setConfirmBulkDelete(true)}
-            disabled={selectedCount === 0 || isPending}
-            className="cursor-pointer whitespace-nowrap rounded-[9px] border border-red-200 bg-red-50 px-3.5 py-2 text-[13px] font-bold text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            삭제
-          </button>
+          {status === "deleted" ? (
+            <>
+              <button
+                onClick={handleBulkRestore}
+                disabled={selectedCount === 0 || isPending}
+                className="cursor-pointer whitespace-nowrap rounded-[9px] border border-teal-200 bg-teal-50 px-3.5 py-2 text-[13px] font-semibold text-teal-600 hover:bg-teal-100 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                복구
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={handleBulkToggle}
+                disabled={selectedCount === 0 || isPending}
+                className="cursor-pointer whitespace-nowrap rounded-[9px] border border-[#e2e8eb] bg-white px-3.5 py-2 text-[13px] font-semibold text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                수정
+              </button>
+              <button
+                onClick={() => setConfirmBulkDelete(true)}
+                disabled={selectedCount === 0 || isPending}
+                className="cursor-pointer whitespace-nowrap rounded-[9px] border border-red-200 bg-red-50 px-3.5 py-2 text-[13px] font-bold text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                삭제
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -337,16 +380,17 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
       <ConfirmModal
         isOpen={confirmBulkDelete}
         title={`선택한 ${selectedCount}개 게시글을 삭제하시겠습니까?`}
-        description="삭제된 게시글은 복구할 수 없습니다."
+        description="삭제된 게시글은 30일간 보관 후 자동으로 영구 삭제됩니다."
         confirmLabel="삭제"
         cancelLabel="취소"
         onConfirm={handleBulkDelete}
         onCancel={() => setConfirmBulkDelete(false)}
       />
 
+
       {toast && (
         <div
-          className="fixed bottom-7 left-1/2 z-[80] flex -translate-x-1/2 items-center gap-2.5 rounded-xl bg-slate-900 px-5 py-[13px] text-white shadow-[0_10px_30px_rgba(15,23,42,0.3)]"
+          className="fixed bottom-7 left-1/2 z-80 flex -translate-x-1/2 items-center gap-2.5 rounded-xl bg-slate-900 px-5 py-3.25 text-white shadow-[0_10px_30px_rgba(15,23,42,0.3)]"
           style={{ animation: "fadeIn .18s ease" }}
         >
           <svg

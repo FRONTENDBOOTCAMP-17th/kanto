@@ -33,7 +33,7 @@ export async function bulkTogglePostStatus(ids: number[]): Promise<void> {
 
   const rows = data ?? [];
   const toInactive = rows.filter((p) => p.status === "active").map((p) => p.id);
-  const toActive = rows.filter((p) => p.status !== "active").map((p) => p.id);
+  const toActive = rows.filter((p) => p.status === "inactive").map((p) => p.id);
 
   if (toInactive.length) {
     await admin
@@ -52,11 +52,29 @@ export async function bulkTogglePostStatus(ids: number[]): Promise<void> {
   revalidatePath("/admin");
 }
 
-/** 선택한 게시글들을 삭제한다. */
+/** 선택한 게시글들을 복구한다 (status를 active로 되돌리고 deleted_at 초기화). */
+export async function bulkRestorePosts(ids: number[]): Promise<void> {
+  if (ids.length === 0) return;
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("posts")
+    .update({ status: "active", deleted_at: null } as never)
+    .in("id", ids);
+  if (error) throw error;
+
+  revalidatePath("/admin/posts");
+  revalidatePath("/admin");
+}
+
+
+/** 선택한 게시글들을 소프트 삭제한다 (30일 후 pg_cron이 영구 삭제). */
 export async function bulkDeletePosts(ids: number[]): Promise<void> {
   if (ids.length === 0) return;
   const admin = createAdminClient();
-  const { error } = await admin.from("posts").delete().in("id", ids);
+  const { error } = await admin
+    .from("posts")
+    .update({ status: "deleted", deleted_at: new Date().toISOString() } as never)
+    .in("id", ids);
   if (error) throw error;
 
   revalidatePath("/admin/posts");
