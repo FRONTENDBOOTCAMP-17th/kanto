@@ -9,6 +9,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { ImageUploadField } from "@/components/common/ImageUploadField";
 import { useImageUpload } from "@/hooks/useImageUpload";
 import Toast from "@/components/common/Toast";
+import { APIProvider } from "@vis.gl/react-google-maps";
+import { PlaceAutocomplete } from "@/components/go/PlaceAutocomplete";
+import type { PickedLocation } from "@/type/go";
+
+// 기존 라벨의 " *" 와 동일하게 라벨 색을 상속(검은색)하도록 색상 클래스 없이 표시.
+const RequiredMark = () => <span> *</span>;
 
 const URL_REGEX = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&/=]*)$/i;
 
@@ -20,7 +26,8 @@ interface CreateJobFormPageTwoProps {
   industry: string; setIndustry: (v: string) => void;
   companyYear: string; setCompanyYear: (v: string) => void;
   employeeCount: string; setEmployeeCount: (v: string) => void;
-  companyAddress: string; setCompanyAddress: (v: string) => void;
+  companyAddress: string;
+  companyLocation: PickedLocation | null; setCompanyLocation: (l: PickedLocation) => void;
   companyWebsite: string; setCompanyWebsite: (v: string) => void;
   managerName: string;
   managerTitle: string; setManagerTitle: (v: string) => void;
@@ -41,7 +48,8 @@ export function CreateJobFormPageTwo({
   industry, setIndustry,
   companyYear, setCompanyYear,
   employeeCount, setEmployeeCount,
-  companyAddress, setCompanyAddress,
+  companyAddress,
+  companyLocation, setCompanyLocation,
   companyWebsite, setCompanyWebsite,
   managerName,
   managerTitle, setManagerTitle,
@@ -134,8 +142,8 @@ export function CreateJobFormPageTwo({
           <Textarea id="companyIntro" placeholder={t("form.companyIntroPlaceholder")} value={companyIntro} onChange={(e) => setCompanyIntro(e.target.value)} className="resize-none min-h-52 rounded-sm p-5 text-xs md:text-sm" required />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="industry">{t("form.industryLabel")}</Label>
-          <Input id="industry" placeholder={t("form.industryPlaceholder")} value={industry} onChange={(e) => setIndustry(e.target.value)} className="h-12 rounded-sm" />
+          <Label htmlFor="industry">{t("form.industryLabel")}<RequiredMark /></Label>
+          <Input id="industry" placeholder={t("form.industryPlaceholder")} value={industry} onChange={(e) => setIndustry(e.target.value)} className="h-12 rounded-sm" required />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -148,11 +156,17 @@ export function CreateJobFormPageTwo({
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="companyAddress">{t("form.addressLabel")}</Label>
-          <Input id="companyAddress" placeholder={t("form.addressPlaceholder")} value={companyAddress} onChange={(e) => setCompanyAddress(e.target.value)} className="h-12 rounded-sm" />
+          <Label htmlFor="companyAddress">{t("form.addressLabel")}<RequiredMark /></Label>
+          <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
+            <PlaceAutocomplete
+              selected={companyLocation}
+              onSelect={setCompanyLocation}
+              fallbackLabel={companyLocation ? null : companyAddress || null}
+            />
+          </APIProvider>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="companyWebsite">{t("form.websiteLabel")}</Label>
+          <Label htmlFor="companyWebsite">{t("form.websiteLabel")}<RequiredMark /></Label>
           <Input
             id="companyWebsite"
             placeholder={t("form.websitePlaceholder")}
@@ -160,6 +174,7 @@ export function CreateJobFormPageTwo({
             onChange={(e) => setCompanyWebsite(e.target.value)}
             onBlur={handleWebsiteBlur}
             className="h-12 rounded-sm"
+            required
           />
           {websiteError && <p className="text-xs text-red-500">{websiteError}</p>}
         </div>
@@ -177,16 +192,16 @@ export function CreateJobFormPageTwo({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="managerTitle">{t("form.managerTitleLabel")}</Label>
-          <Input id="managerTitle" placeholder={t("form.managerTitlePlaceholder")} value={managerTitle} onChange={(e) => setManagerTitle(e.target.value)} className="h-12 rounded-sm" />
+          <Label htmlFor="managerTitle">{t("form.managerTitleLabel")}<RequiredMark /></Label>
+          <Input id="managerTitle" placeholder={t("form.managerTitlePlaceholder")} value={managerTitle} onChange={(e) => setManagerTitle(e.target.value)} className="h-12 rounded-sm" required />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="managerPhone">{t("form.managerPhoneLabel")}</Label>
-          <Input id="managerPhone" placeholder={t("form.managerPhonePlaceholder")} value={managerPhone} onChange={(e) => setManagerPhone(e.target.value)} className="h-12 rounded-sm" />
+          <Label htmlFor="managerPhone">{t("form.managerPhoneLabel")}<RequiredMark /></Label>
+          <Input id="managerPhone" placeholder={t("form.managerPhonePlaceholder")} value={managerPhone} onChange={(e) => setManagerPhone(e.target.value)} className="h-12 rounded-sm" required />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="managerEmail">{t("form.managerEmailLabel")}</Label>
-          <Input id="managerEmail" type="email" placeholder={t("form.managerEmailPlaceholder")} value={managerEmail} onChange={(e) => setManagerEmail(e.target.value)} className="h-12 rounded-sm" />
+          <Label htmlFor="managerEmail">{t("form.managerEmailLabel")}<RequiredMark /></Label>
+          <Input id="managerEmail" type="email" placeholder={t("form.managerEmailPlaceholder")} value={managerEmail} onChange={(e) => setManagerEmail(e.target.value)} className="h-12 rounded-sm" required />
         </div>
       </div>
 

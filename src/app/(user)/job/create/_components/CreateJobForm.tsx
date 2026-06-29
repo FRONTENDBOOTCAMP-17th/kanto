@@ -77,7 +77,8 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
               employeeCount={form.employeeCount}
               setEmployeeCount={form.setEmployeeCount}
               companyAddress={form.companyAddress}
-              setCompanyAddress={form.setCompanyAddress}
+              companyLocation={form.companyLocation}
+              setCompanyLocation={form.setCompanyLocation}
               companyWebsite={form.companyWebsite}
               setCompanyWebsite={form.setCompanyWebsite}
               managerName={form.managerName}

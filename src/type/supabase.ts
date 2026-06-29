@@ -526,6 +526,8 @@ export type Database = {
           applicant_count: string | null
           company_address: string | null
           company_intro: string
+          company_lat: number | null
+          company_lng: number | null
           company_logo: string | null
           company_name: string
           company_website: string | null
@@ -558,6 +560,8 @@ export type Database = {
           applicant_count?: string | null
           company_address?: string | null
           company_intro: string
+          company_lat?: number | null
+          company_lng?: number | null
           company_logo?: string | null
           company_name: string
           company_website?: string | null
@@ -590,6 +594,8 @@ export type Database = {
           applicant_count?: string | null
           company_address?: string | null
           company_intro?: string
+          company_lat?: number | null
+          company_lng?: number | null
           company_logo?: string | null
           company_name?: string
           company_website?: string | null

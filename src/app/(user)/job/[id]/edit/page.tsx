@@ -35,6 +35,8 @@ export default async function EditJobPage({
           company_year: job.company_year,
           employee_count: job.employee_count,
           company_address: job.company_address,
+          company_lat: job.company_lat,
+          company_lng: job.company_lng,
           company_website: job.company_website,
           manager_title: job.manager_title,
           manager_phone: job.manager_phone,

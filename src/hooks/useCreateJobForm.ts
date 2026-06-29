@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import { useImageUpload } from "@/hooks/useImageUpload";
 import type { TradeLocation } from "@/type/location";
 import type { EmployeeType, SalaryType, JobInitialData } from "@/type/job/jobCreate";
+import type { PickedLocation } from "@/type/go";
 
 export function useCreateJobForm(userId: number, userName: string, initialData?: JobInitialData) {
   const router = useRouter();
@@ -34,6 +35,16 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   const [companyYear, setCompanyYear] = useState(initialData?.company_year?.toString() ?? "");
   const [employeeCount, setEmployeeCount] = useState(initialData?.employee_count?.toString() ?? "");
   const [companyAddress, setCompanyAddress] = useState(initialData?.company_address ?? "");
+  // 주소 자동완성으로 선택한 위치(좌표+주소). 상세 페이지 지도 핀에 사용.
+  const [companyLocation, setCompanyLocation] = useState<PickedLocation | null>(
+    initialData?.company_lat != null && initialData?.company_lng != null
+      ? {
+          lat: initialData.company_lat,
+          lng: initialData.company_lng,
+          address: initialData.company_address ?? "",
+        }
+      : null,
+  );
   const [companyWebsite, setCompanyWebsite] = useState(initialData?.company_website ?? "");
   const [managerName, setManagerName] = useState(userName);
   const [managerTitle, setManagerTitle] = useState(initialData?.manager_title ?? "");
@@ -63,6 +74,20 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   };
 
   const handleSubmit = async () => {
+    // 2단계 필수 항목 검증(제출 버튼이 폼 밖에 있어 native required 가 우회되므로 직접 검증).
+    const resolvedAddress = companyLocation?.address ?? companyAddress;
+    if (
+      !industry.trim() ||
+      !resolvedAddress.trim() ||
+      !companyWebsite.trim() ||
+      !managerTitle.trim() ||
+      !managerPhone.trim() ||
+      !managerEmail.trim()
+    ) {
+      alert("업종, 주소, 웹사이트, 담당자 직함, 전화번호, 이메일을 모두 입력해주세요.");
+      return;
+    }
+
     const checkText = [mainTask, companyIntro].join(" ");
     const urlCount = (checkText.match(/https?:\/\/[^\s]+/g) ?? []).length;
     if (urlCount > maxUrlsRef.current) {
@@ -97,7 +122,9 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       is_time_negotiable: isTimeNegotiable,
       company_year: companyYear ? Number(companyYear) : null,
       employee_count: employeeCount ? Number(employeeCount) : null,
-      company_address: companyAddress || null,
+      company_address: resolvedAddress || null,
+      company_lat: companyLocation?.lat ?? initialData?.company_lat ?? null,
+      company_lng: companyLocation?.lng ?? initialData?.company_lng ?? null,
       company_website: companyWebsite || null,
       preferred: preferred || null,
       preferred_tags: preferredTags.length > 0 ? preferredTags : null,
@@ -218,6 +245,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     companyYear, setCompanyYear,
     employeeCount, setEmployeeCount,
     companyAddress, setCompanyAddress,
+    companyLocation, setCompanyLocation,
     companyWebsite, setCompanyWebsite,
     managerName, setManagerName,
     managerTitle, setManagerTitle,
