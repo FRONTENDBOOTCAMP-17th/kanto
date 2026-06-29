@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { MapPin, Loader2, Search } from "lucide-react";
 import { useMapsLibrary } from "@vis.gl/react-google-maps";
 import type { PickedLocation } from "@/type/go";
+import { extractBarangayCity } from "@/type/location";
 
 // 마닐라 중심 — 자동완성 결과를 현지 우선으로 bias
 const MANILA_CENTER = { lat: 14.5547, lng: 121.0244 };
@@ -14,9 +15,11 @@ const BIAS_RADIUS_M = 30000;
 interface Props {
   selected: PickedLocation | null;
   onSelect: (loc: PickedLocation) => void;
+  // 편집 시 아직 재선택 전이라도 기존 설정 위치를 "선택됨"으로 보여줄 공개 라벨
+  fallbackLabel?: string | null;
 }
 
-export function PlaceAutocomplete({ selected, onSelect }: Props) {
+export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) {
   const placesLib = useMapsLibrary("places");
 
   const [input, setInput] = useState("");
@@ -49,7 +52,7 @@ export function PlaceAutocomplete({ selected, onSelect }: Props) {
         const { suggestions } = await placesLib.AutocompleteSuggestion.fetchAutocompleteSuggestions({
           input: query,
           sessionToken: sessionTokenRef.current,
-          language: "ko",
+          language: "en",
           region: "ph",
           // 필리핀 외 지역 결과 제외 (locationBias는 우선순위일 뿐 필터가 아니므로 필수)
           includedRegionCodes: ["ph"],
@@ -74,23 +77,36 @@ export function PlaceAutocomplete({ selected, onSelect }: Props) {
 
   const handlePick = async (suggestion: google.maps.places.AutocompleteSuggestion) => {
     const prediction = suggestion.placePrediction;
-    if (!prediction) return;
+    if (!prediction || !placesLib) return;
 
     setOpen(false);
     setLoading(true);
     try {
-      const place = prediction.toPlace();
-      await place.fetchFields({ fields: ["location", "formattedAddress", "displayName", "id"] });
+      // 영어 로케일 Place로 명시 조회 → addressComponents(바랑가이/시)를 항상 영어로 저장.
+      const place = new placesLib.Place({
+        id: prediction.placeId,
+        requestedLanguage: "en",
+        requestedRegion: "ph",
+      });
+      await place.fetchFields({
+        fields: ["location", "formattedAddress", "displayName", "id", "addressComponents"],
+      });
 
       const lat = place.location?.lat();
       const lng = place.location?.lng();
       if (lat === undefined || lng === undefined) return;
+
+      const { barangay, city, province } = extractBarangayCity(place.addressComponents ?? []);
 
       onSelect({
         lat,
         lng,
         address: place.formattedAddress ?? place.displayName ?? prediction.text.text,
         placeId: place.id,
+        barangay,
+        city,
+        province,
+        displayName: place.displayName ?? null,
       });
       setInput("");
       setSuggestions([]);
@@ -151,11 +167,18 @@ export function PlaceAutocomplete({ selected, onSelect }: Props) {
         </ul>
       )}
 
-      {/* 선택된 위치 표시 */}
+      {/* 선택된 위치 표시 — 새 선택 > 기존 설정(편집) > 미선택 */}
       {selected ? (
         <div className="mt-2 flex items-center gap-2 rounded-[10px] bg-teal-50 px-3 py-2.5">
           <MapPin className="h-4 w-4 flex-shrink-0 text-teal-600" strokeWidth={2} />
           <span className="text-[13px] font-semibold text-teal-800">{selected.address}</span>
+        </div>
+      ) : fallbackLabel ? (
+        <div className="mt-2 flex items-center gap-2 rounded-[10px] bg-teal-50 px-3 py-2.5">
+          <MapPin className="h-4 w-4 flex-shrink-0 text-teal-600" strokeWidth={2} />
+          <span className="text-[13px] font-semibold text-teal-800">
+            현재 설정된 거래지역: {fallbackLabel}
+          </span>
         </div>
       ) : (
         <p className="mt-1.5 text-[12.5px] text-slate-400">아직 위치가 선택되지 않았습니다</p>

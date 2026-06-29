@@ -31,6 +31,11 @@ export interface PickedLocation {
   lng: number;
   address: string; // formattedAddress (없으면 displayName)
   placeId?: string;
+  // 마켓플레이스 거래지역 세분화용 (go 모임에서는 미사용) — addressComponents 에서 추출
+  barangay?: string | null;
+  city?: string | null;
+  province?: string | null;
+  displayName?: string | null; // 시 성분 없는 장소(랜드마크 등)의 라벨 폴백용
 }
 
 // 생성 모달 입력 (date/time → ISO 조합은 createMeetup에서 처리)

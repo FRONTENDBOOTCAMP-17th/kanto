@@ -31,6 +31,7 @@ interface RentalListFilter {
   search?: string;
   roomType?: string;
   location?: string;
+  barangay?: string;
   targetIds?: number[];
   userId?: number;
 }
@@ -59,6 +60,7 @@ export async function getRentalList(
   // 방 종류/지역 필터를 DB(inner join 자식 컬럼)로 push.
   if (filter?.roomType) query = query.eq("rentals.room_type", filter.roomType);
   if (filter?.location) query = query.eq("rentals.location", filter.location as TradeLocation);
+  if (filter?.barangay) query = query.eq("rentals.location_barangay", filter.barangay);
 
   if (pagination) {
     const from = (pagination.page - 1) * pagination.pageSize;
@@ -69,6 +71,31 @@ export async function getRentalList(
   if (error) throw new Error(error.message);
 
   return { posts: (data as unknown as RentalWithPost[]) ?? [], total: count ?? 0 };
+}
+
+// 2단계 지역 필터용: 활성 매물이 있는 바랑가이를 광역(location)별로 묶어 반환.
+export async function getRentalBarangays(): Promise<Record<string, string[]>> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("rentals")
+    .select("location, location_barangay, posts!inner(status)")
+    .eq("posts.status", "active")
+    .not("location_barangay", "is", null)
+    .limit(2000);
+
+  if (error) throw new Error(error.message);
+
+  const grouped: Record<string, Set<string>> = {};
+  for (const row of data ?? []) {
+    const type = row.location as string | null;
+    const barangay = row.location_barangay as string;
+    if (!type) continue;
+    (grouped[type] ??= new Set()).add(barangay);
+  }
+  return Object.fromEntries(
+    Object.entries(grouped).map(([k, v]) => [k, [...v].sort()]),
+  );
 }
 
 interface RentalCreate {

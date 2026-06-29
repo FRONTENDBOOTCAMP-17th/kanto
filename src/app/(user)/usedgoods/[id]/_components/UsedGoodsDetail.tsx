@@ -18,6 +18,8 @@ import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarresel";
 import { Button } from "@/components/ui/button";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import RelatedItemsCarousel, { type RelatedItem } from "@/components/common/RelatedItemsCarousel";
+import { ApproxAreaMapWithProvider } from "@/components/common/ApproxAreaMap";
+import { formatBarangayLabel } from "@/type/location";
 
 type UsedGoods = Tables<"used_goods"> & {
   posts: Tables<"posts"> & {
@@ -67,6 +69,15 @@ export default function UsedGoodsDetail({
   const accession = data.posts.users?.created_at
     ? new Date(data.posts.users.created_at)
     : null;
+
+  // 거래지역: 바랑가이/시가 있으면 그 라벨, 없으면 기존 광역 enum (레거시 글)
+  const locationLabel =
+    data.location_barangay || data.location_city
+      ? formatBarangayLabel(data.location_barangay, data.location_city)
+      : data.location_type === "그 외 지역"
+        ? te("tradeLocation.otherAreas")
+        : data.location_type;
+  const hasCoords = data.location_lat != null && data.location_lng != null;
 
   const handleChat = async () => {
     if (!userId) { setShowLoginModal(true); return; }
@@ -138,7 +149,7 @@ export default function UsedGoodsDetail({
                 <dt className="text-gray-500 font-medium">{t("price")}</dt>
                 <dd className="text-orange-500">· ₱ {data.price?.toLocaleString()}</dd>
                 <dt className="text-gray-500 font-medium">{t("tradeLocation")}</dt>
-                <dd className="text-gray-700">· {data.location_type === "그 외 지역" ? te("tradeLocation.otherAreas") : data.location_type}</dd>
+                <dd className="text-gray-700">· {locationLabel}</dd>
                 {data.safe_payment !== null && (
                   <>
                     <dt className="text-gray-500 font-medium">{t("safePayment")}</dt>
@@ -148,9 +159,17 @@ export default function UsedGoodsDetail({
                   </>
                 )}
               </dl>
+              {hasCoords && (
+                <div className="mt-4">
+                  <ApproxAreaMapWithProvider
+                    lat={data.location_lat as number}
+                    lng={data.location_lng as number}
+                  />
+                </div>
+              )}
             </div>
             <hr className="border-gray-200" />
-            
+
             <div className="flex flex-col gap-4">
               <h2 className="text-xl font-semibold">{t("sellerInfo")}</h2>
               <div className="flex items-center gap-3">
@@ -201,7 +220,7 @@ export default function UsedGoodsDetail({
                 <dt className="text-gray-500 font-medium">{t("price")}</dt>
                 <dd className="text-orange-500">· ₱ {data.price?.toLocaleString()}</dd>
                 <dt className="text-gray-500 font-medium">{t("tradeLocation")}</dt>
-                <dd className="text-gray-700">· {data.location_type === "그 외 지역" ? te("tradeLocation.otherAreas") : data.location_type}</dd>
+                <dd className="text-gray-700">· {locationLabel}</dd>
                 {data.safe_payment !== null && (
                   <>
                     <dt className="text-gray-500 font-medium">{t("safePayment")}</dt>
@@ -211,6 +230,14 @@ export default function UsedGoodsDetail({
                   </>
                 )}
               </dl>
+              {hasCoords && (
+                <div className="mt-4">
+                  <ApproxAreaMapWithProvider
+                    lat={data.location_lat as number}
+                    lng={data.location_lng as number}
+                  />
+                </div>
+              )}
             </div>
             <div className="p-6 flex flex-col gap-4">
               <h2 className="text-xl font-semibold">{t("sellerInfo")}</h2>

@@ -19,6 +19,7 @@ interface UsedGoodsListFilter {
   search?: string;
   category?: string;
   location?: string;
+  barangay?: string;
   targetIds?: number[];
   userId?: number;
 }
@@ -57,6 +58,7 @@ export async function getUsedGoodsList(
   // 카테고리/지역 필터를 DB(inner join 자식 컬럼)로 push.
   if (filter?.category) query = query.eq("used_goods.category", filter.category);
   if (filter?.location) query = query.eq("used_goods.location_type", filter.location as TradeLocation);
+  if (filter?.barangay) query = query.eq("used_goods.location_barangay", filter.barangay);
 
   if (pagination) {
     const from = (pagination.page - 1) * pagination.pageSize;
@@ -96,6 +98,31 @@ export async function getUsedGoodsItem(postId: number) {
     .single();
 
   return data;
+}
+
+// 2단계 지역 필터용: 활성 매물이 있는 바랑가이를 광역(location_type)별로 묶어 반환.
+// 하드코딩 없이 실제 데이터에서 동적 생성.
+export async function getUsedGoodsBarangays(): Promise<Record<string, string[]>> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("used_goods")
+    .select("location_type, location_barangay, posts!inner(status)")
+    .eq("posts.status", "active")
+    .not("location_barangay", "is", null)
+    .limit(2000);
+
+  if (error) throw new Error(error.message);
+
+  const grouped: Record<string, Set<string>> = {};
+  for (const row of data ?? []) {
+    const type = row.location_type as string;
+    const barangay = row.location_barangay as string;
+    (grouped[type] ??= new Set()).add(barangay);
+  }
+  return Object.fromEntries(
+    Object.entries(grouped).map(([k, v]) => [k, [...v].sort()]),
+  );
 }
 
 export async function getUsedGoodsByCategory() {

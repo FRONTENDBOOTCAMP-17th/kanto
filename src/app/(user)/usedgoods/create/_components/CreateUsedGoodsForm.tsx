@@ -23,11 +23,17 @@ import {
 import {
   PRODUCT_CATEGORIES,
   PRODUCT_CONDITIONS,
-  TRADE_LOCATIONS,
   type ProductCategory,
   type ProductCondition,
-  type TradeLocation,
 } from "@/type/usedGoods";
+import { LocationPicker } from "@/components/common/LocationPicker";
+import {
+  cityToTradeLocation,
+  roundCoord,
+  formatBarangayLabel,
+  type TradeLocation,
+} from "@/type/location";
+import type { PickedLocation } from "@/type/go";
 
 interface InitialData {
   post_id: number | undefined;
@@ -37,6 +43,10 @@ interface InitialData {
   condition: string | null;
   location_type: string | null;
   location_custom: string | null;
+  location_barangay: string | null;
+  location_city: string | null;
+  location_lat: number | null;
+  location_lng: number | null;
   content: string | null;
   safe_payment: boolean | null;
   images: string[] | null;
@@ -63,12 +73,18 @@ export function CreateUsedGoodsForm({
   const [condition, setCondition] = useState<ProductCondition | "">(
     (initialData?.condition as ProductCondition) ?? "",
   );
-  const [preferredLocation, setPreferredLocation] = useState<
-    TradeLocation | ""
-  >((initialData?.location_type as TradeLocation) ?? "");
-  const [preferredLocationDetail, setPreferredLocationDetail] = useState(
-    initialData?.location_custom ?? "",
-  );
+  // 새로 선택한 거래지역 (편집 시 재선택 안 하면 null → 기존 값 유지)
+  const [picked, setPicked] = useState<PickedLocation | null>(null);
+  // 편집 시 아직 재선택 전 보여줄 기존 공개 라벨
+  const fallbackLocationLabel =
+    initialData?.location_barangay || initialData?.location_city
+      ? formatBarangayLabel(
+          initialData.location_barangay ?? null,
+          initialData.location_city ?? null,
+        )
+      : (initialData?.location_type ?? null);
+  // 기존 글에 거래지역이 있는지 (편집 시 재선택 없이도 유효 처리)
+  const hasExistingLocation = Boolean(initialData?.location_type);
   const [content, setContent] = useState(initialData?.content ?? "");
   const [safePayment, setSafePayment] = useState(
     initialData?.safe_payment ?? false,
@@ -96,15 +112,42 @@ export function CreateUsedGoodsForm({
     price !== "" &&
     productCategory !== "" &&
     condition !== "" &&
-    preferredLocation !== "" &&
-    (preferredLocation !== "그 외 지역" || preferredLocationDetail.trim() !== "") &&
+    (picked !== null || hasExistingLocation) &&
     content.trim() !== "" &&
     imagePreviews.length > 0;
 
+  // 저장용 거래지역 필드 — 새로 선택했으면 클램프(좌표 반올림) 후 도출, 아니면 기존 값 유지.
+  const buildLocationFields = () =>
+    picked
+      ? {
+          location_type: cityToTradeLocation(
+            picked.city ?? null,
+            picked.province ?? null,
+          ) as TradeLocation,
+          location_barangay: picked.barangay ?? null,
+          // 시 성분 없는 장소(랜드마크 등)도 라벨이 비지 않도록 폴백 — 표시 전용
+          location_city:
+            picked.city ?? picked.province ?? picked.displayName ?? picked.address ?? null,
+          location_lat: roundCoord(picked.lat),
+          location_lng: roundCoord(picked.lng),
+          location_custom: null,
+        }
+      : {
+          location_type: initialData?.location_type as TradeLocation,
+          location_barangay: initialData?.location_barangay ?? null,
+          location_city: initialData?.location_city ?? null,
+          location_lat: initialData?.location_lat ?? null,
+          location_lng: initialData?.location_lng ?? null,
+          location_custom: initialData?.location_custom ?? null,
+        };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!productCategory || !condition || !preferredLocation) return;
+    if (!productCategory || !condition) return;
+    if (!picked && !hasExistingLocation) return;
     setIsSubmitting(true);
+
+    const locationFields = buildLocationFields();
 
     if (initialData) {
       if (!postId) return;
@@ -138,8 +181,7 @@ export function CreateUsedGoodsForm({
           price: Number(price),
           category: productCategory,
           condition,
-          location_type: preferredLocation,
-          location_custom: preferredLocationDetail,
+          ...locationFields,
           content,
           safe_payment: safePayment,
           images: finalImages,
@@ -194,9 +236,7 @@ export function CreateUsedGoodsForm({
         safe_payment: safePayment,
         content,
         images: uploadedUrls.length > 0 ? uploadedUrls : null,
-        location_type: preferredLocation,
-        location_custom:
-          preferredLocation === "그 외 지역" ? preferredLocationDetail : null,
+        ...locationFields,
       });
 
       if (goodsError) {
@@ -347,31 +387,12 @@ export function CreateUsedGoodsForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="preferredLocation">{t("form.locationLabel")}</Label>
-              <Select
-                value={preferredLocation}
-                onValueChange={(v) => setPreferredLocation(v as TradeLocation)}
-                required
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t("form.locationPlaceholder")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {TRADE_LOCATIONS.map((loc) => (
-                    <SelectItem key={loc} value={loc}>
-                      {loc === "그 외 지역" ? te("tradeLocation.otherAreas") : loc}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {preferredLocation === "그 외 지역" && (
-                <Input
-                  placeholder={t("form.locationDetailPlaceholder")}
-                  value={preferredLocationDetail}
-                  onChange={(e) => setPreferredLocationDetail(e.target.value)}
-                  required
-                />
-              )}
+              <Label>{t("form.locationLabel")}</Label>
+              <LocationPicker
+                value={picked}
+                onChange={setPicked}
+                fallbackLabel={fallbackLocationLabel}
+              />
             </div>
 
             <div className="space-y-2">
