@@ -1,6 +1,18 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import { getUsedGoodsList, getUsedGoodsBarangays } from "@/services/usedGoods/usedGoods";
+import { getUsedGoodsList } from "@/services/usedGoods/usedGoods";
+
+export const metadata: Metadata = {
+  title: "중고거래",
+  description: "필리핀 한인 중고거래 매물을 찾아보세요.",
+  openGraph: {
+    title: "중고거래 | 칸토",
+    description: "필리핀 한인 중고거래 매물을 찾아보세요.",
+    images: [{ url: "/kantoLogo.png", alt: "칸토 로고" }],
+  },
+};
 import { getLikeList } from "@/services/likes";
 import { getSessionUser, getIdentityVerified } from "@/services/user/user";
 import { CategoryWriteButton } from "@/components/common/CategoryWriteButton";

@@ -1,5 +1,16 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getJobList, getPopularJobs } from "@/services/job/job";
+
+export const metadata: Metadata = {
+  title: "구인구직",
+  description: "필리핀 한인 구인구직 공고를 찾아보세요.",
+  openGraph: {
+    title: "구인구직 | 칸토",
+    description: "필리핀 한인 구인구직 공고를 찾아보세요.",
+    images: [{ url: "/kantoLogo.png", alt: "칸토 로고" }],
+  },
+};
 import { getLikeList } from "@/services/likes";
 import { getSessionUser, getIdentityVerified } from "@/services/user/user";
 import { CategoryWriteButton } from "@/components/common/CategoryWriteButton";

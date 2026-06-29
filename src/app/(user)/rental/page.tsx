@@ -1,6 +1,18 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import { getRentalList, getRentalBarangays } from "@/services/rental/rental";
+import { getRentalList } from "@/services/rental/rental";
+
+export const metadata: Metadata = {
+  title: "렌탈",
+  description: "필리핀 한인 렌탈 매물을 찾아보세요.",
+  openGraph: {
+    title: "렌탈 | 칸토",
+    description: "필리핀 한인 렌탈 매물을 찾아보세요.",
+    images: [{ url: "/kantoLogo.png", alt: "칸토 로고" }],
+  },
+};
 import { getLikeList } from "@/services/likes";
 import { getSessionUser, getIdentityVerified } from "@/services/user/user";
 import { RentalList } from "./_components/RentalList";
