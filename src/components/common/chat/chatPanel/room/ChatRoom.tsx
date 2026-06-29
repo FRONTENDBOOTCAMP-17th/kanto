@@ -19,6 +19,7 @@ interface ChatRoomData {
   sellerId: number | null;
   postPrice: number | null;
   isReserved: boolean;
+  isSold: boolean;
 }
 
 export default function ChatRoom({
@@ -53,6 +54,7 @@ export default function ChatRoom({
         sellerId: newChatMeta.sellerId,
         postPrice: newChatMeta.postPrice,
         isReserved: false,
+        isSold: false,
       });
       return;
     }
