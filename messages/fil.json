@@ -648,8 +648,9 @@
       "joinedAt": "Petsa ng pagsali",
       "provider": "Paraan ng pag-sign up",
       "verify": "Pagpapatunay ng pagkakakilanlan",
-      "verifyDesc": "Kailangan ng pagpapatunay upang makapag-post at sumali sa random chat.",
-      "verifyButton": "Patunayan ang pagkakakilanlan"
+      "verifyDesc": "Kailangan ng pagpapatunay upang makapag-post at sumali sa Kanto GO!.",
+      "verifyButton": "Patunayan ang pagkakakilanlan",
+      "verifyComplete": "Nakumpleto na ang pagpapatunay ng pagkakakilanlan."
     },
     "providers": {
       "google": "Google",
@@ -885,6 +886,10 @@
     }
   },
   "Go": {
+    "meta": {
+      "title": "Kanto GO! | Mga Miting ng Komunidad ng Pilipino",
+      "description": "Hanapin ang mga real-time na miting ng komunidad ng Pilipino sa mapa."
+    },
     "map": {
       "inProgress": "{count} meetup na isinasagawa",
       "loading": "...",

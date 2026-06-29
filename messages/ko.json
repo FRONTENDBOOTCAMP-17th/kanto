@@ -650,8 +650,9 @@
       "joinedAt": "가입일",
       "provider": "가입경로",
       "verify": "본인인증",
-      "verifyDesc": "게시물 작성과 랜덤채팅 참여는 인증이 필요합니다.",
-      "verifyButton": "본인인증 하기"
+      "verifyDesc": "게시물 작성과 칸토고 참여는 인증이 필요합니다.",
+      "verifyButton": "본인인증 하기",
+      "verifyComplete": "본인인증이 완료되었습니다."
     },
     "providers": {
       "google": "구글",
@@ -887,6 +888,10 @@
     }
   },
   "Go": {
+    "meta": {
+      "title": "Kanto GO! | 필리핀 한인 번개 모임",
+      "description": "필리핀 한인 커뮤니티의 실시간 번개 모임을 지도에서 확인하세요."
+    },
     "map": {
       "inProgress": "{count}개 모임 진행 중",
       "loading": "...",

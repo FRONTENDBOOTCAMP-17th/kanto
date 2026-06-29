@@ -642,8 +642,9 @@
       "joinedAt": "Joined",
       "provider": "Sign-up method",
       "verify": "Identity Verification",
-      "verifyDesc": "Verification is required to create posts and join random chats.",
-      "verifyButton": "Verify identity"
+      "verifyDesc": "Verification is required to create posts and join Kanto GO!.",
+      "verifyButton": "Verify identity",
+      "verifyComplete": "Identity verification is complete."
     },
     "providers": {
       "google": "Google",
@@ -879,6 +880,10 @@
     }
   },
   "Go": {
+    "meta": {
+      "title": "Kanto GO! | Filipino Community Meetups",
+      "description": "Find real-time Filipino community meetups on the map."
+    },
     "map": {
       "inProgress": "{count} meetups in progress",
       "loading": "...",
