@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+
+import { getRentalList, getRentalBarangays } from "@/services/rental/rental";
 import { getRentalList } from "@/services/rental/rental";
 
 export const metadata: Metadata = {
@@ -24,6 +26,7 @@ interface SearchParams {
   search?: string;
   roomType?: string;
   location?: string;
+  barangay?: string;
   page?: string;
 }
 
@@ -36,19 +39,21 @@ export default async function RentalPage({
   const currentPage = Number(params.page ?? 1);
   const t = await getTranslations("Rental");
 
-  const [{ posts, total }, { likedIds, currentUserId }, sessionUser, isVerified] =
+  const [{ posts, total }, { likedIds, currentUserId }, sessionUser, isVerified, barangaysByLocation] =
     await Promise.all([
       getRentalList(
         {
           search: params.search,
           roomType: params.roomType,
           location: params.location,
+          barangay: params.barangay,
         },
         { page: currentPage, pageSize: ITEMS_PER_PAGE },
       ),
       getLikeList("rental"),
       getSessionUser(),
       getIdentityVerified(),
+      getRentalBarangays(),
     ]);
 
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
@@ -77,6 +82,8 @@ export default async function RentalPage({
           givenSearch={params.search ?? ""}
           defaultRoomType={params.roomType ?? "all"}
           defaultLocation={params.location ?? sessionUser?.region ?? "all"}
+          defaultBarangay={params.barangay ?? "all"}
+          barangaysByLocation={barangaysByLocation}
         />
 
         <div className="border-t border-gray-200 mb-8" />

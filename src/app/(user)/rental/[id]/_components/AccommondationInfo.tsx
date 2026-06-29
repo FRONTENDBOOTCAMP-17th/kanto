@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { ReactNode } from "react";
 import { useTranslations } from "next-intl";
+import { ApproxAreaMapWithProvider } from "@/components/common/ApproxAreaMap";
+import { formatBarangayLabel } from "@/type/location";
 import { formatPrice } from "@/utils/formatTime";
 
 const AMENITY_ICONS: Record<string, ReactNode> = {
@@ -79,8 +81,22 @@ export default function AccommondationInfo({ rental }: { rental: Rental }) {
         <dt className="text-gray-500 font-medium">{t("maxOccupants")}</dt>
         <dd>· {t("occupantsValue", { count: rental.max_occupants ?? 0 })}</dd>
         <dt className="text-gray-500 font-medium">{t("location")}</dt>
-        <dd>· {rental.location === "그 외 지역" ? te("tradeLocation.otherAreas") : rental.location}</dd>
+        <dd>
+          ·{" "}
+          {rental.location_barangay || rental.location_city
+            ? formatBarangayLabel(rental.location_barangay, rental.location_city)
+            : rental.location === "그 외 지역"
+              ? te("tradeLocation.otherAreas")
+              : rental.location}
+        </dd>
       </dl>
+
+      {rental.location_lat != null && rental.location_lng != null && (
+        <ApproxAreaMapWithProvider
+          lat={rental.location_lat}
+          lng={rental.location_lng}
+        />
+      )}
     </>
   );
 }

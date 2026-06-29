@@ -1190,7 +1190,11 @@ export type Database = {
           id: number
           images: Json | null
           location: Database["public"]["Enums"]["trade_location"] | null
+          location_barangay: string | null
+          location_city: string | null
           location_detail: string | null
+          location_lat: number | null
+          location_lng: number | null
           max_occupants: number | null
           post_id: number | null
           price: number | null
@@ -1205,7 +1209,11 @@ export type Database = {
           id?: number
           images?: Json | null
           location?: Database["public"]["Enums"]["trade_location"] | null
+          location_barangay?: string | null
+          location_city?: string | null
           location_detail?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
           max_occupants?: number | null
           post_id?: number | null
           price?: number | null
@@ -1220,7 +1228,11 @@ export type Database = {
           id?: number
           images?: Json | null
           location?: Database["public"]["Enums"]["trade_location"] | null
+          location_barangay?: string | null
+          location_city?: string | null
           location_detail?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
           max_occupants?: number | null
           post_id?: number | null
           price?: number | null
@@ -1548,7 +1560,11 @@ export type Database = {
           content: string
           id: number
           images: Json | null
+          location_barangay: string | null
+          location_city: string | null
           location_custom: string | null
+          location_lat: number | null
+          location_lng: number | null
           location_type: Database["public"]["Enums"]["trade_location"]
           post_id: number
           price: number
@@ -1560,7 +1576,11 @@ export type Database = {
           content: string
           id?: number
           images?: Json | null
+          location_barangay?: string | null
+          location_city?: string | null
           location_custom?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
           location_type: Database["public"]["Enums"]["trade_location"]
           post_id: number
           price: number
@@ -1572,7 +1592,11 @@ export type Database = {
           content?: string
           id?: number
           images?: Json | null
+          location_barangay?: string | null
+          location_city?: string | null
           location_custom?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
           location_type?: Database["public"]["Enums"]["trade_location"]
           post_id?: number
           price?: number

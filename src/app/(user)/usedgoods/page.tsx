@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+
+import { getUsedGoodsList, getUsedGoodsBarangays } from "@/services/usedGoods/usedGoods";
 import { getUsedGoodsList } from "@/services/usedGoods/usedGoods";
 
 export const metadata: Metadata = {
@@ -24,6 +26,7 @@ interface SearchParams {
   search?: string;
   category?: string;
   location?: string;
+  barangay?: string;
   page?: string;
 }
 
@@ -36,19 +39,22 @@ export default async function UsedGoodsPage({
   const currentPage = Number(params.page ?? 1);
   const t = await getTranslations("UsedGoods");
 
-  const [{ posts, total }, { likedIds, currentUserId }, sessionUser, isVerified] = await Promise.all([
-    getUsedGoodsList(
-      {
-        search: params.search,
-        category: params.category,
-        location: params.location,
-      },
-      { page: currentPage, pageSize: ITEMS_PER_PAGE },
-    ),
-    getLikeList("used_goods"),
-    getSessionUser(),
-    getIdentityVerified(),
-  ]);
+  const [{ posts, total }, { likedIds, currentUserId }, sessionUser, isVerified, barangaysByLocation] =
+    await Promise.all([
+      getUsedGoodsList(
+        {
+          search: params.search,
+          category: params.category,
+          location: params.location,
+          barangay: params.barangay,
+        },
+        { page: currentPage, pageSize: ITEMS_PER_PAGE },
+      ),
+      getLikeList("used_goods"),
+      getSessionUser(),
+      getIdentityVerified(),
+      getUsedGoodsBarangays(),
+    ]);
 
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
@@ -76,6 +82,8 @@ export default async function UsedGoodsPage({
           givenSearch={params.search ?? ""}
           defaultCategory={params.category ?? "all"}
           defaultLocation={params.location ?? sessionUser?.region ?? "all"}
+          defaultBarangay={params.barangay ?? "all"}
+          barangaysByLocation={barangaysByLocation}
         />
 
         <div className="border-t border-gray-200 my-6" />

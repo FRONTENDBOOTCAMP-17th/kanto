@@ -51,6 +51,10 @@ export default async function RentalEditPage({
           images: rental.images as string[] | null,
           location: rental.location,
           location_detail: rental.location_detail,
+          location_barangay: rental.location_barangay,
+          location_city: rental.location_city,
+          location_lat: rental.location_lat,
+          location_lng: rental.location_lng,
         }}
       />
     </div>

@@ -33,6 +33,8 @@ export function RentalList({ initialPosts, initialLikedIds, currentUserId, curre
             price={rental?.price ?? null}
             location={rental?.location ?? null}
             locationDetail={rental?.location_detail ?? null}
+            barangay={rental?.location_barangay ?? null}
+            city={rental?.location_city ?? null}
             createdAt={post.created_at}
             images={(rental?.images as string[] | null) ?? []}
             amenities={(rental?.amenities as string[] | null) ?? []}

@@ -5,6 +5,7 @@ import type { UsedGoodsWithPost } from "@/type/usedGoods";
 import { ContentCard } from "@/components/common/ContentCard";
 import { EmptyState } from "@/components/common/EmptyState";
 import PopularBadge from "@/app/(user)/main/_components/PopularBadge";
+import { formatBarangayLabel } from "@/type/location";
 
 interface Props {
   initialPosts: UsedGoodsWithPost[];
@@ -29,9 +30,11 @@ export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId, cu
           ? goods.images.filter((img): img is string => typeof img === "string")
           : [];
         const location =
-          goods?.location_type === "그 외 지역"
-            ? (goods.location_custom ?? "")
-            : (goods?.location_type ?? "");
+          goods?.location_barangay || goods?.location_city
+            ? formatBarangayLabel(goods.location_barangay, goods.location_city)
+            : goods?.location_type === "그 외 지역"
+              ? (goods.location_custom ?? "")
+              : (goods?.location_type ?? "");
 
         const reservedBadge = !post.is_sold && post.is_reserved ? (
           <span className="rounded bg-teal-400 px-1.5 py-0.5 text-[11px] font-bold text-white">

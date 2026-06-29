@@ -7,6 +7,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { RentalWithPost } from "@/type/rental/rentalDetail";
 import InteractionButtons from "@/components/common/InteractionButtons";
 import type { Locale } from "@/i18n/config";
+import { formatBarangayLabel } from "@/type/location";
 
 interface PostInfoProps {
   rental: RentalWithPost;
@@ -46,7 +47,11 @@ export default function PostInfo({
         />
       </div>
       <p className="text-gray-500 text-sm mt-1">
-        {rental.room_type ? te(`roomType.${rental.room_type}`) : ""} · {rental.location_detail ?? (rental.location === "그 외 지역" ? te("tradeLocation.otherAreas") : rental.location)}
+        {rental.room_type ? te(`roomType.${rental.room_type}`) : ""} ·{" "}
+        {rental.location_barangay || rental.location_city
+          ? formatBarangayLabel(rental.location_barangay, rental.location_city)
+          : (rental.location_detail ??
+            (rental.location === "그 외 지역" ? te("tradeLocation.otherAreas") : rental.location))}
       </p>
 
       <div className="text-gray-400 text-sm flex items-center gap-4 mt-3">
