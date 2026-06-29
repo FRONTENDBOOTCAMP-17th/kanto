@@ -25,18 +25,14 @@ import {
   type RentType,
   type RoomType,
 } from "@/type/rental/rentalDetail";
-
-const LOCATIONS = [
-  "BGC / Taguig",
-  "Makati",
-  "Pasay / Paranaque",
-  "Quezon City",
-  "Mandaluyong / Pasig",
-  "Pampanga",
-  "그 외 지역",
-] as const;
-
-type Location = (typeof LOCATIONS)[number];
+import { LocationPicker } from "@/components/common/LocationPicker";
+import {
+  cityToTradeLocation,
+  roundCoord,
+  formatBarangayLabel,
+  type TradeLocation,
+} from "@/type/location";
+import type { PickedLocation } from "@/type/go";
 
 interface InitialData {
   post_id: number;
@@ -51,6 +47,10 @@ interface InitialData {
   images: string[] | null;
   location: string | null;
   location_detail: string | null;
+  location_barangay: string | null;
+  location_city: string | null;
+  location_lat: number | null;
+  location_lng: number | null;
 }
 
 export default function RentalCreateForm({
@@ -74,8 +74,41 @@ export default function RentalCreateForm({
   const [maxOccupants, setMaxOccupants] = useState(initialData?.max_occupants?.toString() ?? "");
   const [description, setDescription] = useState(initialData?.description ?? "");
   const [amenities, setAmenities] = useState<Amenity[]>((initialData?.amenities as Amenity[]) ?? []);
-  const [location, setLocation] = useState<Location | "">((initialData?.location as Location) ?? "");
-  const [locationDetail, setLocationDetail] = useState(initialData?.location_detail ?? "");
+  // 새로 선택한 거래지역 (편집 시 재선택 안 하면 null → 기존 값 유지)
+  const [picked, setPicked] = useState<PickedLocation | null>(null);
+  const fallbackLocationLabel =
+    initialData?.location_barangay || initialData?.location_city
+      ? formatBarangayLabel(
+          initialData.location_barangay ?? null,
+          initialData.location_city ?? null,
+        )
+      : (initialData?.location ?? null);
+  const hasExistingLocation = Boolean(initialData?.location);
+
+  // 저장용 거래지역 필드 — 새로 선택 시 좌표 클램프 후 도출, 아니면 기존 값 유지.
+  const buildLocationFields = () =>
+    picked
+      ? {
+          location: cityToTradeLocation(
+            picked.city ?? null,
+            picked.province ?? null,
+          ) as TradeLocation,
+          location_barangay: picked.barangay ?? null,
+          // 시 성분 없는 장소(랜드마크 등)도 라벨이 비지 않도록 폴백 — 표시 전용
+          location_city:
+            picked.city ?? picked.province ?? picked.displayName ?? picked.address ?? null,
+          location_lat: roundCoord(picked.lat),
+          location_lng: roundCoord(picked.lng),
+          location_detail: null,
+        }
+      : {
+          location: (initialData?.location ?? null) as TradeLocation | null,
+          location_barangay: initialData?.location_barangay ?? null,
+          location_city: initialData?.location_city ?? null,
+          location_lat: initialData?.location_lat ?? null,
+          location_lng: initialData?.location_lng ?? null,
+          location_detail: initialData?.location_detail ?? null,
+        };
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>(initialData?.images ?? []);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -196,6 +229,8 @@ export default function RentalCreateForm({
 
   const handleSubmit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
+    if (!rentType || !roomType) return;
+    if (!picked && !hasExistingLocation) return;
     if (!rentType || !roomType || !location) return;
 
     const urlCount = (description.match(/https?:\/\/[^\s]+/g) ?? []).length;
@@ -205,6 +240,8 @@ export default function RentalCreateForm({
     }
     setUrlError("");
     setIsSubmitting(true);
+
+    const locationFields = buildLocationFields();
 
     if (initialData) {
       if (!postId) return;
@@ -241,8 +278,7 @@ export default function RentalCreateForm({
           description,
           amenities,
           images: finalImages.length > 0 ? finalImages : null,
-          location,
-          location_detail: location === "그 외 지역" ? locationDetail : null,
+          ...locationFields,
         })
         .eq("post_id", postId);
 
@@ -297,8 +333,7 @@ export default function RentalCreateForm({
         description,
         amenities,
         images: uploadedUrls.length > 0 ? uploadedUrls : null,
-        location,
-        location_detail: location === "그 외 지역" ? locationDetail : null,
+        ...locationFields,
       });
 
       if (rentalError) {
@@ -355,6 +390,12 @@ export default function RentalCreateForm({
             </div>
 
             <div className="space-y-2">
+              <Label>{t("form.locationLabel")}</Label>
+              <LocationPicker
+                value={picked}
+                onChange={setPicked}
+                fallbackLabel={fallbackLocationLabel}
+              />
               <Label htmlFor="location">{t("form.locationLabel")}</Label>
               <Select
                 value={location}
