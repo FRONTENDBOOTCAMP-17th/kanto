@@ -791,7 +791,7 @@
       "confirmError": "Passwords do not match.",
       "showPassword": "Show password",
       "hidePassword": "Hide password",
-      "success": "Sign-up complete! Check your email to finish verification.",
+      "success": "Sign-up complete! Welcome to Kanto!",
       "processing": "Processing...",
       "submit": "Sign up"
     },
