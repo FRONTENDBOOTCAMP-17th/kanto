@@ -133,29 +133,42 @@ export function CreateUsedGoodsForm({
   };
 
   // 저장용 거래지역 필드 — 새로 선택했으면 클램프(좌표 반올림) 후 도출, 아니면 기존 값 유지.
-  const buildLocationFields = () =>
-    picked
-      ? {
-          location_type: cityToTradeLocation(
-            picked.city ?? null,
-            picked.province ?? null,
-          ) as TradeLocation,
-          location_barangay: picked.barangay ?? null,
-          // 시 성분 없는 장소(랜드마크 등)도 라벨이 비지 않도록 폴백 — 표시 전용
-          location_city:
-            picked.city ?? picked.province ?? picked.displayName ?? picked.address ?? null,
-          location_lat: roundCoord(picked.lat),
-          location_lng: roundCoord(picked.lng),
-          location_custom: null,
-        }
-      : {
-          location_type: initialData?.location_type as TradeLocation,
-          location_barangay: initialData?.location_barangay ?? null,
-          location_city: initialData?.location_city ?? null,
-          location_lat: initialData?.location_lat ?? null,
-          location_lng: initialData?.location_lng ?? null,
-          location_custom: initialData?.location_custom ?? null,
-        };
+  const buildLocationFields = () => {
+    if (picked) {
+      return {
+        location_type: cityToTradeLocation(
+          picked.city ?? null,
+          picked.province ?? null,
+        ) as TradeLocation,
+        location_barangay: picked.barangay ?? null,
+        // 시 성분 없는 장소(랜드마크 등)도 라벨이 비지 않도록 폴백 — 표시 전용
+        location_city:
+          picked.city ?? picked.province ?? picked.displayName ?? picked.address ?? null,
+        location_lat: roundCoord(picked.lat),
+        location_lng: roundCoord(picked.lng),
+        location_custom: null,
+      };
+    }
+    if (initialData) {
+      return {
+        location_type: initialData.location_type as TradeLocation,
+        location_barangay: initialData.location_barangay ?? null,
+        location_city: initialData.location_city ?? null,
+        location_lat: initialData.location_lat ?? null,
+        location_lng: initialData.location_lng ?? null,
+        location_custom: initialData.location_custom ?? null,
+      };
+    }
+    // 신규 작성 + LocationPicker 미선택: 드롭다운 값을 location_type 으로 사용
+    return {
+      location_type: preferredLocation as TradeLocation,
+      location_barangay: null,
+      location_city: null,
+      location_lat: null,
+      location_lng: null,
+      location_custom: preferredLocation === "그 외 지역" ? preferredLocationDetail : null,
+    };
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
