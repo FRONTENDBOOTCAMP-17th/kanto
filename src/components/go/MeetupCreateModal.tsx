@@ -9,6 +9,7 @@ import { APIProvider } from "@vis.gl/react-google-maps";
 import { TOPIC_OPTIONS } from "@/constants/meetupTopics";
 import { PlaceAutocomplete } from "@/components/go/PlaceAutocomplete";
 import { createMeetup } from "@/services/go/go";
+import { manilaWallTimeToISO } from "@/utils/goTime";
 import type { MeetupTopicKey } from "@/constants/meetupTopics";
 import type { PickedLocation } from "@/type/go";
 
@@ -170,7 +171,8 @@ export function MeetupCreateModal({
     if (!isValid || submitting) return;
     const date = `${CURRENT_YEAR}-${form.month.padStart(2, "0")}-${form.day.padStart(2, "0")}`;
     const startTime = `${form.startHour}:${form.startMinute}`;
-    if (new Date(`${date}T${startTime}:00`) <= new Date()) {
+    // 마닐라 벽시계 기준으로 과거 여부 판단 (저장 경로와 동일 기준)
+    if (new Date(manilaWallTimeToISO(date, startTime)) <= new Date()) {
       alert(t("create.pastTimeError"));
       return;
     }

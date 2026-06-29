@@ -5,7 +5,7 @@ const CAT_COLORS: Record<string, string> = {
   "중고거래": "#ea580c",
   "커뮤니티": "#7c3aed",
   "구인구직": "#2563eb",
-  "방 렌탈": "#16a34a",
+  "부동산": "#16a34a",
 };
 
 interface Props {

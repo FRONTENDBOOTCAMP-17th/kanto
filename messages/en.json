@@ -18,7 +18,6 @@
       "usedgoods": "Marketplace",
       "jobs": "Jobs",
       "rental": "Rentals",
-      "community": "Community",
       "dating": "Random Chat",
       "go": "Kanto GO!"
     },
@@ -39,13 +38,13 @@
     }
   },
   "Footer": {
-    "tagline": "A community platform<br></br>for Koreans in the Philippines",
+    "tagline": "A life platform<br></br>for everyday living in the Philippines",
     "services": {
       "title": "Services",
       "usedgoods": "Marketplace",
       "jobs": "Jobs",
       "rental": "Rentals",
-      "community": "Korean Community"
+      "go": "Kanto GO!"
     },
     "support": {
       "title": "Support",
@@ -339,11 +338,7 @@
         "description": "Buy and sell used items"
       },
       "jobs": { "name": "Jobs", "description": "Find a job or hire staff" },
-      "rental": { "name": "Rentals", "description": "Find or list a room" },
-      "community": {
-        "name": "Community",
-        "description": "Chat freely with others"
-      }
+      "rental": { "name": "Rentals", "description": "Find or list a room" }
     }
   },
   "Main": {
@@ -359,18 +354,17 @@
     "category": {
       "usedgoods": "Marketplace",
       "jobs": "Jobs",
-      "rental": "Rentals",
-      "community": "Community"
+      "rental": "Rentals"
     },
     "hero": {
       "usedgoods": {
         "title": "Buy and sell on Kanto!",
-        "description": "A safe marketplace for Koreans in the Philippines",
+        "description": "A safe marketplace for everyday living in the Philippines",
         "button": "Go to Marketplace"
       },
       "jobs": {
         "title": "Looking for a job?",
-        "description": "Jobs for Koreans in the Philippines",
+        "description": "Local job listings in the Philippines",
         "button": "Go to Jobs"
       },
       "rental": {
@@ -378,15 +372,10 @@
         "description": "Reasonably priced room rentals",
         "button": "Go to Rentals"
       },
-      "community": {
-        "title": "Want to connect with Koreans?",
-        "description": "A space for Koreans in the Philippines",
-        "button": "Go to Community"
-      },
-      "dating": {
-        "title": "Want to meet someone new?",
-        "description": "Start new connections with filtered random matching",
-        "button": "Go to Random Chat"
+      "go": {
+        "title": "Want to start a local meetup?",
+        "description": "Enjoy all kinds of meetups in the Philippines",
+        "button": "Go to Kanto GO!"
       }
     }
   },
@@ -396,7 +385,7 @@
   },
   "UsedGoods": {
     "title": "Marketplace",
-    "subtitle": "Marketplace for Koreans in the Philippines",
+    "subtitle": "Marketplace for everyday living in the Philippines",
     "searchResult": "Search results for \"{query}\"",
     "write": "Write",
     "empty": "No items yet",
@@ -446,7 +435,7 @@
   },
   "Job": {
     "title": "Jobs",
-    "subtitle": "Job listings for Koreans in the Philippines",
+    "subtitle": "Local job listings in the Philippines",
     "searchResult": "Search results for \"{query}\"",
     "write": "Post a job",
     "emptySearch": "No search results",
@@ -492,7 +481,7 @@
     "form": {
       "back": "Back",
       "createTitle": "Post a job",
-      "page1Subtitle": "Please enter the basic info for the job posting",
+      "requiredNotice": "* indicates a required field.",
       "jobInfo": "Job info",
       "titleLabel": "Job title *",
       "titlePlaceholder": "e.g. Hiring hall staff for a Korean restaurant",
@@ -520,7 +509,6 @@
       "preferredPlaceholder": "Enter preferred qualifications",
       "next": "Next step",
       "prev": "Previous step",
-      "page2Subtitle": "Please enter company info and contact details",
       "companyInfo": "Company info",
       "companyLogoLabel": "Company Logo",
       "companyLogoHint": "Square image recommended (PNG, JPG)",
@@ -553,8 +541,6 @@
       "optional": "(optional)",
       "submitting": "Submitting...",
       "submit": "Done",
-      "errorRequired": "Please fill in all required fields.",
-      "errorLocationDetail": "Please enter the detailed area.",
       "errorImage": "Failed to upload image.",
       "errorEdit": "Failed to update.",
       "errorPost": "Failed to create post.",
@@ -563,7 +549,7 @@
   },
   "Rental": {
     "title": "Rentals",
-    "subtitle": "Room rental info for Koreans in the Philippines",
+    "subtitle": "Local room rental info in the Philippines",
     "searchResult": "Search results for \"{query}\"",
     "write": "Write",
     "empty": "No listings yet",
@@ -719,7 +705,6 @@
         "usedgoods": "Used Goods",
         "jobs": "Jobs",
         "rental": "Rentals",
-        "community": "Community",
         "dating": "Random Chat"
       }
     },
@@ -934,6 +919,7 @@
       "joined": "You've joined! The host has been notified",
       "cancelled": "Participation cancelled",
       "reentryForbidden": "Rejoining is not allowed.",
+      "cancelAfterStart": "The meetup has already started, so you can't cancel.",
       "ended": "Meetup ended",
       "error": "An error occurred",
       "withdrawn": "This user has withdrawn."

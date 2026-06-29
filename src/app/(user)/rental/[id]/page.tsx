@@ -74,6 +74,7 @@ export default async function RentalDetail({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mt-4">
         <BackButton />
         <VerifyAuthor
           authorAuthId={rental.posts.users?.auth_id}

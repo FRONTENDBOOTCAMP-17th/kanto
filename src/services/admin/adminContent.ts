@@ -117,7 +117,7 @@ export interface AffectedPost {
   post_type: string;
   status: string;
   created_at: string;
-  matched_in: "title" | "content";
+  matched_in: "title";
 }
 
 export async function searchPostsByWords(words: string[]): Promise<AffectedPost[]> {
@@ -133,17 +133,6 @@ export async function searchPostsByWords(words: string[]): Promise<AffectedPost[
     .limit(100);
   if (titleError) throw new Error(titleError.message);
 
-  const contentFilter = words.map((w) => `content.ilike.%${w}%`).join(",");
-
-  const { data: contentMatches, error: contentError } = await supabaseAdmin
-    .from("community_posts")
-    .select("post_id, content, post:posts!community_posts_post_id_fkey(id, title, post_type, status, created_at)")
-    .or(contentFilter)
-    .limit(100);
-  if (contentError) throw new Error(contentError.message);
-
-  const titleMatchIds = new Set((titleMatches ?? []).map((p) => p.id));
-
   const results: AffectedPost[] = (titleMatches ?? []).map((p) => ({
     id: p.id,
     title: p.title,
@@ -152,25 +141,6 @@ export async function searchPostsByWords(words: string[]): Promise<AffectedPost[
     created_at: p.created_at,
     matched_in: "title" as const,
   }));
-
-  for (const cm of contentMatches ?? []) {
-    const post = cm.post?.[0] as {
-  id: number;
-  title: string;
-  post_type: string;
-  status: string;
-  created_at: string;
-} | undefined;
-    if (!post || titleMatchIds.has(post.id)) continue;
-    results.push({
-      id: post.id,
-      title: post.title,
-      post_type: post.post_type,
-      status: post.status,
-      created_at: post.created_at,
-      matched_in: "content",
-    });
-  }
 
   return results;
 }

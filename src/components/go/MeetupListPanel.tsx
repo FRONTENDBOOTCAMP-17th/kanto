@@ -6,6 +6,8 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { X, Search, MapPin, Users, Clock } from "lucide-react";
 import { TOPIC_META } from "@/constants/meetupTopics";
+import { TopicBadge } from "@/components/go/TopicBadge";
+import { formatManilaTimeRange } from "@/utils/goTime";
 import type { Meetup } from "@/type/go";
 
 interface MeetupListPanelProps {
@@ -100,9 +102,10 @@ export function MeetupListPanel({
             {filtered.map((meetup) => {
               const meta = TOPIC_META[meetup.topic] ?? TOPIC_META.other;
               const isSelected = selectedId === meetup.post_id;
-              const startDate = new Date(meetup.start_at);
-              const endDate = new Date(meetup.end_at);
-              const timeRange = `${startDate.getHours().toString().padStart(2, "0")}:${startDate.getMinutes().toString().padStart(2, "0")} ~ ${endDate.getHours().toString().padStart(2, "0")}:${endDate.getMinutes().toString().padStart(2, "0")}`;
+              const timeRange = formatManilaTimeRange(
+                meetup.start_at,
+                meetup.end_at,
+              );
               const totalCount = meetup.participant_count + 1;
               const isFull = totalCount >= meetup.max_participants;
 
@@ -116,16 +119,11 @@ export function MeetupListPanel({
                     }}
                   >
                     <div className="mb-2 flex items-start justify-between gap-2">
-                      <span
+                      <TopicBadge
+                        topic={meetup.topic}
+                        label={t(`topics.${meetup.topic}`)}
                         className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11.5px] font-bold"
-                        style={{
-                          background: meta.bg,
-                          color: meta.color,
-                          border: `1px solid ${meta.border}`,
-                        }}
-                      >
-                        {t(`topics.${meetup.topic}`)}
-                      </span>
+                      />
                       {isFull && (
                         <span className="inline-flex items-center rounded-full border border-red-200 bg-red-50 px-2.5 py-0.5 text-[11px] font-bold text-red-500">
                           {t("list.full")}

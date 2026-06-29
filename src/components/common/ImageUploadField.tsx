@@ -9,6 +9,7 @@ interface ImageUploadFieldProps {
   imagePreviews: string[];
   maxCount?: number;
   minCount?: number;
+  required?: boolean;
   isChecking?: boolean;
   onUploadClick: () => void;
   onSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -20,6 +21,7 @@ export function ImageUploadField({
   imagePreviews,
   maxCount = 10,
   minCount,
+  required = false,
   isChecking = false,
   onUploadClick,
   onSelect,
@@ -32,6 +34,7 @@ export function ImageUploadField({
         {minCount !== undefined
           ? t("imageUpload.labelWithMin", { minCount, maxCount })
           : t("imageUpload.label", { maxCount })}
+        {required && " *"}
       </Label>
       <input
         ref={fileInputRef}

@@ -17,6 +17,7 @@ import { MeetupDetailPanel } from "@/components/go/MeetupDetailPanel";
 import { MeetupListPanel } from "@/components/go/MeetupListPanel";
 import { MeetupCreateModal } from "@/components/go/MeetupCreateModal";
 import { TopicFilterChips } from "@/components/go/TopicFilterChips";
+import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import { useAuthStore } from "@/store/authStore";
 import { useGoUiStore } from "@/store/goUiStore";
 import type { Meetup } from "@/type/go";
@@ -68,11 +69,42 @@ function RecenterButton() {
   );
 }
 
+// 목록에서 선택한 모임의 핀 위치로 지도를 이동시킨다.
+function MapPanController({
+  meetup,
+  active,
+}: {
+  meetup: Meetup | null;
+  active: boolean;
+}) {
+  const map = useMap(MAP_ID);
+
+  useEffect(() => {
+    if (!map || !meetup || !active) return;
+
+    map.panTo({ lat: meetup.location_lat, lng: meetup.location_lng });
+
+    // 핀이 클러스터에 묶여 안 보일 수 있으므로 개별 핀이 드러나는 줌까지 확대
+    if ((map.getZoom() ?? 12) < 16) map.setZoom(16);
+
+    // 데스크톱: 우측 상세 패널 너비의 절반만큼 우측으로 panBy → 핀이 패널에 안 가린 채 보이는 영역 중앙에 옴
+    if (window.innerWidth >= 768) {
+      const panelWidth = window.innerWidth >= 1024 ? 390 : 340;
+      map.panBy(panelWidth / 2, 0);
+    }
+    // 실시간 갱신(participant_count 변동)으로 인한 재이동을 막기 위해 post_id 기준으로만 트리거
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, meetup?.post_id, active]);
+
+  return null;
+}
+
 export default function GoPage() {
   const t = useTranslations("Go");
   const [topicFilter, setTopicFilter] = useState<MeetupTopicKey | "all">("all");
   const [selectedMeetupId, setSelectedMeetupId] = useState<number | null>(null);
   const [showCreate, setShowCreate] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [showList, setShowList] = useState(false);
   const [listEnterAnim, setListEnterAnim] = useState<"up" | "left">("up");
   const [detailFromList, setDetailFromList] = useState(false);
@@ -279,6 +311,9 @@ export default function GoPage() {
           })}
         </Map>
 
+        {/* 목록에서 선택 시 해당 핀으로 지도 이동 */}
+        <MapPanController meetup={selectedMeetup} active={detailFromList} />
+
         {/* ── 상단 오버레이: 필터(좌) + 번개모임 만들기(우) ── */}
         <div
           className={`pointer-events-none absolute right-0 top-0 z-10 pt-3.5 left-0 transition-[left] duration-280 ease-in-out ${
@@ -294,7 +329,9 @@ export default function GoPage() {
               />
             </div>
             <button
-              onClick={() => setShowCreate(true)}
+              onClick={() =>
+                currentUserId ? setShowCreate(true) : setShowLoginModal(true)
+              }
               className="absolute right-5 top-0 flex shrink-0 items-center gap-2 rounded-[14px] bg-slate-900 px-4 py-2.5 text-[14px] font-bold text-white shadow-[0_6px_20px_rgba(15,23,42,.35)] transition-all hover:bg-slate-800 active:scale-95"
             >
               <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
@@ -354,6 +391,11 @@ export default function GoPage() {
             onCreated={handleCreated}
           />
         )}
+
+        <LoginRequiredModal
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+        />
       </div>
     </APIProvider>
   );

@@ -5,10 +5,15 @@
 import { useEffect, useState, useMemo } from "react";
 import {
   Zap, Search, X, Calendar, MapPin, Users,
-  AlertTriangle, ChevronLeft, ChevronRight, ExternalLink, CircleOff
+  AlertTriangle, ExternalLink, CircleOff
 } from "lucide-react";
+import { AdminPagination } from "@/app/(admin)/admin/_components/AdminPagination";
+import { MeetupAvatar } from "@/components/go/MeetupAvatar";
 import { adminGetMeetups, adminForceEndMeetup } from "@/services/go/go";
 import { TOPIC_META, TOPIC_OPTIONS } from "@/constants/meetupTopics";
+import { MANILA_TZ, formatManilaTimeRange } from "@/utils/goTime";
+import { TopicBadge } from "@/components/go/TopicBadge";
+import { GoToast } from "@/components/go/GoToast";
 import type { AdminMeetup } from "@/type/go";
 import type { MeetupTopicKey } from "@/constants/meetupTopics";
 
@@ -25,12 +30,12 @@ const STATUS_META = {
 function TopicPill({ topic }: { topic: MeetupTopicKey }) {
   const m = TOPIC_META[topic] ?? TOPIC_META.other;
   return (
-    <span
+    <TopicBadge
+      topic={topic}
+      label={m.label}
+      bordered={false}
       className="inline-flex items-center rounded-[7px] px-2.5 py-0.5 text-[12.5px] font-bold whitespace-nowrap"
-      style={{ background: m.bg, color: m.color }}
-    >
-      {m.label}
-    </span>
+    />
   );
 }
 
@@ -43,24 +48,6 @@ function StatusPill({ status }: { status: "active" | "upcoming" | "ended" }) {
     >
       {m.label}
     </span>
-  );
-}
-
-function Avatar({ name, size = 28 }: { name: string; size?: number }) {
-  const colors = [
-    { bg: "#fee2e2", fg: "#dc2626" }, { bg: "#dbeafe", fg: "#2563eb" },
-    { bg: "#ede9fe", fg: "#7c3aed" }, { bg: "#ffedd5", fg: "#ea580c" },
-    { bg: "#dcfce7", fg: "#16a34a" }, { bg: "#fce7f3", fg: "#db2777" },
-  ];
-  let i = 0;
-  for (let c = 0; c < name.length; c++) i = (i + name.charCodeAt(c)) % colors.length;
-  return (
-    <div
-      style={{ width: size, height: size, background: colors[i].bg, color: colors[i].fg }}
-      className="flex flex-shrink-0 items-center justify-center rounded-full text-xs font-bold"
-    >
-      {name.charAt(0)}
-    </div>
   );
 }
 
@@ -90,7 +77,16 @@ export default function AdminGoPage() {
     }
   };
 
-  useEffect(() => { load(); }, []);
+  // 초기 로드는 effect 내에서 직접 fetch — 동기 setState(setLoading) 호출을 피해
+  // react-hooks/set-state-in-effect(불필요한 cascading render) 경고를 방지한다.
+  // (loading 초기값이 이미 true라 진입 시 setLoading(true)가 필요 없음)
+  useEffect(() => {
+    let active = true;
+    adminGetMeetups()
+      .then((data) => { if (active) setMeetups(data); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, []);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -238,7 +234,8 @@ export default function AdminGoPage() {
 
       {/* ── 테이블 ── */}
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
-        <div className="overflow-x-auto">
+        {/* 데스크탑: 테이블 */}
+        <div className="hidden overflow-x-auto lg:block">
           <table className="w-full min-w-[740px] border-collapse">
             <thead>
               <tr className="border-b border-[#f1f4f6] bg-[#f8fafc]">
@@ -265,10 +262,8 @@ export default function AdminGoPage() {
               ) : pageItems.map((m) => {
                 const cap = Math.round(((m.participant_count + 1) / m.max_participants) * 100);
                 const capColor = cap >= 90 ? "#ef4444" : cap >= 70 ? "#f97316" : "#14b8a6";
-                const startDate = new Date(m.start_at);
-                const endDate   = new Date(m.end_at);
-                const dateStr   = `${startDate.getMonth()+1}/${startDate.getDate()}`;
-                const timeRange = `${startDate.getHours().toString().padStart(2,"0")}:${startDate.getMinutes().toString().padStart(2,"0")} ~ ${endDate.getHours().toString().padStart(2,"0")}:${endDate.getMinutes().toString().padStart(2,"0")}`;
+                const dateStr   = new Date(m.start_at).toLocaleDateString("en-US", { month: "numeric", day: "numeric", timeZone: MANILA_TZ });
+                const timeRange = formatManilaTimeRange(m.start_at, m.end_at);
                 return (
                   <tr
                     key={m.post_id}
@@ -303,7 +298,7 @@ export default function AdminGoPage() {
                     </td>
                     <td className="px-[18px] py-3.5">
                       <div className="flex items-center gap-2">
-                        <Avatar name={m.host_name} size={28} />
+                        <MeetupAvatar name={m.host_name} size={28} />
                         <span className="max-w-[64px] truncate text-[13.5px] font-semibold text-slate-700">{m.host_name}</span>
                       </div>
                     </td>
@@ -320,29 +315,70 @@ export default function AdminGoPage() {
           </table>
         </div>
 
-        {/* 페이지네이션 */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between gap-3 border-t border-[#f1f4f6] px-5 py-4">
-            <span className="text-[13px] text-slate-400">
-              총 <span className="font-semibold text-slate-600">{filtered.length}</span>건
-            </span>
-            <div className="flex items-center gap-1.5">
-              <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={p <= 1}
-                className="flex h-8 items-center gap-1 rounded-[9px] border border-[#e7ebee] bg-white px-3 text-[13px] font-semibold text-slate-500 disabled:opacity-40 hover:bg-[#f7f9fa]">
-                <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.5} /> 이전
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-                <button key={n} onClick={() => setPage(n)}
-                  className={`h-8 min-w-[34px] rounded-[9px] border text-[13px] font-semibold ${p === n ? "border-teal-500 bg-teal-500 text-white" : "border-[#e7ebee] bg-white text-slate-500 hover:bg-[#f7f9fa]"}`}>
-                  {n}
-                </button>
-              ))}
-              <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={p >= totalPages}
-                className="flex h-8 items-center gap-1 rounded-[9px] border border-[#e7ebee] bg-white px-3 text-[13px] font-semibold text-slate-500 disabled:opacity-40 hover:bg-[#f7f9fa]">
-                다음 <ChevronRight className="h-3.5 w-3.5" strokeWidth={2.5} />
-              </button>
-            </div>
+        {/* 모바일: 카드 */}
+        {loading ? (
+          <div className="py-16 text-center text-[14px] text-slate-400 lg:hidden">불러오는 중...</div>
+        ) : pageItems.length === 0 ? (
+          <div className="flex flex-col items-center gap-3 py-16 text-center lg:hidden">
+            <Zap className="h-12 w-12 text-slate-200" strokeWidth={1.6} />
+            <div className="text-[15px] font-bold text-slate-500">조건에 맞는 모임이 없습니다</div>
+            <div className="text-[13.5px] text-slate-400">필터를 변경하거나 검색어를 지워보세요</div>
           </div>
+        ) : (
+          <div className="lg:hidden divide-y divide-[#f3f5f7]">
+            {pageItems.map((m) => {
+              const cap = Math.round(((m.participant_count + 1) / m.max_participants) * 100);
+              const capColor = cap >= 90 ? "#ef4444" : cap >= 70 ? "#f97316" : "#14b8a6";
+              const startDate = new Date(m.start_at);
+              const dateStr = `${startDate.getMonth() + 1}/${startDate.getDate()} ${startDate.getHours().toString().padStart(2, "0")}:${startDate.getMinutes().toString().padStart(2, "0")}`;
+              return (
+                <div
+                  key={m.post_id}
+                  onClick={() => { setSelectedId(m.post_id); setConfirmEnd(false); }}
+                  className="cursor-pointer px-4 py-3.5 hover:bg-[#f8fafc]"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <TopicPill topic={m.topic} />
+                      {m.reports > 0 && (
+                        <span className="shrink-0 rounded-md border border-red-200 bg-red-50 px-1.5 py-0.5 text-[11px] font-bold text-red-600">
+                          신고 {m.reports}건
+                        </span>
+                      )}
+                    </div>
+                    <StatusPill status={m.status} />
+                  </div>
+                  <div className="mt-1.5 truncate text-[14px] font-bold text-slate-900">{m.title}</div>
+                  <div className="mt-0.5 truncate text-[12.5px] text-slate-400">{m.location_address}</div>
+                  <div className="mt-2.5 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-[12.5px] text-slate-500">
+                      <span>{dateStr}</span>
+                      <span className="text-slate-300">·</span>
+                      <div className="flex items-center gap-1.5">
+                        <div className="h-1.5 w-9 overflow-hidden rounded-full bg-slate-100">
+                          <div className="h-full rounded-full" style={{ width: `${cap}%`, background: capColor }} />
+                        </div>
+                        <span className="font-bold text-slate-700">{m.participant_count + 1}/{m.max_participants}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <MeetupAvatar name={m.host_name} size={22} />
+                      <span className="max-w-[60px] truncate text-[12.5px] font-semibold text-slate-600">{m.host_name}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {totalPages > 1 && (
+          <AdminPagination
+            currentPage={p}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            countLabel={<>총 <span className="font-semibold text-slate-600">{filtered.length}</span>건</>}
+          />
         )}
       </div>
 
@@ -376,11 +412,11 @@ export default function AdminGoPage() {
             <div className="flex flex-1 flex-col gap-5 overflow-y-auto px-6 py-5">
               {/* 주최자 */}
               <div className="flex items-center gap-3.5 rounded-[14px] border border-slate-100 bg-slate-50 p-4">
-                <Avatar name={selected.host_name} size={44} />
+                <MeetupAvatar name={selected.host_name} size={44} />
                 <div>
                   <div className="text-[15px] font-bold text-slate-900">{selected.host_name}</div>
                   <div className="mt-0.5 text-[12.5px] text-slate-400">
-                    주최자 · {new Date(selected.created_at).toLocaleDateString("ko-KR")} 개설
+                    주최자 · {new Date(selected.created_at).toLocaleDateString("ko-KR", { timeZone: MANILA_TZ })} 개설
                   </div>
                 </div>
               </div>
@@ -391,7 +427,7 @@ export default function AdminGoPage() {
                   {
                     icon: Calendar,
                     label: "일시",
-                    content: `${new Date(selected.start_at).toLocaleDateString("ko-KR")} · ${new Date(selected.start_at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })} ~ ${new Date(selected.end_at).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}`,
+                    content: `${new Date(selected.start_at).toLocaleDateString("ko-KR", { timeZone: MANILA_TZ })} · ${formatManilaTimeRange(selected.start_at, selected.end_at)}`,
                   },
                   {
                     icon: MapPin,
@@ -436,13 +472,13 @@ export default function AdminGoPage() {
                 <div className="flex flex-wrap gap-3">
                   <div className="flex flex-col items-center gap-1">
                     <div style={{ boxShadow: "0 0 0 2px #14b8a6" }} className="rounded-full">
-                      <Avatar name={selected.host_name} size={40} />
+                      <MeetupAvatar name={selected.host_name} size={40} />
                     </div>
                     <span className="text-[10.5px] font-bold text-teal-600">주최자</span>
                   </div>
                   {selected.participants.slice(0, 8).map((pt) => (
                     <div key={pt.id} className="flex flex-col items-center gap-1">
-                      <Avatar name={pt.display_name} size={40} />
+                      <MeetupAvatar name={pt.display_name} size={40} />
                       <span className="text-[10.5px] text-slate-400">참여자</span>
                     </div>
                   ))}
@@ -509,12 +545,7 @@ export default function AdminGoPage() {
       )}
 
       {/* 토스트 */}
-      {toast && (
-        <div className="fixed bottom-7 left-1/2 z-[90] flex -translate-x-1/2 items-center gap-2.5 whitespace-nowrap rounded-xl bg-slate-900 px-5 py-3.5 text-[13.5px] font-semibold text-white shadow-2xl">
-          <span className="text-emerald-400">✓</span>
-          {toast}
-        </div>
-      )}
+      {toast && <GoToast message={toast} showIcon />}
     </div>
   );
 }

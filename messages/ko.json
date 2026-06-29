@@ -18,7 +18,6 @@
       "usedgoods": "중고거래",
       "jobs": "구인구직",
       "rental": "부동산",
-      "community": "커뮤니티",
       "dating": "랜덤채팅",
       "go": "Kanto GO!"
     },
@@ -39,13 +38,13 @@
     }
   },
   "Footer": {
-    "tagline": "필리핀 한인을 위한<br></br>커뮤니티 플랫폼",
+    "tagline": "필리핀 생활을 연결하는<br></br>라이프 플랫폼",
     "services": {
       "title": "서비스",
       "usedgoods": "중고거래",
       "jobs": "구인구직",
       "rental": "부동산",
-      "community": "한인 커뮤니티"
+      "go": "Kanto GO!"
     },
     "support": {
       "title": "고객지원",
@@ -345,10 +344,6 @@
       "rental": {
         "name": "부동산",
         "description": "방을 구하거나 방을 내놓아요"
-      },
-      "community": {
-        "name": "커뮤니티",
-        "description": "자유롭게 이야기를 나눠요"
       }
     }
   },
@@ -365,34 +360,28 @@
     "category": {
       "usedgoods": "중고거래",
       "jobs": "구인구직",
-      "rental": "부동산",
-      "community": "커뮤니티"
+      "rental": "부동산"
     },
     "hero": {
       "usedgoods": {
         "title": "중고거래는 칸토에서!",
-        "description": "필리핀 한인들의 안전한 중고거래 플랫폼",
+        "description": "필리핀 생활을 위한 안전한 중고거래 플랫폼",
         "button": "중고거래 바로가기"
       },
       "jobs": {
         "title": "일자리를 찾고 있다면",
-        "description": "필리핀 한인 구인구직 정보",
+        "description": "필리핀 현지 구인구직 정보",
         "button": "구인구직 바로가기"
       },
       "rental": {
         "title": "초저가 방을 찾고 있다면",
-        "description": "합리적인 가격의 방 렌트 정보",
+        "description": "합리적인 가격의 부동산 정보",
         "button": "부동산 바로가기"
       },
-      "community": {
-        "title": "한인들과 소통하고 싶다면",
-        "description": "필리핀 한인들의 소통 공간",
-        "button": "커뮤니티 바로가기"
-      },
-      "dating": {
-        "title": "새로운 인연을 만나고 싶다면",
-        "description": "필터링된 랜덤 매칭으로 새로운 인연을 시작하세요",
-        "button": "랜덤채팅 바로가기"
+      "go": {
+        "title": "동네 모임을 만들고 싶다면",
+        "description": "필리핀에서 다양한 모임을 가져보세요",
+        "button": "Kanto GO! 바로가기"
       }
     }
   },
@@ -402,7 +391,7 @@
   },
   "UsedGoods": {
     "title": "중고거래",
-    "subtitle": "필리핀 한인들을 위한 중고거래",
+    "subtitle": "필리핀 생활을 위한 중고거래",
     "searchResult": "\"{query}\" 검색 결과",
     "write": "글쓰기",
     "empty": "등록된 상품이 없습니다",
@@ -428,7 +417,7 @@
       "back": "뒤로가기",
       "editTitle": "중고거래 수정",
       "createTitle": "중고거래 글쓰기",
-      "subtitle": "필요한 정보를 입력해주세요",
+      "subtitle": "* 표시는 필수 입력란입니다.",
       "titleLabel": "제목 *",
       "titlePlaceholder": "상품명을 입력하세요",
       "priceLabel": "가격 *",
@@ -452,7 +441,7 @@
   },
   "Job": {
     "title": "구인구직",
-    "subtitle": "필리핀 한인을 위한 구인구직 정보",
+    "subtitle": "필리핀 현지 구인구직 정보",
     "searchResult": "\"{query}\" 검색 결과",
     "write": "공고 등록",
     "emptySearch": "검색 결과가 없어요",
@@ -498,7 +487,7 @@
     "form": {
       "back": "뒤로가기",
       "createTitle": "구인구직 글쓰기",
-      "page1Subtitle": "채용 공고의 기본 정보를 입력해주세요",
+      "requiredNotice": "* 표시는 필수 입력란입니다.",
       "jobInfo": "채용 정보",
       "titleLabel": "공고 제목 *",
       "titlePlaceholder": "예: 한식당 홀 서빙 직원 구합니다",
@@ -528,7 +517,6 @@
       "preferredPlaceholder": "우대 사항을 입력하세요",
       "next": "다음 단계",
       "prev": "이전 단계",
-      "page2Subtitle": "회사 정보와 담당자 연락처를 입력해주세요",
       "companyInfo": "회사 정보",
       "companyLogoLabel": "회사 로고",
       "companyLogoHint": "정사각형 이미지 권장 (PNG, JPG)",
@@ -561,8 +549,6 @@
       "optional": "(선택사항)",
       "submitting": "등록 중...",
       "submit": "작성 완료",
-      "errorRequired": "필수 항목을 모두 입력해주세요.",
-      "errorLocationDetail": "상세 지역을 입력해주세요.",
       "errorImage": "이미지 업로드에 실패했습니다.",
       "errorEdit": "수정에 실패했습니다.",
       "errorPost": "게시글 등록에 실패했습니다.",
@@ -571,7 +557,7 @@
   },
   "Rental": {
     "title": "부동산",
-    "subtitle": "필리핀 한인을 위한 방 렌트 정보",
+    "subtitle": "필리핀 현지 부동산 정보",
     "searchResult": "\"{query}\" 검색 결과",
     "write": "글쓰기",
     "empty": "등록된 매물이 없습니다",
@@ -594,7 +580,7 @@
       "back": "뒤로가기",
       "editTitle": "부동산 글 수정",
       "createTitle": "부동산 글쓰기",
-      "subtitle": "필요한 정보를 입력해주세요",
+      "subtitle": "* 표시는 필수 입력란입니다.",
       "titleLabel": "숙소명 *",
       "titlePlaceholder": "숙소명을 입력하세요",
       "locationLabel": "숙소 위치 *",
@@ -727,7 +713,6 @@
         "usedgoods": "중고거래",
         "jobs": "구인구직",
         "rental": "부동산",
-        "community": "커뮤니티",
         "dating": "랜덤채팅"
       }
     },
@@ -942,6 +927,7 @@
       "joined": "모임에 참여했습니다! 주최자에게 알림이 전송됩니다",
       "cancelled": "참여를 취소했습니다",
       "reentryForbidden": "재입장이 불가합니다.",
+      "cancelAfterStart": "모임이 시작되어 취소할 수 없습니다.",
       "ended": "모임을 종료했습니다",
       "error": "오류가 발생했습니다",
       "withdrawn": "탈퇴한 사용자입니다."

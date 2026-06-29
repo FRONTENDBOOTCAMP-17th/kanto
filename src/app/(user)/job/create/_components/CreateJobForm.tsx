@@ -21,12 +21,13 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
           {t("form.back")}
         </Button>
         <Card className="p-8">
-          <div className="flex items-center gap-3 mb-6">
+          <div className="flex items-center gap-3 mb-2">
             <h1 className="page-title">{t("form.createTitle")}</h1>
             <span className="text-sm font-medium bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full">
               {form.step}/2
             </span>
           </div>
+          <p className="text-gray-600 mb-8">{t("form.requiredNotice")}</p>
 
           {form.step === 1 && (
             <CreateJobFormPageOne

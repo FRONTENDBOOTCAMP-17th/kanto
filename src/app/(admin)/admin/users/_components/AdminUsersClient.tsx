@@ -2,8 +2,10 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { Users } from "lucide-react";
+import { AdminPagination } from "@/app/(admin)/admin/_components/AdminPagination";
 import { User } from "@/services/admin/adminUsers";
 import AdminUsersTable from "./AdminUsersTable";
+import AdminUsersCard from "./AdminUsersCard";
 import UserDetailDrawer from "./UserDetailDrawer";
 import {
   bulkApplySanction,
@@ -177,7 +179,7 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
         />
       </div>
 
-      <div className="rounded-[14px] border border-[#e7ebee] bg-white px-4 py-3 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+      <div className="hidden lg:block rounded-[14px] border border-[#e7ebee] bg-white px-4 py-3 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <div className="flex items-center justify-between gap-3">
           <span className="text-[13px] text-slate-500">
             {selectedCount > 0 ? (
@@ -230,7 +232,8 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
       </div>
 
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
-        <div className="overflow-x-auto">
+        {/* 데스크탑: 테이블 */}
+        <div className="hidden overflow-x-auto lg:block">
           <AdminUsersTable
             users={pageItems}
             selectedIds={selectedIds}
@@ -241,6 +244,13 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
           />
         </div>
 
+        {/* 모바일: 카드 */}
+        {pageItems.length > 0 && (
+          <div className="lg:hidden">
+            <AdminUsersCard users={pageItems} onOpen={(id) => setSelId(id)} />
+          </div>
+        )}
+
         {filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center px-5 py-16 text-center">
             <Users className="h-12 w-12 text-slate-200" strokeWidth={1.8} />
@@ -250,21 +260,12 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
         )}
 
         {totalPages > 1 && (
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#f1f4f6] px-[22px] py-4">
-            <span className="text-[13px] text-slate-400">
-              총 <span className="font-semibold text-slate-600">{filtered.length}</span>명 중{" "}
-              <span className="font-semibold text-slate-600">
-                {filtered.length === 0 ? "0" : `${startIdx + 1}–${startIdx + pageItems.length}`}
-              </span>{" "}표시
-            </span>
-            <div className="flex items-center gap-1.5">
-              <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="h-[34px] rounded-[9px] border border-[#e7ebee] bg-white px-[13px] text-[13px] font-semibold" style={{ color: curPage <= 1 ? "#cbd5e1" : "#475569" }}>이전</button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-                <button key={n} onClick={() => setPage(n)} className={["h-[34px] min-w-[34px] rounded-[9px] px-2 text-[13px]", n === curPage ? "border-none bg-teal-500 font-bold text-white" : "border border-[#e7ebee] bg-white font-semibold text-slate-600"].join(" ")}>{n}</button>
-              ))}
-              <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} className="h-[34px] rounded-[9px] border border-[#e7ebee] bg-white px-[13px] text-[13px] font-semibold" style={{ color: curPage >= totalPages ? "#cbd5e1" : "#475569" }}>다음</button>
-            </div>
-          </div>
+          <AdminPagination
+            currentPage={curPage}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            countLabel={<>총 <span className="font-semibold text-slate-600">{filtered.length}</span>명 중 <span className="font-semibold text-slate-600">{filtered.length === 0 ? "0" : `${startIdx + 1}–${startIdx + pageItems.length}`}</span> 표시</>}
+          />
         )}
       </div>
 

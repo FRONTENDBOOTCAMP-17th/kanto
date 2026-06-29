@@ -18,7 +18,6 @@
       "usedgoods": "Palengke",
       "jobs": "Trabaho",
       "rental": "Paupahan",
-      "community": "Komunidad",
       "dating": "Random na Chat",
       "go": "Kanto GO!"
     },
@@ -39,13 +38,13 @@
     }
   },
   "Footer": {
-    "tagline": "Isang community platform<br></br>para sa mga Koreano sa Pilipinas",
+    "tagline": "Isang life platform<br></br>para sa araw-araw na pamumuhay sa Pilipinas",
     "services": {
       "title": "Mga Serbisyo",
       "usedgoods": "Palengke",
       "jobs": "Trabaho",
       "rental": "Paupahan",
-      "community": "Komunidad ng Koreano"
+      "go": "Kanto GO!"
     },
     "support": {
       "title": "Suporta",
@@ -345,10 +344,6 @@
       "rental": {
         "name": "Paupahan",
         "description": "Maghanap o mag-post ng kwarto"
-      },
-      "community": {
-        "name": "Komunidad",
-        "description": "Malayang makipag-usap sa iba"
       }
     }
   },
@@ -365,18 +360,17 @@
     "category": {
       "usedgoods": "Palengke",
       "jobs": "Trabaho",
-      "rental": "Paupahan",
-      "community": "Komunidad"
+      "rental": "Paupahan"
     },
     "hero": {
       "usedgoods": {
         "title": "Bumili at magbenta sa Kanto!",
-        "description": "Ligtas na palengke para sa mga Koreano sa Pilipinas",
+        "description": "Ligtas na palengke para sa araw-araw na pamumuhay sa Pilipinas",
         "button": "Pumunta sa Palengke"
       },
       "jobs": {
         "title": "Naghahanap ng trabaho?",
-        "description": "Mga trabaho para sa mga Koreano sa Pilipinas",
+        "description": "Mga lokal na trabaho sa Pilipinas",
         "button": "Pumunta sa Trabaho"
       },
       "rental": {
@@ -384,15 +378,10 @@
         "description": "Makatuwirang presyo ng paupahan",
         "button": "Pumunta sa Paupahan"
       },
-      "community": {
-        "title": "Gustong makihalubilo sa mga Koreano?",
-        "description": "Espasyo para sa mga Koreano sa Pilipinas",
-        "button": "Pumunta sa Komunidad"
-      },
-      "dating": {
-        "title": "Gustong makakilala ng bago?",
-        "description": "Magsimula ng bagong koneksyon sa pamamagitan ng filtered random matching",
-        "button": "Pumunta sa Random na Chat"
+      "go": {
+        "title": "Gustong magsimula ng lokal na meetup?",
+        "description": "Mag-enjoy ng iba't ibang meetup sa Pilipinas",
+        "button": "Pumunta sa Kanto GO!"
       }
     }
   },
@@ -402,7 +391,7 @@
   },
   "UsedGoods": {
     "title": "Palengke",
-    "subtitle": "Palengke para sa mga Koreano sa Pilipinas",
+    "subtitle": "Palengke para sa araw-araw na pamumuhay sa Pilipinas",
     "searchResult": "Mga resulta para sa \"{query}\"",
     "write": "Mag-post",
     "empty": "Wala pang produkto",
@@ -452,7 +441,7 @@
   },
   "Job": {
     "title": "Trabaho",
-    "subtitle": "Impormasyon ng trabaho para sa mga Koreano sa Pilipinas",
+    "subtitle": "Impormasyon ng lokal na trabaho sa Pilipinas",
     "searchResult": "Mga resulta para sa \"{query}\"",
     "write": "Mag-post",
     "emptySearch": "Walang resulta ng paghahanap",
@@ -477,6 +466,7 @@
     "details": "Mga detalye",
     "mainTask": "Mga pangunahing gawain",
     "preferred": "Mga gustong kwalipikasyon",
+    "backToList": "Bumalik sa listahan",
     "viewCount": "{count}",
     "applicantCount": "Mga aplikante: {count}",
     "managerInfo": "Taong makokontak",
@@ -497,7 +487,7 @@
     "form": {
       "back": "Bumalik",
       "createTitle": "Mag-post ng trabaho",
-      "page1Subtitle": "Pakilagay ang pangunahing impormasyon ng job posting",
+      "requiredNotice": "Ang * ay nagpapahiwatig ng kinakailangang field.",
       "jobInfo": "Impormasyon ng trabaho",
       "titleLabel": "Pamagat ng trabaho *",
       "titlePlaceholder": "hal. Naghahanap ng hall staff para sa Korean restaurant",
@@ -525,7 +515,6 @@
       "preferredPlaceholder": "Ilagay ang mga gustong kwalipikasyon",
       "next": "Susunod na hakbang",
       "prev": "Nakaraang hakbang",
-      "page2Subtitle": "Pakilagay ang impormasyon ng kumpanya at detalye ng kontak",
       "companyInfo": "Impormasyon ng kumpanya",
       "companyLogoLabel": "Logo ng Kumpanya",
       "companyLogoHint": "Inirerekomenda ang square na larawan (PNG, JPG)",
@@ -558,8 +547,6 @@
       "optional": "(opsyonal)",
       "submitting": "Isinusumite...",
       "submit": "Tapos na",
-      "errorRequired": "Pakipunan ang lahat ng kinakailangang field.",
-      "errorLocationDetail": "Pakilagay ang detalyadong lugar.",
       "errorImage": "Nabigong i-upload ang larawan.",
       "errorEdit": "Nabigong i-update.",
       "errorPost": "Nabigong gumawa ng post.",
@@ -568,7 +555,7 @@
   },
   "Rental": {
     "title": "Paupahan",
-    "subtitle": "Impormasyon ng paupahan para sa mga Koreano sa Pilipinas",
+    "subtitle": "Impormasyon ng lokal na paupahan sa Pilipinas",
     "searchResult": "Mga resulta para sa \"{query}\"",
     "write": "Mag-post",
     "empty": "Wala pang listing",
@@ -724,7 +711,6 @@
         "usedgoods": "Mga Gamit na Bagay",
         "jobs": "Mga Trabaho",
         "rental": "Mga Paupahan",
-        "community": "Komunidad",
         "dating": "Random Chat"
       }
     },
@@ -939,6 +925,7 @@
       "joined": "Sumali ka na! Naabisuhan na ang host",
       "cancelled": "Nakansela ang pagsali",
       "reentryForbidden": "Hindi pinapayagan ang muling pagsali.",
+      "cancelAfterStart": "Nagsimula na ang meetup, kaya hindi mo na ito makakansela.",
       "ended": "Natapos ang meetup",
       "error": "May naganap na error",
       "withdrawn": "Umalis na ang user na ito."

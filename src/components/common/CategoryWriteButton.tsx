@@ -27,7 +27,6 @@ export function CategoryWriteButton({
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [isVerificationOpen, setIsVerificationOpen] = useState(false);
-  const [isSuccessOpen, setIsSuccessOpen] = useState(false);
 
   const handleClick = () => {
     if (isSuspended) {
@@ -39,11 +38,7 @@ export function CategoryWriteButton({
       return;
     }
     if (isVerified) {
-      setIsSuccessOpen(true);
-      window.setTimeout(() => {
-        setIsSuccessOpen(false);
-        router.push(href);
-      }, 1500);
+      router.push(href);
       return;
     }
     setIsConfirmOpen(true);
@@ -124,17 +119,6 @@ export function CategoryWriteButton({
         />
       )}
 
-      {isSuccessOpen && (
-        <div className="fixed inset-0 z-200 flex items-center justify-center bg-black/45 px-4">
-          <div className="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl text-center">
-            <ShieldCheck className="w-10 h-10 text-teal-500 mx-auto mb-3" />
-            <h2 className="text-base font-semibold text-gray-900 mb-1">
-              본인인증이 완료된 사용자입니다.
-            </h2>
-            <p className="text-sm text-gray-500">글쓰기 페이지로 이동합니다.</p>
-          </div>
-        </div>
-      )}
     </>
   );
 }

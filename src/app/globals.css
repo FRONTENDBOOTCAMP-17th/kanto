@@ -18,6 +18,11 @@
   from { transform: translateY(100%); }
   to   { transform: translateY(0); }
 }
+@keyframes pullDown {
+  0%   { transform: translateY(0); }
+  40%  { transform: translateY(6px); }
+  100% { transform: translateY(0); }
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -166,7 +171,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-x-hidden;
   }
   html {
     @apply font-sans;

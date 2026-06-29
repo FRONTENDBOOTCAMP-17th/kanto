@@ -282,7 +282,7 @@ export default function RentalCreateForm({
         <Button
           variant="ghost"
           onClick={() =>
-            router.push(initialData ? `/rental/${postId}` : "/create")
+            router.push(initialData ? `/rental/${postId}` : "/rental")
           }
           className="mb-6"
         >
@@ -313,6 +313,7 @@ export default function RentalCreateForm({
               <Select
                 value={location}
                 onValueChange={(v) => setLocation(v as Location)}
+                required
               >
                 <SelectTrigger>
                   <SelectValue placeholder={t("form.locationPlaceholder")} />
@@ -340,6 +341,7 @@ export default function RentalCreateForm({
               <Select
                 value={rentType}
                 onValueChange={(v) => setRentType(v as RentType)}
+                required
               >
                 <SelectTrigger>
                   <SelectValue placeholder={t("form.rentTypePlaceholder")} />
@@ -356,10 +358,11 @@ export default function RentalCreateForm({
               <div className="relative">
                 <Input
                   id="price"
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   placeholder="0"
                   value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  onChange={(e) => setPrice(e.target.value.replace(/[^0-9]/g, ""))}
                   className="pr-12"
                   required
                 />
@@ -374,10 +377,11 @@ export default function RentalCreateForm({
               <div className="relative">
                 <Input
                   id="deposit"
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   placeholder="0"
                   value={deposit}
-                  onChange={(e) => setDeposit(e.target.value)}
+                  onChange={(e) => setDeposit(e.target.value.replace(/[^0-9]/g, ""))}
                   className="pr-12"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
@@ -409,10 +413,11 @@ export default function RentalCreateForm({
               <Label htmlFor="maxOccupants">{t("form.maxOccupantsLabel")}</Label>
               <Input
                 id="maxOccupants"
-                type="number"
+                type="text"
+                inputMode="numeric"
                 placeholder="0"
                 value={maxOccupants}
-                onChange={(e) => setMaxOccupants(e.target.value)}
+                onChange={(e) => setMaxOccupants(e.target.value.replace(/[^0-9]/g, ""))}
                 required
               />
             </div>
@@ -465,7 +470,7 @@ export default function RentalCreateForm({
                 type="button"
                 variant="outline"
                 onClick={() =>
-                  router.push(initialData ? `/rental/${postId}` : "/create")
+                  router.push(initialData ? `/rental/${postId}` : "/rental")
                 }
                 className="flex-1"
                 disabled={isSubmitting}
