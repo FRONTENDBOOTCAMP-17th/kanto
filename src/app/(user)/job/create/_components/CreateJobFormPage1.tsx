@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { X, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -50,7 +49,6 @@ interface CreateJobFormPageOneProps {
   preferredTags: string[];
   setPreferredTags: (v: string[]) => void;
   handleNextStep: () => void;
-  handleBack: () => void;
 }
 
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
@@ -93,7 +91,6 @@ export function CreateJobFormPageOne({
   preferredTags,
   setPreferredTags,
   handleNextStep,
-  handleBack,
 }: CreateJobFormPageOneProps) {
   const [showPreferredModal, setShowPreferredModal] = useState(false);
 
@@ -400,21 +397,8 @@ export function CreateJobFormPageOne({
           placeholder={t("form.preferredPlaceholder")}
           value={preferred}
           onChange={(e) => setPreferred(e.target.value)}
+          className="h-12 rounded-sm"
         />
-      </div>
-
-      <div className="flex gap-3 pt-4 border-t">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleBack}
-          className="flex-1"
-        >
-          {tc("cancel")}
-        </Button>
-        <Button type="submit" variant="teal" className="flex-1">
-          {t("form.next")}
-        </Button>
       </div>
 
       <JobPreferredModal

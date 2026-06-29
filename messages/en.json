@@ -528,7 +528,7 @@
       "companyNameLabel": "Company name *",
       "companyNamePlaceholder": "Enter the company name",
       "companyIntroLabel": "Company introduction *",
-      "companyIntroPlaceholder": "Enter an introduction to the company",
+      "companyIntroPlaceholder": "- Main business area\n- Company background and vision\n- Work environment and benefits\n- Company strengths\n\n* Please describe in detail so applicants can understand the company well\n* Posts containing URLs, KakaoTalk IDs, or phone numbers may be deleted or restricted",
       "industryLabel": "Industry",
       "industryPlaceholder": "e.g. Restaurant",
       "foundedYearLabel": "Founded",
