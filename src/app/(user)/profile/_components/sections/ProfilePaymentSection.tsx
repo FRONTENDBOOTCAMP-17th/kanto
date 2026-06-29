@@ -44,7 +44,7 @@ export function ProfilePaymentSection({
     bankEditing,
     handleSaveBank,
     handleEditBank,
-  } = useProfileInfo(user, null);
+  } = useProfileInfo(user);
 
   return (
     <div className="px-5 md:px-0 py-6">
