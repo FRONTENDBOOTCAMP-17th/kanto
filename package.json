@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "gen:types": "supabase gen types typescript --project-id dhvvrtyzurouttlswpbq > src/type/supabase.ts"
+    "gen:types": "supabase gen types typescript --project-id dhvvrtyzurouttlswpbq > src/type/supabase.ts",
+    "seed": "npx tsx scripts/seed.ts",
+    "seed:bulk": "npx tsx scripts/seed-bulk.ts"
   },
   "dependencies": {
     "@cerebras/cerebras_cloud_sdk": "^1.64.1",
