@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import UsedGoodsDetail from "@/app/(user)/usedgoods/[id]/_components/UsedGoodsDetail";
 import { viewCountUp } from "@/services/view";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
+export { generateMetadata } from "./metadata";
 
 export default async function UsedGoodsDetailPage({
   params,
@@ -33,8 +34,26 @@ export default async function UsedGoodsDetailPage({
   // 조회수 증가는 강한 일관성이 필요 없으므로 응답 후로 미뤄 렌더를 막지 않는다.
   after(() => viewCountUp(data.post_id));
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: (data.posts as { title: string } | null)?.title,
+    description: data.content?.slice(0, 160),
+    image: (data.images as string[] | null)?.[0],
+    offers: {
+      "@type": "Offer",
+      price: data.price,
+      priceCurrency: "PHP",
+      availability: "https://schema.org/InStock",
+    },
+  };
+
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <UsedGoodsDetail
         data={data}
         relatedData={relatedData}

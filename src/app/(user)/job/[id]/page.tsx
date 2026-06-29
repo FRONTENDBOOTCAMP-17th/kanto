@@ -15,6 +15,7 @@ import CompanyInfo from "./_components/CompanyInfo";
 import { viewCountUp } from "@/services/view";
 import { createClient } from "@/utils/supabase/server";
 import RelatedItemsCarousel, { type RelatedItem } from "@/components/common/RelatedItemsCarousel";
+export { generateMetadata } from "./metadata";
 
 export default async function JobDetailPage({
   params,
@@ -54,7 +55,35 @@ export default async function JobDetailPage({
     priceText: formatPrice(item.salary),
   }));
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: job.posts.title,
+    description: job.main_task?.slice(0, 160),
+    datePosted: job.created_at,
+    validThrough: job.deadline,
+    hiringOrganization: {
+      "@type": "Organization",
+      name: job.company_name,
+    },
+    jobLocation: {
+      "@type": "Place",
+      address: { "@type": "PostalAddress", addressCountry: "PH" },
+    },
+    baseSalary: {
+      "@type": "MonetaryAmount",
+      currency: "PHP",
+      value: job.salary,
+    },
+  };
+
   return (
+    <div className="page-container w-full py-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="border border-gray-200 rounded-2xl overflow-hidden divide-y divide-gray-200">
     <div className="page-container pb-12">
       <div className="flex items-center justify-between mt-4">
         <BackButton />

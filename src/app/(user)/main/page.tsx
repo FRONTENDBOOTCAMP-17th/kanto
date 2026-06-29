@@ -1,4 +1,15 @@
+import type { Metadata } from "next";
 import { useTranslations } from "next-intl";
+
+export const metadata: Metadata = {
+  title: "홈",
+  description: "필리핀 한인 커뮤니티를 위한 중고거래, 렌탈, 구인구직 플랫폼 칸토입니다.",
+  openGraph: {
+    title: "칸토 | 필리핀 한인 중고거래 & 렌탈 플랫폼",
+    description: "필리핀 한인 커뮤니티를 위한 중고거래, 렌탈, 구인구직 플랫폼 칸토입니다.",
+    images: [{ url: "/kantoLogo.png", alt: "칸토 로고" }],
+  },
+};
 import MainSearchBar from "./_components/MainSearchBar";
 import Hero from "./_components/Hero";
 import Popular from "./_components/popular/Popular";
