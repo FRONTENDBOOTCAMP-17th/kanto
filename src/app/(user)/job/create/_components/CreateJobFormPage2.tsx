@@ -127,29 +127,29 @@ export function CreateJobFormPageTwo({
         </div>
         <div className="space-y-2">
           <Label htmlFor="companyName">{t("form.companyNameLabel")}</Label>
-          <Input id="companyName" placeholder={t("form.companyNamePlaceholder")} value={companyName} onChange={(e) => setCompanyName(e.target.value)} required />
+          <Input id="companyName" placeholder={t("form.companyNamePlaceholder")} value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="h-12 rounded-sm" required />
         </div>
         <div className="space-y-2">
           <Label htmlFor="companyIntro">{t("form.companyIntroLabel")}</Label>
-          <Textarea id="companyIntro" placeholder={t("form.companyIntroPlaceholder")} value={companyIntro} onChange={(e) => setCompanyIntro(e.target.value)} className="resize-none min-h-28" required />
+          <Textarea id="companyIntro" placeholder={t("form.companyIntroPlaceholder")} value={companyIntro} onChange={(e) => setCompanyIntro(e.target.value)} className="resize-none min-h-28 rounded-sm p-5" required />
         </div>
         <div className="space-y-2">
           <Label htmlFor="industry">{t("form.industryLabel")}</Label>
-          <Input id="industry" placeholder={t("form.industryPlaceholder")} value={industry} onChange={(e) => setIndustry(e.target.value)} />
+          <Input id="industry" placeholder={t("form.industryPlaceholder")} value={industry} onChange={(e) => setIndustry(e.target.value)} className="h-12 rounded-sm" />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="companyYear">{t("form.foundedYearLabel")}</Label>
-            <Input id="companyYear" inputMode="numeric" placeholder={t("form.foundedYearPlaceholder")} value={companyYear} onChange={(e) => setCompanyYear(e.target.value.replace(/\D/g, ""))} />
+            <Input id="companyYear" inputMode="numeric" placeholder={t("form.foundedYearPlaceholder")} value={companyYear} onChange={(e) => setCompanyYear(e.target.value.replace(/\D/g, ""))} className="h-12 rounded-sm" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="employeeCount">{t("form.employeeCountLabel")}</Label>
-            <Input id="employeeCount" inputMode="numeric" placeholder={t("form.employeeCountPlaceholder")} value={employeeCount} onChange={(e) => setEmployeeCount(e.target.value.replace(/\D/g, ""))} />
+            <Input id="employeeCount" inputMode="numeric" placeholder={t("form.employeeCountPlaceholder")} value={employeeCount} onChange={(e) => setEmployeeCount(e.target.value.replace(/\D/g, ""))} className="h-12 rounded-sm" />
           </div>
         </div>
         <div className="space-y-2">
           <Label htmlFor="companyAddress">{t("form.addressLabel")}</Label>
-          <Input id="companyAddress" placeholder={t("form.addressPlaceholder")} value={companyAddress} onChange={(e) => setCompanyAddress(e.target.value)} />
+          <Input id="companyAddress" placeholder={t("form.addressPlaceholder")} value={companyAddress} onChange={(e) => setCompanyAddress(e.target.value)} className="h-12 rounded-sm" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="companyWebsite">{t("form.websiteLabel")}</Label>
@@ -159,6 +159,7 @@ export function CreateJobFormPageTwo({
             value={companyWebsite}
             onChange={(e) => setCompanyWebsite(e.target.value)}
             onBlur={handleWebsiteBlur}
+            className="h-12 rounded-sm"
           />
           {websiteError && <p className="text-xs text-red-500">{websiteError}</p>}
         </div>
@@ -172,20 +173,20 @@ export function CreateJobFormPageTwo({
             id="managerName"
             value={managerName}
             readOnly
-            className="bg-gray-100 text-gray-500 cursor-not-allowed"
+            className="h-12 rounded-sm bg-gray-100 text-gray-500 cursor-not-allowed"
           />
         </div>
         <div className="space-y-2">
           <Label htmlFor="managerTitle">{t("form.managerTitleLabel")}</Label>
-          <Input id="managerTitle" placeholder={t("form.managerTitlePlaceholder")} value={managerTitle} onChange={(e) => setManagerTitle(e.target.value)} />
+          <Input id="managerTitle" placeholder={t("form.managerTitlePlaceholder")} value={managerTitle} onChange={(e) => setManagerTitle(e.target.value)} className="h-12 rounded-sm" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="managerPhone">{t("form.managerPhoneLabel")}</Label>
-          <Input id="managerPhone" placeholder={t("form.managerPhonePlaceholder")} value={managerPhone} onChange={(e) => setManagerPhone(e.target.value)} />
+          <Input id="managerPhone" placeholder={t("form.managerPhonePlaceholder")} value={managerPhone} onChange={(e) => setManagerPhone(e.target.value)} className="h-12 rounded-sm" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="managerEmail">{t("form.managerEmailLabel")}</Label>
-          <Input id="managerEmail" type="email" placeholder={t("form.managerEmailPlaceholder")} value={managerEmail} onChange={(e) => setManagerEmail(e.target.value)} />
+          <Input id="managerEmail" type="email" placeholder={t("form.managerEmailPlaceholder")} value={managerEmail} onChange={(e) => setManagerEmail(e.target.value)} className="h-12 rounded-sm" />
         </div>
       </div>
 

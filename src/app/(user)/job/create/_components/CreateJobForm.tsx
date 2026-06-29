@@ -1,8 +1,7 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
+import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCreateJobForm } from "@/hooks/useCreateJobForm";
 import { CreateJobFormPageOne } from "./CreateJobFormPage1";
@@ -11,24 +10,23 @@ import type { JobInitialData } from "@/type/job/jobCreate";
 
 export function CreateJobForm({ userId, userName, initialData }: { userId: number; userName: string; initialData?: JobInitialData }) {
   const t = useTranslations("Job");
+  const tc = useTranslations("Common");
   const form = useCreateJobForm(userId, userName, initialData);
 
   return (
-    <main className="flex-1 bg-gray-50 py-8 px-4">
-      <div className="max-w-3xl mx-auto">
-        <Button variant="ghost" onClick={form.handleBack} className="mb-6">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          {t("form.back")}
-        </Button>
-        <Card className="p-8">
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="page-title">{t("form.createTitle")}</h1>
-            <span className="text-sm font-medium bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full">
-              {form.step}/2
-            </span>
-          </div>
-          <p className="text-gray-600 mb-8">{t("form.requiredNotice")}</p>
+    <main className="flex-1 bg-gray-50 py-8 px-4 pb-32">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" onClick={form.handleBack} className="hover:text-teal-500">
+            <ChevronLeft className="w-5 h-5" />
+          </Button>
+          <span className="text-lg font-semibold">{t("form.createTitle")}</span>
+          <span className="text-sm font-medium bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full">
+            {form.step}/2
+          </span>
+        </div>
 
+        <div className="p-8">
           {form.step === 1 && (
             <CreateJobFormPageOne
               title={form.title}
@@ -90,14 +88,39 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
               setManagerPhone={form.setManagerPhone}
               managerEmail={form.managerEmail}
               setManagerEmail={form.setManagerEmail}
-              isSubmitting={form.isSubmitting}
-              urlError={form.urlError}
               imageUpload={form.imageUpload}
-              handleSubmit={form.handleSubmit}
-              handlePrevStep={form.handlePrevStep}
             />
           )}
-        </Card>
+        </div>
+      </div>
+
+      <div className="sticky bottom-0 z-10 bg-gray-50 pb-4 -mx-4 px-4 md:static md:bg-transparent md:pb-0 md:max-w-7xl md:mx-auto md:px-8">
+        <hr className="border-gray-200" />
+        <p className="text-center text-xs md:text-sm text-gray-500 mt-4">{t("form.sellerDisclaimer")}</p>
+        {form.urlError && (
+          <p className="text-[13px] text-red-500 mt-2">{form.urlError}</p>
+        )}
+        <div className="flex gap-3 pt-4">
+          {form.step === 1 ? (
+            <>
+              <Button type="button" variant="outline" onClick={form.handleBack} className="flex-1 h-12" disabled={form.isSubmitting}>
+                {tc("cancel")}
+              </Button>
+              <Button type="button" variant="teal" onClick={form.handleNextStep} className="flex-1 h-12">
+                {t("form.next")}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button type="button" variant="outline" onClick={form.handlePrevStep} className="flex-1 h-12" disabled={form.isSubmitting}>
+                {t("form.prev")}
+              </Button>
+              <Button type="button" variant="teal" onClick={form.handleSubmit} className="flex-1 h-12" disabled={form.isSubmitting}>
+                {form.isSubmitting ? t("form.submitting") : t("form.submit")}
+              </Button>
+            </>
+          )}
+        </div>
       </div>
     </main>
   );
