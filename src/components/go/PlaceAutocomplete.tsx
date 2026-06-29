@@ -21,7 +21,6 @@ interface Props {
 }
 
 export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) {
-export function PlaceAutocomplete({ selected, onSelect }: Props) {
   const t = useTranslations("Go.place");
   const placesLib = useMapsLibrary("places");
 

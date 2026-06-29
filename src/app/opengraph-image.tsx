@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { ImageResponse } from "next/og";
 
 export const alt = "칸토";
@@ -20,7 +19,7 @@ export default function OgImage() {
           gap: "16px",
         }}
       >
-        <Image
+        <img
           src={`${process.env.NEXT_PUBLIC_BASE_URL}/kantoLogo.png`}
           width={240}
           height={240}

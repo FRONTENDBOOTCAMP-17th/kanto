@@ -89,6 +89,9 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
               managerEmail={form.managerEmail}
               setManagerEmail={form.setManagerEmail}
               imageUpload={form.imageUpload}
+              isSubmitting={form.isSubmitting}
+              handleSubmit={form.handleSubmit}
+              handlePrevStep={form.handlePrevStep}
             />
           )}
         </div>
