@@ -17,8 +17,12 @@ export default function DeleteButton({ postId, redirectPath }: DeleteButtonProps
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDelete = async () => {
-    await supabase.from("posts").delete().eq("id", postId);
+    const { error } = await supabase.from("posts").delete().eq("id", postId);
     setIsOpen(false);
+    if (error) {
+      alert(t("deleteFailed"));
+      return;
+    }
     router.push(redirectPath);
   };
 

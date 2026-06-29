@@ -105,6 +105,7 @@
     "edit": "I-edit",
     "close": "Isara",
     "deleteConfirm": "Sigurado ka bang gusto mong burahin ito?",
+    "deleteFailed": "Nabigong burahin. Pakisubukan muli.",
     "processing": "Pinoproseso...",
     "loginRequired": "Mag-log in para magpatuloy",
     "goToLogin": "Pumunta sa login",
@@ -456,6 +457,7 @@
     "write": "Mag-post",
     "emptySearch": "Walang resulta ng paghahanap",
     "empty": "Wala pang job posting",
+    "emptyDescription": "Maging una sa pag-post ng trabaho!",
     "allTypes": "Lahat",
     "jobInfo": "Impormasyon ng trabaho",
     "employeeType": "Uri ng trabaho",
@@ -878,6 +880,10 @@
       "rental": "Mga Paupahan"
     },
     "empty": "Walang mga paborito.",
+    "emptyDescription": "I-save ang mga gusto mo para makita dito",
+    "myPostsEmpty": "Wala ka pang naipo-post",
+    "myPostsEmptyDescription": "Gawin ang iyong unang listing!",
+    "writePost": "Sumulat ng post",
     "goTo": {
       "used_goods": "Pumunta sa Marketplace",
       "jobs": "Pumunta sa Mga Trabaho",

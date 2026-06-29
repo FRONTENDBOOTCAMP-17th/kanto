@@ -105,6 +105,7 @@
     "edit": "Edit",
     "close": "Close",
     "deleteConfirm": "Are you sure you want to delete this?",
+    "deleteFailed": "Failed to delete. Please try again.",
     "processing": "Processing...",
     "loginRequired": "Please log in to continue",
     "goToLogin": "Go to login",
@@ -450,6 +451,7 @@
     "write": "Post a job",
     "emptySearch": "No search results",
     "empty": "No job postings yet",
+    "emptyDescription": "Be the first to post a job!",
     "allTypes": "All",
     "jobInfo": "Job info",
     "employeeType": "Employment type",
@@ -872,6 +874,10 @@
       "rental": "Rentals"
     },
     "empty": "No favorites yet.",
+    "emptyDescription": "Save items you like to see them here",
+    "myPostsEmpty": "You haven't posted anything yet",
+    "myPostsEmptyDescription": "Create your first listing!",
+    "writePost": "Write a post",
     "goTo": {
       "used_goods": "Browse Marketplace",
       "jobs": "Browse Jobs",
