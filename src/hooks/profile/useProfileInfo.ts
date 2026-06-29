@@ -62,6 +62,12 @@ export function useProfileInfo(user: UserType, avatarFile: File | null) {
         bank_account_number: bankAccountNumber,
         bank_account_name: bankAccountName,
       });
+      setUser({
+        ...user,
+        bank_code: bankCode,
+        bank_account_number: bankAccountNumber,
+        bank_account_name: bankAccountName,
+      });
       setBankSaved(true);
       setBankEditing(false);
       alert(t("bankSaved"));
