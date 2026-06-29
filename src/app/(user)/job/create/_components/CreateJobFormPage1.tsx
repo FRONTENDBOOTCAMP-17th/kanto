@@ -135,6 +135,9 @@ export function CreateJobFormPageOne({
       setWorkHoursStart("");
       setWorkHoursEnd("");
       setWorkDays([]);
+    } else {
+      setWorkHoursStart("00:00");
+      setWorkHoursEnd("00:00");
     }
   };
 
