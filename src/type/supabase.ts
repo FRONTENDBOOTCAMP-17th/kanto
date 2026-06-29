@@ -1075,6 +1075,7 @@ export type Database = {
       posts: {
         Row: {
           created_at: string
+          deleted_at: string | null
           handled_at: string | null
           handled_by: number | null
           id: number
@@ -1092,6 +1093,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          deleted_at?: string | null
           handled_at?: string | null
           handled_by?: number | null
           id?: number
@@ -1109,6 +1111,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          deleted_at?: string | null
           handled_at?: string | null
           handled_by?: number | null
           id?: number

@@ -59,6 +59,7 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
   const t = useTranslations("Profile.settings");
   const tp = useTranslations("Profile.providers");
   const tc = useTranslations("Common");
+  const te = useTranslations("Enums");
 
   return (
     <div className="flex flex-col divide-y divide-gray-100">
@@ -80,7 +81,9 @@ export function ProfileSettingsSection({ initialIdentities }: { initialIdentitie
               <SelectContent>
                 <SelectItem value="all">{tc("allRegions")}</SelectItem>
                 {TRADE_LOCATIONS.map((loc) => (
-                  <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                  <SelectItem key={loc} value={loc}>
+                    {loc === "그 외 지역" ? te("tradeLocation.otherAreas") : loc}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>

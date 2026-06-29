@@ -62,12 +62,15 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
+      if (currentScrollY > HEADER_HEIGHT) {
+        setIsMobileOpen(false);
+      }
       if (currentScrollY <= HEADER_HEIGHT) {
-        setIsVisible(true); 
+        setIsVisible(true);
       } else if (currentScrollY > prevScrollY.current) {
-        setIsVisible(false); 
+        setIsVisible(false);
       } else if (currentScrollY < prevScrollY.current) {
-        setIsVisible(true); 
+        setIsVisible(true);
       }
       prevScrollY.current = currentScrollY;
     };
@@ -75,14 +78,20 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const pathname = usePathname();
+  const { isSuspended, openModal } = useSuspended();
+
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
+    setIsMobileOpen(false);
+  }
+
   const handleLogoutClick = () => {
     setIsLogoutModalOpen(true);
     setIsProfileOpen(false);
     setIsMobileOpen(false);
   };
-
-  const pathname = usePathname();
-  const { isSuspended, openModal } = useSuspended();
 
   const handleLogoutConfirm = async () => {
     setIsLogoutModalOpen(false);
@@ -102,6 +111,14 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
   }, [isProfileOpen]);
 
   return (
+    <>
+      {isMobileOpen && (
+        <div
+          className="fixed inset-0 z-40 md:hidden"
+          aria-hidden="true"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
     <header
       className={`fixed md:sticky top-0 z-50 w-full bg-white transition-transform duration-300 ${
         isVisible || isMobileOpen ? "translate-y-0" : "-translate-y-full md:translate-y-0"
@@ -113,6 +130,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
           <Link
             href={ROUTES.home}
             className="flex items-center hover:opacity-80 transition-opacity shrink-0"
+            onClick={() => setIsMobileOpen(false)}
           >
             <Image
               src="/kantoMobileLogo.png"
@@ -141,7 +159,10 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
             {user && (
               <NotificationBell
                 ref={notificationBellRef}
-                onOpen={() => setIsProfileOpen(false)}
+                onOpen={() => {
+                  setIsProfileOpen(false);
+                  setIsMobileOpen(false);
+                }}
               />
             )}
 
@@ -355,5 +376,6 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
         onCancel={() => setIsLogoutModalOpen(false)}
       />
     </header>
+    </>
   );
 }

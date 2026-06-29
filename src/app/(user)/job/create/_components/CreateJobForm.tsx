@@ -89,9 +89,7 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
               managerEmail={form.managerEmail}
               setManagerEmail={form.setManagerEmail}
               imageUpload={form.imageUpload}
-              isSubmitting={form.isSubmitting}
               handleSubmit={form.handleSubmit}
-              handlePrevStep={form.handlePrevStep}
             />
           )}
         </div>
@@ -109,7 +107,7 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
               <Button type="button" variant="outline" onClick={form.handleBack} className="flex-1 h-12" disabled={form.isSubmitting}>
                 {tc("cancel")}
               </Button>
-              <Button type="button" variant="teal" onClick={form.handleNextStep} className="flex-1 h-12">
+              <Button type="button" variant="teal" onClick={form.handleNextStep} className="flex-1 h-12" disabled={!form.isStep1Valid}>
                 {t("form.next")}
               </Button>
             </>
@@ -118,7 +116,7 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
               <Button type="button" variant="outline" onClick={form.handlePrevStep} className="flex-1 h-12" disabled={form.isSubmitting}>
                 {t("form.prev")}
               </Button>
-              <Button type="button" variant="teal" onClick={form.handleSubmit} className="flex-1 h-12" disabled={form.isSubmitting}>
+              <Button type="button" variant="teal" onClick={form.handleSubmit} className="flex-1 h-12" disabled={form.isSubmitting || !form.isStep2Valid}>
                 {form.isSubmitting ? t("form.submitting") : t("form.submit")}
               </Button>
             </>

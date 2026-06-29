@@ -21,8 +21,8 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   const [locationType, setLocationType] = useState<TradeLocation | "">(initialData?.location_type as TradeLocation ?? "");
   const [locationCustom, setLocationCustom] = useState(initialData?.location_custom ?? "");
   const [deadline, setDeadline] = useState(initialData?.deadline ?? "");
-  const [workHoursStart, setWorkHoursStart] = useState(() => (initialData?.work_hours ?? "").split(" - ")[0] ?? "");
-  const [workHoursEnd, setWorkHoursEnd] = useState(() => (initialData?.work_hours ?? "").split(" - ")[1] ?? "");
+  const [workHoursStart, setWorkHoursStart] = useState(() => (initialData?.work_hours ?? "").split(" - ")[0] || "00:00");
+  const [workHoursEnd, setWorkHoursEnd] = useState(() => (initialData?.work_hours ?? "").split(" - ")[1] || "00:00");
   const [workDays, setWorkDays] = useState<string[]>(initialData?.work_days ?? []);
   const [isTimeNegotiable, setIsTimeNegotiable] = useState(initialData?.is_time_negotiable ?? false);
   const [mainTask, setMainTask] = useState(initialData?.main_task ?? "");
@@ -64,9 +64,24 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       .catch(() => {});
   }, []);
 
+  const isStep1Valid =
+    title.trim().length >= 2 &&
+    employeeType !== "" &&
+    salary !== "" &&
+    salaryType !== "" &&
+    locationType !== "" &&
+    (locationType !== "그 외 지역" || locationCustom.trim() !== "") &&
+    deadline !== "" &&
+    (isTimeNegotiable || (!!workHoursStart && !!workHoursEnd)) &&
+    mainTask.trim().length >= 10;
+
+  const isStep2Valid =
+    companyName.trim() !== "" &&
+    companyIntro.trim() !== "";
+
   const handleNextStep = () => {
-    if (!isTimeNegotiable && (!workHoursStart || !workHoursEnd || workDays.length === 0)) {
-      alert("근무 시간과 근무 요일을 입력하거나 시간 협의를 선택해주세요.");
+    if (!isTimeNegotiable && (!workHoursStart || !workHoursEnd)) {
+      alert("근무 시간을 입력하거나 시간 협의를 선택해주세요.");
       return;
     }
     setStep(2);
@@ -238,6 +253,8 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     mainTask, setMainTask,
     preferred, setPreferred,
     preferredTags, setPreferredTags,
+    isStep1Valid,
+    isStep2Valid,
     handleNextStep,
     companyName, setCompanyName,
     companyIntro, setCompanyIntro,

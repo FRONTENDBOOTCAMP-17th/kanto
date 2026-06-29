@@ -147,11 +147,17 @@ export function UnifiedBanner() {
   const currentNotice = noticeItems[safeNoticeIndex];
   const hasMultipleNotices = noticeItems.length > 1;
 
+  // 목록 페이지: 글쓰기 버튼이 우측 → 탭을 좌측
+  // 상세/기타 페이지: 뒤로가기가 좌측 → 탭을 우측
+  const mobileTabSide = ["/usedgoods", "/rental", "/job", "/go"].includes(pathname)
+    ? "left-4"
+    : "right-4";
+
   return (
     <>
       {/* ── 모바일: 공지 탭 + 제재 뱃지 ────────────────────────────── */}
       <div className="md:hidden relative h-0 overflow-visible">
-        <div className="absolute -top-1.5 right-4 flex items-start gap-2">
+        <div className={`absolute -top-1.5 ${mobileTabSide} flex items-start gap-2`}>
 
           {/* 공지 탭 */}
           {noticeCount > 0 && (

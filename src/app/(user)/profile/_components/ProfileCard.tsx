@@ -61,7 +61,6 @@ function ProfileForm({
   initialIsVerified: boolean;
 }) {
   const [activeTab, setActiveTab] = useState<Tab>("info");
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [isVerificationOpen, setIsVerificationOpen] = useState(false);
   const [isIdentityVerified, setIsIdentityVerified] = useState(initialIsVerified);
   const router = useRouter();
@@ -98,7 +97,7 @@ function ProfileForm({
             <ProfileAvatar
               avatarUrl={user.avatar_url ?? ""}
               name={user.name ?? ""}
-              onFileChange={setAvatarFile}
+              userId={user.id}
             />
             <div className="-mt-4">
               <ProfileUserInfo name={user.name ?? ""} email={user.email ?? ""} />
@@ -138,8 +137,8 @@ function ProfileForm({
               </div>
               <p className="text-xs text-gray-500 leading-relaxed">
                 {isIdentityVerified
-                  ? "본인인증이 완료되었습니다."
-                  : "게시물 작성과 랜덤채팅 참여는 인증이 필요합니다."}
+                  ? t("verifyComplete")
+                  : t("verifyDesc")}
               </p>
               <button
                 type="button"
@@ -155,7 +154,7 @@ function ProfileForm({
 
         
         <div className="flex-1 md:pl-8">
-          {activeTab === "info" && <ProfileInfoSection user={user} avatarFile={avatarFile} />}
+          {activeTab === "info" && <ProfileInfoSection user={user} />}
           {activeTab === "payment" && <ProfilePaymentSection user={user} />}
           {activeTab === "history" && <ProfileTransactionsSection />}
           {activeTab === "reviews" && <ProfileReviewsSection reviews={reviews} avgRating={avgRating} reviewCount={reviewCount} />}

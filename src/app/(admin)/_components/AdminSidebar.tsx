@@ -41,18 +41,18 @@ export default function AdminSidebar({ pendingCount }: { pendingCount: number })
 
   return (
     <>
-      
+
       <header className="fixed inset-x-0 top-0 z-50 hidden h-14.5 items-center justify-between border-b border-[#ebeef0] bg-white px-4 max-lg:flex">
         <Link href="/admin" className="flex items-end hover:opacity-75 transition-opacity">
           <Image
-            src="/worldcupLogo.png"
+            src="/kantomobileLogo.png"
             alt="kanto 로고"
             width={40}
             height={40}
             className="object-contain"
           />
-          <span className="-ml-2 mb-0.5 font-(family-name:--font-geist-sans) text-[17px] font-semibold leading-none tracking-tight text-teal-600">
-            World Cup
+          <span className="-ml-2 mb-0.5 font-(family-name:--font-geist-sans) text-[17px] font-semibold leading-none tracking-widest text-teal-400">
+            ADMIN
           </span>
         </Link>
         <button
@@ -74,7 +74,7 @@ export default function AdminSidebar({ pendingCount }: { pendingCount: number })
         />
       )}
 
-      
+
       <aside
         className={[
           "sticky top-0 flex h-screen w-62.5 shrink-0 flex-col border-r border-[#ebeef0] bg-white px-4 py-5.5",
@@ -87,14 +87,14 @@ export default function AdminSidebar({ pendingCount }: { pendingCount: number })
       >
         <Link href="/admin" className="flex items-end px-2 pb-5 pt-1.5 hover:opacity-75 transition-opacity">
           <Image
-            src="/worldcupLogo.png"
+            src="/kantomobileLogo.png"
             alt="kanto 로고"
             width={44}
             height={15}
             className="object-contain"
           />
-          <span className="-ml-2 mb-0 font-(family-name:--font-geist-sans) text-[17px] font-semibold leading-none tracking-tight text-teal-600">
-            World Cup
+          <span className="-ml-2 mb-0 font-(family-name:--font-geist-sans) text-[17px] font-semibold leading-none tracking-widest text-teal-400">
+            ADMIN
           </span>
         </Link>
 

@@ -6,9 +6,9 @@ import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
 import type { User as UserType } from "@/type/user";
-import { uploadAvatar, updateProfile, fetchRestoredUser, saveBankAccount } from "@/services/profile/profileInfo";
+import { updateProfile, fetchRestoredUser, saveBankAccount } from "@/services/profile/profileInfo";
 
-export function useProfileInfo(user: UserType, avatarFile: File | null) {
+export function useProfileInfo(user: UserType) {
   const [name, setName] = useState(user.name ?? "");
   const [phone, setPhone] = useState(user.phone ?? "");
   const [phoneSaved, setPhoneSaved] = useState(!!user.phone);
@@ -38,8 +38,7 @@ export function useProfileInfo(user: UserType, avatarFile: File | null) {
   const handleSave = async () => {
     const isFirstSave = !phoneSaved;
     try {
-      const avatarUrl = avatarFile ? await uploadAvatar(user.id, avatarFile) : user.avatar_url;
-      const updated = await updateProfile(user.id, { name, phone, avatar_url: avatarUrl });
+      const updated = await updateProfile(user.id, { name, phone, avatar_url: user.avatar_url });
       setUser(updated);
       setPhoneSaved(true);
       setPhoneEditing(false);

@@ -9,7 +9,10 @@ export async function deletePost(postId: number): Promise<void> {
   const sessionUser = await requireAdmin();
   const admin = createAdminClient();
 
-  const { error } = await admin.from("posts").delete().eq("id", postId);
+  const { error } = await admin
+    .from("posts")
+    .update({ status: "deleted", deleted_at: new Date().toISOString() } as never)
+    .eq("id", postId);
   if (error) throw error;
 
   insertAuditLog(sessionUser, "delete_post", { targetType: "post", targetId: postId });

@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,11 +32,8 @@ interface CreateJobFormPageTwoProps {
   managerTitle: string; setManagerTitle: (v: string) => void;
   managerPhone: string; setManagerPhone: (v: string) => void;
   managerEmail: string; setManagerEmail: (v: string) => void;
-  isSubmitting: boolean;
-  urlError?: string;
   imageUpload: ReturnType<typeof useImageUpload>;
   handleSubmit: () => void;
-  handlePrevStep: () => void;
 }
 
 export function CreateJobFormPageTwo({
@@ -55,11 +51,8 @@ export function CreateJobFormPageTwo({
   managerTitle, setManagerTitle,
   managerPhone, setManagerPhone,
   managerEmail, setManagerEmail,
-  isSubmitting,
-  urlError,
   imageUpload,
   handleSubmit,
-  handlePrevStep,
 }: CreateJobFormPageTwoProps) {
   const t = useTranslations("Job");
   const tc = useTranslations("Common");
@@ -219,15 +212,6 @@ export function CreateJobFormPageTwo({
         />
       </div>
 
-      {urlError && (
-        <p className="text-[13px] text-red-500">{urlError}</p>
-      )}
-      <div className="flex gap-3 pt-2">
-        <Button type="button" variant="outline" onClick={handlePrevStep} className="flex-1" disabled={isSubmitting}>{t("form.prev")}</Button>
-        <Button type="submit" variant="teal" className="flex-1" disabled={isSubmitting}>
-          {isSubmitting ? t("form.submitting") : t("form.submit")}
-        </Button>
-      </div>
       <Toast message={toastMessage} showMessage={showToast} type="error" icon="alert" />
     </form>
   );
