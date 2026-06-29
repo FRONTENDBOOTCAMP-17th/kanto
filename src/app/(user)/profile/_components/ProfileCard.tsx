@@ -137,8 +137,8 @@ function ProfileForm({
               </div>
               <p className="text-xs text-gray-500 leading-relaxed">
                 {isIdentityVerified
-                  ? "본인인증이 완료되었습니다."
-                  : "게시물 작성과 랜덤채팅 참여는 인증이 필요합니다."}
+                  ? t("verifyComplete")
+                  : t("verifyDesc")}
               </p>
               <button
                 type="button"

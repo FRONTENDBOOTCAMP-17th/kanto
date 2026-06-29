@@ -8,6 +8,7 @@ import { X, Zap, Loader2 } from "lucide-react";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { TOPIC_OPTIONS } from "@/constants/meetupTopics";
 import { PlaceAutocomplete } from "@/components/go/PlaceAutocomplete";
+import { ResponsiveSelect } from "@/components/ui/responsive-select";
 import { createMeetup } from "@/services/go/go";
 import { manilaWallTimeToISO } from "@/utils/goTime";
 import type { MeetupTopicKey } from "@/constants/meetupTopics";
@@ -60,12 +61,11 @@ export function MeetupCreateModal({
 
   const set =
     (k: keyof typeof form) =>
-    (
-      e: React.ChangeEvent<
-        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >,
-    ) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  const setField = (k: keyof typeof form) => (value: string) =>
+    setForm((f) => ({ ...f, [k]: value }));
 
   // 선택한 월/일이 "오늘" 기준 이미 지난 시작시간을 가리키면 시작/종료를 초기화
   const clearPastStart = (next: typeof form) => {
@@ -84,9 +84,9 @@ export function MeetupCreateModal({
   };
 
   // 월 변경 → 선택일이 말일을 넘으면 일 초기화, 오늘 이전 시작시간이면 시간도 초기화
-  const setMonth = (e: React.ChangeEvent<HTMLSelectElement>) =>
+  const setMonth = (value: string) =>
     setForm((f) => {
-      const next = { ...f, month: e.target.value };
+      const next = { ...f, month: value };
       const dim = next.month
         ? new Date(CURRENT_YEAR, Number(next.month), 0).getDate()
         : 31;
@@ -96,9 +96,9 @@ export function MeetupCreateModal({
     });
 
   // 일 변경 → 오늘로 바뀌면서 이미 지난 시작시간이면 초기화
-  const setDay = (e: React.ChangeEvent<HTMLSelectElement>) =>
+  const setDay = (value: string) =>
     setForm((f) => {
-      const next = { ...f, day: e.target.value };
+      const next = { ...f, day: value };
       clearPastStart(next);
       return next;
     });
@@ -106,9 +106,9 @@ export function MeetupCreateModal({
   // 시작 변경 → 종료가 시작 이하이면 종료 초기화
   const setStart =
     (k: "startHour" | "startMinute") =>
-    (e: React.ChangeEvent<HTMLSelectElement>) =>
+    (value: string) =>
       setForm((f) => {
-        const next = { ...f, [k]: e.target.value };
+        const next = { ...f, [k]: value };
         if (
           next.startHour !== "" &&
           next.startMinute !== "" &&
@@ -199,9 +199,6 @@ export function MeetupCreateModal({
       setSubmitting(false);
     }
   };
-
-  const selectClass =
-    "w-full rounded-[11px] border-[1.5px] border-slate-200 bg-white px-2.5 py-3 text-[14px] text-slate-900 outline-none focus:border-teal-400";
 
   return (
     <>
@@ -313,34 +310,26 @@ export function MeetupCreateModal({
                   <span className="text-red-500">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-1.5">
-                  <select
+                  <ResponsiveSelect
                     value={form.month}
-                    onChange={setMonth}
-                    className={selectClass}
-                  >
-                    <option value="" disabled>
-                      {t("create.month")}
-                    </option>
-                    {MONTH_OPTIONS.map((m) => (
-                      <option key={m} value={m}>
-                        {t("create.monthValue", { month: m })}
-                      </option>
-                    ))}
-                  </select>
-                  <select
+                    onValueChange={setMonth}
+                    placeholder={t("create.month")}
+                    label={t("create.dateLabel")}
+                    options={MONTH_OPTIONS.map((m) => ({
+                      value: String(m),
+                      label: t("create.monthValue", { month: m }),
+                    }))}
+                  />
+                  <ResponsiveSelect
                     value={form.day}
-                    onChange={setDay}
-                    className={selectClass}
-                  >
-                    <option value="" disabled>
-                      {t("create.day")}
-                    </option>
-                    {DAYS.map((d) => (
-                      <option key={d} value={d}>
-                        {t("create.dayValue", { day: d })}
-                      </option>
-                    ))}
-                  </select>
+                    onValueChange={setDay}
+                    placeholder={t("create.day")}
+                    label={t("create.dateLabel")}
+                    options={DAYS.map((d) => ({
+                      value: String(d),
+                      label: t("create.dayValue", { day: d }),
+                    }))}
+                  />
                 </div>
               </div>
 
@@ -352,34 +341,26 @@ export function MeetupCreateModal({
                     <span className="text-red-500">*</span>
                   </label>
                   <div className="flex items-center gap-1.5">
-                    <select
+                    <ResponsiveSelect
                       value={form.startHour}
-                      onChange={setStart("startHour")}
-                      className={selectClass}
-                    >
-                      <option value="" disabled>
-                        {t("create.hour")}
-                      </option>
-                      {startHourOptions.map((h) => (
-                        <option key={h} value={h}>
-                          {t("create.hourValue", { hour: parseInt(h) })}
-                        </option>
-                      ))}
-                    </select>
-                    <select
+                      onValueChange={setStart("startHour")}
+                      placeholder={t("create.hour")}
+                      label={t("create.startLabel")}
+                      options={startHourOptions.map((h) => ({
+                        value: h,
+                        label: t("create.hourValue", { hour: parseInt(h) }),
+                      }))}
+                    />
+                    <ResponsiveSelect
                       value={form.startMinute}
-                      onChange={setStart("startMinute")}
-                      className={selectClass}
-                    >
-                      <option value="" disabled>
-                        {t("create.minute")}
-                      </option>
-                      {startMinuteOptions.map((m) => (
-                        <option key={m} value={m}>
-                          {t("create.minuteValue", { minute: m })}
-                        </option>
-                      ))}
-                    </select>
+                      onValueChange={setStart("startMinute")}
+                      placeholder={t("create.minute")}
+                      label={t("create.startLabel")}
+                      options={startMinuteOptions.map((m) => ({
+                        value: m,
+                        label: t("create.minuteValue", { minute: m }),
+                      }))}
+                    />
                   </div>
                 </div>
                 <div>
@@ -388,36 +369,28 @@ export function MeetupCreateModal({
                     <span className="text-red-500">*</span>
                   </label>
                   <div className="flex items-center gap-1.5">
-                    <select
+                    <ResponsiveSelect
                       value={form.endHour}
-                      onChange={set("endHour")}
+                      onValueChange={setField("endHour")}
+                      placeholder={t("create.hour")}
+                      label={t("create.endLabel")}
                       disabled={!startSet}
-                      className={`${selectClass} disabled:bg-slate-50 disabled:text-slate-400`}
-                    >
-                      <option value="" disabled>
-                        {t("create.hour")}
-                      </option>
-                      {endHourOptions.map((h) => (
-                        <option key={h} value={h}>
-                          {t("create.hourValue", { hour: parseInt(h) })}
-                        </option>
-                      ))}
-                    </select>
-                    <select
+                      options={endHourOptions.map((h) => ({
+                        value: h,
+                        label: t("create.hourValue", { hour: parseInt(h) }),
+                      }))}
+                    />
+                    <ResponsiveSelect
                       value={form.endMinute}
-                      onChange={set("endMinute")}
+                      onValueChange={setField("endMinute")}
+                      placeholder={t("create.minute")}
+                      label={t("create.endLabel")}
                       disabled={!startSet}
-                      className={`${selectClass} disabled:bg-slate-50 disabled:text-slate-400`}
-                    >
-                      <option value="" disabled>
-                        {t("create.minute")}
-                      </option>
-                      {endMinuteOptions.map((m) => (
-                        <option key={m} value={m}>
-                          {t("create.minuteValue", { minute: m })}
-                        </option>
-                      ))}
-                    </select>
+                      options={endMinuteOptions.map((m) => ({
+                        value: m,
+                        label: t("create.minuteValue", { minute: m }),
+                      }))}
+                    />
                   </div>
                 </div>
               </div>
@@ -427,17 +400,15 @@ export function MeetupCreateModal({
                 <label className="mb-2 block text-[13px] font-bold text-slate-600">
                   {t("create.maxParticipants")}
                 </label>
-                <select
+                <ResponsiveSelect
                   value={form.maxParticipants}
-                  onChange={set("maxParticipants")}
-                  className={selectClass}
-                >
-                  {PARTICIPANTS.map((n) => (
-                    <option key={n} value={n}>
-                      {t("create.participantsValue", { count: n })}
-                    </option>
-                  ))}
-                </select>
+                  onValueChange={setField("maxParticipants")}
+                  label={t("create.maxParticipants")}
+                  options={PARTICIPANTS.map((n) => ({
+                    value: String(n),
+                    label: t("create.participantsValue", { count: n }),
+                  }))}
+                />
               </div>
 
               {/* 상세 위치 */}

@@ -28,11 +28,11 @@ export default function KpiCards({
   ];
 
   return (
-    <div className="grid grid-cols-[repeat(auto-fit,minmax(210px,1fr))] gap-4">
-      {KPIS.map((k) => (
+    <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-7 gap-4">
+      {KPIS.map((k, i) => (
         <div
           key={k.label}
-          className="rounded-2xl border border-[#edf0f2] bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)]"
+          className={`rounded-2xl border border-[#edf0f2] bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)] ${i === KPIS.length - 1 ? "col-span-2 sm:col-span-1" : ""}`}
         >
           <span className="text-[13px] font-semibold text-slate-500">
             {k.label}

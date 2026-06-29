@@ -105,6 +105,7 @@
     "edit": "I-edit",
     "close": "Isara",
     "deleteConfirm": "Sigurado ka bang gusto mong burahin ito?",
+    "deleteFailed": "Nabigong burahin. Pakisubukan muli.",
     "processing": "Pinoproseso...",
     "loginRequired": "Mag-log in para magpatuloy",
     "goToLogin": "Pumunta sa login",
@@ -456,6 +457,7 @@
     "write": "Mag-post",
     "emptySearch": "Walang resulta ng paghahanap",
     "empty": "Wala pang job posting",
+    "emptyDescription": "Maging una sa pag-post ng trabaho!",
     "allTypes": "Lahat",
     "jobInfo": "Impormasyon ng trabaho",
     "employeeType": "Uri ng trabaho",
@@ -648,8 +650,9 @@
       "joinedAt": "Petsa ng pagsali",
       "provider": "Paraan ng pag-sign up",
       "verify": "Pagpapatunay ng pagkakakilanlan",
-      "verifyDesc": "Kailangan ng pagpapatunay upang makapag-post at sumali sa random chat.",
-      "verifyButton": "Patunayan ang pagkakakilanlan"
+      "verifyDesc": "Kailangan ng pagpapatunay upang makapag-post at sumali sa Kanto GO!.",
+      "verifyButton": "Patunayan ang pagkakakilanlan",
+      "verifyComplete": "Nakumpleto na ang pagpapatunay ng pagkakakilanlan."
     },
     "providers": {
       "google": "Google",
@@ -796,7 +799,7 @@
       "confirmError": "Hindi magkatugma ang mga password.",
       "showPassword": "Ipakita ang password",
       "hidePassword": "Itago ang password",
-      "success": "Tapos na ang pag-sign up! Tingnan ang iyong email upang kumpletuhin ang pagpapatunay.",
+      "success": "Tapos na ang pag-sign up! Maligayang pagdating sa Kanto!",
       "processing": "Pinoproseso...",
       "submit": "Mag-sign up"
     },
@@ -878,6 +881,10 @@
       "rental": "Mga Paupahan"
     },
     "empty": "Walang mga paborito.",
+    "emptyDescription": "I-save ang mga gusto mo para makita dito",
+    "myPostsEmpty": "Wala ka pang naipo-post",
+    "myPostsEmptyDescription": "Gawin ang iyong unang listing!",
+    "writePost": "Sumulat ng post",
     "goTo": {
       "used_goods": "Pumunta sa Marketplace",
       "jobs": "Pumunta sa Mga Trabaho",
@@ -885,6 +892,10 @@
     }
   },
   "Go": {
+    "meta": {
+      "title": "Kanto GO! | Mga Miting ng Komunidad ng Pilipino",
+      "description": "Hanapin ang mga real-time na miting ng komunidad ng Pilipino sa mapa."
+    },
     "map": {
       "inProgress": "{count} meetup na isinasagawa",
       "loading": "...",

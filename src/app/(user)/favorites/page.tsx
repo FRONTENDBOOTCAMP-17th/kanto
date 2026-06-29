@@ -10,6 +10,7 @@ import { UsedGoodsList } from "@/app/(user)/usedgoods/_components/UsedGoodsList"
 import { JobList } from "@/app/(user)/job/_components/JobList";
 import { RentalList } from "@/app/(user)/rental/_components/RentalList";
 import { FavoritesTabs } from "./_components/FavoritesTabs";
+import { EmptyState } from "@/components/common/EmptyState";
 import { PaginationUrl } from "@/components/common/PaginationUrl";
 import type { UsedGoodsWithPost } from "@/type/usedGoods";
 import type { JobWithPost } from "@/type/job/jobList";
@@ -45,14 +46,13 @@ export default async function FavoritesPage({
   if (currentUserId === null) redirect("/login");
 
   const t = await getTranslations("Favorites");
-  const isEmpty = likedIds.length === 0;
 
   let usedGoods: UsedGoodsWithPost[] = [];
   let jobs: JobWithPost[] = [];
   let rentals: RentalWithPost[] = [];
   let totalPages = 1;
 
-  if (!isEmpty) {
+  if (likedIds.length > 0) {
     const paging = { page: currentPage, pageSize: ITEMS_PER_PAGE };
     if (activeType === "used_goods") {
       const { posts, total } = await getUsedGoodsList({ targetIds: likedIds }, paging);
@@ -69,6 +69,11 @@ export default async function FavoritesPage({
     }
   }
 
+  // 실제로 표시할 게시글 기준으로 빈 화면을 판정한다(찜했지만 삭제/비활성으로
+  // 목록에 안 잡히는 경우에도 모든 탭에서 동일한 빈 화면+버튼이 뜨도록).
+  const isEmpty =
+    (activeType === "used_goods" ? usedGoods : activeType === "jobs" ? jobs : rentals).length === 0;
+
   return (
     <div className="page-wrapper">
       <main className="flex-1 page-container w-full py-8">
@@ -77,15 +82,14 @@ export default async function FavoritesPage({
         <div className="border-t border-gray-200 my-6" />
 
         {isEmpty ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
-            <p className="text-gray-500 text-base">{t("empty")}</p>
+          <EmptyState message={t("empty")} description={t("emptyDescription")}>
             <Link
               href={CATEGORY_PATHS[activeType]}
               className="px-5 py-2.5 rounded-lg bg-teal-500 text-white text-sm font-medium hover:bg-teal-600 transition-colors"
             >
               {t(`goTo.${activeType}`)}
             </Link>
-          </div>
+          </EmptyState>
         ) : (
           <>
             {activeType === "used_goods" && (

@@ -4,10 +4,10 @@ import { getTranslations } from "next-intl/server";
 import { getRentalList, getRentalBarangays } from "@/services/rental/rental";
 
 export const metadata: Metadata = {
-  title: "렌탈",
+  title: "부동산",
   description: "필리핀 한인 렌탈 매물을 찾아보세요.",
   openGraph: {
-    title: "렌탈 | 칸토",
+    title: "부동산 | 칸토",
     description: "필리핀 한인 렌탈 매물을 찾아보세요.",
     images: [{ url: "/kantoLogo.png", alt: "칸토 로고" }],
   },
@@ -58,8 +58,8 @@ export default async function RentalPage({
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
   return (
-    <main className="flex-1 py-8">
-      <div className="page-container">
+    <div className="page-wrapper">
+      <main className="flex-1 page-container w-full py-8">
         <div className="relative flex flex-col items-center text-center mb-6">
           <h1 className="page-title-lg">{t("title")}</h1>
           <p className="text-gray-600 mt-1">
@@ -85,7 +85,7 @@ export default async function RentalPage({
           barangaysByLocation={barangaysByLocation}
         />
 
-        <div className="border-t border-gray-200 mb-8" />
+        <div className="border-t border-gray-200 my-6" />
 
         <RentalList
           initialPosts={posts}
@@ -99,7 +99,7 @@ export default async function RentalPage({
             <PaginationUrl currentPage={currentPage} totalPage={totalPages} />
           </div>
         )}
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }

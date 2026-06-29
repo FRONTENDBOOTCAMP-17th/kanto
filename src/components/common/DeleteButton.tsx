@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { supabase } from "@/lib/supabase";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 
 interface DeleteButtonProps {
@@ -17,11 +16,12 @@ export default function DeleteButton({ postId, redirectPath }: DeleteButtonProps
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDelete = async () => {
-    await supabase
-      .from("posts")
-      .update({ status: "deleted", deleted_at: new Date().toISOString() })
-      .eq("id", postId);
+    const res = await fetch(`/api/posts/${postId}`, { method: "DELETE" });
     setIsOpen(false);
+    if (!res.ok) {
+      alert(t("deleteFailed"));
+      return;
+    }
     router.push(redirectPath);
   };
 

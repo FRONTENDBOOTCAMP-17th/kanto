@@ -112,6 +112,16 @@ export default function RentalCreateForm({
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>(initialData?.images ?? []);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isFormValid =
+    title.trim().length >= 2 &&
+    (picked !== null || hasExistingLocation) &&
+    rentType !== "" &&
+    price !== "" &&
+    roomType !== "" &&
+    maxOccupants !== "" &&
+    description.trim().length >= 10 &&
+    imagePreviews.length > 0;
   const [urlError, setUrlError] = useState("");
   const maxUrlsRef = useRef(3);
   const [isCheckingImages, setIsCheckingImages] = useState(false);
@@ -367,6 +377,8 @@ export default function RentalCreateForm({
             <ImageUploadField
               fileInputRef={fileInputRef}
               imagePreviews={imagePreviews}
+              minCount={1}
+              required
               isChecking={isCheckingImages}
               onUploadClick={handleImageUpload}
               onSelect={handleImageSelect}
@@ -498,7 +510,7 @@ export default function RentalCreateForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">{t("form.descriptionLabel")}</Label>
+              <Label htmlFor="description">{t("form.descriptionLabel")} *</Label>
               <Textarea
                 id="description"
                 placeholder={t("form.descriptionPlaceholder")}
@@ -539,7 +551,7 @@ export default function RentalCreateForm({
             form="rental-create-form"
             variant="teal"
             className="flex-1 h-12"
-            disabled={isSubmitting}
+            disabled={!isFormValid || isSubmitting}
           >
             {isSubmitting
               ? initialData ? t("form.editing") : t("form.submitting")
