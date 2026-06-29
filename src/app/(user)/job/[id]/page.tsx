@@ -78,13 +78,11 @@ export default async function JobDetailPage({
   };
 
   return (
-    <div className="page-container w-full py-6">
+    <div className="page-container pb-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div className="border border-gray-200 rounded-2xl overflow-hidden divide-y divide-gray-200">
-    <div className="page-container pb-12">
       <div className="flex items-center justify-between mt-4">
         <BackButton />
         <VerifyAuthor

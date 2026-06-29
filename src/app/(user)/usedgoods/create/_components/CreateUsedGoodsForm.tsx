@@ -114,16 +114,6 @@ export function CreateUsedGoodsForm({
       .catch(() => {});
   }, []);
 
-  const isFormValid =
-    title.trim().length >= 2 &&
-    price !== "" && Number(price) >= 0 &&
-    productCategory !== "" &&
-    condition !== "" &&
-    preferredLocation !== "" &&
-    (preferredLocation !== "그 외 지역" || preferredLocationDetail.trim() !== "") &&
-    content.trim().length >= 10 &&
-    imagePreviews.length > 0;
-
   const showErrorToast = (message: string) => {
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToastMessage(message);
@@ -167,11 +157,7 @@ export function CreateUsedGoodsForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!productCategory || !condition) return;
-    if (!picked && !hasExistingLocation) return;
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!productCategory || !condition || !preferredLocation) return;
+    if (!productCategory || !condition || (!picked && !hasExistingLocation)) return;
     if (imagePreviews.length === 0) return;
 
     const urlCount = (content.match(/https?:\/\/[^\s]+/g) ?? []).length;
@@ -470,32 +456,6 @@ export function CreateUsedGoodsForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="preferredLocation">{t("form.locationLabel")}</Label>
-              <Select
-                value={preferredLocation}
-                onValueChange={(v) => setPreferredLocation(v as TradeLocation)}
-                required
-              >
-                <SelectTrigger className="h-12 rounded-sm">
-                  <SelectValue placeholder={t("form.locationPlaceholder")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {TRADE_LOCATIONS.map((loc) => (
-                    <SelectItem key={loc} value={loc}>
-                      {loc === "그 외 지역" ? te("tradeLocation.otherAreas") : loc}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {preferredLocation === "그 외 지역" && (
-                <Input
-                  placeholder={t("form.locationDetailPlaceholder")}
-                  value={preferredLocationDetail}
-                  onChange={(e) => setPreferredLocationDetail(e.target.value)}
-                  className="h-12 rounded-sm"
-                  required
-                />
-              )}
               <Label>{t("form.locationLabel")}</Label>
               <LocationPicker
                 value={picked}
