@@ -231,7 +231,6 @@ export default function RentalCreateForm({
     e.preventDefault();
     if (!rentType || !roomType) return;
     if (!picked && !hasExistingLocation) return;
-    if (!rentType || !roomType || !location) return;
 
     const urlCount = (description.match(/https?:\/\/[^\s]+/g) ?? []).length;
     if (urlCount > maxUrlsRef.current) {
@@ -396,32 +395,6 @@ export default function RentalCreateForm({
                 onChange={setPicked}
                 fallbackLabel={fallbackLocationLabel}
               />
-              <Label htmlFor="location">{t("form.locationLabel")}</Label>
-              <Select
-                value={location}
-                onValueChange={(v) => setLocation(v as Location)}
-                required
-              >
-                <SelectTrigger className="h-12 rounded-sm">
-                  <SelectValue placeholder={t("form.locationPlaceholder")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {LOCATIONS.map((loc) => (
-                    <SelectItem key={loc} value={loc}>
-                      {loc === "그 외 지역" ? te("tradeLocation.otherAreas") : loc}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {location === "그 외 지역" && (
-                <Input
-                  placeholder={t("form.locationDetailPlaceholder")}
-                  value={locationDetail}
-                  onChange={(e) => setLocationDetail(e.target.value)}
-                  className="h-12 rounded-sm"
-                  required
-                />
-              )}
             </div>
 
             <div className="space-y-2">

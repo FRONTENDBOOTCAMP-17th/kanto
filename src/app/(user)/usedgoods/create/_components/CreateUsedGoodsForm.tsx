@@ -27,6 +27,7 @@ import {
 } from "@/type/usedGoods";
 import { LocationPicker } from "@/components/common/LocationPicker";
 import {
+  TRADE_LOCATIONS,
   cityToTradeLocation,
   roundCoord,
   formatBarangayLabel,
@@ -131,15 +132,6 @@ export function CreateUsedGoodsForm({
     toastTimerRef.current = setTimeout(() => setShowToast(false), 3000);
   };
 
-  const isFormValid =
-    title.trim() !== "" &&
-    price !== "" &&
-    productCategory !== "" &&
-    condition !== "" &&
-    (picked !== null || hasExistingLocation) &&
-    content.trim() !== "" &&
-    imagePreviews.length > 0;
-
   // 저장용 거래지역 필드 — 새로 선택했으면 클램프(좌표 반올림) 후 도출, 아니면 기존 값 유지.
   const buildLocationFields = () =>
     picked
@@ -165,10 +157,6 @@ export function CreateUsedGoodsForm({
           location_custom: initialData?.location_custom ?? null,
         };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!productCategory || !condition) return;
-    if (!picked && !hasExistingLocation) return;
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!productCategory || !condition || !preferredLocation) return;

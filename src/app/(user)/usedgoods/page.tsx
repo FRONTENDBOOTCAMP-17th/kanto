@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import { getUsedGoodsList, getUsedGoodsBarangays } from "@/services/usedGoods/usedGoods";
-import { getUsedGoodsList } from "@/services/usedGoods/usedGoods";
 
 export const metadata: Metadata = {
   title: "중고거래",
