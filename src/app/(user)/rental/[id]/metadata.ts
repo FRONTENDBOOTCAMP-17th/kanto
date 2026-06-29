@@ -15,7 +15,7 @@ export async function generateMetadata({
     .eq("post_id", id)
     .single();
 
-  if (!data) return { title: "게시글을 찾을 수 없습니다" };
+  if (!data) return { title: "게시글을 찾을 수 없습니다", robots: { index: false } };
 
   const title = (data.posts as { title: string }).title;
   const ogImage = (data.images as string[] | null)?.[0] ?? "/og-image.png";

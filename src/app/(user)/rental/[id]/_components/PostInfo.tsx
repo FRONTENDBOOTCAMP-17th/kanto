@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { formatTimeAgo } from "@/utils/formatTime";
+import { formatTimeAgo } from "@/utils/format";
 import { Clock, Eye, Heart } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { RentalWithPost } from "@/type/rental/rentalDetail";

@@ -47,9 +47,10 @@ export function ImageUploadField({
     e.preventDefault();
     setIsDragging(false);
     if (!onFilesDropped) return;
-    const files = Array.from(e.dataTransfer.files).filter((f) =>
-      f.type.startsWith("image/"),
-    );
+    const remaining = maxCount - imagePreviews.length;
+    const files = Array.from(e.dataTransfer.files)
+      .filter((f) => f.type.startsWith("image/"))
+      .slice(0, remaining);
     if (files.length > 0) onFilesDropped(files);
   };
 

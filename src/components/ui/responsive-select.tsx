@@ -86,8 +86,7 @@ export function ResponsiveSelect({
           tabIndex={-1}
           required
           disabled={disabled}
-          value={value}
-          onChange={() => {}}
+          defaultValue={value}
           className="absolute inset-0 h-full w-full opacity-0 pointer-events-none"
         >
           <option value="" />

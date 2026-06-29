@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getLikeList } from "@/services/likes";
@@ -17,6 +18,10 @@ const CATEGORY_TYPE = ["used_goods", "jobs", "rental"] as const;
 type TabType = (typeof CATEGORY_TYPE)[number];
 
 const ITEMS_PER_PAGE = 12;
+
+export const metadata: Metadata = {
+  robots: { index: false },
+};
 
 export default async function MypostsPage({
   searchParams,

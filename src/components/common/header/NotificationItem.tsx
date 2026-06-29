@@ -1,8 +1,8 @@
-import type { ElementType } from "react";
+﻿import type { ElementType } from "react";
 import { Heart, FileText, MessageCircle, Bird, ShieldAlert } from "lucide-react";
 import { useLocale } from "next-intl";
 import type { Notification } from "@/hooks/useNotifications";
-import { formatTimeAgo } from "@/utils/formatTime";
+import { formatTimeAgo } from "@/utils/format";
 import type { Locale } from "@/i18n/config";
 
 const ICON_MAP: Record<string, { icon: ElementType; color: string }> = {

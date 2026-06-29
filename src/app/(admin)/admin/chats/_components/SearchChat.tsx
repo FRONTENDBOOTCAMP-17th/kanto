@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Fragment, useEffect, useRef, useState, useTransition } from "react";
 import { MessageSquare, X, ExternalLink } from "lucide-react";
@@ -7,7 +7,7 @@ import { POST_TYPE_LABEL } from "@/app/(admin)/admin/_lib/constants";
 import { fetchChatMessages } from "@/app/(admin)/admin/chats/_actions/fetchChatMessages";
 import { applySanction } from "@/app/(admin)/admin/users/_actions/applySanction";
 import { liftSanction } from "@/app/(admin)/admin/users/_actions/liftSanction";
-import { formatDateDivider, formatMessageTime } from "@/utils/formatTime";
+import { formatDateDivider, formatMessageTime } from "@/utils/format";
 
 interface ChatRoom {
   id: number;

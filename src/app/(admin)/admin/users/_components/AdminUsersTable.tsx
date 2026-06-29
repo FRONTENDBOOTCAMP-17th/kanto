@@ -1,5 +1,5 @@
-import { User } from "@/services/admin/adminUsers";
-import { formatDate } from "@/utils/formatTime";
+﻿import { User } from "@/services/admin/adminUsers";
+import { formatDate } from "@/utils/format";
 
 interface AdminUsersTableProps {
   users: User[];

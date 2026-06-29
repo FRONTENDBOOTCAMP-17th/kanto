@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import { Star } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import type { Locale } from "@/i18n/config";
 import type { ReviewWithReviewer } from "@/type/review";
-import { formatTimeAgo } from "@/utils/formatTime";
+import { formatTimeAgo } from "@/utils/format";
 
 interface Props {
   reviews: ReviewWithReviewer[];

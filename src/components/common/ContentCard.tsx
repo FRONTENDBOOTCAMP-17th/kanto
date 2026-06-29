@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -7,7 +7,7 @@ import { MapPin, Clock, Heart, ImageIcon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import { LikeButton } from "@/components/common/LikeButton";
-import { formatTimeAgo } from "@/utils/formatTime";
+import { formatTimeAgo } from "@/utils/format";
 import type { Locale } from "@/i18n/config";
 
 export interface ContentCardProps {

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { MapPin, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { LikeButton } from "@/components/common/LikeButton";
 import type { JobWithPost } from "@/type/job/jobList";
-import { formatPrice } from "@/utils/formatTime";
+import { formatPrice } from "@/utils/format";
 
 interface Props {
   posts: JobWithPost[];

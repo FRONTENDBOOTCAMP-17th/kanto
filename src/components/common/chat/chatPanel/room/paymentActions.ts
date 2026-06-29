@@ -184,7 +184,7 @@ export async function confirmReceiptAction(
     );
   }
 
-  const released = await claimTransactionRelease(transaction.id);
+  const released = await claimTransactionRelease(transaction.id, transaction.buyer_id);
   if (!released) {
     throw new Error("이미 처리 중인 거래입니다. 잠시 후 확인해주세요.");
   }
