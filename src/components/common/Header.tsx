@@ -47,6 +47,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
   const t = useTranslations("Header");
   const router = useRouter();
   const user = useAuthStore((s) => s.user) ?? initialUser;
+  const clearUser = useAuthStore((s) => s.clearUser);
   useAuthInit();
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -81,18 +82,14 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
   };
 
   const pathname = usePathname();
-  const PROTECTED_PATHS = ["/create", "/myposts", "/favorites", "/profile"];
   const { isSuspended, openModal } = useSuspended();
 
   const handleLogoutConfirm = async () => {
     setIsLogoutModalOpen(false);
     await supabase.auth.signOut();
-    const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
-    if (isProtected) {
-      router.push(ROUTES.login);
-    } else {
-      router.refresh();
-    }
+    clearUser();
+    router.push(ROUTES.home);
+    router.refresh();
   };
 
   useEffect(() => {
@@ -106,11 +103,11 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
 
   return (
     <header
-      className={`fixed md:sticky top-0 z-50 w-full bg-white border-b border-gray-200 transition-transform duration-300 ${
+      className={`fixed md:sticky top-0 z-50 w-full bg-white transition-transform duration-300 ${
         isVisible || isMobileOpen ? "translate-y-0" : "-translate-y-full md:translate-y-0"
       }`}
     >
-      <div className="page-container">
+      <div className="page-container border-b border-gray-200 relative z-10 bg-white">
         <div className="flex items-center justify-between h-12 md:h-16">
           
           <Link
@@ -140,7 +137,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
             
             <LanguageSwitcher />
 
-            
+
             {user && (
               <NotificationBell
                 ref={notificationBellRef}

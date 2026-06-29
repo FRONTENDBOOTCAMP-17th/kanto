@@ -4,6 +4,7 @@ import { getPublicProfile } from "@/services/user/publicProfile";
 import { getReviewsForUser } from "@/services/review/review";
 import { hasBlockedUser } from "@/services/chat/block";
 import { PublicProfileView } from "./_components/PublicProfileView";
+export { generateMetadata } from "./metadata";
 
 export default async function UserProfilePage({
   params,

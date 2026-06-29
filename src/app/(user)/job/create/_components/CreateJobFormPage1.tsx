@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { X, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -124,7 +125,7 @@ export function CreateJobFormPageOne({
     );
 
   const handleSalaryChange = (value: string) => {
-    const rawNumber = value.replace(/\D/g, ""); 
+    const rawNumber = value.replace(/\D/g, "");
     setSalary(rawNumber);
   };
 
@@ -141,7 +142,19 @@ export function CreateJobFormPageOne({
   };
 
   return (
-    <div className="space-y-4">
+    <form
+      className="space-y-4"
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleNextStep();
+      }}
+    >
+      <div>
+        <h2 className="font-semibold text-xl text-gray-900">
+          {t("form.jobInfo")}
+        </h2>
+      </div>
+
       <div className="space-y-2">
         <Label htmlFor="title">{t("form.titleLabel")}</Label>
         <Input
@@ -150,13 +163,13 @@ export function CreateJobFormPageOne({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="h-12 rounded-sm"
+          required
         />
         {title.length > 0 && title.trim().length < 2 && (
           <p className="text-[13px] text-red-500">{t("form.titleMinLength")}</p>
         )}
       </div>
 
-      
       <div className="space-y-2">
         <Label>{t("form.employeeTypeLabel")}</Label>
         <ResponsiveSelect
@@ -165,10 +178,10 @@ export function CreateJobFormPageOne({
           options={EMPLOYEE_OPTIONS}
           placeholder={t("form.employeeTypePlaceholder")}
           className="h-12 rounded-sm"
+          required
         />
       </div>
 
-      
       <div className="space-y-2">
         <Label htmlFor="salary">{t("form.salaryLabel")}</Label>
         <div className="flex gap-2">
@@ -181,6 +194,7 @@ export function CreateJobFormPageOne({
               value={salary ? Number(salary).toLocaleString() : ""}
               onChange={(e) => handleSalaryChange(e.target.value)}
               className="h-12 rounded-sm pr-12"
+              required
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm pointer-events-none">
               PHP
@@ -196,7 +210,6 @@ export function CreateJobFormPageOne({
         </div>
       </div>
 
-      
       <div className="space-y-2">
         <Label>{t("form.locationLabel")}</Label>
         <ResponsiveSelect
@@ -205,6 +218,7 @@ export function CreateJobFormPageOne({
           options={LOCATION_OPTIONS}
           placeholder={t("form.locationPlaceholder")}
           className="h-12 rounded-sm"
+          required
         />
         {locationType === "그 외 지역" && (
           <Input
@@ -212,11 +226,11 @@ export function CreateJobFormPageOne({
             value={locationCustom}
             onChange={(e) => setLocationCustom(e.target.value)}
             className="h-12 rounded-sm"
+            required
           />
         )}
       </div>
 
-      
       <div className="space-y-2">
         <Label htmlFor="deadline">{t("form.deadlineLabel")}</Label>
         <Input
@@ -225,10 +239,10 @@ export function CreateJobFormPageOne({
           value={deadline}
           onChange={(e) => setDeadline(e.target.value)}
           className="h-12 rounded-sm"
+          required
         />
       </div>
 
-      
       <div className="space-y-4 border-t pt-4 mt-2">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
@@ -291,11 +305,9 @@ export function CreateJobFormPageOne({
           </div>
         </div>
 
-        
         <div className="space-y-2">
           <Label>{t("form.workDaysLabel")}</Label>
 
-          
           <div className="flex flex-wrap gap-2">
             {DAY_PRESETS.map((preset) => (
               <button
@@ -310,7 +322,6 @@ export function CreateJobFormPageOne({
             ))}
           </div>
 
-          
           <div className="flex flex-wrap gap-2">
             {WORK_DAYS.map((day) => {
               const selected = workDays.includes(day);
@@ -334,7 +345,6 @@ export function CreateJobFormPageOne({
         </div>
       </div>
 
-      
       <div className="space-y-2">
         <Label htmlFor="mainTask">{t("form.mainTaskLabel")}</Label>
         <Textarea
@@ -344,6 +354,7 @@ export function CreateJobFormPageOne({
           onChange={(e) => setMainTask(e.target.value.slice(0, 5000))}
           className="resize-none min-h-68 rounded-sm p-5 text-xs md:text-sm"
           maxLength={5000}
+          required
         />
         {mainTask.length > 0 && mainTask.trim().length < 10 && (
           <p className="text-[13px] text-red-500">{t("form.mainTaskMinLength")}</p>
@@ -351,7 +362,6 @@ export function CreateJobFormPageOne({
         <p className="text-right text-xs text-gray-400">{mainTask.length}/5000</p>
       </div>
 
-      
       <div className="space-y-2">
         <Label>{t("form.preferredLabel")}</Label>
         <button
@@ -365,7 +375,6 @@ export function CreateJobFormPageOne({
             : t("form.preferredSelect")}
         </button>
 
-        
         {preferredTags.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {preferredTags.map((key) => (
@@ -378,9 +387,9 @@ export function CreateJobFormPageOne({
                   type="button"
                   onClick={() => toggleTag(key)}
                   aria-label={tc("delete")}
-                  className="transition-colors hover:text-teal-900 flex justify-center "
+                  className="transition-colors hover:text-teal-900 flex justify-center"
                 >
-                  <X className="h-3.5 w-3.5 " />
+                  <X className="h-3.5 w-3.5" />
                 </button>
               </span>
             ))}
@@ -394,12 +403,26 @@ export function CreateJobFormPageOne({
         />
       </div>
 
+      <div className="flex gap-3 pt-4 border-t">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleBack}
+          className="flex-1"
+        >
+          {tc("cancel")}
+        </Button>
+        <Button type="submit" variant="teal" className="flex-1">
+          {t("form.next")}
+        </Button>
+      </div>
+
       <JobPreferredModal
         isOpen={showPreferredModal}
         onClose={() => setShowPreferredModal(false)}
         selected={preferredTags}
         onToggle={toggleTag}
       />
-    </div>
+    </form>
   );
 }

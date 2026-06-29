@@ -43,7 +43,8 @@
       "title": "Services",
       "usedgoods": "Marketplace",
       "jobs": "Jobs",
-      "rental": "Rentals"
+      "rental": "Rentals",
+      "go": "Kanto GO!"
     },
     "support": {
       "title": "Support",
@@ -373,10 +374,10 @@
         "description": "Reasonably priced room rentals",
         "button": "Go to Rentals"
       },
-      "dating": {
-        "title": "Want to meet someone new?",
-        "description": "Start new connections with filtered random matching",
-        "button": "Go to Random Chat"
+      "go": {
+        "title": "Want to start a local meetup?",
+        "description": "Enjoy all kinds of meetups in the Philippines",
+        "button": "Go to Kanto GO!"
       }
     }
   },
@@ -515,7 +516,6 @@
       "preferredPlaceholder": "Enter preferred qualifications",
       "next": "Next step",
       "prev": "Previous step",
-      "page2Subtitle": "Please enter company info and contact details",
       "companyInfo": "Company info",
       "companyLogoLabel": "Company Logo",
       "companyLogoHint": "Square image recommended (PNG, JPG)",

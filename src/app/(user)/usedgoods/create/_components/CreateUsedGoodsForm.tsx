@@ -62,9 +62,9 @@ export function CreateUsedGoodsForm({
   const [condition, setCondition] = useState<ProductCondition | "">(
     (initialData?.condition as ProductCondition) ?? "",
   );
-  const [preferredLocation, setPreferredLocation] = useState<
-    TradeLocation | ""
-  >((initialData?.location_type as TradeLocation) ?? "");
+  const [preferredLocation, setPreferredLocation] = useState<TradeLocation | "">(
+    (initialData?.location_type as TradeLocation) ?? "",
+  );
   const [preferredLocationDetail, setPreferredLocationDetail] = useState(
     initialData?.location_custom ?? "",
   );
@@ -80,6 +80,10 @@ export function CreateUsedGoodsForm({
   const [urlError, setUrlError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const maxUrlsRef = useRef(3);
+  const [isCheckingImages, setIsCheckingImages] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     fetch("/api/admin/spam-config")
@@ -87,17 +91,6 @@ export function CreateUsedGoodsForm({
       .then((d) => { if (d?.max_urls_per_post != null) maxUrlsRef.current = d.max_urls_per_post; })
       .catch(() => {});
   }, []);
-  const [isCheckingImages, setIsCheckingImages] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const showErrorToast = (message: string) => {
-    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    setToastMessage(message);
-    setShowToast(true);
-    toastTimerRef.current = setTimeout(() => setShowToast(false), 3000);
-  };
 
   const isFormValid =
     title.trim().length >= 2 &&
@@ -109,9 +102,17 @@ export function CreateUsedGoodsForm({
     content.trim().length >= 10 &&
     imagePreviews.length > 0;
 
+  const showErrorToast = (message: string) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToastMessage(message);
+    setShowToast(true);
+    toastTimerRef.current = setTimeout(() => setShowToast(false), 3000);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!productCategory || !condition || !preferredLocation) return;
+    if (imagePreviews.length === 0) return;
 
     const urlCount = (content.match(/https?:\/\/[^\s]+/g) ?? []).length;
     if (urlCount > maxUrlsRef.current) {
@@ -140,9 +141,7 @@ export function CreateUsedGoodsForm({
         }
       }
 
-      const existingUrls = imagePreviews.filter(
-        (url) => !url.startsWith("blob:"),
-      );
+      const existingUrls = imagePreviews.filter((url) => !url.startsWith("blob:"));
       const finalImages = [...existingUrls, ...uploadedUrls];
 
       await supabase.from("posts").update({ title }).eq("id", postId);
@@ -361,10 +360,7 @@ export function CreateUsedGoodsForm({
                   inputMode="numeric"
                   placeholder="0"
                   value={price}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/[^0-9]/g, "");
-                    setPrice(val);
-                  }}
+                  onChange={(e) => setPrice(e.target.value.replace(/[^0-9]/g, ""))}
                   className="h-12 rounded-sm pr-12"
                   required
                 />
@@ -385,13 +381,11 @@ export function CreateUsedGoodsForm({
                   <SelectValue placeholder={t("form.categoryPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {PRODUCT_CATEGORIES.filter((c) => c.id !== "all").map(
-                    (cat) => (
-                      <SelectItem key={cat.id} value={cat.id}>
-                        {te(`productCategory.${cat.id}`)}
-                      </SelectItem>
-                    ),
-                  )}
+                  {PRODUCT_CATEGORIES.filter((c) => c.id !== "all").map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {te(`productCategory.${cat.id}`)}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -474,7 +468,6 @@ export function CreateUsedGoodsForm({
                 {t("form.safePaymentUse")}
               </Label>
             </div>
-
           </form>
         </div>
       </div>

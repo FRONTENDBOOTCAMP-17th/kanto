@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
@@ -86,6 +86,13 @@ export default function RentalCreateForm({
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/spam-config")
+      .then((r) => r.json())
+      .then((d) => { if (d?.max_urls_per_post != null) maxUrlsRef.current = d.max_urls_per_post; })
+      .catch(() => {});
+  }, []);
 
   const showErrorToast = (message: string) => {
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
@@ -349,7 +356,11 @@ export default function RentalCreateForm({
 
             <div className="space-y-2">
               <Label htmlFor="location">{t("form.locationLabel")}</Label>
-              <Select value={location} onValueChange={(v) => setLocation(v as Location)}>
+              <Select
+                value={location}
+                onValueChange={(v) => setLocation(v as Location)}
+                required
+              >
                 <SelectTrigger className="h-12 rounded-sm">
                   <SelectValue placeholder={t("form.locationPlaceholder")} />
                 </SelectTrigger>
@@ -374,7 +385,11 @@ export default function RentalCreateForm({
 
             <div className="space-y-2">
               <Label htmlFor="rentType">{t("form.rentTypeLabel")}</Label>
-              <Select value={rentType} onValueChange={(v) => setRentType(v as RentType)}>
+              <Select
+                value={rentType}
+                onValueChange={(v) => setRentType(v as RentType)}
+                required
+              >
                 <SelectTrigger className="h-12 rounded-sm">
                   <SelectValue placeholder={t("form.rentTypePlaceholder")} />
                 </SelectTrigger>

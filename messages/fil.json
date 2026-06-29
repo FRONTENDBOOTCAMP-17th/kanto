@@ -43,7 +43,8 @@
       "title": "Mga Serbisyo",
       "usedgoods": "Palengke",
       "jobs": "Trabaho",
-      "rental": "Paupahan"
+      "rental": "Paupahan",
+      "go": "Kanto GO!"
     },
     "support": {
       "title": "Suporta",
@@ -379,10 +380,10 @@
         "description": "Makatuwirang presyo ng paupahan",
         "button": "Pumunta sa Paupahan"
       },
-      "dating": {
-        "title": "Gustong makakilala ng bago?",
-        "description": "Magsimula ng bagong koneksyon sa pamamagitan ng filtered random matching",
-        "button": "Pumunta sa Random na Chat"
+      "go": {
+        "title": "Gustong magsimula ng lokal na meetup?",
+        "description": "Mag-enjoy ng iba't ibang meetup sa Pilipinas",
+        "button": "Pumunta sa Kanto GO!"
       }
     }
   },
@@ -470,6 +471,7 @@
     "details": "Mga detalye",
     "mainTask": "Mga pangunahing gawain",
     "preferred": "Mga gustong kwalipikasyon",
+    "backToList": "Bumalik sa listahan",
     "viewCount": "{count}",
     "applicantCount": "Mga aplikante: {count}",
     "managerInfo": "Taong makokontak",
@@ -520,7 +522,6 @@
       "preferredPlaceholder": "Ilagay ang mga gustong kwalipikasyon",
       "next": "Susunod na hakbang",
       "prev": "Nakaraang hakbang",
-      "page2Subtitle": "Pakilagay ang impormasyon ng kumpanya at detalye ng kontak",
       "companyInfo": "Impormasyon ng kumpanya",
       "companyLogoLabel": "Logo ng Kumpanya",
       "companyLogoHint": "Inirerekomenda ang square na larawan (PNG, JPG)",
