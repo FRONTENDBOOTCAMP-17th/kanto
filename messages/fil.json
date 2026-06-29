@@ -534,7 +534,7 @@
       "companyNameLabel": "Pangalan ng kumpanya *",
       "companyNamePlaceholder": "Ilagay ang pangalan ng kumpanya",
       "companyIntroLabel": "Panimula ng kumpanya *",
-      "companyIntroPlaceholder": "Ilagay ang panimula tungkol sa kumpanya",
+      "companyIntroPlaceholder": "- Pangunahing larangan ng negosyo\n- Background at bisyon ng kumpanya\n- Kapaligiran sa trabaho at mga benepisyo\n- Mga kalakasan ng kumpanya\n\n* Mangyaring ilarawan nang detalyado para maunawaan ng mga aplikante ang kumpanya\n* Ang mga post na may URL, KakaoTalk ID, o numero ng telepono ay maaaring tanggalin o paghigpitan",
       "industryLabel": "Industriya",
       "industryPlaceholder": "hal. Restawran",
       "foundedYearLabel": "Itinatag",

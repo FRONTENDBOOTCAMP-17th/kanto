@@ -131,7 +131,7 @@ export function CreateJobFormPageTwo({
         </div>
         <div className="space-y-2">
           <Label htmlFor="companyIntro">{t("form.companyIntroLabel")}</Label>
-          <Textarea id="companyIntro" placeholder={t("form.companyIntroPlaceholder")} value={companyIntro} onChange={(e) => setCompanyIntro(e.target.value)} className="resize-none min-h-28 rounded-sm p-5" required />
+          <Textarea id="companyIntro" placeholder={t("form.companyIntroPlaceholder")} value={companyIntro} onChange={(e) => setCompanyIntro(e.target.value)} className="resize-none min-h-52 rounded-sm p-5 text-xs md:text-sm" required />
         </div>
         <div className="space-y-2">
           <Label htmlFor="industry">{t("form.industryLabel")}</Label>

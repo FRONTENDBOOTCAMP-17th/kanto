@@ -58,7 +58,6 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
               preferredTags={form.preferredTags}
               setPreferredTags={form.setPreferredTags}
               handleNextStep={form.handleNextStep}
-              handleBack={form.handleBack}
             />
           )}
 

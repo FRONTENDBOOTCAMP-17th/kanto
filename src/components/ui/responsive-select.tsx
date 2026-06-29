@@ -57,7 +57,7 @@ export function ResponsiveSelect({
         type="button"
         disabled={disabled}
         onClick={() => setMobileOpen(true)}
-        className="flex h-9 w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:hidden"
+        className="flex h-full w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:hidden"
       >
         <span className={`truncate ${selectedLabel ? "" : "text-muted-foreground"}`}>
           {selectedLabel ?? placeholder}
@@ -67,7 +67,7 @@ export function ResponsiveSelect({
 
 
       <Select value={value} onValueChange={onValueChange} disabled={disabled}>
-        <SelectTrigger className="hidden w-full md:flex">
+        <SelectTrigger className="hidden h-full w-full md:flex">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent className="max-h-60">
