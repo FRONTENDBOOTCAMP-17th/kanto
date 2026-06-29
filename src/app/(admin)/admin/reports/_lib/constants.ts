@@ -12,9 +12,9 @@ export const REASON_STYLE: Record<string, { fg: string; bg: string }> = {
 
 export const CATEGORY_STYLE: Record<string, { fg: string; bg: string }> = {
   중고거래: { fg: "#ea580c", bg: "#fff7ed" },
-  커뮤니티: { fg: "#7c3aed", bg: "#f5f3ff" },
+  "Kanto Go!": { fg: "#7c3aed", bg: "#f5f3ff" },
   구인구직: { fg: "#2563eb", bg: "#eff6ff" },
-  "방 렌탈": { fg: "#16a34a", bg: "#f0fdf4" },
+  부동산: { fg: "#16a34a", bg: "#f0fdf4" },
 };
 
 export const STATUS_STYLE: Record<
@@ -26,10 +26,11 @@ export const STATUS_STYLE: Record<
   dismissed: { label: "무시됨", bg: "#f1f5f9", fg: "#64748b" },
 };
 
-export const SANCTION_LABEL: Record<Exclude<Sanction, "none">, string> = {
+export const SANCTION_LABEL: Record<string, string> = {
   "7d": "7일 정지",
   "30d": "30일 정지",
   perm: "영구 정지",
+  lifted: "제재 해제",
 };
 
 export const PAGE_SIZE = 8;

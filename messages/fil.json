@@ -18,7 +18,6 @@
       "usedgoods": "Palengke",
       "jobs": "Trabaho",
       "rental": "Paupahan",
-      "community": "Komunidad",
       "dating": "Random na Chat",
       "go": "Kanto GO!"
     },
@@ -39,13 +38,13 @@
     }
   },
   "Footer": {
-    "tagline": "Isang community platform<br></br>para sa mga Koreano sa Pilipinas",
+    "tagline": "Isang life platform<br></br>para sa araw-araw na pamumuhay sa Pilipinas",
     "services": {
       "title": "Mga Serbisyo",
       "usedgoods": "Palengke",
       "jobs": "Trabaho",
       "rental": "Paupahan",
-      "community": "Komunidad ng Koreano"
+      "go": "Kanto GO!"
     },
     "support": {
       "title": "Suporta",
@@ -180,6 +179,8 @@
     "submit": "Mag-ulat",
     "done": "Naisumite na ang iyong ulat.",
     "already": "Naiulat mo na ang {target} na ito.",
+    "alreadyUser": "Na-report mo na ang user na ito.",
+    "withdrawnUser": "Umalis na ang user na ito.",
     "targetNoun": {
       "post": "post",
       "user": "user",
@@ -348,10 +349,6 @@
       "rental": {
         "name": "Paupahan",
         "description": "Maghanap o mag-post ng kwarto"
-      },
-      "community": {
-        "name": "Komunidad",
-        "description": "Malayang makipag-usap sa iba"
       }
     }
   },
@@ -368,18 +365,17 @@
     "category": {
       "usedgoods": "Palengke",
       "jobs": "Trabaho",
-      "rental": "Paupahan",
-      "community": "Komunidad"
+      "rental": "Paupahan"
     },
     "hero": {
       "usedgoods": {
         "title": "Bumili at magbenta sa Kanto!",
-        "description": "Ligtas na palengke para sa mga Koreano sa Pilipinas",
+        "description": "Ligtas na palengke para sa araw-araw na pamumuhay sa Pilipinas",
         "button": "Pumunta sa Palengke"
       },
       "jobs": {
         "title": "Naghahanap ng trabaho?",
-        "description": "Mga trabaho para sa mga Koreano sa Pilipinas",
+        "description": "Mga lokal na trabaho sa Pilipinas",
         "button": "Pumunta sa Trabaho"
       },
       "rental": {
@@ -387,15 +383,10 @@
         "description": "Makatuwirang presyo ng paupahan",
         "button": "Pumunta sa Paupahan"
       },
-      "community": {
-        "title": "Gustong makihalubilo sa mga Koreano?",
-        "description": "Espasyo para sa mga Koreano sa Pilipinas",
-        "button": "Pumunta sa Komunidad"
-      },
-      "dating": {
-        "title": "Gustong makakilala ng bago?",
-        "description": "Magsimula ng bagong koneksyon sa pamamagitan ng filtered random matching",
-        "button": "Pumunta sa Random na Chat"
+      "go": {
+        "title": "Gustong magsimula ng lokal na meetup?",
+        "description": "Mag-enjoy ng iba't ibang meetup sa Pilipinas",
+        "button": "Pumunta sa Kanto GO!"
       }
     }
   },
@@ -405,7 +396,7 @@
   },
   "UsedGoods": {
     "title": "Palengke",
-    "subtitle": "Palengke para sa mga Koreano sa Pilipinas",
+    "subtitle": "Palengke para sa araw-araw na pamumuhay sa Pilipinas",
     "searchResult": "Mga resulta para sa \"{query}\"",
     "write": "Mag-post",
     "empty": "Wala pang produkto",
@@ -455,7 +446,7 @@
   },
   "Job": {
     "title": "Trabaho",
-    "subtitle": "Impormasyon ng trabaho para sa mga Koreano sa Pilipinas",
+    "subtitle": "Impormasyon ng lokal na trabaho sa Pilipinas",
     "searchResult": "Mga resulta para sa \"{query}\"",
     "write": "Mag-post",
     "emptySearch": "Walang resulta ng paghahanap",
@@ -480,6 +471,7 @@
     "details": "Mga detalye",
     "mainTask": "Mga pangunahing gawain",
     "preferred": "Mga gustong kwalipikasyon",
+    "backToList": "Bumalik sa listahan",
     "viewCount": "{count}",
     "applicantCount": "Mga aplikante: {count}",
     "managerInfo": "Taong makokontak",
@@ -500,7 +492,7 @@
     "form": {
       "back": "Bumalik",
       "createTitle": "Mag-post ng trabaho",
-      "page1Subtitle": "Pakilagay ang pangunahing impormasyon ng job posting",
+      "requiredNotice": "Ang * ay nagpapahiwatig ng kinakailangang field.",
       "jobInfo": "Impormasyon ng trabaho",
       "titleLabel": "Pamagat ng trabaho *",
       "titlePlaceholder": "hal. Naghahanap ng hall staff para sa Korean restaurant",
@@ -528,7 +520,6 @@
       "preferredPlaceholder": "Ilagay ang mga gustong kwalipikasyon",
       "next": "Susunod na hakbang",
       "prev": "Nakaraang hakbang",
-      "page2Subtitle": "Pakilagay ang impormasyon ng kumpanya at detalye ng kontak",
       "companyInfo": "Impormasyon ng kumpanya",
       "companyLogoLabel": "Logo ng Kumpanya",
       "companyLogoHint": "Inirerekomenda ang square na larawan (PNG, JPG)",
@@ -561,8 +552,6 @@
       "optional": "(opsyonal)",
       "submitting": "Isinusumite...",
       "submit": "Tapos na",
-      "errorRequired": "Pakipunan ang lahat ng kinakailangang field.",
-      "errorLocationDetail": "Pakilagay ang detalyadong lugar.",
       "errorImage": "Nabigong i-upload ang larawan.",
       "errorEdit": "Nabigong i-update.",
       "errorPost": "Nabigong gumawa ng post.",
@@ -571,7 +560,7 @@
   },
   "Rental": {
     "title": "Paupahan",
-    "subtitle": "Impormasyon ng paupahan para sa mga Koreano sa Pilipinas",
+    "subtitle": "Impormasyon ng lokal na paupahan sa Pilipinas",
     "searchResult": "Mga resulta para sa \"{query}\"",
     "write": "Mag-post",
     "empty": "Wala pang listing",
@@ -727,7 +716,6 @@
         "usedgoods": "Mga Gamit na Bagay",
         "jobs": "Mga Trabaho",
         "rental": "Mga Paupahan",
-        "community": "Komunidad",
         "dating": "Random Chat"
       }
     },
@@ -853,6 +841,20 @@
       "home": "Pumunta sa home"
     }
   },
+  "Chatbot": {
+    "title": "AI Assistant",
+    "newChat": "Bagong chat",
+    "history": "Kasaysayan ng chat",
+    "historyEmpty": "Walang mga kamakailang pag-uusap",
+    "placeholder": "Mag-type ng mensahe...",
+    "errorMessage": "Paumanhin, pakisubukang muli sa ilang sandali.",
+    "greeting": "Kamusta! Ako ang Kanto AI Assistant.\nHuwag mag-alinlangang magtanong!",
+    "suggestions": {
+      "badge": "Paano makakuha ng verified badge?",
+      "safeTrade": "Mga tip sa ligtas na kalakalan",
+      "mangoIndex": "Ano ang Mango Index?"
+    }
+  },
   "Favorites": {
     "title": "Mga Paborito",
     "myPostsTitle": "Aking mga Post",
@@ -867,6 +869,142 @@
       "used_goods": "Pumunta sa Marketplace",
       "jobs": "Pumunta sa Mga Trabaho",
       "rental": "Pumunta sa Mga Paupahan"
+    }
+  },
+  "Go": {
+    "map": {
+      "inProgress": "{count} meetup na isinasagawa",
+      "loading": "...",
+      "createMeetup": "Gumawa ng Meetup",
+      "myLocation": "Aking lokasyon",
+      "clusterCount": "{count} meetup"
+    },
+    "filter": {
+      "all": "Lahat",
+      "toggle": "I-toggle ang filter ng paksa"
+    },
+    "topics": {
+      "food": "Pagkain/Kainan",
+      "sports": "Sports/Ehersisyo",
+      "study": "Pag-aaral/Wika",
+      "hobby": "Libangan/Kultura",
+      "trip": "Lakad/Biyahe",
+      "social": "Pakikipagkaibigan/Kwentuhan",
+      "other": "Iba pa"
+    },
+    "list": {
+      "title": "Mga Meetup",
+      "inProgress": "{count} isinasagawa",
+      "searchPlaceholder": "Maghanap ayon sa pamagat...",
+      "noResults": "Walang nahanap",
+      "empty": "Walang isinasagawang meetup",
+      "full": "Puno na",
+      "close": "Isara"
+    },
+    "detail": {
+      "back": "Bumalik sa listahan",
+      "reportAria": "I-report ang meetup",
+      "report": "I-report",
+      "close": "Isara",
+      "full": "Puno na",
+      "host": "Host",
+      "capacity": "<b>{current}</b>/{max}",
+      "intro": "Tungkol",
+      "joinChat": "Pumasok sa chat ng meetup",
+      "ended": "Tapos na ang meetup na ito",
+      "endTitle": "Tapusin ang meetup?",
+      "endDesc": "Aabisuhan ang mga kalahok at mawawala ang pin sa mapa.",
+      "cancel": "Kanselahin",
+      "endConfirm": "Kumpirmahin ang pagtatapos",
+      "ending": "Pinoproseso...",
+      "endMeetup": "Tapusin ang meetup",
+      "join": "Sumali",
+      "cancelJoin": "Kanselahin ang pagsali",
+      "processing": "Pinoproseso...",
+      "cancelTitle": "Hindi ka na makakasali muli. Sigurado ka bang kakanselahin?",
+      "cancelStay": "Manatili",
+      "cancelConfirm": "Kanselahin ang meetup",
+      "moreParticipants": "+{count}"
+    },
+    "toast": {
+      "joined": "Sumali ka na! Naabisuhan na ang host",
+      "cancelled": "Nakansela ang pagsali",
+      "reentryForbidden": "Hindi pinapayagan ang muling pagsali.",
+      "cancelAfterStart": "Nagsimula na ang meetup, kaya hindi mo na ito makakansela.",
+      "ended": "Natapos ang meetup",
+      "error": "May naganap na error",
+      "withdrawn": "Umalis na ang user na ito."
+    },
+    "chat": {
+      "title": "Chat ng meetup",
+      "back": "Bumalik sa listahan",
+      "membersAria": "Mga kalahok",
+      "notFound": "Hindi nahanap ang chat room. Pakitingnan ang iyong status ng pagsali.",
+      "blockHow": "Paano mo gustong i-block?",
+      "blockDescRoom": "Kung i-block mo lang sa chat na ito, makikita pa rin ang user sa ibang meetup chat.",
+      "blockDescGlobal": "Kung ganap na i-block, hindi mo na makikita ang user kahit saan, at idaragdag sila sa iyong blocked list sa Profile.",
+      "blockRoomOnly": "I-block sa chat na ito lang",
+      "blockGlobal": "Ganap na i-block",
+      "cancel": "Kanselahin",
+      "blockedRoom": "Na-block sa chat na ito",
+      "blockedGlobal": "Na-block ang user",
+      "unblocked": "Inalis ang block",
+      "sendFailed": "Hindi naipadala ang mensahe.",
+      "loadMore": "Tingnan ang mga naunang mensahe",
+      "loadingMore": "Nilo-load...",
+      "jumpToLatest": "Pumunta sa pinakabago",
+      "inputPlaceholder": "Mag-type ng mensahe",
+      "cooldown": "Subukan muli pagkalipas ng {seconds}s",
+      "send": "Ipadala",
+      "messageInput": "Input ng mensahe",
+      "membersTitle": "Mga kalahok ({count})",
+      "close": "Isara",
+      "me": "Ako",
+      "host": "Host",
+      "unblock": "I-unblock",
+      "report": "I-report",
+      "block": "I-block",
+      "viewProfile": "Tingnan ang profile ni {name}"
+    },
+    "pin": {
+      "full": "Puno",
+      "almostFull": "Malapit nang mapuno"
+    },
+    "create": {
+      "title": "Gumawa ng Meetup",
+      "doneTitle": "Nagawa na ang meetup!",
+      "doneDesc": "May lightning pin na sa mapa.<br></br>Malapit nang sumali ang mga tao sa paligid.",
+      "locationLabel": "Pumili ng lokasyon",
+      "locationHint": "(maghanap ng pangalan ng lugar o address)",
+      "titleLabel": "Pamagat",
+      "titlePlaceholder": "hal. BGC sushi tour",
+      "topicLabel": "Paksa",
+      "dateLabel": "Petsa",
+      "month": "Buwan",
+      "day": "Araw",
+      "monthValue": "{month}",
+      "dayValue": "{day}",
+      "startLabel": "Simula",
+      "endLabel": "Wakas",
+      "hour": "Oras",
+      "minute": "Min",
+      "hourValue": "{hour}",
+      "minuteValue": "{minute}",
+      "maxParticipants": "Max na kalahok",
+      "participantsValue": "{count}",
+      "locationDetailLabel": "Detalyadong lokasyon (opsyonal)",
+      "locationDetailPlaceholder": "hal. Parco 1F, harap ng exit 2",
+      "descriptionLabel": "Isang linyang paglalarawan",
+      "descriptionPlaceholder": "Ipakilala ang meetup sa isang linya",
+      "cancel": "Kanselahin",
+      "submit": "Ilagay ang pin",
+      "pastTimeError": "Hindi ka makakagawa ng meetup sa nakaraang oras",
+      "createError": "May naganap na error habang gumagawa"
+    },
+    "place": {
+      "placeholder": "Maglagay ng pangalan ng lugar o address (hal. SM Aura)",
+      "loading": "Nilo-load ang mapa…",
+      "empty": "Wala pang napiling lokasyon"
     }
   }
 }

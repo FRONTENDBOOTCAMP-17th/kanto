@@ -27,6 +27,7 @@ interface CreateJobFormPageTwoProps {
   managerPhone: string; setManagerPhone: (v: string) => void;
   managerEmail: string; setManagerEmail: (v: string) => void;
   isSubmitting: boolean;
+  urlError?: string;
   imageUpload: ReturnType<typeof useImageUpload>;
   handleSubmit: () => void;
   handlePrevStep: () => void;
@@ -47,6 +48,7 @@ export function CreateJobFormPageTwo({
   managerPhone, setManagerPhone,
   managerEmail, setManagerEmail,
   isSubmitting,
+  urlError,
   imageUpload,
   handleSubmit,
   handlePrevStep,
@@ -79,11 +81,15 @@ export function CreateJobFormPageTwo({
   };
 
   return (
-    <div className="space-y-6">
-      <p className="text-gray-500">{t("form.page2Subtitle")}</p>
-
+    <form
+      className="space-y-6"
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit();
+      }}
+    >
       <div className="space-y-4">
-        <h2 className="font-semibold text-gray-900">{t("form.companyInfo")}</h2>
+        <h2 className="font-semibold text-xl text-gray-900">{t("form.companyInfo")}</h2>
         <div className="space-y-2">
           <Label>{t("form.companyLogoLabel")} <span className="text-gray-400 font-normal text-sm">{t("form.optional")}</span></Label>
           <div className="flex items-center gap-4">
@@ -121,11 +127,11 @@ export function CreateJobFormPageTwo({
         </div>
         <div className="space-y-2">
           <Label htmlFor="companyName">{t("form.companyNameLabel")}</Label>
-          <Input id="companyName" placeholder={t("form.companyNamePlaceholder")} value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
+          <Input id="companyName" placeholder={t("form.companyNamePlaceholder")} value={companyName} onChange={(e) => setCompanyName(e.target.value)} required />
         </div>
         <div className="space-y-2">
           <Label htmlFor="companyIntro">{t("form.companyIntroLabel")}</Label>
-          <Textarea id="companyIntro" placeholder={t("form.companyIntroPlaceholder")} value={companyIntro} onChange={(e) => setCompanyIntro(e.target.value)} className="resize-none min-h-28" />
+          <Textarea id="companyIntro" placeholder={t("form.companyIntroPlaceholder")} value={companyIntro} onChange={(e) => setCompanyIntro(e.target.value)} className="resize-none min-h-28" required />
         </div>
         <div className="space-y-2">
           <Label htmlFor="industry">{t("form.industryLabel")}</Label>
@@ -159,7 +165,7 @@ export function CreateJobFormPageTwo({
       </div>
 
       <div className="space-y-4">
-        <h2 className="font-semibold text-gray-900">{t("form.managerInfo")}</h2>
+        <h2 className="font-semibold text-xl text-gray-900">{t("form.managerInfo")}</h2>
         <div className="space-y-2">
           <Label htmlFor="managerName">{t("form.managerNameLabel")}</Label>
           <Input
@@ -197,13 +203,16 @@ export function CreateJobFormPageTwo({
         />
       </div>
 
+      {urlError && (
+        <p className="text-[13px] text-red-500">{urlError}</p>
+      )}
       <div className="flex gap-3 pt-2">
         <Button type="button" variant="outline" onClick={handlePrevStep} className="flex-1" disabled={isSubmitting}>{t("form.prev")}</Button>
-        <Button type="button" variant="teal" onClick={handleSubmit} className="flex-1" disabled={isSubmitting}>
+        <Button type="submit" variant="teal" className="flex-1" disabled={isSubmitting}>
           {isSubmitting ? t("form.submitting") : t("form.submit")}
         </Button>
       </div>
       <Toast message={toastMessage} showMessage={showToast} type="error" icon="alert" />
-    </div>
+    </form>
   );
 }

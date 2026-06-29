@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { CreditCard } from "lucide-react";
+import { AdminPagination } from "@/app/(admin)/admin/_components/AdminPagination";
 import type { AdminTransaction } from "@/services/admin/adminTransactions";
 
 const STATUS_META: Record<string, { label: string; className: string }> = {
@@ -113,7 +114,8 @@ export default function AdminPaymentsClient({ transactions }: Props) {
 
       {/* 테이블 */}
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
-        <div className="overflow-x-auto">
+        {/* 데스크탑: 테이블 */}
+        <div className="hidden overflow-x-auto lg:block">
           <table className="w-full min-w-[760px] border-collapse">
             <thead>
               <tr className="border-b border-[#f1f4f6] bg-slate-50">
@@ -167,6 +169,34 @@ export default function AdminPaymentsClient({ transactions }: Props) {
           </table>
         </div>
 
+        {/* 모바일: 카드 */}
+        {pageItems.length > 0 && (
+          <div className="lg:hidden divide-y divide-[#f3f5f7]">
+            {pageItems.map((tx) => {
+              const meta = STATUS_META[tx.status] ?? { label: tx.status, className: "bg-gray-100 text-gray-400" };
+              return (
+                <div key={tx.id} className="px-4 py-3.5">
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="min-w-0 truncate text-[14px] font-bold text-slate-900">
+                      {tx.post?.title ?? <span className="text-slate-300">삭제된 게시글</span>}
+                    </span>
+                    <span className={`inline-block shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${meta.className}`}>
+                      {meta.label}
+                    </span>
+                  </div>
+                  <div className="mt-2 flex items-center justify-between gap-2 text-[12.5px] text-slate-500">
+                    <span>{tx.buyer?.name ?? "-"} → {tx.seller?.name ?? "-"}</span>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <span className="font-semibold text-slate-800">₱{tx.amount.toLocaleString()}</span>
+                      <span className="text-slate-400">{tx.created_at.split("T")[0]}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         {filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center px-5 py-16 text-center">
             <CreditCard className="h-12 w-12 text-slate-200" strokeWidth={1.8} />
@@ -176,44 +206,12 @@ export default function AdminPaymentsClient({ transactions }: Props) {
         )}
 
         {totalPages > 1 && (
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#f1f4f6] px-[22px] py-4">
-            <span className="text-[13px] text-slate-400">
-              총 <span className="font-semibold text-slate-600">{filtered.length}</span>건 중{" "}
-              <span className="font-semibold text-slate-600">
-                {filtered.length === 0 ? "0" : `${startIdx + 1}–${startIdx + pageItems.length}`}
-              </span>{" "}표시
-            </span>
-            <div className="flex items-center gap-1.5">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="h-[34px] rounded-[9px] border border-[#e7ebee] bg-white px-[13px] text-[13px] font-semibold"
-                style={{ color: curPage <= 1 ? "#cbd5e1" : "#475569" }}
-              >
-                이전
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-                <button
-                  key={n}
-                  onClick={() => setPage(n)}
-                  className={[
-                    "h-[34px] min-w-[34px] rounded-[9px] px-2 text-[13px]",
-                    n === curPage
-                      ? "border-none bg-teal-500 font-bold text-white"
-                      : "border border-[#e7ebee] bg-white font-semibold text-slate-600",
-                  ].join(" ")}
-                >
-                  {n}
-                </button>
-              ))}
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className="h-[34px] rounded-[9px] border border-[#e7ebee] bg-white px-[13px] text-[13px] font-semibold"
-                style={{ color: curPage >= totalPages ? "#cbd5e1" : "#475569" }}
-              >
-                다음
-              </button>
-            </div>
-          </div>
+          <AdminPagination
+            currentPage={curPage}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            countLabel={<>총 <span className="font-semibold text-slate-600">{filtered.length}</span>건 중 <span className="font-semibold text-slate-600">{filtered.length === 0 ? "0" : `${startIdx + 1}–${startIdx + pageItems.length}`}</span> 표시</>}
+          />
         )}
       </div>
     </>

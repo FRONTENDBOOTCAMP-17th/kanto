@@ -5,6 +5,7 @@ import { createAdminClient } from "@/utils/supabase/admin";
 import { requireAdmin } from "@/services/user/user";
 import { REPORTS_TABLE, REPORT_STATUS } from "@/constants/report";
 import type { Sanction, ReportType } from "@/type/admin";
+import { insertAuditLog } from "@/services/admin/auditLog";
 
 function calcExpiresAt(sanction: Sanction): string | null {
   if (sanction === "none") return null;
@@ -81,6 +82,12 @@ export async function resolveReport(
     } as never);
   }
 
+  insertAuditLog(sessionUser, "resolve_report", {
+    targetType: "report",
+    targetId: reportId,
+    detail: { sanction: opts.sanction, deactivatePost: opts.deactivatePost },
+  });
+
   revalidatePath("/admin/reports");
 }
 
@@ -97,6 +104,8 @@ export async function dismissReport(reportId: number): Promise<void> {
       handled_by: adminId,
     } as never)
     .eq("id", reportId);
+
+  insertAuditLog(sessionUser, "dismiss_report", { targetType: "report", targetId: reportId });
 
   revalidatePath("/admin/reports");
 }

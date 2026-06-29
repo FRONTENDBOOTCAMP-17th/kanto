@@ -18,7 +18,6 @@
       "usedgoods": "Marketplace",
       "jobs": "Jobs",
       "rental": "Rentals",
-      "community": "Community",
       "dating": "Random Chat",
       "go": "Kanto GO!"
     },
@@ -39,13 +38,13 @@
     }
   },
   "Footer": {
-    "tagline": "A community platform<br></br>for Koreans in the Philippines",
+    "tagline": "A life platform<br></br>for everyday living in the Philippines",
     "services": {
       "title": "Services",
       "usedgoods": "Marketplace",
       "jobs": "Jobs",
       "rental": "Rentals",
-      "community": "Korean Community"
+      "go": "Kanto GO!"
     },
     "support": {
       "title": "Support",
@@ -180,6 +179,8 @@
     "submit": "Report",
     "done": "Your report has been submitted.",
     "already": "You have already reported this {target}.",
+    "alreadyUser": "You have already reported this user.",
+    "withdrawnUser": "This user has withdrawn.",
     "targetNoun": {
       "post": "post",
       "user": "user",
@@ -342,11 +343,7 @@
         "description": "Buy and sell used items"
       },
       "jobs": { "name": "Jobs", "description": "Find a job or hire staff" },
-      "rental": { "name": "Rentals", "description": "Find or list a room" },
-      "community": {
-        "name": "Community",
-        "description": "Chat freely with others"
-      }
+      "rental": { "name": "Rentals", "description": "Find or list a room" }
     }
   },
   "Main": {
@@ -362,18 +359,17 @@
     "category": {
       "usedgoods": "Marketplace",
       "jobs": "Jobs",
-      "rental": "Rentals",
-      "community": "Community"
+      "rental": "Rentals"
     },
     "hero": {
       "usedgoods": {
         "title": "Buy and sell on Kanto!",
-        "description": "A safe marketplace for Koreans in the Philippines",
+        "description": "A safe marketplace for everyday living in the Philippines",
         "button": "Go to Marketplace"
       },
       "jobs": {
         "title": "Looking for a job?",
-        "description": "Jobs for Koreans in the Philippines",
+        "description": "Local job listings in the Philippines",
         "button": "Go to Jobs"
       },
       "rental": {
@@ -381,15 +377,10 @@
         "description": "Reasonably priced room rentals",
         "button": "Go to Rentals"
       },
-      "community": {
-        "title": "Want to connect with Koreans?",
-        "description": "A space for Koreans in the Philippines",
-        "button": "Go to Community"
-      },
-      "dating": {
-        "title": "Want to meet someone new?",
-        "description": "Start new connections with filtered random matching",
-        "button": "Go to Random Chat"
+      "go": {
+        "title": "Want to start a local meetup?",
+        "description": "Enjoy all kinds of meetups in the Philippines",
+        "button": "Go to Kanto GO!"
       }
     }
   },
@@ -399,7 +390,7 @@
   },
   "UsedGoods": {
     "title": "Marketplace",
-    "subtitle": "Marketplace for Koreans in the Philippines",
+    "subtitle": "Marketplace for everyday living in the Philippines",
     "searchResult": "Search results for \"{query}\"",
     "write": "Write",
     "empty": "No items yet",
@@ -449,7 +440,7 @@
   },
   "Job": {
     "title": "Jobs",
-    "subtitle": "Job listings for Koreans in the Philippines",
+    "subtitle": "Local job listings in the Philippines",
     "searchResult": "Search results for \"{query}\"",
     "write": "Post a job",
     "emptySearch": "No search results",
@@ -495,7 +486,7 @@
     "form": {
       "back": "Back",
       "createTitle": "Post a job",
-      "page1Subtitle": "Please enter the basic info for the job posting",
+      "requiredNotice": "* indicates a required field.",
       "jobInfo": "Job info",
       "titleLabel": "Job title *",
       "titlePlaceholder": "e.g. Hiring hall staff for a Korean restaurant",
@@ -523,7 +514,6 @@
       "preferredPlaceholder": "Enter preferred qualifications",
       "next": "Next step",
       "prev": "Previous step",
-      "page2Subtitle": "Please enter company info and contact details",
       "companyInfo": "Company info",
       "companyLogoLabel": "Company Logo",
       "companyLogoHint": "Square image recommended (PNG, JPG)",
@@ -556,8 +546,6 @@
       "optional": "(optional)",
       "submitting": "Submitting...",
       "submit": "Done",
-      "errorRequired": "Please fill in all required fields.",
-      "errorLocationDetail": "Please enter the detailed area.",
       "errorImage": "Failed to upload image.",
       "errorEdit": "Failed to update.",
       "errorPost": "Failed to create post.",
@@ -566,7 +554,7 @@
   },
   "Rental": {
     "title": "Rentals",
-    "subtitle": "Room rental info for Koreans in the Philippines",
+    "subtitle": "Local room rental info in the Philippines",
     "searchResult": "Search results for \"{query}\"",
     "write": "Write",
     "empty": "No listings yet",
@@ -722,7 +710,6 @@
         "usedgoods": "Used Goods",
         "jobs": "Jobs",
         "rental": "Rentals",
-        "community": "Community",
         "dating": "Random Chat"
       }
     },
@@ -848,6 +835,20 @@
       "home": "Go home"
     }
   },
+  "Chatbot": {
+    "title": "AI Assistant",
+    "newChat": "New chat",
+    "history": "Chat history",
+    "historyEmpty": "No recent conversations",
+    "placeholder": "Type a message...",
+    "errorMessage": "Sorry, please try again in a moment.",
+    "greeting": "Hello! I'm the Kanto AI Assistant.\nFeel free to ask me anything!",
+    "suggestions": {
+      "badge": "How do I get a verified badge?",
+      "safeTrade": "Safe trading tips",
+      "mangoIndex": "What is the Mango Index?"
+    }
+  },
   "Favorites": {
     "title": "Favorites",
     "myPostsTitle": "My Posts",
@@ -862,6 +863,142 @@
       "used_goods": "Browse Marketplace",
       "jobs": "Browse Jobs",
       "rental": "Browse Rentals"
+    }
+  },
+  "Go": {
+    "map": {
+      "inProgress": "{count} meetups in progress",
+      "loading": "...",
+      "createMeetup": "Create Meetup",
+      "myLocation": "My location",
+      "clusterCount": "{count} meetups"
+    },
+    "filter": {
+      "all": "All",
+      "toggle": "Toggle topic filter"
+    },
+    "topics": {
+      "food": "Food/Dining",
+      "sports": "Sports/Exercise",
+      "study": "Study/Language",
+      "hobby": "Hobby/Culture",
+      "trip": "Outing/Travel",
+      "social": "Social/Chat",
+      "other": "Other"
+    },
+    "list": {
+      "title": "Meetups",
+      "inProgress": "{count} in progress",
+      "searchPlaceholder": "Search by title...",
+      "noResults": "No results found",
+      "empty": "No meetups in progress",
+      "full": "Full",
+      "close": "Close"
+    },
+    "detail": {
+      "back": "Back to list",
+      "reportAria": "Report meetup",
+      "report": "Report",
+      "close": "Close",
+      "full": "Full",
+      "host": "Host",
+      "capacity": "<b>{current}</b>/{max}",
+      "intro": "About",
+      "joinChat": "Enter meetup chat",
+      "ended": "This meetup has ended",
+      "endTitle": "End this meetup?",
+      "endDesc": "Participants will be notified and the pin will disappear from the map.",
+      "cancel": "Cancel",
+      "endConfirm": "Confirm end",
+      "ending": "Processing...",
+      "endMeetup": "End meetup",
+      "join": "Join",
+      "cancelJoin": "Cancel participation",
+      "processing": "Processing...",
+      "cancelTitle": "You won't be able to rejoin. Are you sure you want to cancel?",
+      "cancelStay": "Stay",
+      "cancelConfirm": "Cancel meetup",
+      "moreParticipants": "+{count}"
+    },
+    "toast": {
+      "joined": "You've joined! The host has been notified",
+      "cancelled": "Participation cancelled",
+      "reentryForbidden": "Rejoining is not allowed.",
+      "cancelAfterStart": "The meetup has already started, so you can't cancel.",
+      "ended": "Meetup ended",
+      "error": "An error occurred",
+      "withdrawn": "This user has withdrawn."
+    },
+    "chat": {
+      "title": "Meetup chat",
+      "back": "Back to list",
+      "membersAria": "Participants",
+      "notFound": "Chat room not found. Please check your participation status.",
+      "blockHow": "How would you like to block?",
+      "blockDescRoom": "If you block only in this chat, the user remains visible in other meetup chats.",
+      "blockDescGlobal": "If you block completely, you won't see this user anywhere, and they'll be added to your blocked list in Profile.",
+      "blockRoomOnly": "Block in this chat only",
+      "blockGlobal": "Block completely",
+      "cancel": "Cancel",
+      "blockedRoom": "Blocked in this chat",
+      "blockedGlobal": "User blocked",
+      "unblocked": "Block removed",
+      "sendFailed": "Couldn't send the message.",
+      "loadMore": "Load earlier messages",
+      "loadingMore": "Loading...",
+      "jumpToLatest": "Jump to latest",
+      "inputPlaceholder": "Type a message",
+      "cooldown": "Try again in {seconds}s",
+      "send": "Send",
+      "messageInput": "Message input",
+      "membersTitle": "Participants ({count})",
+      "close": "Close",
+      "me": "Me",
+      "host": "Host",
+      "unblock": "Unblock",
+      "report": "Report",
+      "block": "Block",
+      "viewProfile": "View {name}'s profile"
+    },
+    "pin": {
+      "full": "Full",
+      "almostFull": "Almost full"
+    },
+    "create": {
+      "title": "Create Meetup",
+      "doneTitle": "Meetup created!",
+      "doneDesc": "A lightning pin has been placed on the map.<br></br>People nearby will join soon.",
+      "locationLabel": "Choose location",
+      "locationHint": "(search for a place name or address)",
+      "titleLabel": "Title",
+      "titlePlaceholder": "e.g. BGC sushi tour",
+      "topicLabel": "Topic",
+      "dateLabel": "Date",
+      "month": "Month",
+      "day": "Day",
+      "monthValue": "{month}",
+      "dayValue": "{day}",
+      "startLabel": "Start",
+      "endLabel": "End",
+      "hour": "Hour",
+      "minute": "Min",
+      "hourValue": "{hour}",
+      "minuteValue": "{minute}",
+      "maxParticipants": "Max participants",
+      "participantsValue": "{count}",
+      "locationDetailLabel": "Detailed location (optional)",
+      "locationDetailPlaceholder": "e.g. Parco 1F, in front of exit 2",
+      "descriptionLabel": "One-line description",
+      "descriptionPlaceholder": "Introduce your meetup in one line",
+      "cancel": "Cancel",
+      "submit": "Drop the pin",
+      "pastTimeError": "You can't create a meetup in the past",
+      "createError": "An error occurred while creating"
+    },
+    "place": {
+      "placeholder": "Enter a place name or address (e.g. SM Aura)",
+      "loading": "Loading map…",
+      "empty": "No location selected yet"
     }
   }
 }

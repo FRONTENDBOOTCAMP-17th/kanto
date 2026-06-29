@@ -15,7 +15,6 @@ const PAGE_OPTIONS = [
   { key: "all", label: "전체" },
   { key: "write", label: "글쓰기" },
   { key: "chat", label: "채팅" },
-  { key: "community", label: "커뮤니티" },
 ];
 
 const MOCK_WINDOWS: Window[] = [

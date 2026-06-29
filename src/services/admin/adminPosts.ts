@@ -12,14 +12,7 @@ export interface AdminPost {
   handled_at: string | null;
 }
 
-const POST_TYPE_LABEL: Record<string, string> = {
-  used_goods: "중고거래",
-  jobs: "구인구직",
-  rental: "방 렌탈",
-  community: "커뮤니티",
-};
-
-export { POST_TYPE_LABEL };
+export { POST_TYPE_LABEL } from "@/app/(admin)/admin/_lib/constants";
 
 const POST_TYPE_PATH: Record<string, string> = {
   used_goods: "usedgoods",
@@ -44,6 +37,7 @@ export async function getAdminPosts(): Promise<AdminPost[]> {
     .select(
       "id, title, post_type, status, view_count, created_at, handled_at, author:users!posts_user_id_fkey(name), admin_user:users!posts_handled_by_fkey(name)"
     )
+    .neq("post_type", "meetup")
     .order("created_at", { ascending: false }) as unknown as {
       data: Array<{
         id: number;

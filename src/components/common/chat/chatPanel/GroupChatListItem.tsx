@@ -34,6 +34,9 @@ export default function GroupChatListItem({ room, isLast, onClick }: Props) {
             <span className="font-medium text-gray-900 text-sm md:text-xs truncate">
               {room.title}
             </span>
+            <span className="shrink-0 rounded-full border border-teal-100 bg-teal-50 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-teal-700">
+              {room.member_count}
+            </span>
             {room.status === "ended" && (
               <span className="text-xs md:text-[10px] text-gray-400 shrink-0">종료됨</span>
             )}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
@@ -94,8 +94,17 @@ export function CreateUsedGoodsForm({
     initialData?.images ?? [],
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isCheckingImages, setIsCheckingImages] = useState(false);
+  const [urlError, setUrlError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const maxUrlsRef = useRef(3);
+
+  useEffect(() => {
+    fetch("/api/admin/spam-config")
+      .then((r) => r.json())
+      .then((d) => { if (d?.max_urls_per_post != null) maxUrlsRef.current = d.max_urls_per_post; })
+      .catch(() => {});
+  }, []);
+  const [isCheckingImages, setIsCheckingImages] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -145,6 +154,17 @@ export function CreateUsedGoodsForm({
     e.preventDefault();
     if (!productCategory || !condition) return;
     if (!picked && !hasExistingLocation) return;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!productCategory || !condition || !preferredLocation) return;
+    if (imagePreviews.length === 0) return;
+
+    const urlCount = (content.match(/https?:\/\/[^\s]+/g) ?? []).length;
+    if (urlCount > maxUrlsRef.current) {
+      setUrlError(`게시물에 URL은 최대 ${maxUrlsRef.current}개까지 허용됩니다.`);
+      return;
+    }
+    setUrlError("");
     setIsSubmitting(true);
 
     const locationFields = buildLocationFields();
@@ -331,10 +351,11 @@ export function CreateUsedGoodsForm({
               <div className="relative">
                 <Input
                   id="price"
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   placeholder="0"
                   value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  onChange={(e) => setPrice(e.target.value.replace(/[^0-9]/g, ""))}
                   className="pr-12"
                   required
                 />
@@ -412,6 +433,7 @@ export function CreateUsedGoodsForm({
               fileInputRef={fileInputRef}
               imagePreviews={imagePreviews}
               minCount={1}
+              required
               isChecking={isCheckingImages}
               onUploadClick={handleImageUpload}
               onSelect={handleImageSelect}
@@ -434,6 +456,9 @@ export function CreateUsedGoodsForm({
               </Label>
             </div>
 
+            {urlError && (
+              <p className="text-[13px] text-red-500">{urlError}</p>
+            )}
             <div className="flex gap-3 pt-4">
               <Button
                 type="button"
@@ -448,7 +473,7 @@ export function CreateUsedGoodsForm({
                 type="submit"
                 variant="teal"
                 className="flex-1"
-                disabled={isSubmitting || !isFormValid}
+                disabled={isSubmitting}
               >
                 {isSubmitting ? t("form.submitting") : t("form.submit")}
               </Button>

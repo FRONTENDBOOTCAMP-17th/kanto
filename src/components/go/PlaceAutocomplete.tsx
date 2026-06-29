@@ -3,6 +3,7 @@
 // 장소명/주소 입력 → Google Places 자동완성 → 선택 시 좌표+주소 확보
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { MapPin, Loader2, Search } from "lucide-react";
 import { useMapsLibrary } from "@vis.gl/react-google-maps";
 import type { PickedLocation } from "@/type/go";
@@ -20,15 +21,20 @@ interface Props {
 }
 
 export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) {
+export function PlaceAutocomplete({ selected, onSelect }: Props) {
+  const t = useTranslations("Go.place");
   const placesLib = useMapsLibrary("places");
 
   const [input, setInput] = useState("");
-  const [suggestions, setSuggestions] = useState<google.maps.places.AutocompleteSuggestion[]>([]);
+  const [suggestions, setSuggestions] = useState<
+    google.maps.places.AutocompleteSuggestion[]
+  >([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
   // 자동완성 세션 토큰 (입력~선택을 한 세션으로 묶어 과금 최적화)
-  const sessionTokenRef = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
+  const sessionTokenRef =
+    useRef<google.maps.places.AutocompleteSessionToken | null>(null);
 
   // 입력 디바운스 후 후보 조회 (setState는 모두 타이머 콜백 안에서 — effect 동기 호출 회피)
   useEffect(() => {
@@ -75,7 +81,9 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
     };
   }, [input, placesLib]);
 
-  const handlePick = async (suggestion: google.maps.places.AutocompleteSuggestion) => {
+  const handlePick = async (
+    suggestion: google.maps.places.AutocompleteSuggestion,
+  ) => {
     const prediction = suggestion.placePrediction;
     if (!prediction || !placesLib) return;
 
@@ -101,7 +109,8 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
       onSelect({
         lat,
         lng,
-        address: place.formattedAddress ?? place.displayName ?? prediction.text.text,
+        address:
+          place.formattedAddress ?? place.displayName ?? prediction.text.text,
         placeId: place.id,
         barangay,
         city,
@@ -120,7 +129,10 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
   return (
     <div className="relative">
       <div className="relative">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" strokeWidth={2} />
+        <Search
+          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+          strokeWidth={2}
+        />
         <input
           value={input}
           onChange={(e) => {
@@ -128,7 +140,7 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
-          placeholder={placesLib ? "장소명 또는 주소를 입력하세요 (예: SM Aura)" : "지도 로딩 중…"}
+          placeholder={placesLib ? t("placeholder") : t("loading")}
           disabled={!placesLib}
           className="w-full rounded-[11px] border-[1.5px] border-slate-200 py-3 pl-9 pr-9 text-[14.5px] text-slate-900 outline-none focus:border-teal-400 disabled:bg-slate-50"
         />
@@ -151,13 +163,18 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
                   onClick={() => handlePick(s)}
                   className="flex w-full items-start gap-2.5 px-3.5 py-2.5 text-left hover:bg-slate-50"
                 >
-                  <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-slate-400" strokeWidth={2} />
+                  <MapPin
+                    className="mt-0.5 h-4 w-4 shrink-0 text-slate-400"
+                    strokeWidth={2}
+                  />
                   <span className="min-w-0">
                     <span className="block truncate text-[14px] font-semibold text-slate-800">
                       {p.mainText?.text ?? p.text.text}
                     </span>
                     {p.secondaryText?.text && (
-                      <span className="block truncate text-[12.5px] text-slate-400">{p.secondaryText.text}</span>
+                      <span className="block truncate text-[12.5px] text-slate-400">
+                        {p.secondaryText.text}
+                      </span>
                     )}
                   </span>
                 </button>
@@ -170,8 +187,10 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
       {/* 선택된 위치 표시 — 새 선택 > 기존 설정(편집) > 미선택 */}
       {selected ? (
         <div className="mt-2 flex items-center gap-2 rounded-[10px] bg-teal-50 px-3 py-2.5">
-          <MapPin className="h-4 w-4 flex-shrink-0 text-teal-600" strokeWidth={2} />
-          <span className="text-[13px] font-semibold text-teal-800">{selected.address}</span>
+          <MapPin className="h-4 w-4 shrink-0 text-teal-600" strokeWidth={2} />
+          <span className="text-[13px] font-semibold text-teal-800">
+            {selected.address}
+          </span>
         </div>
       ) : fallbackLabel ? (
         <div className="mt-2 flex items-center gap-2 rounded-[10px] bg-teal-50 px-3 py-2.5">
@@ -181,7 +200,7 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
           </span>
         </div>
       ) : (
-        <p className="mt-1.5 text-[12.5px] text-slate-400">아직 위치가 선택되지 않았습니다</p>
+        <p className="mt-1.5 text-[12.5px] text-slate-400">{t("empty")}</p>
       )}
     </div>
   );

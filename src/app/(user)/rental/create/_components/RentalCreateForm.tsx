@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
@@ -113,6 +113,15 @@ export default function RentalCreateForm({
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>(initialData?.images ?? []);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [urlError, setUrlError] = useState("");
+  const maxUrlsRef = useRef(3);
+
+  useEffect(() => {
+    fetch("/api/admin/spam-config")
+      .then((r) => r.json())
+      .then((d) => { if (d?.max_urls_per_post != null) maxUrlsRef.current = d.max_urls_per_post; })
+      .catch(() => {});
+  }, []);
   const [isCheckingImages, setIsCheckingImages] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showToast, setShowToast] = useState(false);
@@ -187,6 +196,14 @@ export default function RentalCreateForm({
     e.preventDefault();
     if (!rentType || !roomType) return;
     if (!picked && !hasExistingLocation) return;
+    if (!rentType || !roomType || !location) return;
+
+    const urlCount = (description.match(/https?:\/\/[^\s]+/g) ?? []).length;
+    if (urlCount > maxUrlsRef.current) {
+      setUrlError(`게시물에 URL은 최대 ${maxUrlsRef.current}개까지 허용됩니다.`);
+      return;
+    }
+    setUrlError("");
     setIsSubmitting(true);
 
     const locationFields = buildLocationFields();
@@ -300,7 +317,7 @@ export default function RentalCreateForm({
         <Button
           variant="ghost"
           onClick={() =>
-            router.push(initialData ? `/rental/${postId}` : "/create")
+            router.push(initialData ? `/rental/${postId}` : "/rental")
           }
           className="mb-6"
         >
@@ -333,6 +350,31 @@ export default function RentalCreateForm({
                 onChange={setPicked}
                 fallbackLabel={fallbackLocationLabel}
               />
+              <Label htmlFor="location">{t("form.locationLabel")}</Label>
+              <Select
+                value={location}
+                onValueChange={(v) => setLocation(v as Location)}
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t("form.locationPlaceholder")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {LOCATIONS.map((loc) => (
+                    <SelectItem key={loc} value={loc}>
+                      {loc === "그 외 지역" ? te("tradeLocation.otherAreas") : loc}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {location === "그 외 지역" && (
+                <Input
+                  placeholder={t("form.locationDetailPlaceholder")}
+                  value={locationDetail}
+                  onChange={(e) => setLocationDetail(e.target.value)}
+                  required
+                />
+              )}
             </div>
 
             <div className="space-y-2">
@@ -340,6 +382,7 @@ export default function RentalCreateForm({
               <Select
                 value={rentType}
                 onValueChange={(v) => setRentType(v as RentType)}
+                required
               >
                 <SelectTrigger>
                   <SelectValue placeholder={t("form.rentTypePlaceholder")} />
@@ -356,10 +399,11 @@ export default function RentalCreateForm({
               <div className="relative">
                 <Input
                   id="price"
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   placeholder="0"
                   value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  onChange={(e) => setPrice(e.target.value.replace(/[^0-9]/g, ""))}
                   className="pr-12"
                   required
                 />
@@ -374,10 +418,11 @@ export default function RentalCreateForm({
               <div className="relative">
                 <Input
                   id="deposit"
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   placeholder="0"
                   value={deposit}
-                  onChange={(e) => setDeposit(e.target.value)}
+                  onChange={(e) => setDeposit(e.target.value.replace(/[^0-9]/g, ""))}
                   className="pr-12"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
@@ -409,10 +454,11 @@ export default function RentalCreateForm({
               <Label htmlFor="maxOccupants">{t("form.maxOccupantsLabel")}</Label>
               <Input
                 id="maxOccupants"
-                type="number"
+                type="text"
+                inputMode="numeric"
                 placeholder="0"
                 value={maxOccupants}
-                onChange={(e) => setMaxOccupants(e.target.value)}
+                onChange={(e) => setMaxOccupants(e.target.value.replace(/[^0-9]/g, ""))}
                 required
               />
             </div>
@@ -457,12 +503,15 @@ export default function RentalCreateForm({
               />
             </div>
 
+            {urlError && (
+              <p className="text-[13px] text-red-500">{urlError}</p>
+            )}
             <div className="flex gap-3 pt-4">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() =>
-                  router.push(initialData ? `/rental/${postId}` : "/create")
+                  router.push(initialData ? `/rental/${postId}` : "/rental")
                 }
                 className="flex-1"
                 disabled={isSubmitting}

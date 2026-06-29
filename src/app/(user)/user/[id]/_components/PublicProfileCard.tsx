@@ -61,7 +61,7 @@ export function PublicProfileCard({ profile, reviewCount }: Props) {
         <Stat value={profile.postCount} label={t("posts")} />
         <Stat value={reviewCount} label={t("reviews")} />
         <div className="flex items-center justify-center">
-          <MangoIndex userId={profile.id} />
+          <MangoIndex score={profile.ktsScore} grade={profile.ktsGrade} />
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FileText } from "lucide-react";
 import { FilterDropdown } from "@/components/common/FilterDropdown";
 import { ROUTES } from "@/constants/routes";
+import { POST_TYPE_LABEL } from "@/app/(admin)/admin/_lib/constants";
 import type { Post } from "@/type/post";
 
 type UserPost = Pick<
@@ -20,28 +21,19 @@ const CATEGORY_OPTIONS = [
   { id: "all", label: "전체" },
   { id: "used_goods", label: "중고거래" },
   { id: "jobs", label: "구인구직" },
-  { id: "rental", label: "방 렌트" },
+  { id: "rental", label: "부동산" },
 ] as const;
-
-const POST_TYPE_LABEL: Record<string, string> = {
-  used_goods: "중고거래",
-  jobs: "구인구직",
-  rental: "방 렌트",
-  community: "커뮤니티",
-};
 
 const POST_TYPE_BADGE: Record<string, string> = {
   used_goods: "bg-violet-50 text-violet-600",
   jobs: "bg-amber-50 text-amber-600",
   rental: "bg-sky-50 text-sky-600",
-  community: "bg-emerald-50 text-emerald-600",
 };
 
 const POST_TYPE_PATH: Record<string, string> = {
   used_goods: ROUTES.usedgoods,
   jobs: ROUTES.jobs,
   rental: ROUTES.rental,
-  community: ROUTES.community,
 };
 
 export default function AdminUsersPosts({ posts }: AdminUsersPostsProps) {

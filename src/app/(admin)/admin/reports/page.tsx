@@ -46,6 +46,14 @@ export default async function ReportsPage() {
         .map((r) => r.target_id as number),
     ),
   ];
+  // 메시지 신고는 target_id가 메시지 id이므로, 발신자(user)로 해소해야 한다.
+  const messageReportIds = [
+    ...new Set(
+      reports
+        .filter((r) => r.target_type === "message" && r.target_id != null)
+        .map((r) => r.target_id as number),
+    ),
+  ];
   const adminIds = [
     ...new Set(
       reports
@@ -56,7 +64,7 @@ export default async function ReportsPage() {
 
   
   const reportIds = reports.map((r) => r.id);
-  const [postsRes, targetUsersRes, adminUsersRes, sanctionsRes] = await Promise.all([
+  const [postsRes, targetUsersRes, adminUsersRes, sanctionsRes, messagesRes] = await Promise.all([
     postIds.length
       ? admin
           .from("posts")
@@ -76,7 +84,19 @@ export default async function ReportsPage() {
           .in("report_id", reportIds)
           .order("created_at", { ascending: true })
       : { data: [] as { report_id: number | null; sanction_type: string; expires_at: string | null; created_at: string | null }[] },
+    messageReportIds.length
+      ? admin.from("meetup_chat_messages").select("id, sender_id").in("id", messageReportIds)
+      : { data: [] as { id: number; sender_id: number }[] },
   ]);
+
+  // 메시지 신고 → 발신자(user) 해소. 발신자 이름을 별도로 조회해 targetUserMap에 합친다.
+  const messageSenderMap = new Map(
+    (messagesRes.data ?? []).map((m) => [m.id, m.sender_id]),
+  );
+  const messageSenderIds = [...new Set(messageSenderMap.values())];
+  const { data: messageSenders } = messageSenderIds.length
+    ? await admin.from("users").select("id, name").in("id", messageSenderIds)
+    : { data: [] as { id: number; name: string }[] };
 
   
   const sanctionByReport = new Map<number, { sanction_type: string; expires_at: string | null }>();
@@ -100,7 +120,9 @@ export default async function ReportsPage() {
 
   
   const postMap = new Map((postsRes.data ?? []).map((p) => [p.id, p]));
-  const targetUserMap = new Map((targetUsersRes.data ?? []).map((u) => [u.id, u]));
+  const targetUserMap = new Map(
+    [...(targetUsersRes.data ?? []), ...(messageSenders ?? [])].map((u) => [u.id, u]),
+  );
   const authorMap = new Map((authorsData ?? []).map((u) => [u.id, u]));
   const adminUserMap = new Map((adminUsersRes.data ?? []).map((u) => [u.id, u]));
 
@@ -126,7 +148,7 @@ export default async function ReportsPage() {
         authorId: post?.user_id,
         postType: post?.post_type,
         targetName: post?.title ?? "(삭제된 게시글)",
-        category: POST_TYPE_LABEL[post?.post_type ?? ""] ?? "커뮤니티",
+        category: POST_TYPE_LABEL[post?.post_type ?? ""] ?? "Kanto Go!",
         author: author?.name ?? "알 수 없음",
         reason,
         description,
@@ -141,11 +163,16 @@ export default async function ReportsPage() {
       };
     }
 
-    const targetUser = r.target_id != null ? targetUserMap.get(r.target_id) : undefined;
+    // 메시지 신고는 발신자 id로 해소, 그 외(user)는 target_id 그대로
+    const resolvedUserId =
+      r.target_type === "message" && r.target_id != null
+        ? messageSenderMap.get(r.target_id) ?? null
+        : r.target_id;
+    const targetUser = resolvedUserId != null ? targetUserMap.get(resolvedUserId) : undefined;
     return {
       id: r.id,
       type: "user" as const,
-      targetId: r.target_id ?? 0,
+      targetId: resolvedUserId ?? 0,
       targetName: targetUser?.name ?? "(탈퇴한 회원)",
       reason,
       description,

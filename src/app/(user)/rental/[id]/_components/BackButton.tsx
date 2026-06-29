@@ -12,7 +12,7 @@ export default function BackButton() {
   return (
     <button
       onClick={() => router.push(fromPage ? `/rental?page=${fromPage}` : "/rental")}
-      className="flex mx-2 my-4 gap-2 cursor-pointer"
+      className="flex gap-2 cursor-pointer"
     >
       <MoveLeft />
       {t("backToList")}

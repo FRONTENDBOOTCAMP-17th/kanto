@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { formatPrice } from "@/utils/formatTime";
 import { after } from "next/server";
 import { getRentalDetail } from "@/services/rental/rental";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
@@ -47,13 +48,13 @@ export default async function RentalDetail({
       href: `/rental/${item.post_id}`,
       imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
       title: (item.posts as { title: string | null } | null)?.title ?? "",
-      priceText: item.price ? `₱ ${item.price.toLocaleString()}` : "가격 협의",
+      priceText: formatPrice(item.price),
     }));
   }
 
   return (
     <div className="page-container pb-12">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mt-4">
         <BackButton />
         <VerifyAuthor
           authorAuthId={rental.posts.users?.auth_id}

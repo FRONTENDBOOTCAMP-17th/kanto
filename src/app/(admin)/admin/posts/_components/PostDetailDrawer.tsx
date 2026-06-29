@@ -15,12 +15,13 @@ import {
   type PostReport,
 } from "@/app/(admin)/admin/posts/_actions/getPostReports";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
+import { SANCTION_LABEL } from "@/app/(admin)/admin/reports/_lib/constants";
+import { formatDate, formatDateTime } from "@/utils/formatTime";
 
 const CATEGORY_STYLE: Record<string, { bg: string; fg: string }> = {
   used_goods: { bg: "#f0fdfa", fg: "#0d9488" },
   jobs: { bg: "#faf5ff", fg: "#7c3aed" },
   rental: { bg: "#eff6ff", fg: "#2563eb" },
-  community: { bg: "#fff7ed", fg: "#c2410c" },
 };
 
 const POST_STATUS_STYLE: Record<string, { label: string; bg: string; fg: string }> = {
@@ -28,21 +29,6 @@ const POST_STATUS_STYLE: Record<string, { label: string; bg: string; fg: string 
   inactive: { label: "비공개", bg: "#f1f5f9", fg: "#94a3b8" },
 };
 
-function formatDate(date: string | null) {
-  if (!date) return "-";
-  return new Intl.DateTimeFormat("ko-KR", {
-    year: "numeric", month: "2-digit", day: "2-digit",
-  }).format(new Date(date));
-}
-
-function formatDateTime(date: string | null) {
-  if (!date) return "-";
-  return new Intl.DateTimeFormat("ko-KR", {
-    year: "numeric", month: "2-digit", day: "2-digit",
-    hour: "2-digit", minute: "2-digit", second: "2-digit",
-    hour12: false,
-  }).format(new Date(date));
-}
 
 function Pill({ text, fg, bg, bold }: { text: string; fg: string; bg: string; bold?: boolean }) {
   return (
@@ -236,9 +222,6 @@ export default function PostDetailDrawer({ post, onClose, onChanged, onDeleted, 
                     resolved: { label: "처리완료", bg: "#dcfce7", fg: "#15803d" },
                     dismissed: { label: "무시됨", bg: "#f1f5f9", fg: "#64748b" },
                   };
-                  const sanctionLabel: Record<string, string> = {
-                    "7d": "7일 정지", "30d": "30일 정지", perm: "영구 정지",
-                  };
                   const ss = statusStyle[r.status] ?? statusStyle.pending;
                   return (
                     <div key={r.id} className="px-4 py-[13px]">
@@ -256,7 +239,7 @@ export default function PostDetailDrawer({ post, onClose, onChanged, onDeleted, 
                         </span>
                         {r.sanction_type && (
                           <span className="inline-flex items-center rounded-full border border-orange-200 bg-orange-50 px-2.5 py-0.5 text-[11.5px] font-bold text-orange-600">
-                            {sanctionLabel[r.sanction_type] ?? r.sanction_type}
+                            {SANCTION_LABEL[r.sanction_type] ?? r.sanction_type}
                           </span>
                         )}
                       </div>
@@ -274,7 +257,7 @@ export default function PostDetailDrawer({ post, onClose, onChanged, onDeleted, 
           </div>
 
           {(() => {
-            const SANCTION_LABEL: Record<string, string> = {
+            const userSanctionLabel: Record<string, string> = {
               "7d": "유저 7일 정지",
               "30d": "유저 30일 정지",
               perm: "유저 영구 정지",
@@ -305,7 +288,7 @@ export default function PostDetailDrawer({ post, onClose, onChanged, onDeleted, 
                 logs.push({
                   key: `${r.id}-sanction`,
                   icon: "sanction",
-                  label: SANCTION_LABEL[r.sanction_type] ?? r.sanction_type,
+                  label: userSanctionLabel[r.sanction_type] ?? r.sanction_type,
                   admin: r.admin_name,
                   date: r.resolved_at,
                 });

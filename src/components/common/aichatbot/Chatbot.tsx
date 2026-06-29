@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { BotMessageSquare, X, Send, History, ChevronLeft, Plus } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { useTranslations, useLocale } from "next-intl";
+import { BCP47_LOCALE } from "@/i18n/config";
 
 interface Message {
   role: "user" | "assistant";
@@ -15,13 +17,6 @@ interface ChatSession {
   preview: string;
   messages: Message[];
 }
-
-const INITIAL_MESSAGES: Message[] = [
-  {
-    role: "assistant",
-    content: "안녕하세요! 칸토 AI 어시스턴트입니다\n무엇이든 편하게 물어보세요!",
-  },
-];
 
 const HISTORY_KEY = "kanto_ai_history";
 
@@ -58,13 +53,21 @@ interface Props {
 }
 
 export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
+  const t = useTranslations("Chatbot");
+  const locale = useLocale();
+
+  const initialMessages: Message[] = [
+    { role: "assistant", content: t("greeting") },
+  ];
+
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
+  const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isLoading, setIsLoading] = useState(false);
   const [view, setView] = useState<"chat" | "history">("chat");
   const [history, setHistory] = useState<ChatSession[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef<Message[]>(messages);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -80,11 +83,27 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
   // 챗봇 닫힐 때 대화 저장 후 새 대화 시작
   const handleClose = () => {
     saveToHistory(messagesRef.current);
-    setMessages(INITIAL_MESSAGES);
+    setMessages(initialMessages);
     setView("chat");
     setInput("");
     onToggle();
   };
+
+  // 최신 handleClose 참조 (바깥 클릭 리스너의 stale closure 방지)
+  const handleCloseRef = useRef(handleClose);
+  handleCloseRef.current = handleClose;
+
+  // 열려 있을 때 바깥 클릭 시 닫기
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+        handleCloseRef.current();
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [isOpen]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -144,7 +163,7 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
         const updated = [...prev];
         updated[updated.length - 1] = {
           role: "assistant",
-          content: "죄송합니다, 잠시 후 다시 시도해주세요.",
+          content: t("errorMessage"),
         };
         return updated;
       });
@@ -167,7 +186,7 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={rootRef}>
       {isOpen && (
         <div
           className="
@@ -182,22 +201,22 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
               <BotMessageSquare className="w-5 h-5" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold leading-none">AI 어시스턴트</p>
+              <p className="text-sm font-semibold leading-none">{t("title")}</p>
             </div>
             <button
               onClick={() => {
-                setMessages(INITIAL_MESSAGES);
+                setMessages(initialMessages);
                 setView("chat");
               }}
               className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
-              title="새 대화"
+              title={t("newChat")}
             >
               <Plus className="w-4 h-4" />
             </button>
             <button
               onClick={handleHistoryOpen}
               className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
-              title="대화 기록"
+              title={t("history")}
             >
               <History className="w-4 h-4" />
             </button>
@@ -219,12 +238,12 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
-                <span className="text-sm font-medium text-gray-700">대화 기록</span>
+                <span className="text-sm font-medium text-gray-700">{t("history")}</span>
               </div>
               {history.length === 0 ? (
                 <div className="flex flex-col items-center justify-center flex-1 gap-2 text-gray-400">
                   <History className="w-8 h-8 opacity-30" />
-                  <p className="text-sm">최근 대화가 없습니다</p>
+                  <p className="text-sm">{t("historyEmpty")}</p>
                 </div>
               ) : (
                 <ul className="flex-1 overflow-y-auto divide-y divide-gray-100">
@@ -238,7 +257,7 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
                       className="px-4 py-3 bg-white hover:bg-violet-50 cursor-pointer transition-colors"
                     >
                       <p className="text-xs text-gray-400">
-                        {new Date(session.startedAt).toLocaleString("ko-KR")}
+                        {new Date(session.startedAt).toLocaleString(BCP47_LOCALE[locale as keyof typeof BCP47_LOCALE])}
                       </p>
                       <p className="text-sm text-gray-700 truncate mt-0.5">
                         {session.preview}
@@ -289,13 +308,13 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
                         ) : (
                           msg.content
                         )}
-                        {i === INITIAL_MESSAGES.length - 1 &&
-                          messages.length === INITIAL_MESSAGES.length && (
+                        {i === initialMessages.length - 1 &&
+                          messages.length === initialMessages.length && (
                             <div className="flex flex-wrap gap-1.5 my-2">
                               {[
-                                "인증뱃지는 어떻게 받나요?",
-                                "안전거래 방법",
-                                "망고지수는 어떤건가요?",
+                                t("suggestions.badge"),
+                                t("suggestions.safeTrade"),
+                                t("suggestions.mangoIndex"),
                               ].map((q) => (
                                 <button
                                   key={q}
@@ -327,7 +346,7 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="메시지를 입력하세요..."
+                  placeholder={t("placeholder")}
                   className="flex-1 min-w-0 text-sm bg-gray-50 rounded-full px-4 py-2 outline-none border border-gray-200 focus:border-violet-400 focus:bg-white transition-colors"
                 />
                 <button

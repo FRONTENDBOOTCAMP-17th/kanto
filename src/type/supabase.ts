@@ -39,6 +39,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_teams: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string
+        }
+        Relationships: []
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          actor_id: number | null
+          actor_role: string
+          created_at: string | null
+          detail: Json | null
+          id: number
+          target_id: number | null
+          target_type: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: number | null
+          actor_role: string
+          created_at?: string | null
+          detail?: Json | null
+          id?: never
+          target_id?: number | null
+          target_type?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: number | null
+          actor_role?: string
+          created_at?: string | null
+          detail?: Json | null
+          id?: never
+          target_id?: number | null
+          target_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_logs_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       banned_keywords: {
         Row: {
           created_at: string
@@ -381,41 +447,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      community_posts: {
-        Row: {
-          category: string | null
-          comment_count: number | null
-          content: string | null
-          id: number
-          images: Json | null
-          post_id: number | null
-        }
-        Insert: {
-          category?: string | null
-          comment_count?: number | null
-          content?: string | null
-          id?: number
-          images?: Json | null
-          post_id?: number | null
-        }
-        Update: {
-          category?: string | null
-          comment_count?: number | null
-          content?: string | null
-          id?: number
-          images?: Json | null
-          post_id?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "community_posts_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "posts"
             referencedColumns: ["id"]
           },
         ]
@@ -1108,6 +1139,48 @@ export type Database = {
           },
         ]
       }
+      profanity_rules: {
+        Row: {
+          created_at: string
+          created_by: number | null
+          id: number
+          scopes: string[]
+          updated_at: string
+          words: string[]
+        }
+        Insert: {
+          created_at?: string
+          created_by?: number | null
+          id?: never
+          scopes?: string[]
+          updated_at?: string
+          words?: string[]
+        }
+        Update: {
+          created_at?: string
+          created_by?: number | null
+          id?: never
+          scopes?: string[]
+          updated_at?: string
+          words?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profanity_rules_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profanity_rules_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rentals: {
         Row: {
           amenities: Json | null
@@ -1263,6 +1336,125 @@ export type Database = {
             columns: ["transaction_id"]
             isOneToOne: false
             referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sanction_templates: {
+        Row: {
+          body: string
+          id: number
+          title: string
+          trigger: string
+          updated_at: string
+          updated_by: number | null
+        }
+        Insert: {
+          body: string
+          id?: never
+          title: string
+          trigger: string
+          updated_at?: string
+          updated_by?: number | null
+        }
+        Update: {
+          body?: string
+          id?: never
+          title?: string
+          trigger?: string
+          updated_at?: string
+          updated_by?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sanction_templates_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sanction_templates_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spam_config: {
+        Row: {
+          auto_sanction_enabled: boolean
+          chat_cooldown_sec: number
+          chat_max_count: number
+          chat_window_sec: number
+          id: number
+          max_urls_per_post: number
+          profanity_strike_max: number
+          report_strike_max: number
+          updated_at: string
+          updated_by: number | null
+        }
+        Insert: {
+          auto_sanction_enabled?: boolean
+          chat_cooldown_sec?: number
+          chat_max_count?: number
+          chat_window_sec?: number
+          id?: number
+          max_urls_per_post?: number
+          profanity_strike_max?: number
+          report_strike_max?: number
+          updated_at?: string
+          updated_by?: number | null
+        }
+        Update: {
+          auto_sanction_enabled?: boolean
+          chat_cooldown_sec?: number
+          chat_max_count?: number
+          chat_window_sec?: number
+          id?: number
+          max_urls_per_post?: number
+          profanity_strike_max?: number
+          report_strike_max?: number
+          updated_at?: string
+          updated_by?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spam_config_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "public_user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spam_config_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_permissions: {
+        Row: {
+          permission: string
+          team_id: number
+        }
+        Insert: {
+          permission: string
+          team_id: number
+        }
+        Update: {
+          permission?: string
+          team_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_permissions_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "admin_teams"
             referencedColumns: ["id"]
           },
         ]
@@ -1574,6 +1766,7 @@ export type Database = {
       }
       users: {
         Row: {
+          admin_team_id: number | null
           alert_chat: boolean | null
           alert_comment: boolean | null
           alert_keywords: string[] | null
@@ -1602,6 +1795,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          admin_team_id?: number | null
           alert_chat?: boolean | null
           alert_comment?: boolean | null
           alert_keywords?: string[] | null
@@ -1630,6 +1824,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          admin_team_id?: number | null
           alert_chat?: boolean | null
           alert_comment?: boolean | null
           alert_keywords?: string[] | null
@@ -1657,7 +1852,15 @@ export type Database = {
           suspended_until?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "users_admin_team_id_fkey"
+            columns: ["admin_team_id"]
+            isOneToOne: false
+            referencedRelation: "admin_teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

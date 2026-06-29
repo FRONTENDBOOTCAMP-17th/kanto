@@ -23,6 +23,7 @@ export interface MeetupParticipant {
   display_name: string; // users.name
   avatar_url: string | null;
   is_host?: boolean; // 단체채팅 멤버 목록에서 호스트 표시용
+  is_deleted?: boolean; // 탈퇴(deleted_at) 회원 여부 — 신고 차단용
 }
 
 // 장소 자동완성으로 선택된 위치 (좌표 + 주소)

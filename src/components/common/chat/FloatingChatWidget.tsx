@@ -6,6 +6,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useChatStore, type PendingNewChat, type PendingGroupRoom } from "@/store/chatStore";
 import { useSuspended, useSuspendedModalStore } from "@/hooks/useSuspended";
 import { useChatListRealtime } from "@/hooks/chat/useChatListRealtime";
+import { useGroupRoomsRealtime } from "@/hooks/go/useGroupRoomsRealtime";
 import { getMyRooms } from "@/services/go/groupChat";
 import ChatBubbleButton from "./ChatBubbleButton";
 import ChatList from "./chatPanel/ChatList";
@@ -49,11 +50,25 @@ export default function FloatingChatWidget({
   const rootRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const refreshGroupRooms = () => {
+  const refreshGroupRooms = useCallback(() => {
     getMyRooms()
       .then(setGroupRooms)
       .catch(() => {});
-  };
+  }, []);
+
+  // 모임 채팅 메시지가 연달아 들어오면 getMyRooms(방별 last/unread 집계)가 매 메시지마다
+  // 호출되어 비용이 커진다. Realtime 트리거는 디바운스해 버스트를 한 번으로 합친다.
+  const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const debouncedRefreshGroupRooms = useCallback(() => {
+    if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+    refreshTimerRef.current = setTimeout(refreshGroupRooms, 400);
+  }, [refreshGroupRooms]);
+  useEffect(
+    () => () => {
+      if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+    },
+    [],
+  );
   const handleClose = useCallback(() => {
     setView("list");
     setSelectedChatId(null);
@@ -165,9 +180,33 @@ export default function FloatingChatWidget({
   useEffect(() => {
     if (!isLoggedIn) return;
     refreshGroupRooms();
-  }, [isLoggedIn, groupRoomsVersion]);
+  }, [isLoggedIn, groupRoomsVersion, refreshGroupRooms]);
+
+  useEffect(() => {
+    if (!isLoggedIn || !isOpen || view !== "list") return;
+    refreshGroupRooms();
+  }, [isLoggedIn, isOpen, refreshGroupRooms, view]);
+
+  // Realtime 이벤트가 네트워크/브라우저 상태에 따라 누락되어도 목록이 뒤처지지 않도록
+  // 목록 화면에서만 낮은 빈도의 안전망을 둔다. 실시간 반영의 주 경로는 Realtime이다.
+  useEffect(() => {
+    if (!isLoggedIn || !isOpen || view !== "list") return;
+    const refreshIfVisible = () => {
+      if (document.visibilityState === "visible") refreshGroupRooms();
+    };
+    const id = window.setInterval(refreshIfVisible, 10000);
+    document.addEventListener("visibilitychange", refreshIfVisible);
+    window.addEventListener("focus", refreshGroupRooms);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", refreshIfVisible);
+      window.removeEventListener("focus", refreshGroupRooms);
+    };
+  }, [isLoggedIn, isOpen, refreshGroupRooms, view]);
 
   useChatListRealtime({ currentUserId: currentUserId ?? 0, setChats });
+  // 모임 채팅 새 메시지 → 목록/unread 실시간 갱신(새로고침 없이). 버스트는 디바운스로 합침.
+  useGroupRoomsRealtime(isLoggedIn, debouncedRefreshGroupRooms);
 
   useEffect(() => {
     if (!currentUserId) return;
@@ -327,6 +366,7 @@ export default function FloatingChatWidget({
             />
           ) : view === "group-room" && selectedGroupRoom && currentUserForRoom ? (
             <GroupChatRoomBody
+              key={selectedGroupRoom.meetupPostId}
               meetupPostId={selectedGroupRoom.meetupPostId}
               meetupTitle={selectedGroupRoom.title}
               currentUser={currentUserForRoom}

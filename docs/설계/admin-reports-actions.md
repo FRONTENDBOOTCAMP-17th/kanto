@@ -177,7 +177,6 @@ if (
 | `src/hooks/usedgoods/useCreateUsedGoodsForm.ts`                 | 중고거래 글쓰기 |
 | `src/hooks/useCreateJobForm.ts`                                 | 구인구직 글쓰기 |
 | `src/app/(user)/rental/create/_components/RentalCreateForm.tsx` | 방렌트 글쓰기   |
-| 커뮤니티 글쓰기 훅/폼 (확인 필요)                               | 커뮤니티 글쓰기 |
 | 댓글 작성 로직 (확인 필요)                                      | 댓글            |
 
 > 현재 글쓰기가 클라이언트 사이드에서 직접 Supabase에 insert 하는 구조이므로,  
