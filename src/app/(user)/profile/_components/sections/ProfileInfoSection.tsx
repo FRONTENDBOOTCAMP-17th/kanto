@@ -8,10 +8,8 @@ import ProfileScore from "../ProfileScore";
 
 export function ProfileInfoSection({
   user,
-  avatarFile,
 }: {
   user: UserType;
-  avatarFile: File | null;
 }) {
   const t = useTranslations("Profile.info");
   const {
@@ -29,7 +27,7 @@ export function ProfileInfoSection({
     handleSave,
     handleDeleteAccount,
     handleRestoreAccount,
-  } = useProfileInfo(user, avatarFile);
+  } = useProfileInfo(user);
 
   return (
     <div className="flex flex-col divide-y divide-gray-100">
