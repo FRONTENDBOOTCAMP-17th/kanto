@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { GlobalLayout } from "@/components/common/GlobalLayout";
 import { Providers } from "@/components/common/Providers";
+import { WebVitalsReporter } from "@/components/common/WebVitalsReporter";
 import { getSessionUser } from "@/services/user/user";
 import { BCP47_LOCALE, type Locale } from "@/i18n/config";
 import "./globals.css";
@@ -91,6 +92,7 @@ export default async function RootLayout({
             __html: `try{if(innerWidth<768){var c=new URLSearchParams(location.search).get('chat');if(c||sessionStorage.getItem('chatWidget:newChatDraft'))document.documentElement.setAttribute('data-chat-boot','')}}catch(e){}`,
           }}
         />
+        <WebVitalsReporter />
         <NextIntlClientProvider>
           <Providers>
             <GlobalLayout initialUser={initialUser}>{children}</GlobalLayout>
