@@ -59,15 +59,9 @@ function Pagination({ page, total, onChange }: { page: number; total: number; on
   );
 }
 
-function MeetupCard({ meetup, showHost }: { meetup: MeetupSummary; showHost?: boolean }) {
-  const statusKey = getMeetupStatus(meetup.start_at, meetup.end_at, meetup.post_status);
-  const isEnded = statusKey === "ended";
-  const Wrapper = isEnded ? "div" : Link;
-  const wrapperProps = isEnded
-    ? { className: "flex flex-col gap-2 rounded-xl border border-gray-100 p-4 opacity-50" }
-    : { href: `/go/${meetup.post_id}`, className: "flex flex-col gap-2 rounded-xl border border-gray-100 p-4 hover:bg-gray-50 transition-colors" };
+function MeetupCardInner({ meetup, showHost, statusKey }: { meetup: MeetupSummary; showHost?: boolean; statusKey: string }) {
   return (
-    <Wrapper {...(wrapperProps as never)}>
+    <>
       <div className="flex items-start justify-between gap-2">
         <span className="text-sm font-semibold text-gray-900 line-clamp-1 flex-1">{meetup.title}</span>
         <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${STATUS_COLOR[statusKey]}`}>
@@ -94,7 +88,23 @@ function MeetupCard({ meetup, showHost }: { meetup: MeetupSummary; showHost?: bo
           </span>
         )}
       </div>
-    </Wrapper>
+    </>
+  );
+}
+
+function MeetupCard({ meetup, showHost }: { meetup: MeetupSummary; showHost?: boolean }) {
+  const statusKey = getMeetupStatus(meetup.start_at, meetup.end_at, meetup.post_status);
+  if (statusKey === "ended") {
+    return (
+      <div className="flex flex-col gap-2 rounded-xl border border-gray-100 p-4 opacity-50">
+        <MeetupCardInner meetup={meetup} showHost={showHost} statusKey={statusKey} />
+      </div>
+    );
+  }
+  return (
+    <Link href={`/go/${meetup.post_id}`} className="flex flex-col gap-2 rounded-xl border border-gray-100 p-4 hover:bg-gray-50 transition-colors">
+      <MeetupCardInner meetup={meetup} showHost={showHost} statusKey={statusKey} />
+    </Link>
   );
 }
 
