@@ -19,6 +19,7 @@ import { ProfileBlockedSection } from "./sections/ProfileBlockedSection";
 import { ProfileSettingsSection } from "./sections/ProfileSettingsSection";
 import { ProfilePaymentSection } from "./sections/ProfilePaymentSection";
 import { ProfileTransactionsSection } from "./sections/ProfileTransactionsSection";
+import { ProfileMeetingsSection, type MeetupSummary } from "./sections/ProfileMeetingsSection";
 import type { UserIdentity } from "@supabase/supabase-js";
 import type { ReviewWithReviewer } from "@/type/review";
 import { IdentityVerificationModal } from "./IdentityVerificationModal";
@@ -30,6 +31,8 @@ export function ProfileCard({
   initialIsVerified,
   postCount,
   likeCount,
+  createdMeetups,
+  joinedMeetups,
 }: {
   alertSettings: AlertSettings;
   initialIdentities: UserIdentity[];
@@ -37,6 +40,8 @@ export function ProfileCard({
   initialIsVerified: boolean;
   postCount: number;
   likeCount: number;
+  createdMeetups: MeetupSummary[];
+  joinedMeetups: MeetupSummary[];
 }) {
   const { user } = useAuthStore();
   if (!user) return null;
@@ -49,6 +54,8 @@ export function ProfileCard({
       initialIsVerified={initialIsVerified}
       postCount={postCount}
       likeCount={likeCount}
+      createdMeetups={createdMeetups}
+      joinedMeetups={joinedMeetups}
     />
   );
 }
@@ -61,6 +68,8 @@ function ProfileForm({
   initialIsVerified,
   postCount,
   likeCount,
+  createdMeetups,
+  joinedMeetups,
 }: {
   user: UserType;
   alertSettings: AlertSettings;
@@ -69,6 +78,8 @@ function ProfileForm({
   initialIsVerified: boolean;
   postCount: number;
   likeCount: number;
+  createdMeetups: MeetupSummary[];
+  joinedMeetups: MeetupSummary[];
 }) {
   const [activeTab, setActiveTab] = useState<Tab>("info");
   const [isVerificationOpen, setIsVerificationOpen] = useState(false);
@@ -172,6 +183,7 @@ function ProfileForm({
           {activeTab === "payment" && <ProfilePaymentSection user={user} />}
           {activeTab === "history" && <ProfileTransactionsSection />}
           {activeTab === "reviews" && <ProfileReviewsSection reviews={reviews} avgRating={avgRating} reviewCount={reviewCount} />}
+          {activeTab === "meetings" && <ProfileMeetingsSection createdMeetups={createdMeetups} joinedMeetups={joinedMeetups} />}
           {activeTab === "alerts" && <ProfileAlertsSection initialSettings={alertSettings} />}
           {activeTab === "blocked" && <ProfileBlockedSection />}
           {activeTab === "settings" && <ProfileSettingsSection initialIdentities={initialIdentities} />}
