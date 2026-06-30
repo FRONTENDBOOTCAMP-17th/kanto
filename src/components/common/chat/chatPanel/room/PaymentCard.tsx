@@ -57,7 +57,7 @@ export default function PaymentCard({
     run(async () => {
       const updated = await confirmReceiptAction(transaction.id);
       onTransactionChange(updated);
-      // 거래 완료 시 목록 페이지(서버 컴포넌트)를 재요청해 판매완료가 새로고침 없이 반영되게 한다.
+      
       router.refresh();
       setIsLoading(false);
     });

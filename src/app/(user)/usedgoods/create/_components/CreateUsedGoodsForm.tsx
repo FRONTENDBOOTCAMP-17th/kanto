@@ -72,9 +72,9 @@ export function CreateUsedGoodsForm({
   const [condition, setCondition] = useState<ProductCondition | "">(
     (initialData?.condition as ProductCondition) ?? "",
   );
-  // 새로 선택한 거래지역 (편집 시 재선택 안 하면 null → 기존 값 유지)
+  
   const [picked, setPicked] = useState<PickedLocation | null>(null);
-  // 편집 시 아직 재선택 전 보여줄 기존 공개 라벨
+  
   const fallbackLocationLabel =
     initialData?.location_barangay || initialData?.location_city
       ? formatBarangayLabel(
@@ -82,7 +82,7 @@ export function CreateUsedGoodsForm({
           initialData.location_city ?? null,
         )
       : (initialData?.location_type ?? null);
-  // 기존 글에 거래지역이 있는지 (편집 시 재선택 없이도 유효 처리)
+  
   const hasExistingLocation = Boolean(initialData?.location_type);
   const [content, setContent] = useState(initialData?.content ?? "");
   const [safePayment, setSafePayment] = useState(
@@ -124,7 +124,7 @@ export function CreateUsedGoodsForm({
     toastTimerRef.current = setTimeout(() => setShowToast(false), 3000);
   };
 
-  // 저장용 거래지역 필드 — 새로 선택했으면 클램프(좌표 반올림) 후 도출, 아니면 기존 값 유지.
+  
   const buildLocationFields = () => {
     if (picked) {
       return {
@@ -133,7 +133,7 @@ export function CreateUsedGoodsForm({
           picked.province ?? null,
         ) as TradeLocation,
         location_barangay: picked.barangay ?? null,
-        // 시 성분 없는 장소(랜드마크 등)도 라벨이 비지 않도록 폴백 — 표시 전용
+        
         location_city:
           picked.city ?? picked.province ?? picked.displayName ?? picked.address ?? null,
         location_lat: roundCoord(picked.lat),

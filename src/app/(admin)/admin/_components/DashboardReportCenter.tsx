@@ -101,7 +101,7 @@ export default function DashboardReportCenter({
 
       {children}
 
-      {/* 처리 대기열 드로어 (#5) */}
+      
       {queueOpen && (
         <>
           <div
@@ -230,7 +230,7 @@ export default function DashboardReportCenter({
         </>
       )}
 
-      {/* 로딩 오버레이 */}
+      
       {loading && (
         <div className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-900/20">
           <div className="flex items-center gap-2.5 rounded-xl bg-white px-5 py-3 shadow-lg">
@@ -242,7 +242,7 @@ export default function DashboardReportCenter({
         </div>
       )}
 
-      {/* 유저 상세 드로어 (#6) */}
+      
       {userDetail && (
         <UserDetailDrawer
           key={userDetail.id}
@@ -258,7 +258,7 @@ export default function DashboardReportCenter({
         />
       )}
 
-      {/* 게시글 상세 드로어 (#6) */}
+      
       {postDetail && (
         <PostDetailDrawer
           key={postDetail.id}

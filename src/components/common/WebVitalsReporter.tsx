@@ -2,7 +2,6 @@
 
 import { useReportWebVitals } from "next/web-vitals";
 
-// Google 권장 기준값 (단위: ms, CLS는 unitless)
 const THRESHOLDS = {
   LCP:  { good: 2500, poor: 4000 },
   INP:  { good: 200,  poor: 500  },

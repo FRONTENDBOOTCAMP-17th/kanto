@@ -35,7 +35,7 @@ export function AdminPagination({
         <span className="hidden lg:inline text-[13px] text-slate-400">{countLabel}</span>
       )}
 
-      {/* 데스크탑 */}
+      
       <div className="hidden lg:flex items-center gap-1.5">
         <button
           onClick={() => onPageChange(Math.max(1, currentPage - 1))}
@@ -73,7 +73,7 @@ export function AdminPagination({
         </button>
       </div>
 
-      {/* 모바일: < 1 / 4 > */}
+      
       <div className="flex lg:hidden items-center gap-7">
         <button
           onClick={() => onPageChange(Math.max(1, currentPage - 1))}

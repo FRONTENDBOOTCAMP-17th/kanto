@@ -1,7 +1,5 @@
 "use client";
 
-// 진행 중 모임 목록 — 데스크톱: 왼쪽 슬라이드, 모바일: 하단 시트
-
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { X, Search, MapPin, Users, Clock } from "lucide-react";
@@ -15,7 +13,7 @@ interface MeetupListPanelProps {
   selectedId: number | null;
   onSelect: (meetup: Meetup) => void;
   onClose: () => void;
-  enterAnim?: "up" | "left"; // 모바일 진입 방향: 최초 열기=아래에서, 상세에서 복귀=왼쪽에서
+  enterAnim?: "up" | "left"; 
 }
 
 export function MeetupListPanel({
@@ -41,10 +39,10 @@ export function MeetupListPanel({
       }`}
       style={{ zIndex: 41 }}
     >
-      {/* 모바일 드래그 핸들 */}
+      
       <div className="mx-auto mt-2 mb-1 h-1 w-10 shrink-0 rounded-full bg-slate-300 md:hidden" />
 
-      {/* 헤더 */}
+      
       <div className="shrink-0 border-b border-slate-100 px-6 py-5 max-md:pt-3">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
@@ -64,7 +62,7 @@ export function MeetupListPanel({
           </button>
         </div>
 
-        {/* 검색창 */}
+        
         <div className="mt-3.5 flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5">
           <Search
             className="h-3.75 w-3.75 shrink-0 text-slate-400"
@@ -88,7 +86,7 @@ export function MeetupListPanel({
         </div>
       </div>
 
-      {/* 목록 */}
+      
       <div className="flex-1 overflow-y-auto">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-2 py-16 text-slate-400">

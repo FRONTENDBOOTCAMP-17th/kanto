@@ -10,11 +10,10 @@ export interface GroupMessageWithSender extends GroupMessage {
   tempId?: number;
 }
 
-// "내 모임 채팅" 목록 1행
 export interface MyGroupRoom {
   room_id: number;
   meetup_post_id: number;
-  title: string; // posts.title
+  title: string; 
   topic: MeetupTopicKey;
   status: "active" | "ended";
   member_count: number;

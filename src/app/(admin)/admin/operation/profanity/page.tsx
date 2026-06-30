@@ -120,7 +120,7 @@ export default function ProfanityPage() {
 
   return (
     <div className="p-6 lg:p-8">
-      {/* Header */}
+      
       <div className="mb-7">
         <Link
           href="/admin/operation"
@@ -140,7 +140,7 @@ export default function ProfanityPage() {
         </p>
       </div>
 
-      {/* Tab bar */}
+      
       <div className="mb-4">
         <div className="flex w-fit gap-1 rounded-xl border border-[#ebeef0] bg-slate-50 p-1">
           <button
@@ -168,7 +168,7 @@ export default function ProfanityPage() {
         </div>
       </div>
 
-      {/* Content */}
+      
       {tab === "list" ? (
         <div className="rounded-2xl border border-[#ebeef0] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
           {rules.length === 0 ? (
@@ -252,13 +252,13 @@ export default function ProfanityPage() {
         </div>
       ) : (
         <div className="flex flex-col gap-5">
-          {/* Form card */}
+          
           <div className="rounded-2xl border border-[#ebeef0] bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
             <p className="mb-5 text-[15px] font-semibold text-slate-800">
               {editingId !== null ? "금칙어 룰 수정" : "새 금칙어 룰 등록"}
             </p>
             <div className="flex flex-col gap-5">
-              {/* Scope selector */}
+              
               <div>
                 <label className="mb-2 block text-[13px] font-medium text-slate-600">
                   적용 범위
@@ -283,7 +283,7 @@ export default function ProfanityPage() {
                 </div>
               </div>
 
-              {/* Word tag input */}
+              
               <div>
                 <label className="mb-1.5 block text-[13px] font-medium text-slate-600">
                   금칙어 목록
@@ -339,7 +339,7 @@ export default function ProfanityPage() {
             </div>
           </div>
 
-          {/* Affected posts card */}
+          
           <div className="rounded-2xl border border-[#ebeef0] bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
             <div className="mb-4 flex items-center justify-between">
               <div>

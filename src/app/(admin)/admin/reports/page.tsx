@@ -46,7 +46,7 @@ export default async function ReportsPage() {
         .map((r) => r.target_id as number),
     ),
   ];
-  // 메시지 신고는 target_id가 메시지 id이므로, 발신자(user)로 해소해야 한다.
+  
   const messageReportIds = [
     ...new Set(
       reports
@@ -89,7 +89,7 @@ export default async function ReportsPage() {
       : { data: [] as { id: number; sender_id: number }[] },
   ]);
 
-  // 메시지 신고 → 발신자(user) 해소. 발신자 이름을 별도로 조회해 targetUserMap에 합친다.
+  
   const messageSenderMap = new Map(
     (messagesRes.data ?? []).map((m) => [m.id, m.sender_id]),
   );
@@ -163,7 +163,7 @@ export default async function ReportsPage() {
       };
     }
 
-    // 메시지 신고는 발신자 id로 해소, 그 외(user)는 target_id 그대로
+    
     const resolvedUserId =
       r.target_type === "message" && r.target_id != null
         ? messageSenderMap.get(r.target_id) ?? null

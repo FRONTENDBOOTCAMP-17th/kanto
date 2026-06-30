@@ -278,7 +278,7 @@ export default function GroupChatRoomBody({
       );
     } catch {
       setMessages((prev) => prev.filter((m) => m.tempId !== tempId));
-      // 서버 에러 원문(코드/한국어)을 노출하지 않고 현지화 메시지로 통일
+      
       setSendError(t("chat.sendFailed"));
       setTimeout(() => setSendError(""), 3000);
     }
@@ -289,7 +289,7 @@ export default function GroupChatRoomBody({
     setTimeout(() => setToast(""), 2600);
   };
 
-  // 멤버 신고 — 탈퇴 회원이면 신고 대신 안내 토스트
+  
   const handleReportUser = (userId: number) => {
     const member = members.find((m) => m.user_id === userId);
     if (member?.is_deleted) {

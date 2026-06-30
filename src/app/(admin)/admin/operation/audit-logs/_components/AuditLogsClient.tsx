@@ -55,7 +55,7 @@ export function AuditLogsClient({ initialLogs }: Props) {
       )}
 
       <div className="p-6 lg:p-8">
-        {/* Header */}
+        
         <div className="mb-7">
           <Link
             href="/admin/operation"
@@ -75,7 +75,7 @@ export function AuditLogsClient({ initialLogs }: Props) {
           </p>
         </div>
 
-        {/* Stats */}
+        
         <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {statCards.map((card) => (
             <div
@@ -88,7 +88,7 @@ export function AuditLogsClient({ initialLogs }: Props) {
           ))}
         </div>
 
-        {/* Filters */}
+        
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <SearchInput
             value={filters.searchQuery}
@@ -132,10 +132,10 @@ export function AuditLogsClient({ initialLogs }: Props) {
           <span className="ml-auto text-[13px] text-slate-400">{filters.filtered.length.toLocaleString()}건</span>
         </div>
 
-        {/* Table */}
+        
         <LogTable logs={filters.paginated} onSelect={setSelectedLog} />
 
-        {/* Pagination */}
+        
         {filters.totalPages > 1 && (
           <Pagination
             page={filters.page}
@@ -148,8 +148,6 @@ export function AuditLogsClient({ initialLogs }: Props) {
     </>
   );
 }
-
-// ─── Filter Controls ──────────────────────────────────────────────────────────
 
 function SearchInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
@@ -346,8 +344,6 @@ function DateRangeDropdown({
   );
 }
 
-// ─── Table ────────────────────────────────────────────────────────────────────
-
 function LogTable({ logs, onSelect }: { logs: AuditLog[]; onSelect: (log: AuditLog) => void }) {
   if (logs.length === 0) {
     return (
@@ -437,8 +433,6 @@ function LogRow({ log, isLast, onSelect }: { log: AuditLog; isLast: boolean; onS
     </tr>
   );
 }
-
-// ─── Pagination ───────────────────────────────────────────────────────────────
 
 function Pagination({
   page, totalPages, totalCount, onChange,

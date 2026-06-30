@@ -7,9 +7,6 @@ export interface BlockedUser {
   avatar_url: string | null;
 }
 
-/**
- * 내가 전역으로 차단한 사용자 목록 (프로필 "차단한 사용자" 탭용)
- */
 export async function getBlockedUsers(userId: number): Promise<BlockedUser[]> {
   const { data } = await supabase
     .from("user_blocks")
@@ -34,7 +31,6 @@ export async function isBlockedPair(userId: number, otherUserId: number) {
   return !!data;
 }
 
-// blockerId가 blockedId를 차단했는지 (방향성 있는 확인)
 export async function hasBlockedUser(blockerId: number, blockedId: number) {
   const supabase = createAdminClient();
   const { data } = await supabase

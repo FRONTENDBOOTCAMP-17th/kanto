@@ -43,7 +43,7 @@ export function NoticeBanner() {
       .catch(() => {});
   }, []);
 
-  // 페이지 이동 시 닫힘 상태 리셋 → 다시 표시
+  
   useEffect(() => {
     setDismissed(false);
     setHideToday(false);

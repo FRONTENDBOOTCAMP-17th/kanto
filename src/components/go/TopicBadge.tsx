@@ -1,5 +1,4 @@
-// 주제 뱃지 — TOPIC_META 색상 룩업 + 칩 스타일을 단일화.
-// 라벨은 호출자가 주입(사용자단은 t(`topics.${topic}`), 어드민은 한국어 라벨).
+
 
 import { TOPIC_META } from "@/constants/meetupTopics";
 import type { MeetupTopicKey } from "@/constants/meetupTopics";

@@ -1,7 +1,5 @@
 "use client";
 
-// 장소명/주소 입력 → Google Places 자동완성 → 선택 시 좌표+주소 확보
-
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { MapPin, Loader2, Search } from "lucide-react";
@@ -9,14 +7,13 @@ import { useMapsLibrary } from "@vis.gl/react-google-maps";
 import type { PickedLocation } from "@/type/go";
 import { extractBarangayCity } from "@/type/location";
 
-// 마닐라 중심 — 자동완성 결과를 현지 우선으로 bias
 const MANILA_CENTER = { lat: 14.5547, lng: 121.0244 };
 const BIAS_RADIUS_M = 30000;
 
 interface Props {
   selected: PickedLocation | null;
   onSelect: (loc: PickedLocation) => void;
-  // 편집 시 아직 재선택 전이라도 기존 설정 위치를 "선택됨"으로 보여줄 공개 라벨
+  
   fallbackLabel?: string | null;
 }
 
@@ -31,11 +28,11 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
-  // 자동완성 세션 토큰 (입력~선택을 한 세션으로 묶어 과금 최적화)
+  
   const sessionTokenRef =
     useRef<google.maps.places.AutocompleteSessionToken | null>(null);
 
-  // 입력 디바운스 후 후보 조회 (setState는 모두 타이머 콜백 안에서 — effect 동기 호출 회피)
+  
   useEffect(() => {
     if (!placesLib) return;
 
@@ -59,7 +56,7 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
           sessionToken: sessionTokenRef.current,
           language: "en",
           region: "ph",
-          // 필리핀 외 지역 결과 제외 (locationBias는 우선순위일 뿐 필터가 아니므로 필수)
+          
           includedRegionCodes: ["ph"],
           locationBias: {
             center: MANILA_CENTER,
@@ -89,7 +86,7 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
     setOpen(false);
     setLoading(true);
     try {
-      // 영어 로케일 Place로 명시 조회 → addressComponents(바랑가이/시)를 항상 영어로 저장.
+      
       const place = new placesLib.Place({
         id: prediction.placeId,
         requestedLanguage: "en",
@@ -119,7 +116,7 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
       setInput("");
       setSuggestions([]);
     } finally {
-      // 선택으로 세션 종료 → 다음 검색은 새 토큰
+      
       sessionTokenRef.current = null;
       setLoading(false);
     }
@@ -148,7 +145,7 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
         )}
       </div>
 
-      {/* 자동완성 후보 드롭다운 */}
+      
       {open && suggestions.length > 0 && (
         <ul className="absolute z-10 mt-1.5 max-h-60 w-full overflow-y-auto rounded-[12px] border border-slate-200 bg-white py-1.5 shadow-lg">
           {suggestions.map((s, i) => {
@@ -183,7 +180,7 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
         </ul>
       )}
 
-      {/* 선택된 위치 표시 — 새 선택 > 기존 설정(편집) > 미선택 */}
+      
       {selected ? (
         <div className="mt-2 flex items-center gap-2 rounded-[10px] bg-teal-50 px-3 py-2.5">
           <MapPin className="h-4 w-4 shrink-0 text-teal-600" strokeWidth={2} />

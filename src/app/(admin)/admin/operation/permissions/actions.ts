@@ -43,8 +43,6 @@ type RawUser  = { id: number; name: string; email: string | null; created_at: st
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const raw = (db: ReturnType<typeof createAdminClient>) => db as any;
 
-// ── Read ──────────────────────────────────────────────────────────────
-
 export async function getAdmins(): Promise<AdminAccount[]> {
   const db = createAdminClient();
   const { data } = await raw(db)
@@ -94,8 +92,6 @@ export async function searchUsers(query: string): Promise<UserResult[]> {
     joinedAt: String(u.created_at).slice(0, 10),
   }));
 }
-
-// ── Write ─────────────────────────────────────────────────────────────
 
 export async function promoteToAdmin(userId: number, teamId: number | null) {
   const db = createAdminClient();

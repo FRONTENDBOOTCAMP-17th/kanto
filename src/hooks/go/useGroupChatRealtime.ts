@@ -20,13 +20,13 @@ export function useGroupChatRealtime({
 }: Props) {
   const senderCacheRef = useRef<Map<number, SellerInfo>>(new Map([[currentUser.id, currentUser]]));
 
-  // 매 렌더 새로 생성될 수 있는 값(차단 목록·콜백·setter)은 ref로 읽는다.
-  // effect 의존성에 넣으면 입력창 타이핑 등 매 리렌더마다 채널이 재구독되어
-  // 재구독 공백 동안 들어온 메시지를 놓칠 수 있다(구독 대상은 roomId로만 결정).
+  
+  
+  
   const blockedIdsRef = useRef(blockedIds);
   const setMessagesRef = useRef(setMessages);
   const onMessageInsertedRef = useRef(onMessageInserted);
-  // ref 갱신은 렌더 중이 아니라 커밋 후(effect)에 수행한다.
+  
   useEffect(() => {
     blockedIdsRef.current = blockedIds;
     setMessagesRef.current = setMessages;

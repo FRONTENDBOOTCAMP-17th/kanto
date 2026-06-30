@@ -74,7 +74,6 @@ export default function AdminSidebar({ pendingCount }: { pendingCount: number })
         />
       )}
 
-
       <aside
         className={[
           "sticky top-0 flex h-screen w-62.5 shrink-0 flex-col border-r border-[#ebeef0] bg-white px-4 py-5.5",

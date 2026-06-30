@@ -60,14 +60,14 @@ export function UnifiedBanner() {
   const [dismissedIds, setDismissedIds] = useState<number[]>([]);
   const [hideTodayChecked, setHideTodayChecked] = useState(false);
 
-  // 데스크톱 배너용 (공지+제재 혼합 네비게이션)
+  
   const [desktopIndex, setDesktopIndex] = useState(0);
 
-  // 모바일 공지 모달
+  
   const [noticeModalOpen, setNoticeModalOpen] = useState(false);
   const [noticeIndex, setNoticeIndex] = useState(0);
 
-  // 모바일 제재 모달
+  
   const [suspensionModalOpen, setSuspensionModalOpen] = useState(false);
 
   const [lastPathname, setLastPathname] = useState(pathname);
@@ -115,7 +115,7 @@ export function UnifiedBanner() {
   const hasSuspension = !!suspensionItem;
   const noticeCount = noticeItems.length;
 
-  // 제재 날짜 문자열
+  
   let suspensionDateStr = "";
   let isPermanent = false;
   if (suspensionItem) {
@@ -136,30 +136,30 @@ export function UnifiedBanner() {
 
   if (items.length === 0) return null;
 
-  // ── 데스크톱 배너용 변수 ──────────────────────────────────────────
+  
   const safeDesktopIndex = Math.min(desktopIndex, items.length - 1);
   const desktopCurrent = items[safeDesktopIndex];
   const hasMultiple = items.length > 1;
   const desktopBgColor = desktopCurrent.type === "suspension" ? "bg-red-600" : "bg-teal-500";
 
-  // ── 모바일 공지 모달용 변수 ───────────────────────────────────────
+  
   const safeNoticeIndex = Math.min(noticeIndex, Math.max(0, noticeItems.length - 1));
   const currentNotice = noticeItems[safeNoticeIndex];
   const hasMultipleNotices = noticeItems.length > 1;
 
-  // 목록 페이지: 글쓰기 버튼이 우측 → 탭을 좌측
-  // 상세/기타 페이지: 뒤로가기가 좌측 → 탭을 우측
+  
+  
   const mobileTabSide = ["/usedgoods", "/rental", "/job", "/go"].includes(pathname)
     ? "left-4"
     : "right-4";
 
   return (
     <>
-      {/* ── 모바일: 공지 탭 + 제재 뱃지 ────────────────────────────── */}
+      
       <div className="md:hidden relative h-0 overflow-visible">
         <div className={`absolute -top-1.5 ${mobileTabSide} flex items-start gap-2`}>
 
-          {/* 공지 탭 */}
+          
           {noticeCount > 0 && (
             <button
               onClick={() => setNoticeModalOpen(true)}
@@ -175,7 +175,7 @@ export function UnifiedBanner() {
             </button>
           )}
 
-          {/* 제재 뱃지 */}
+          
           {hasSuspension && (
             <button
               onClick={() => setSuspensionModalOpen(true)}
@@ -189,7 +189,7 @@ export function UnifiedBanner() {
         </div>
       </div>
 
-      {/* ── 모바일: 공지 모달 ────────────────────────────────────────── */}
+      
       {noticeModalOpen && noticeCount > 0 && createPortal(
         <div
           className="fixed inset-0 z-9999 flex items-center justify-center p-6"
@@ -200,7 +200,7 @@ export function UnifiedBanner() {
             className="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* 헤더 */}
+            
             <div className="bg-teal-500 text-white px-4 py-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Megaphone className="w-4 h-4 shrink-0" />
@@ -239,13 +239,13 @@ export function UnifiedBanner() {
                 </button>
               </div>
             </div>
-            {/* 본문 */}
+            
             <div className="px-5 py-4">
               <p className="text-sm text-gray-800 leading-relaxed">
                 {currentNotice?.notice.title}
               </p>
             </div>
-            {/* 오늘 하루 안보기 */}
+            
             {currentNotice && (
               <div className="px-5 pb-4">
                 <label className="flex items-center gap-2 cursor-pointer select-none">
@@ -265,7 +265,7 @@ export function UnifiedBanner() {
         document.body,
       )}
 
-      {/* ── 모바일: 제재 모달 ────────────────────────────────────────── */}
+      
       {suspensionModalOpen && hasSuspension && createPortal(
         <div
           className="fixed inset-0 z-9999 flex items-center justify-center p-6"
@@ -276,7 +276,7 @@ export function UnifiedBanner() {
             className="relative w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* 헤더 */}
+            
             <div className="bg-red-600 text-white px-4 py-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <ShieldAlert className="w-4 h-4 shrink-0" />
@@ -290,7 +290,7 @@ export function UnifiedBanner() {
                 <X className="w-4 h-4" />
               </button>
             </div>
-            {/* 본문 */}
+            
             <div className="px-5 py-4">
               <p className="text-sm text-gray-800 leading-relaxed">
                 {isPermanent
@@ -303,7 +303,7 @@ export function UnifiedBanner() {
         document.body,
       )}
 
-      {/* ── 데스크톱: 기존 배너 (공지+제재 혼합) ───────────────────── */}
+      
       <div className={`hidden md:block w-full ${desktopBgColor} text-white px-4 py-2.5`}>
         <div className="max-w-5xl mx-auto flex items-center relative">
 

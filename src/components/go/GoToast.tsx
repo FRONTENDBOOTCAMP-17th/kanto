@@ -1,12 +1,11 @@
-// 칸토 go! 공용 토스트 — 상세 패널·단체채팅·어드민의 복붙 토스트 마크업 단일화.
-// 상위에서 조건부 렌더(`{msg && <GoToast .../>}`)하며, 메시지가 비면 아무것도 렌더하지 않는다.
+
 
 import { X } from "lucide-react";
 
 interface GoToastProps {
   message: string;
   error?: boolean;
-  /** 성공/실패 아이콘 표시 여부 (상세 패널·어드민) */
+  
   showIcon?: boolean;
 }
 

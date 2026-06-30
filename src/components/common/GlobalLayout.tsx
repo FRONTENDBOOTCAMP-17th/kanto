@@ -19,34 +19,33 @@ interface Props {
   initialUser: User | null;
 }
 
-// useLayoutEffect는 SSR에서 경고를 내므로 클라이언트에서만 사용한다.
 const useIsoLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 export function GlobalLayout({ children, initialUser }: Props) {
   const pathname = usePathname();
-  // 채팅 위젯의 열림 상태는 chatStore가 소스 오브 트루스이고(복원 로직이 의존),
-  // GlobalLayout은 AI 챗봇 열림 상태만 들고 둘이 동시에 열리지 않게 조정한다.
+  
+  
   const [botOpen, setBotOpen] = useState(false);
   const chatOpen = useChatStore((s) => s.isOpen);
   const setWidgetOpen = useChatStore((s) => s.setWidgetOpen);
-  // 칸토 go! 패널 상태 → 우측 하단 위젯 표시 제어.
-  // detailOpen: 데스크톱·모바일 모두 숨김(상세 패널과 겹침).
-  // listOpen: 모바일에서만 숨김(하단 시트가 올라오면 위젯도 가림).
+  
+  
+  
   const goDetailOpen = useGoUiStore((s) => s.detailOpen);
   const goListOpen = useGoUiStore((s) => s.listOpen);
 
-  // 채팅 위젯이 열리면 챗봇을 닫는다(챗봇을 열 때 채팅을 닫는 건 onToggle에서 처리).
+  
   useEffect(() => {
     return useChatStore.subscribe((state) => {
       if (state.isOpen) setBotOpen(false);
     });
   }, []);
 
-  // 부팅 커버(layout.tsx 인라인 스크립트가 깔아둔 흰 화면)를 마운트 시 제거한다.
-  // 위젯이 없는 페이지(로그인 등)에서도 항상 마운트되는 GlobalLayout에서 지워야
-  // 커버가 남아 흰 화면이 되는 일이 없다. 위젯 오버레이는 자식인
-  // FloatingChatWidget의 layout effect에서 같은 페인트 전에 열리므로 깜빡임이 없다.
+  
+  
+  
+  
   useIsoLayoutEffect(() => {
     document.documentElement.removeAttribute("data-chat-boot");
   }, []);
@@ -75,14 +74,14 @@ export function GlobalLayout({ children, initialUser }: Props) {
             goDetailOpen ? "hidden" : goListOpen ? "max-md:hidden" : ""
           }`}
         >
-          {/* 지도(go) 화면은 스크롤이 없어 위로가기/글쓰기 FAB를 띄우지 않는다 */}
+          
           {!isGo && <ScrollToTop />}
           <Chatbot
             isOpen={botOpen}
             onToggle={() => {
               const next = !botOpen;
               setBotOpen(next);
-              if (next) setWidgetOpen(false); // 챗봇을 열 때 채팅 위젯을 닫는다.
+              if (next) setWidgetOpen(false); 
             }}
             mobileHidden={chatOpen}
           />

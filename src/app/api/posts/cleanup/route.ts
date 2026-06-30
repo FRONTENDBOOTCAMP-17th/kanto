@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
-// Called by an external cron (e.g. Vercel Cron Jobs) to permanently delete
-// posts that have been soft-deleted for over 30 days.
-// Protect with a shared secret: set CRON_SECRET in env vars and pass it as
-// Authorization: Bearer <CRON_SECRET>
 export async function POST(request: Request) {
   const secret = process.env.CRON_SECRET;
   if (secret) {

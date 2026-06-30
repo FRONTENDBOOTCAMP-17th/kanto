@@ -1,7 +1,5 @@
 "use client";
 
-// 지도에 표시할 진행 중 모임 목록 — Supabase Realtime 구독
-
 import { useEffect, useState, useCallback, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 import { getActiveMeetups } from "@/services/go/go";
@@ -9,7 +7,7 @@ import type { Meetup } from "@/type/go";
 import type { MeetupTopicKey } from "@/constants/meetupTopics";
 
 interface UseLiveMeetupsOptions {
-  /** 주제 필터. undefined 또는 "all" 이면 전체 */
+  
   topicFilter?: MeetupTopicKey | "all";
 }
 
@@ -46,16 +44,16 @@ export function useLiveMeetups({ topicFilter }: UseLiveMeetupsOptions = {}) {
     debounceRef.current = setTimeout(load, 180);
   }, [load]);
 
-  // 초기 로드
+  
   useEffect(() => {
     const id = setTimeout(load, 0);
     return () => clearTimeout(id);
   }, [load]);
 
-  // Realtime 구독 — meetups / meetup_participants 변경 시 재조회
-  // 주의: posts 테이블은 supabase_realtime publication에 없음 — 구독하면 채널 전체가 깨짐.
-  // 종료(posts.status 변경) 시에는 hostEndMeetup/adminForceEndMeetup이 meetups 행도
-  // 함께 touch하여 이 구독으로 갱신을 트리거함.
+  
+  
+  
+  
   useEffect(() => {
     const channel = supabase
       .channel("live-meetups")
@@ -77,7 +75,7 @@ export function useLiveMeetups({ topicFilter }: UseLiveMeetupsOptions = {}) {
     };
   }, [scheduleLoad]);
 
-  // 클라이언트 사이드 필터
+  
   const filtered =
     !topicFilter || topicFilter === "all"
       ? meetups

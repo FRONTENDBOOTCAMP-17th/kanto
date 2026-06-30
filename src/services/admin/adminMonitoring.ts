@@ -58,13 +58,13 @@ export async function getMonitoringStats(): Promise<MonitoringStats> {
     admin.rpc("get_region_post_counts", { days: 30 }),
   ]);
 
-  // Daily signups — fill gaps so chart is always 30 points
+  
   const dailySignups = fillDailyGaps(
     (signups30Res.data ?? []) as { day: string; count: number }[],
     30,
   );
 
-  // Monthly signups — aggregate 365-day data by month, last 12 months
+  
   const monthlyMap = new Map<string, number>();
   for (const { day, count } of (signups365Res.data ?? []) as { day: string; count: number }[]) {
     const d = new Date(day);
@@ -77,7 +77,7 @@ export async function getMonitoringStats(): Promise<MonitoringStats> {
     return { month: key, count: monthlyMap.get(key) ?? 0 };
   });
 
-  // Yearly signups — aggregate from all user created_at
+  
   const yearlyMap = new Map<string, number>();
   for (const { created_at } of (allUsersCreatedRes.data ?? []) as { created_at: string }[]) {
     const year = String(new Date(created_at).getFullYear());
@@ -87,7 +87,7 @@ export async function getMonitoringStats(): Promise<MonitoringStats> {
     .sort((a, b) => a[0].localeCompare(b[0]))
     .map(([year, count]) => ({ year, count }));
 
-  // Post type distribution
+  
   const postTypesRaw = (postTypesRes.data ?? []) as { post_type: string }[];
   const typeMap: Record<string, number> = {};
   for (const { post_type } of postTypesRaw) {
@@ -99,7 +99,7 @@ export async function getMonitoringStats(): Promise<MonitoringStats> {
     .sort((a, b) => b[1] - a[1])
     .map(([name, count]) => ({ name, count, pct: `${Math.round((count / total) * 100)}%` }));
 
-  // Regions
+  
   const regions = ((regionsRes.data ?? []) as { location: string; count: number }[])
     .map((r) => ({ name: r.location, count: Number(r.count) }));
 

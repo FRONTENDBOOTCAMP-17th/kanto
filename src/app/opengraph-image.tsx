@@ -21,7 +21,7 @@ export default function OgImage() {
           position: "relative",
         }}
       >
-        {/* 배경 teal 글로우 */}
+        
         <div
           style={{
             position: "absolute",
@@ -45,7 +45,7 @@ export default function OgImage() {
           }}
         />
 
-        {/* 상단 teal 라인 */}
+        
         <div
           style={{
             position: "absolute",
@@ -58,7 +58,7 @@ export default function OgImage() {
           }}
         />
 
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+        
         <img
           src={`${BASE}/kantoLogo.png`}
           width={380}

@@ -22,7 +22,6 @@ import type { UserIdentity } from "@supabase/supabase-js";
 import type { ReviewWithReviewer } from "@/type/review";
 import { IdentityVerificationModal } from "./IdentityVerificationModal";
 
-
 export function ProfileCard({
   alertSettings,
   initialIdentities,

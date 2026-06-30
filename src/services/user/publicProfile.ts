@@ -14,8 +14,6 @@ export interface PublicProfile {
   identityVerified: boolean;
 }
 
-// 다른 유저의 공개 프로필을 조회한다.
-// 본인인증(identity_verified)은 auth user_metadata에만 있어 admin 클라이언트로 읽는다.
 export const getPublicProfile = cache(
   async (userId: number): Promise<PublicProfile | null> => {
     const supabase = await createClient();

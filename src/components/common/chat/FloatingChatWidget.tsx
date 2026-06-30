@@ -16,10 +16,8 @@ import type { ChatWithUsers } from "@/type/chat/chat";
 import type { MyGroupRoom } from "@/type/groupChat";
 import type { User } from "@/type/user";
 
-// 아직 생성 전(첫 메시지 전)인 새 채팅 초안을 새로고침 동안 보관하는 키
 const NEW_CHAT_DRAFT_KEY = "chatWidget:newChatDraft";
 
-// useLayoutEffect는 SSR에서 경고를 내므로 클라이언트에서만 사용한다.
 const useIsoLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
@@ -29,8 +27,8 @@ export default function FloatingChatWidget({
   initialUser: User | null;
 }) {
   const t = useTranslations("Chat");
-  // SSR/하이드레이션 동안 zustand는 getInitialState()(=로그아웃 상태)를 반환하므로,
-  // 서버가 내려준 initialUser로 첫 렌더부터 게이트를 확정한다(버튼 늦게 뜨는 현상 방지).
+  
+  
   const storeUser = useAuthStore((s) => s.user);
   const authUser = storeUser ?? initialUser;
   const isLoggedIn = !!authUser;
@@ -56,8 +54,8 @@ export default function FloatingChatWidget({
       .catch(() => {});
   }, []);
 
-  // 모임 채팅 메시지가 연달아 들어오면 getMyRooms(방별 last/unread 집계)가 매 메시지마다
-  // 호출되어 비용이 커진다. Realtime 트리거는 디바운스해 버스트를 한 번으로 합친다.
+  
+  
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const debouncedRefreshGroupRooms = useCallback(() => {
     if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
@@ -187,8 +185,8 @@ export default function FloatingChatWidget({
     refreshGroupRooms();
   }, [isLoggedIn, isOpen, refreshGroupRooms, view]);
 
-  // Realtime 이벤트가 네트워크/브라우저 상태에 따라 누락되어도 목록이 뒤처지지 않도록
-  // 목록 화면에서만 낮은 빈도의 안전망을 둔다. 실시간 반영의 주 경로는 Realtime이다.
+  
+  
   useEffect(() => {
     if (!isLoggedIn || !isOpen || view !== "list") return;
     const refreshIfVisible = () => {
@@ -205,7 +203,7 @@ export default function FloatingChatWidget({
   }, [isLoggedIn, isOpen, refreshGroupRooms, view]);
 
   useChatListRealtime({ currentUserId: currentUserId ?? 0, setChats });
-  // 모임 채팅 새 메시지 → 목록/unread 실시간 갱신(새로고침 없이). 버스트는 디바운스로 합침.
+  
   useGroupRoomsRealtime(isLoggedIn, debouncedRefreshGroupRooms);
 
   useEffect(() => {
@@ -221,20 +219,20 @@ export default function FloatingChatWidget({
     setUnreadCount(directTotal + groupTotal);
   }, [chats, groupRooms, currentUserId, setUnreadCount]);
 
-  // 새로고침 시 열려 있던 1:1 채팅방/새 채팅 초안을 복원한다.
-  // - 생성된 채팅방: URL의 ?chat=<id> (openWidget 경로)
-  // - 첫 메시지 전 새 채팅 초안: sessionStorage (openNewChat 경로)
+  
+  
+  
   const restoredRef = useRef(false);
   useIsoLayoutEffect(() => {
     if (restoredRef.current || !isLoggedIn) return;
     restoredRef.current = true;
 
-    // 페인트 전에(layout effect) 로컬 state를 직접 세팅해 오버레이를 같은 프레임에 띄운다.
-    // 스토어→subscribe를 우회하는 이유: subscribe 리스너는 passive effect라
-    // layout effect 시점엔 아직 미등록 → openWidget을 호출해도 변경을 놓친다.
+    
+    
+    
     const chatParam = new URLSearchParams(window.location.search).get("chat");
 
-    // 채팅 목록만 열려 있던 상태 복원 (밑 페이지로 빠지지 않게)
+    
     if (chatParam === "list") {
       setView("list");
       setSelectedChatId(null);
@@ -270,17 +268,17 @@ export default function FloatingChatWidget({
     }
   }, [isLoggedIn]);
 
-  // 열려 있는 1:1 채팅방을 URL(?chat=<id>)에 반영해 새로고침에도 유지되게 한다.
-  // (언더라잉 페이지를 재요청하지 않도록 history API로 URL만 갱신)
+  
+  
   const urlSyncReadyRef = useRef(false);
   useEffect(() => {
     if (!urlSyncReadyRef.current) {
-      urlSyncReadyRef.current = true; // 최초 마운트는 복원 로직에 맡기고 건너뛴다
+      urlSyncReadyRef.current = true; 
       return;
     }
     const params = new URLSearchParams(window.location.search);
-    // 방: ?chat=<id> / 목록: ?chat=list (목록도 새로고침에 유지되도록)
-    // 새 채팅 초안(room+selectedChatId 없음)은 sessionStorage로 따로 복원하므로 제외.
+    
+    
     const inRoom = isOpen && view === "room" && selectedChatId !== null;
     const inList = isOpen && view === "list";
     const desired = inRoom ? String(selectedChatId) : inList ? "list" : null;
@@ -299,12 +297,12 @@ export default function FloatingChatWidget({
     );
   }, [isOpen, view, selectedChatId]);
 
-  // 아직 생성 전인 새 채팅 초안을 sessionStorage에 저장해 새로고침에도 유지한다.
-  // (생성되면 selectedChatId가 채워지며 ?chat 으로 전환되고, 닫히면 초안을 비운다)
+  
+  
   const draftSyncReadyRef = useRef(false);
   useEffect(() => {
     if (!draftSyncReadyRef.current) {
-      draftSyncReadyRef.current = true; // 최초 마운트는 복원 로직에 맡기고 건너뛴다
+      draftSyncReadyRef.current = true; 
       return;
     }
     const isNewDraft =

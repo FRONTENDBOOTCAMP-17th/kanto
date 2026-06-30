@@ -1,7 +1,5 @@
 "use client";
 
-// 핀 클릭 시 우측에서 슬라이드 인하는 모임 상세 패널
-
 import { useEffect, useState } from "react";
 import { useTranslations, useFormatter } from "next-intl";
 import {
@@ -36,7 +34,7 @@ import type { Meetup, MeetupParticipant } from "@/type/go";
 interface MeetupDetailPanelProps {
   meetup: Meetup | null;
   onClose: () => void;
-  onBackToList?: () => void; // 모바일: 목록으로 복귀(< 버튼)
+  onBackToList?: () => void; 
   currentUserId?: number;
   suppressOverlay?: boolean;
 }
@@ -168,7 +166,7 @@ function MeetupDetailPanelContent({
       return;
     }
     if (joining || statusLoading || isFull) return;
-    // 한 번 취소한 모임은 재입장 불가 — 토스트만 띄운다
+    
     if (myStatus === "cancelled") {
       showToast(t("toast.reentryForbidden"), true);
       return;
@@ -236,15 +234,15 @@ function MeetupDetailPanelContent({
         }`}
       />
 
-      {/* 패널 — 데스크톱: 우측 슬라이드, 모바일: 하단 시트 */}
+      
       <div
         className="fixed bottom-0 right-0 top-15 md:top-27.25 flex w-85 max-w-full flex-col bg-white shadow-[-8px_0_36px_rgba(0,0,0,0.12)] animate-[slideInRight_.28s_cubic-bezier(.4,0,.2,1)] lg:w-97.5 max-md:left-0 max-md:top-auto max-md:h-[85vh] max-md:w-full max-md:rounded-t-2xl"
         style={{ zIndex: 41 }}
       >
-        {/* 모바일 드래그 핸들 */}
+        
         <div className="mx-auto mt-2 mb-1 h-1 w-10 shrink-0 rounded-full bg-slate-300 md:hidden" />
 
-        {/* 헤더 */}
+        
         <div className="shrink-0 border-b border-slate-100 px-6 py-5 max-md:pt-3">
           <div className="mb-2.5 flex items-start justify-between gap-3">
             <div className="flex flex-1 min-w-0 items-start gap-2">
@@ -298,9 +296,9 @@ function MeetupDetailPanelContent({
           </div>
         </div>
 
-        {/* 내용 */}
+        
         <div className="flex flex-1 flex-col gap-4.5 overflow-y-auto px-6 py-5">
-          {/* 일시 / 장소 */}
+          
           <div className="flex flex-col gap-2.5">
             <div className="flex items-center gap-2.5">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] bg-slate-50">
@@ -327,7 +325,7 @@ function MeetupDetailPanelContent({
             </div>
           </div>
 
-          {/* 주최자 + 정원 현황 */}
+          
           <div className="rounded-[14px] border border-slate-100 bg-slate-50 p-4">
             <div className="mb-3.5 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
@@ -358,14 +356,14 @@ function MeetupDetailPanelContent({
                 })}
               </span>
             </div>
-            {/* 정원 바 */}
+            
             <div className="mb-3 h-1.5 overflow-hidden rounded-full bg-slate-200">
               <div
                 className="h-full rounded-full transition-all"
                 style={{ width: `${capPct}%`, background: capColor }}
               />
             </div>
-            {/* 참여자 아바타 */}
+            
             <div className="flex flex-wrap gap-2">
               {participants.slice(0, 7).map((p) => (
                 <MeetupAvatar key={p.id} name={p.display_name} size={34} />
@@ -380,7 +378,7 @@ function MeetupDetailPanelContent({
             </div>
           </div>
 
-          {/* 소개 */}
+          
           <div>
             <div className="mb-2 text-[11.5px] font-bold uppercase tracking-widest text-slate-400">
               {t("detail.intro")}
@@ -391,7 +389,7 @@ function MeetupDetailPanelContent({
           </div>
         </div>
 
-        {/* 참여 버튼 / 호스트 관리 버튼 */}
+        
         <div className="shrink-0 border-t border-slate-100 px-6 py-4 flex flex-col gap-2.5">
           {(isHost || joined) && meetup.status !== "inactive" && (
             <button
@@ -402,7 +400,7 @@ function MeetupDetailPanelContent({
                     meetupPostId: meetup.post_id,
                     title: meetup.title,
                   });
-                onClose(); // 패널을 닫아 채팅 위젯이 가려지지 않게 함
+                onClose(); 
               }}
               className="flex w-full items-center justify-center gap-2 rounded-[12px] border border-teal-200 bg-teal-50 py-3 text-[14px] font-bold text-teal-700 hover:bg-teal-100 transition-colors"
             >
@@ -483,7 +481,7 @@ function MeetupDetailPanelContent({
         </div>
       </div>
 
-      {/* 토스트 */}
+      
       {toast && <GoToast message={toast.msg} error={toast.error} showIcon />}
 
       {canReport && (

@@ -1,7 +1,5 @@
 "use client";
 
-// 주제 필터 칩 바 (지도 상단 오버레이)
-
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { SlidersHorizontal } from "lucide-react";
@@ -31,7 +29,7 @@ export function TopicFilterChips({ value, onChange, activeTopics }: TopicFilterC
 
   return (
     <div className="flex min-w-0 max-w-full items-center gap-2">
-      {/* 토글 버튼 */}
+      
       <button
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label={t("filter.toggle")}
@@ -44,7 +42,7 @@ export function TopicFilterChips({ value, onChange, activeTopics }: TopicFilterC
         )}
       </button>
 
-      {/* 칩 목록 — 가로 슬라이드 */}
+      
       <div
         className="relative min-w-0 max-w-full overflow-hidden transition-all duration-300 ease-in-out"
         style={{ maxWidth: isOpen ? "1000px" : "0px", opacity: isOpen ? 1 : 0 }}

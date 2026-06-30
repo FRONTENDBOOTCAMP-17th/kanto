@@ -70,7 +70,7 @@ export default function UsedGoodsDetail({
     ? new Date(data.posts.users.created_at)
     : null;
 
-  // 거래지역: 바랑가이/시가 있으면 그 라벨, 없으면 기존 광역 enum (레거시 글)
+  
   const locationLabel =
     data.location_barangay || data.location_city
       ? formatBarangayLabel(data.location_barangay, data.location_city)

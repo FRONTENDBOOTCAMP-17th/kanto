@@ -19,8 +19,8 @@ export default function NotificationsPage() {
     if (href) router.push(href);
   };
 
-  // 읽은 알림은 목록에서 제외하고(#5), 채팅 알림은 플로팅 위젯에서 처리하므로
-  // 전체보기 페이지에는 정지/해제 등 비채팅 알림만 보여준다.
+  
+  
   const visible = notifications.filter(
     (n) => !n.is_read && n.type !== "chat",
   );

@@ -73,14 +73,14 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
     messagesRef.current = messages;
   }, [messages]);
 
-  // 새로고침/탭 닫기 시 대화 저장
+  
   useEffect(() => {
     const handleUnload = () => saveToHistory(messagesRef.current);
     window.addEventListener("beforeunload", handleUnload);
     return () => window.removeEventListener("beforeunload", handleUnload);
   }, []);
 
-  // 챗봇 닫힐 때 대화 저장 후 새 대화 시작
+  
   const handleClose = () => {
     saveToHistory(messagesRef.current);
     setMessages(initialMessages);
@@ -89,11 +89,11 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
     onToggle();
   };
 
-  // 최신 handleClose 참조 (바깥 클릭 리스너의 stale closure 방지)
+  
   const handleCloseRef = useRef(handleClose);
   handleCloseRef.current = handleClose;
 
-  // 열려 있을 때 바깥 클릭 시 닫기
+  
   useEffect(() => {
     if (!isOpen) return;
     const handleOutsideClick = (e: MouseEvent) => {
@@ -195,7 +195,7 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
             max-md:fixed max-md:inset-0 max-md:mr-0 max-md:w-full max-md:h-full max-md:rounded-none max-md:shadow-none max-md:border-0 max-md:z-55
           "
         >
-          {/* 헤더 */}
+          
           <div className="flex items-center gap-3 px-4 py-3 bg-linear-to-r from-violet-600 to-indigo-600 text-white shrink-0">
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
               <BotMessageSquare className="w-5 h-5" />
@@ -229,7 +229,7 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
           </div>
 
           {view === "history" ? (
-            /* 히스토리 패널 */
+            
             <div className="flex flex-col flex-1 overflow-hidden bg-gray-50">
               <div className="flex items-center gap-2 px-3 py-2.5 bg-white border-b border-gray-100 shrink-0">
                 <button
@@ -268,7 +268,7 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
               )}
             </div>
           ) : (
-            /* 채팅 패널 */
+            
             <>
               <div
                 className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-gray-50"
@@ -340,7 +340,7 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* 입력창 */}
+              
               <div className="bg-white border-t border-gray-100 px-4 py-3 flex items-center gap-2 shrink-0">
                 <input
                   value={input}
@@ -362,7 +362,7 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
         </div>
       )}
 
-      {/* 트리거 버튼 */}
+      
       <button
         onClick={isOpen ? handleClose : onToggle}
         className={`relative z-50 w-12 h-12 bg-linear-to-br from-violet-500 to-indigo-600 hover:from-violet-600 hover:to-indigo-700 rounded-full shadow-lg flex items-center justify-center text-white transition-all hover:scale-105 active:scale-95 ${mobileHidden ? "max-md:hidden" : ""}`}

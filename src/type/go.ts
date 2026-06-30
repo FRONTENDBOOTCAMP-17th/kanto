@@ -3,50 +3,46 @@ import type { MeetupTopicKey } from "@/constants/meetupTopics";
 
 type MeetupRow = Tables<"meetups">;
 
-// 목록/상세에서 쓰는 enriched 모임 (posts 조인 + joined 참여자 수)
 export interface Meetup extends Omit<MeetupRow, "topic"> {
   topic: MeetupTopicKey;
-  title: string; // posts.title
-  host_id: number; // posts.user_id (public.users.id)
-  host_name: string; // users.name
-  status: string; // posts.status ("active" | "inactive")
-  participant_count: number; // joined 참여자 수 (주최자 별도)
+  title: string; 
+  host_id: number; 
+  host_name: string; 
+  status: string; 
+  participant_count: number; 
 }
 
-// 상세 패널 참여자 (users 조인)
 export interface MeetupParticipant {
   id: number;
   meetup_post_id: number;
   user_id: number;
   joined_at: string;
   status: "joined" | "cancelled";
-  display_name: string; // users.name
+  display_name: string; 
   avatar_url: string | null;
-  is_host?: boolean; // 단체채팅 멤버 목록에서 호스트 표시용
-  is_deleted?: boolean; // 탈퇴(deleted_at) 회원 여부 — 신고 차단용
+  is_host?: boolean; 
+  is_deleted?: boolean; 
 }
 
-// 장소 자동완성으로 선택된 위치 (좌표 + 주소)
 export interface PickedLocation {
   lat: number;
   lng: number;
-  address: string; // formattedAddress (없으면 displayName)
+  address: string; 
   placeId?: string;
-  // 마켓플레이스 거래지역 세분화용 (go 모임에서는 미사용) — addressComponents 에서 추출
+  
   barangay?: string | null;
   city?: string | null;
   province?: string | null;
-  displayName?: string | null; // 시 성분 없는 장소(랜드마크 등)의 라벨 폴백용
+  displayName?: string | null; 
 }
 
-// 생성 모달 입력 (date/time → ISO 조합은 createMeetup에서 처리)
 export interface CreateMeetupInput {
   title: string;
   topic: MeetupTopicKey;
   description: string;
-  date: string; // "YYYY-MM-DD"
-  startTime: string; // "HH:mm"
-  endTime: string; // "HH:mm"
+  date: string; 
+  startTime: string; 
+  endTime: string; 
   lat: number;
   lng: number;
   address: string;
@@ -54,11 +50,10 @@ export interface CreateMeetupInput {
   maxParticipants: number;
 }
 
-// 어드민 테이블/Drawer용 합성 뷰
 export interface AdminMeetup extends Meetup {
   host_initial: string;
-  status: "active" | "upcoming" | "ended"; // 시간/강제종료 기준 계산값
+  status: "active" | "upcoming" | "ended"; 
   participants: { id: number; user_id: number; status: string; display_name: string }[];
-  reports: number; // common_reports (target_type='post', target_id=post_id) 집계
-  created_at: string; // posts.created_at
+  reports: number; 
+  created_at: string; 
 }

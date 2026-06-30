@@ -70,7 +70,7 @@ export default function ChatRoomClient({
     setIsReserved(next);
     try {
       await toggleReserveAction(postId, next);
-      // 목록 페이지(서버 컴포넌트)를 즉시 재요청해 예약중 배지가 새로고침 없이 반영되게 한다.
+      
       router.refresh();
     } catch {
       setIsReserved(!next);
@@ -209,9 +209,9 @@ export default function ChatRoomClient({
     refreshBannerState();
   }, [refreshBannerState, systemMsgCount]);
 
-  // 거래 완료 여부: 방 로드 시점의 is_sold 거나, 방을 연 채로 수령확인되어
-  // 거래가 released 된 경우(메시지의 transaction 상태)를 함께 본다.
-  // 완료되면 예약중 변경/취소 버튼을 숨긴다.
+  
+  
+  
   const isCompleted =
     isSold || messages.some((m) => m.transaction?.status === "released");
 

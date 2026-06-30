@@ -11,7 +11,7 @@ interface SearchBarProps {
   givenSearch?: string;
   defaultLocation?: string;
   defaultBarangay?: string;
-  // 광역(location_type)별 실제 매물 바랑가이 목록 — 2단계 필터 옵션 동적 소스
+  
   barangaysByLocation?: Record<string, string[]>;
   onSearch?: (query: string, location: string, barangay: string) => void;
   showLocation?: boolean;
@@ -39,7 +39,7 @@ export function SearchBar({
   const locationDropdownRef = useRef<HTMLDivElement>(null);
   const barangayDropdownRef = useRef<HTMLDivElement>(null);
 
-  // 선택된 광역의 바랑가이 옵션 (광역 미선택 시 비표시)
+  
   const barangayOptions =
     locationFilter !== "all" ? (barangaysByLocation?.[locationFilter] ?? []) : [];
   const showBarangay = showLocation && barangayOptions.length > 0;
@@ -58,7 +58,7 @@ export function SearchBar({
   const selectedLocationLabel = locationLabel(locationFilter);
   const selectedBarangayLabel = barangayLabel(barangayFilter);
 
-  // 광역 변경 시 바랑가이 선택 초기화
+  
   const selectLocation = (id: string) => {
     setLocationFilter(id);
     setBarangayFilter("all");

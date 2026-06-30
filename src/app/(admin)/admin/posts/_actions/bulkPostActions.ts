@@ -19,7 +19,6 @@ async function getCurrentAdminId(): Promise<number | null> {
   return data?.id ?? null;
 }
 
-/** 선택한 게시글들의 상태를 활성↔비공개로 각각 토글한다. */
 export async function bulkTogglePostStatus(ids: number[]): Promise<void> {
   if (ids.length === 0) return;
   const admin = createAdminClient();
@@ -52,7 +51,6 @@ export async function bulkTogglePostStatus(ids: number[]): Promise<void> {
   revalidatePath("/admin");
 }
 
-/** 선택한 게시글들을 복구한다 (status를 active로 되돌리고 deleted_at 초기화). */
 export async function bulkRestorePosts(ids: number[]): Promise<void> {
   if (ids.length === 0) return;
   const admin = createAdminClient();
@@ -66,8 +64,6 @@ export async function bulkRestorePosts(ids: number[]): Promise<void> {
   revalidatePath("/admin");
 }
 
-
-/** 선택한 게시글들을 소프트 삭제한다 (30일 후 pg_cron이 영구 삭제). */
 export async function bulkDeletePosts(ids: number[]): Promise<void> {
   if (ids.length === 0) return;
   const admin = createAdminClient();

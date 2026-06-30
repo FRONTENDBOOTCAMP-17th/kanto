@@ -80,7 +80,7 @@ export default function MaintenancePage() {
 
   return (
     <div className="p-6 lg:p-8">
-      {/* Header */}
+      
       <div className="mb-7 flex flex-wrap items-start justify-between gap-4">
         <div>
           <Link
@@ -107,7 +107,7 @@ export default function MaintenancePage() {
         </button>
       </div>
 
-      {/* Active status banner */}
+      
       {activeNow ? (
         <div className="mb-5 flex items-center gap-3 rounded-2xl border border-red-100 bg-red-50 px-5 py-4">
           <AlertTriangle className="h-5 w-5 shrink-0 text-red-500" strokeWidth={2} />
@@ -128,7 +128,7 @@ export default function MaintenancePage() {
         </div>
       )}
 
-      {/* Form */}
+      
       {showForm && (
         <div className="mb-5 rounded-2xl border border-[#ebeef0] bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
           <div className="mb-4 flex items-center justify-between">
@@ -200,7 +200,7 @@ export default function MaintenancePage() {
         </div>
       )}
 
-      {/* List */}
+      
       <div className="rounded-2xl border border-[#ebeef0] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
         {windows.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-2 py-20 text-slate-400">

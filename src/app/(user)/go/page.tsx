@@ -1,7 +1,5 @@
 "use client";
 
-// 칸토 go! 지도 메인 페이지
-
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
@@ -23,18 +21,14 @@ import { useGoUiStore } from "@/store/goUiStore";
 import type { Meetup } from "@/type/go";
 import type { MeetupTopicKey } from "@/constants/meetupTopics";
 
-// 마닐라 BGC/Makati 중심
 const MANILA_CENTER = { lat: 14.5547, lng: 121.0244 };
 const MAP_ID = "kanto-go-map";
 
-// 필리핀 전역 — 이 경계 밖으로는 지도를 팬/줌 불가
 const PH_BOUNDS = { north: 21.2, south: 4.6, west: 116.9, east: 126.6 };
 
-// 클러스터링 파라미터
-const CLUSTER_PX = 46; // 이 픽셀 거리 이내면 한 묶음
-const SPREAD_ZOOM = 18; // 이 줌 이상이면 겹친(분리 불가) 핀을 원형으로 펼침
+const CLUSTER_PX = 46; 
+const SPREAD_ZOOM = 18; 
 
-// 위경도 → Web Mercator 월드 좌표(타일 256px, zoom 0 기준)
 function worldXY(lat: number, lng: number) {
   const s = Math.min(
     Math.max(Math.sin((lat * Math.PI) / 180), -0.9999),
@@ -69,7 +63,6 @@ function RecenterButton() {
   );
 }
 
-// 목록에서 선택한 모임의 핀 위치로 지도를 이동시킨다.
 function MapPanController({
   meetup,
   active,
@@ -84,15 +77,15 @@ function MapPanController({
 
     map.panTo({ lat: meetup.location_lat, lng: meetup.location_lng });
 
-    // 핀이 클러스터에 묶여 안 보일 수 있으므로 개별 핀이 드러나는 줌까지 확대
+    
     if ((map.getZoom() ?? 12) < 16) map.setZoom(16);
 
-    // 데스크톱: 우측 상세 패널 너비의 절반만큼 우측으로 panBy → 핀이 패널에 안 가린 채 보이는 영역 중앙에 옴
+    
     if (window.innerWidth >= 768) {
       const panelWidth = window.innerWidth >= 1024 ? 390 : 340;
       map.panBy(panelWidth / 2, 0);
     }
-    // 실시간 갱신(participant_count 변동)으로 인한 재이동을 막기 위해 post_id 기준으로만 트리거
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, meetup?.post_id, active]);
 
@@ -123,7 +116,7 @@ export default function GoPage() {
 
   const { meetups, allMeetups, loading } = useLiveMeetups({ topicFilter });
 
-  // 모바일 여부 (목록 → 상세 네비게이션 분기)
+  
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
     const update = () => setIsMobile(mq.matches);
@@ -132,7 +125,7 @@ export default function GoPage() {
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  // 패널 열림 상태를 전역에 반영 → 우측 하단 위젯 숨김
+  
   useEffect(() => {
     setDetailOpen(selectedMeetupId !== null);
     return () => setDetailOpen(false);
@@ -158,7 +151,7 @@ export default function GoPage() {
             .map((m) => m.topic),
         );
 
-  // 현재 줌에서 화면상 가까운(≈CLUSTER_PX) 모임을 묶는다. 줌이 커지면 자연히 분리됨.
+  
   const clusters = useMemo(() => {
     const scale = Math.pow(2, zoom);
     const pts = meetups.map((m) => {
@@ -206,7 +199,7 @@ export default function GoPage() {
     setZoom(e.detail.zoom);
   };
 
-  // 실시간 목록과 동기화된 선택 모임 — 참여자 수/상태 변경이 패널에 즉시 반영됨
+  
   const selectedMeetup =
     meetups.find((m) => m.post_id === selectedMeetupId) ?? null;
   const mobileSheetOpen = showList || selectedMeetupId !== null;
@@ -218,14 +211,14 @@ export default function GoPage() {
     );
   };
 
-  // 목록에서 모임 선택 — 모바일에선 목록을 닫고 상세로 "이동"(상세가 오른쪽에서 등장)
+  
   const handleSelectFromList = (meetup: Meetup) => {
     setDetailFromList(true);
     setSelectedMeetupId(meetup.post_id);
     if (isMobile) setShowList(false);
   };
 
-  // 상세에서 뒤로 — 모바일에서 목록으로 복귀(목록이 왼쪽에서 등장)
+  
   const handleBackToList = () => {
     setSelectedMeetupId(null);
     setDetailFromList(false);
@@ -245,13 +238,13 @@ export default function GoPage() {
 
   const handleCreated = () => {
     setShowCreate(false);
-    // 생성된 모임은 Realtime 구독으로 자동 갱신됨
+    
   };
 
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
       <div className="relative h-[calc(100vh-48px)] overflow-hidden md:h-[calc(100vh-109px)]">
-        {/* Google Maps */}
+        
         <Map
           id={MAP_ID}
           mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID}
@@ -281,7 +274,7 @@ export default function GoPage() {
                 />
               );
             }
-            // 고배율: 좌표가 (거의) 동일해 더 줌해도 안 갈라지는 핀들을 원형으로 펼침
+            
             if (zoom >= SPREAD_ZOOM) {
               const cLat =
                 group.reduce((s, m) => s + m.location_lat, 0) / group.length;
@@ -311,10 +304,10 @@ export default function GoPage() {
           })}
         </Map>
 
-        {/* 목록에서 선택 시 해당 핀으로 지도 이동 */}
+        
         <MapPanController meetup={selectedMeetup} active={detailFromList} />
 
-        {/* ── 상단 오버레이: 필터(좌) + 번개모임 만들기(우) ── */}
+        
         <div
           className={`pointer-events-none absolute right-0 top-0 z-10 pt-3.5 left-0 transition-[left] duration-280 ease-in-out ${
             showList ? "md:left-75 lg:left-85" : ""
@@ -340,7 +333,7 @@ export default function GoPage() {
           </div>
         </div>
 
-        {/* ── 진행 중 카운트 필 (클릭 시 목록 사이드바 토글) ── */}
+        
         <button
           onClick={toggleList}
           className={`absolute left-5 z-10 flex items-center gap-1.5 rounded-full bg-slate-900/78 px-3.5 py-1.75 backdrop-blur-md transition-[top,background-color] hover:bg-slate-900/90 md:top-18 ${
@@ -355,7 +348,7 @@ export default function GoPage() {
           </span>
         </button>
 
-        {/* ── 내 위치 버튼 (좌측 하단, 목록 열리면 데스크톱에서 우측으로 이동) ── */}
+        
         <div
           className={`absolute bottom-7 z-10 left-5 transition-[left] duration-280 ease-in-out ${
             showList ? "md:left-80 lg:left-90" : ""
@@ -364,7 +357,7 @@ export default function GoPage() {
           <RecenterButton />
         </div>
 
-        {/* ── 목록 패널 (데스크톱 왼쪽 / 모바일 하단 시트) ── */}
+        
         {showList && (
           <MeetupListPanel
             meetups={meetups}
@@ -375,7 +368,7 @@ export default function GoPage() {
           />
         )}
 
-        {/* ── 상세 패널 (데스크톱 오른쪽 / 모바일 하단 시트, 목록에서 우측으로 이동) ── */}
+        
         <MeetupDetailPanel
           meetup={selectedMeetup}
           onClose={handleCloseDetail}
@@ -384,7 +377,7 @@ export default function GoPage() {
           suppressOverlay={showList}
         />
 
-        {/* ── 생성 모달 ── */}
+        
         {showCreate && (
           <MeetupCreateModal
             onClose={() => setShowCreate(false)}

@@ -74,7 +74,7 @@ export default function RentalCreateForm({
   const [maxOccupants, setMaxOccupants] = useState(initialData?.max_occupants?.toString() ?? "");
   const [description, setDescription] = useState(initialData?.description ?? "");
   const [amenities, setAmenities] = useState<Amenity[]>((initialData?.amenities as Amenity[]) ?? []);
-  // 새로 선택한 거래지역 (편집 시 재선택 안 하면 null → 기존 값 유지)
+  
   const [picked, setPicked] = useState<PickedLocation | null>(null);
   const fallbackLocationLabel =
     initialData?.location_barangay || initialData?.location_city
@@ -85,7 +85,7 @@ export default function RentalCreateForm({
       : (initialData?.location ?? null);
   const hasExistingLocation = Boolean(initialData?.location);
 
-  // 저장용 거래지역 필드 — 새로 선택 시 좌표 클램프 후 도출, 아니면 기존 값 유지.
+  
   const buildLocationFields = () =>
     picked
       ? {
@@ -94,7 +94,7 @@ export default function RentalCreateForm({
             picked.province ?? null,
           ) as TradeLocation,
           location_barangay: picked.barangay ?? null,
-          // 시 성분 없는 장소(랜드마크 등)도 라벨이 비지 않도록 폴백 — 표시 전용
+          
           location_city:
             picked.city ?? picked.province ?? picked.displayName ?? picked.address ?? null,
           location_lat: roundCoord(picked.lat),

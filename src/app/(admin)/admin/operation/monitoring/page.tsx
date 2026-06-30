@@ -28,7 +28,7 @@ export default async function MonitoringPage() {
 
   return (
     <div className="p-6 lg:p-8">
-      {/* Page header */}
+      
       <div className="mb-7">
         <Link
           href="/admin/operation"
@@ -48,7 +48,7 @@ export default async function MonitoringPage() {
         </p>
       </div>
 
-      {/* KPI 카드 */}
+      
       <div className="mb-6 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
         {[
           {

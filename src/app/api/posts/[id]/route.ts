@@ -18,7 +18,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // auth_id → users.id 조회
+  
   const { data: publicUser } = await supabase
     .from("users")
     .select("id")
@@ -29,7 +29,7 @@ export async function DELETE(
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  // 소유자 및 post_type 확인
+  
   const { data: post, error: postFetchError } = await supabaseAdmin
     .from("posts")
     .select("user_id, post_type")
@@ -44,7 +44,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  // CASCADE DELETE 미설정 대비: 자식 테이블 먼저 삭제
+  
   if (post.post_type === "rental") {
     await supabaseAdmin.from("rentals").delete().eq("post_id", postId);
   } else if (post.post_type === "jobs") {

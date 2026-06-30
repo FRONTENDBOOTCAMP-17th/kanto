@@ -199,7 +199,6 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
     });
   }
 
-
   return (
     <>
       <style>{`
@@ -325,7 +324,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
       </div>
 
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
-        {/* 데스크탑: 테이블 */}
+        
         <div className="hidden overflow-x-auto lg:block">
           <AdminPostsTable
             posts={pageItems}
@@ -337,7 +336,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
           />
         </div>
 
-        {/* 모바일: 카드 */}
+        
         {pageItems.length > 0 && (
           <div className="lg:hidden">
             <AdminPostsCard posts={pageItems} onOpen={(id) => setSelId(id)} />
@@ -386,7 +385,6 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
         onConfirm={handleBulkDelete}
         onCancel={() => setConfirmBulkDelete(false)}
       />
-
 
       {toast && (
         <div

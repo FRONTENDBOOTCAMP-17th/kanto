@@ -1,4 +1,4 @@
-// 인라인 2단계 확인 박스 — 상세 패널의 "모임 종료"·"참여 취소" 확인에서 공용 사용.
+
 
 import { AlertTriangle } from "lucide-react";
 

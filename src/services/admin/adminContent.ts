@@ -1,7 +1,5 @@
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
-/* ─── 타입 ─────────────────────────────────────────────── */
-
 export type Scope = "chat" | "post" | "nickname";
 
 export interface ProfanityRule {
@@ -32,8 +30,6 @@ export interface SanctionTemplate {
   body: string;
   updated_at: string;
 }
-
-/* ─── 금칙어 룰 ─────────────────────────────────────────── */
 
 export async function getProfanityRules(): Promise<ProfanityRule[]> {
   const { data, error } = await supabaseAdmin
@@ -79,8 +75,6 @@ export async function deleteProfanityRule(id: number): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
-/* ─── 스팸 설정 ─────────────────────────────────────────── */
-
 export async function getSpamConfig(): Promise<SpamConfig> {
   const { data, error } = await supabaseAdmin
     .from("spam_config")
@@ -108,8 +102,6 @@ export async function updateSpamConfig(
   if (error) throw new Error(error.message);
   return data as SpamConfig;
 }
-
-/* ─── 금칙어 영향 게시물 검색 ───────────────────────────── */
 
 export interface AffectedPost {
   id: number;
@@ -144,8 +136,6 @@ export async function searchPostsByWords(words: string[]): Promise<AffectedPost[
 
   return results;
 }
-
-/* ─── 제재 알림 템플릿 ───────────────────────────────────── */
 
 export async function getSanctionTemplates(): Promise<SanctionTemplate[]> {
   const { data, error } = await supabaseAdmin

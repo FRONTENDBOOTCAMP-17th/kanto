@@ -59,7 +59,7 @@ export default function AdminPaymentsClient({ transactions }: Props) {
 
   return (
     <>
-      {/* 헤더 */}
+      
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
@@ -81,7 +81,7 @@ export default function AdminPaymentsClient({ transactions }: Props) {
         </div>
       </div>
 
-      {/* 검색 */}
+      
       <div className="flex items-center gap-2.5 rounded-[14px] border border-[#e7ebee] bg-white px-4 py-[13px] shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -94,7 +94,7 @@ export default function AdminPaymentsClient({ transactions }: Props) {
         />
       </div>
 
-      {/* 상태 필터 */}
+      
       <div className="flex flex-wrap gap-1.5">
         {STATUS_FILTERS.map((s) => (
           <button
@@ -112,9 +112,9 @@ export default function AdminPaymentsClient({ transactions }: Props) {
         ))}
       </div>
 
-      {/* 테이블 */}
+      
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
-        {/* 데스크탑: 테이블 */}
+        
         <div className="hidden overflow-x-auto lg:block">
           <table className="w-full min-w-[760px] border-collapse">
             <thead>
@@ -169,7 +169,7 @@ export default function AdminPaymentsClient({ transactions }: Props) {
           </table>
         </div>
 
-        {/* 모바일: 카드 */}
+        
         {pageItems.length > 0 && (
           <div className="lg:hidden divide-y divide-[#f3f5f7]">
             {pageItems.map((tx) => {

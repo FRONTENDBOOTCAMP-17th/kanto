@@ -53,14 +53,14 @@ export function NoticeBadge() {
 
   return (
     <div className="flex items-center gap-1">
-      {/* 계정 정지 배지 — 모바일 전용 */}
+      
       {isSuspended && (
         <span className="md:hidden inline-flex items-center px-2 py-0.5 rounded-full bg-red-500 text-white text-[10px] font-bold tracking-wide leading-none">
           정지
         </span>
       )}
 
-      {/* 공지 아이콘 */}
+      
       {count > 0 && (
         <Link
           href="/notices"
@@ -71,12 +71,12 @@ export function NoticeBadge() {
         >
           <Megaphone className="w-5 h-5" />
           {count > 1 ? (
-            /* 다수 공지: 1/3 형태 */
+            
             <span className="text-[11px] font-semibold tabular-nums leading-none text-teal-600">
               1/{count}
             </span>
           ) : (
-            /* 단일 공지: 빨간 점 */
+            
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white" />
           )}
         </Link>
