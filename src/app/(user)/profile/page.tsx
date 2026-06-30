@@ -39,6 +39,7 @@ export default async function ProfilePage() {
           .select("id", { count: "exact", head: true })
           .eq("user_id", userId)
           .eq("status", "active")
+          .in("post_type", ["used_goods", "jobs", "rental"])
           .then(({ count }) => count ?? 0),
         supabase
           .from("common_likes")
@@ -46,6 +47,7 @@ export default async function ProfilePage() {
           .eq("user_id", userId)
           .eq("target_type", "post")
           .eq("posts.status", "active")
+          .in("posts.post_type", ["used_goods", "jobs", "rental"])
           .then(({ count }) => count ?? 0),
       ])
     : [0, 0];

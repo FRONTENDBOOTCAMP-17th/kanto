@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
 import type { User as UserType } from "@/type/user";
@@ -117,18 +118,22 @@ function ProfileForm({
             <div className="flex flex-col gap-3 px-5 md:px-0">
               <h2 className="text-sm font-semibold text-gray-700">{t("stats")}</h2>
               <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="flex flex-col gap-0.5">
+                <Link href="/myposts" className="flex flex-col gap-0.5 rounded-lg p-1 hover:bg-gray-50 transition-colors">
                   <span className="text-xl font-bold text-gray-900">{postCount}</span>
                   <span className="text-xs text-gray-500">{t("posts")}</span>
-                </div>
-                <div className="flex flex-col gap-0.5">
+                </Link>
+                <Link href="/favorites" className="flex flex-col gap-0.5 rounded-lg p-1 hover:bg-gray-50 transition-colors">
                   <span className="text-xl font-bold text-gray-900">{likeCount}</span>
                   <span className="text-xs text-gray-500">{t("favorites")}</span>
-                </div>
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-xl font-bold text-gray-900">{reviewCount}</span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("reviews")}
+                  className="flex flex-col gap-0.5 rounded-lg p-1 hover:bg-gray-50 transition-colors w-full cursor-pointer"
+                >
+                  <span className="text-xl font-bold text-gray-900 w-full">{reviewCount}</span>
                   <span className="text-xs text-gray-500">{t("reviews")}</span>
-                </div>
+                </button>
               </div>
             </div>
 
