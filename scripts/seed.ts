@@ -1007,7 +1007,7 @@ async function seedLikes(ids: Record<string, number>) {
 async function seedTrustHistory(ids: Record<string, number>) {
   console.log("\n📈 KTS 히스토리 생성 중...");
 
-  const userMap = new Map(USERS.map((u) => [u.email, u]));
+  const userMap = new Map<string, (typeof USERS)[number]>(USERS.map((u) => [u.email, u]));
 
   for (const [email, userId] of Object.entries(ids)) {
     const user = userMap.get(email);
