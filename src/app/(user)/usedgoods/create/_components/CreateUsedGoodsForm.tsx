@@ -389,7 +389,6 @@ export function CreateUsedGoodsForm({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="h-12 rounded-sm"
-                required
               />
               {title.length > 0 && title.trim().length < 2 && (
                 <p className="text-sm text-red-500">{t("form.titleMinLength")}</p>
@@ -407,7 +406,6 @@ export function CreateUsedGoodsForm({
                   value={price}
                   onChange={(e) => setPrice(e.target.value.replace(/[^0-9]/g, ""))}
                   className="h-12 rounded-sm pr-12"
-                  required
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
                   PHP
@@ -420,7 +418,6 @@ export function CreateUsedGoodsForm({
               <Select
                 value={productCategory}
                 onValueChange={(v) => setProductCategory(v as ProductCategory)}
-                required
               >
                 <SelectTrigger className="h-12 rounded-sm">
                   <SelectValue placeholder={t("form.categoryPlaceholder")} />
@@ -440,7 +437,6 @@ export function CreateUsedGoodsForm({
               <Select
                 value={condition}
                 onValueChange={(v) => setCondition(v as ProductCondition)}
-                required
               >
                 <SelectTrigger className="h-12 rounded-sm">
                   <SelectValue placeholder={t("form.conditionPlaceholder")} />
@@ -474,7 +470,6 @@ export function CreateUsedGoodsForm({
                 onChange={(e) => setContent(e.target.value)}
                 maxLength={5000}
                 rows={10}
-                required
               />
               {content.length > 0 && content.trim().length < 10 && (
                 <p className="text-sm text-red-500">{t("form.contentMinLength")}</p>
