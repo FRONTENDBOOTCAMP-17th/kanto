@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { createClient } from "@/utils/supabase/server";
 import { getLikeList } from "@/services/likes";
 import { getUsedGoodsList } from "@/services/usedGoods/usedGoods";
 import { getJobList } from "@/services/job/job";
@@ -45,27 +46,42 @@ export default async function MypostsPage({
   const { likedIds, currentUserId } = await getLikeList(activeType);
   if (currentUserId === null) redirect("/login");
 
-  const t = await getTranslations("Favorites");
+  const [t, supabase] = await Promise.all([
+    getTranslations("Favorites"),
+    createClient(),
+  ]);
+
+  const countTypes = ["used_goods", "jobs", "rental"] as const;
+  const paging = { page: currentPage, pageSize: ITEMS_PER_PAGE };
+  const [countResults, postsResult] = await Promise.all([
+    Promise.all(
+      countTypes.map((postType) =>
+        supabase
+          .from("posts")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", currentUserId)
+          .eq("post_type", postType)
+          .eq("status", "active")
+          .then(({ count }) => count ?? 0),
+      ),
+    ),
+    (async () => {
+      if (activeType === "used_goods") return getUsedGoodsList({ userId: currentUserId }, paging);
+      if (activeType === "jobs") return getJobList({ userId: currentUserId }, paging);
+      return getRentalList({ userId: currentUserId }, paging);
+    })(),
+  ]);
+
+  const counts = { used_goods: countResults[0], jobs: countResults[1], rental: countResults[2] };
 
   let usedGoods: UsedGoodsWithPost[] = [];
   let jobs: JobWithPost[] = [];
   let rentals: RentalWithPost[] = [];
-  let totalPages = 1;
+  const totalPages = Math.ceil(postsResult.total / ITEMS_PER_PAGE);
 
-  const paging = { page: currentPage, pageSize: ITEMS_PER_PAGE };
-  if (activeType === "used_goods") {
-    const { posts, total } = await getUsedGoodsList({ userId: currentUserId }, paging);
-    totalPages = Math.ceil(total / ITEMS_PER_PAGE);
-    usedGoods = posts;
-  } else if (activeType === "jobs") {
-    const { posts, total } = await getJobList({ userId: currentUserId }, paging);
-    totalPages = Math.ceil(total / ITEMS_PER_PAGE);
-    jobs = posts;
-  } else {
-    const { posts, total } = await getRentalList({ userId: currentUserId }, paging);
-    totalPages = Math.ceil(total / ITEMS_PER_PAGE);
-    rentals = posts;
-  }
+  if (activeType === "used_goods") usedGoods = postsResult.posts as UsedGoodsWithPost[];
+  else if (activeType === "jobs") jobs = postsResult.posts as JobWithPost[];
+  else rentals = postsResult.posts as RentalWithPost[];
 
   const isEmpty =
     (activeType === "used_goods" ? usedGoods : activeType === "jobs" ? jobs : rentals).length === 0;
@@ -74,7 +90,7 @@ export default async function MypostsPage({
     <div className="page-wrapper">
       <main className="flex-1 page-container w-full py-8">
         <h1 className="page-title mb-6">{t("myPostsTitle")}</h1>
-        <FavoritesTabs activeType={activeType} tabPath="/myposts" />
+        <FavoritesTabs activeType={activeType} tabPath="/myposts" counts={counts} />
         <div className="border-t border-gray-200 my-6" />
 
         {isEmpty ? (
