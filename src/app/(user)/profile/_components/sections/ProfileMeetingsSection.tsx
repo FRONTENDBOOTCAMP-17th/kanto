@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Users, MapPin, Clock, CalendarDays } from "lucide-react";
+import { Users, MapPin, Clock, CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 
 export type MeetupSummary = {
   post_id: number;
@@ -18,6 +18,8 @@ export type MeetupSummary = {
 };
 
 type SubTab = "created" | "joined";
+
+const PAGE_SIZE = 4;
 
 function getMeetupStatus(start_at: string, end_at: string, post_status: string) {
   const now = new Date();
@@ -40,6 +42,21 @@ const STATUS_COLOR: Record<string, string> = {
 function formatDate(iso: string) {
   const d = new Date(iso);
   return `${d.getMonth() + 1}/${d.getDate()} ${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
+}
+
+function Pagination({ page, total, onChange }: { page: number; total: number; onChange: (p: number) => void }) {
+  if (total <= 1) return null;
+  return (
+    <div className="flex items-center justify-center gap-2 mt-5">
+      <button onClick={() => onChange(page - 1)} disabled={page === 1} className="w-8 h-8 rounded-lg border border-gray-200 text-gray-500 disabled:opacity-30 hover:bg-gray-50 transition-colors flex items-center justify-center">
+        <ChevronLeft className="w-4 h-4" />
+      </button>
+      <span className="text-sm text-gray-500">{page} / {total}</span>
+      <button onClick={() => onChange(page + 1)} disabled={page === total} className="w-8 h-8 rounded-lg border border-gray-200 text-gray-500 disabled:opacity-30 hover:bg-gray-50 transition-colors flex items-center justify-center">
+        <ChevronRight className="w-4 h-4" />
+      </button>
+    </div>
+  );
 }
 
 function MeetupCard({ meetup, showHost }: { meetup: MeetupSummary; showHost?: boolean }) {
@@ -89,7 +106,16 @@ export function ProfileMeetingsSection({
   joinedMeetups: MeetupSummary[];
 }) {
   const [subTab, setSubTab] = useState<SubTab>("created");
+  const [page, setPage] = useState(1);
+
+  function switchTab(tab: SubTab) {
+    setSubTab(tab);
+    setPage(1);
+  }
+
   const list = subTab === "created" ? createdMeetups : joinedMeetups;
+  const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+  const paged = list.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <div className="px-5 md:px-0 py-6">
@@ -101,7 +127,7 @@ export function ProfileMeetingsSection({
 
         <div className="mb-4 flex gap-1 rounded-xl border border-gray-100 bg-gray-50 p-1 w-fit">
           <button
-            onClick={() => setSubTab("created")}
+            onClick={() => switchTab("created")}
             className={`rounded-lg px-4 py-1.5 text-[13px] font-semibold transition-colors cursor-pointer ${
               subTab === "created" ? "bg-white text-gray-800 shadow-sm" : "text-gray-400 hover:text-gray-600"
             }`}
@@ -112,7 +138,7 @@ export function ProfileMeetingsSection({
             )}
           </button>
           <button
-            onClick={() => setSubTab("joined")}
+            onClick={() => switchTab("joined")}
             className={`rounded-lg px-4 py-1.5 text-[13px] font-semibold transition-colors cursor-pointer ${
               subTab === "joined" ? "bg-white text-gray-800 shadow-sm" : "text-gray-400 hover:text-gray-600"
             }`}
@@ -132,13 +158,16 @@ export function ProfileMeetingsSection({
             </p>
           </div>
         ) : (
-          <ul className="flex flex-col gap-3">
-            {list.map((meetup) => (
-              <li key={meetup.post_id}>
-                <MeetupCard meetup={meetup} showHost={subTab === "joined"} />
-              </li>
-            ))}
-          </ul>
+          <>
+            <ul className="flex flex-col gap-3">
+              {paged.map((meetup) => (
+                <li key={meetup.post_id}>
+                  <MeetupCard meetup={meetup} showHost={subTab === "joined"} />
+                </li>
+              ))}
+            </ul>
+            <Pagination page={page} total={totalPages} onChange={setPage} />
+          </>
         )}
       </div>
     </div>
