@@ -11,16 +11,12 @@ interface Props {
   givenSearch: string;
   defaultRoomType: string;
   defaultLocation: string;
-  defaultBarangay: string;
-  barangaysByLocation: Record<string, string[]>;
 }
 
 export function RentalFilters({
   givenSearch,
   defaultRoomType,
   defaultLocation,
-  defaultBarangay,
-  barangaysByLocation,
 }: Props) {
   const t = useTranslations("Rental");
   const te = useTranslations("Enums");
@@ -36,13 +32,11 @@ export function RentalFilters({
     <SearchBar
       givenSearch={givenSearch}
       defaultLocation={defaultLocation}
-      defaultBarangay={defaultBarangay}
-      barangaysByLocation={barangaysByLocation}
-      onSearch={(query, location, barangay) =>
+      onSearch={(query, location) =>
         updateParams({
           search: query,
           location,
-          barangay,
+          barangay: "all",
           roomType: pendingRoomType,
         })
       }
