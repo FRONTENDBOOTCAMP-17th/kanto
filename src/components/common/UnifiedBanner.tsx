@@ -89,7 +89,7 @@ export function UnifiedBanner() {
         setNotices(active);
       })
       .catch(() => {});
-  }, []);
+  }, [locale]);
 
   const items = useMemo<BannerItem[]>(() => {
     const result: BannerItem[] = [];
