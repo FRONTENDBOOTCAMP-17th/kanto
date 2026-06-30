@@ -1,10 +1,18 @@
-
-
 import { useEffect, useRef, useState } from "react";
 
-export function useSpamPrevention() {
+interface SpamPreventionConfig {
+  windowMs?: number;
+  maxCount?: number;
+  cooldownSec?: number;
+}
+
+export function useSpamPrevention(config?: SpamPreventionConfig) {
+  const windowMs = config?.windowMs ?? 3000;
+  const maxCount = config?.maxCount ?? 5;
+  const cooldownSec = config?.cooldownSec ?? 10;
+
   const [isCooldown, setIsCooldown] = useState(false);
-  const [cooldownSeconds, setCooldownSeconds] = useState(10);
+  const [cooldownSeconds, setCooldownSeconds] = useState(cooldownSec);
   const sendTimestamps = useRef<number[]>([]);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -18,12 +26,12 @@ export function useSpamPrevention() {
     const now = Date.now();
     sendTimestamps.current.push(now);
     sendTimestamps.current = sendTimestamps.current.filter(
-      (t) => now - t < 3000,
+      (t) => now - t < windowMs,
     );
 
-    if (sendTimestamps.current.length >= 5) {
+    if (sendTimestamps.current.length >= maxCount) {
       setIsCooldown(true);
-      setCooldownSeconds(10);
+      setCooldownSeconds(cooldownSec);
 
       intervalRef.current = setInterval(() => {
         setCooldownSeconds((prev) => {
@@ -40,5 +48,6 @@ export function useSpamPrevention() {
     }
     return false;
   };
+
   return { isCooldown, cooldownSeconds, recordSend };
 }

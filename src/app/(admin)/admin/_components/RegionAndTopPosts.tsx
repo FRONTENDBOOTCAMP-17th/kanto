@@ -54,8 +54,8 @@ export default function RegionAndTopPosts({ regions, topPosts }: Props) {
         )}
       </Card>
 
-      <Card className="flex-[1_1_320px]">
-        <div className="mb-4 flex items-center justify-between">
+      <Card className="flex-[1_1_320px] min-w-0">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-[18px] font-extrabold tracking-tight text-slate-900">
             인기 게시글 Top 5
           </h2>

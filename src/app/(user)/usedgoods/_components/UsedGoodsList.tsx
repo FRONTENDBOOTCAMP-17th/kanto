@@ -4,6 +4,8 @@ import { useTranslations } from "next-intl";
 import type { UsedGoodsWithPost } from "@/type/usedGoods";
 import { ContentCard } from "@/components/common/ContentCard";
 import { EmptyState } from "@/components/common/EmptyState";
+import PopularBadge from "@/app/(user)/main/_components/PopularBadge";
+import { formatBarangayLabel } from "@/type/location";
 
 interface Props {
   initialPosts: UsedGoodsWithPost[];
@@ -28,15 +30,19 @@ export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId, cu
           ? goods.images.filter((img): img is string => typeof img === "string")
           : [];
         const location =
-          goods?.location_type === "그 외 지역"
-            ? (goods.location_custom ?? "")
-            : (goods?.location_type ?? "");
+          goods?.location_barangay || goods?.location_city
+            ? formatBarangayLabel(goods.location_barangay, goods.location_city)
+            : goods?.location_type === "그 외 지역"
+              ? (goods.location_custom ?? "")
+              : (goods?.location_type ?? "");
 
         const reservedBadge = !post.is_sold && post.is_reserved ? (
           <span className="rounded bg-teal-400 px-1.5 py-0.5 text-[11px] font-bold text-white">
             {t("reserved")}
           </span>
         ) : undefined;
+
+        const badge = post.is_popular ? <PopularBadge /> : reservedBadge;
 
         return (
           <ContentCard
@@ -52,7 +58,7 @@ export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId, cu
             currentUserId={currentUserId}
             postId={post.id}
             subtitle={post.users?.name || undefined}
-            badge={reservedBadge}
+            badge={badge}
             soldOverlay={post.is_sold}
           />
         );

@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { REPORTS_TABLE } from "@/constants/report";
+import { getCurrentUserId } from "@/services/user/user";
 
 interface UserLikeReportStatus {
   userId: number | undefined;
@@ -10,38 +11,30 @@ interface UserLikeReportStatus {
 export async function getUserLikeReportStatus(
   postId: number,
 ): Promise<UserLikeReportStatus> {
+  const userId = await getCurrentUserId();
+
+  if (!userId) return { userId: undefined, initialLiked: false, initialReported: false };
+
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) return { userId: undefined, initialLiked: false, initialReported: false };
-
-  const { data: userData } = await supabase
-    .from("users")
-    .select("id")
-    .eq("auth_id", user.id)
-    .single();
-
-  if (!userData) return { userId: undefined, initialLiked: false, initialReported: false };
-
   const [{ data: likeData }, { data: reportData }] = await Promise.all([
     supabase
       .from("common_likes")
       .select("id")
       .eq("target_id", postId)
       .eq("target_type", "post")
-      .eq("user_id", userData.id)
+      .eq("user_id", userId)
       .single(),
     supabase
       .from(REPORTS_TABLE)
       .select("id")
       .eq("target_id", postId)
       .eq("target_type", "post")
-      .eq("user_id", userData.id)
+      .eq("user_id", userId)
       .single(),
   ]);
 
   return {
-    userId: userData.id,
+    userId,
     initialLiked: !!likeData,
     initialReported: !!reportData,
   };

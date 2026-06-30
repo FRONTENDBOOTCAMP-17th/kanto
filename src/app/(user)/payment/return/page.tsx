@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckCircle2, Clock, XCircle } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
@@ -7,6 +8,10 @@ import {
   postSystemMessage,
 } from "@/services/payment/transaction";
 import { getInvoice, isInvoicePaid } from "@/lib/xendit";
+
+export const metadata: Metadata = {
+  robots: { index: false },
+};
 
 export default async function PaymentReturnPage({
   searchParams,

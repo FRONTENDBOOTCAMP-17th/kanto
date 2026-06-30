@@ -4,6 +4,8 @@ interface Props {
   todaySignups: number;
   totalPosts: number;
   todayPosts: number;
+  totalReleasedTx: number;
+  totalReleasedAmount: number;
 }
 
 export default function KpiCards({
@@ -12,6 +14,8 @@ export default function KpiCards({
   todaySignups,
   totalPosts,
   todayPosts,
+  totalReleasedTx,
+  totalReleasedAmount,
 }: Props) {
   const KPIS = [
     { label: "총 회원수", value: totalUsers.toLocaleString(), unit: "명" },
@@ -19,14 +23,16 @@ export default function KpiCards({
     { label: "오늘 신규 가입", value: `+${todaySignups}`, unit: "명" },
     { label: "총 게시글", value: totalPosts.toLocaleString(), unit: "건" },
     { label: "오늘 신규 게시글", value: `+${todayPosts}`, unit: "건" },
+    { label: "완료 거래 건수", value: totalReleasedTx.toLocaleString(), unit: "건" },
+    { label: "총 거래 금액", value: `₱${totalReleasedAmount.toLocaleString()}`, unit: "" },
   ];
 
   return (
-    <div className="grid grid-cols-[repeat(auto-fit,minmax(210px,1fr))] gap-4">
-      {KPIS.map((k) => (
+    <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-7 gap-4">
+      {KPIS.map((k, i) => (
         <div
           key={k.label}
-          className="rounded-2xl border border-[#edf0f2] bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)]"
+          className={`rounded-2xl border border-[#edf0f2] bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)] ${i === KPIS.length - 1 ? "col-span-2 sm:col-span-1" : ""}`}
         >
           <span className="text-[13px] font-semibold text-slate-500">
             {k.label}

@@ -7,6 +7,7 @@ import { CATEGORY, POST_TYPE_LABEL } from "../_lib/constants";
 import { daysSince } from "../_lib/utils";
 import type { Category, ReportedUser, ReportedPost } from "@/type/admin";
 import Card from "./Card";
+import { useReportCenter } from "./DashboardReportCenter";
 
 function reportStatusFromCount(count: number) {
   if (count >= 5)
@@ -30,6 +31,7 @@ export default function ReportQueue({
   reportedPosts,
 }: Props) {
   const [tab, setTab] = useState<"members" | "posts">("members");
+  const { openUser, openPost } = useReportCenter();
 
   return (
     <Card className="flex h-[520px] min-w-0 flex-[1.3_1_440px] flex-col overflow-hidden">
@@ -114,7 +116,10 @@ export default function ReportQueue({
                         {m.latest_reason} · 신고 {Number(m.report_count)}회
                       </div>
                     </div>
-                    <button className="flex-shrink-0 whitespace-nowrap rounded-[9px] border border-[#e2e8eb] bg-[#eef2f6] px-3.5 py-[7px] text-[13px] font-bold text-slate-700 hover:bg-slate-200">
+                    <button
+                      onClick={() => openUser(m.user_id)}
+                      className="flex-shrink-0 whitespace-nowrap rounded-[9px] border border-[#e2e8eb] bg-[#eef2f6] px-3.5 py-[7px] text-[13px] font-bold text-slate-700 hover:bg-slate-200"
+                    >
                       처리
                     </button>
                   </div>
@@ -130,7 +135,7 @@ export default function ReportQueue({
               </p>
             ) : (
               reportedPosts.slice(0, 4).map((p) => {
-                const cat = (POST_TYPE_LABEL[p.post_type] ?? "커뮤니티") as Category;
+                const cat = (POST_TYPE_LABEL[p.post_type] ?? "Kanto Go!") as Category;
                 const ago = daysSince(p.first_reported_at);
                 return (
                   <div
@@ -157,7 +162,10 @@ export default function ReportQueue({
                         </span>
                       </div>
                     </div>
-                    <button className="flex-shrink-0 whitespace-nowrap rounded-[9px] border border-[#e2e8eb] bg-[#eef2f6] px-3.5 py-[7px] text-[13px] font-bold text-slate-700 hover:bg-slate-200">
+                    <button
+                      onClick={() => openPost(p.post_id)}
+                      className="flex-shrink-0 whitespace-nowrap rounded-[9px] border border-[#e2e8eb] bg-[#eef2f6] px-3.5 py-[7px] text-[13px] font-bold text-slate-700 hover:bg-slate-200"
+                    >
                       처리
                     </button>
                   </div>

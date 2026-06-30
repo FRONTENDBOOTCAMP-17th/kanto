@@ -1,5 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import type { JobWithPost } from "@/type/job/jobList";
+import type { Pagination, PagedResult } from "@/services/usedGoods/usedGoods";
+import type { TradeLocation } from "@/type/location";
 
 interface JobListFilter {
   search?: string;
@@ -9,53 +11,53 @@ interface JobListFilter {
   userId?: number;
 }
 
-export async function getJobList(filter?: JobListFilter): Promise<JobWithPost[]> {
+export async function getJobList(
+  filter?: JobListFilter,
+  pagination?: Pagination,
+): Promise<PagedResult<JobWithPost>> {
   const supabase = await createClient();
 
   let query = supabase
     .from("posts")
-    .select("*, jobs(*), users!posts_user_id_fkey(id, name, avatar_url, created_at)")
+    .select("*, jobs!inner(*), users!posts_user_id_fkey(id, name, avatar_url, created_at)", {
+      count: "exact",
+    })
     .eq("post_type", "jobs")
     .eq("status", "active")
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false });
 
   if (filter?.targetIds !== undefined) {
-    if (filter.targetIds.length === 0) return [];
+    if (filter.targetIds.length === 0) return { posts: [], total: 0 };
     query = query.in("id", filter.targetIds);
   }
-  if (filter?.userId) {
-    query = query.eq("user_id", filter.userId);
-  }
-  if (filter?.search) {
-    query = query.ilike("title", `%${filter.search}%`);
+  if (filter?.userId) query = query.eq("user_id", filter.userId);
+  if (filter?.search) query = query.ilike("title", `%${filter.search}%`);
+  
+  if (filter?.employeeType) query = query.eq("jobs.employee_type", filter.employeeType);
+  if (filter?.location) query = query.eq("jobs.location_type", filter.location as TradeLocation);
+
+  if (pagination) {
+    const from = (pagination.page - 1) * pagination.pageSize;
+    query = query.range(from, from + pagination.pageSize - 1);
   }
 
-  const { data, error } = await query;
+  const { data, count, error } = await query;
   if (error) throw new Error(error.message);
 
-  let result = data as unknown as JobWithPost[];
-
-  if (filter?.employeeType) {
-    result = result.filter(
-      (p) => p.jobs?.[0]?.employee_type === filter.employeeType,
-    );
-  }
-  if (filter?.location) {
-    result = result.filter(
-      (p) => p.jobs?.[0]?.location_type === filter.location,
-    );
-  }
-
-  return result;
+  return { posts: (data as unknown as JobWithPost[]) ?? [], total: count ?? 0 };
 }
 
 export async function getPopularJobs(): Promise<JobWithPost[]> {
   const supabase = await createClient();
 
+  
   const { data, error } = await supabase
     .from("posts")
     .select("*, jobs!inner(*), users!posts_user_id_fkey(id, name, avatar_url, created_at)")
-    .eq("post_type", "jobs");
+    .eq("post_type", "jobs")
+    .eq("status", "active")
+    .not("jobs.popular_count", "is", null);
 
   if (error) throw new Error(error.message);
 
@@ -63,8 +65,8 @@ export async function getPopularJobs(): Promise<JobWithPost[]> {
     jobs: (JobWithPost["jobs"][number] & { popular_count: number | null })[];
   };
 
+  
   return (data as unknown as JobWithPopular[])
-    .filter((p) => p.jobs?.[0]?.popular_count != null)
     .sort(
       (a, b) =>
         (a.jobs[0].popular_count ?? 99) - (b.jobs[0].popular_count ?? 99),

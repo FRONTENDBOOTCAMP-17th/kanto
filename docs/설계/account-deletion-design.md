@@ -188,7 +188,6 @@ if (dbUser.deleted_at) redirect("/usedgoods"); // 목록으로 리다이렉트
 | 중고거래 (`used_goods`) | 비공개 (`inactive`) | 복구 (`active`) | 삭제 |
 | 구인구직 (`jobs`) | 비공개 (`inactive`) | 복구 (`active`) | 삭제 |
 | 방렌트 (`rental`) | 비공개 (`inactive`) | 복구 (`active`) | 삭제 |
-| 커뮤니티 | 미구현 | 미구현 | 삭제 |
 | 랜덤채팅 | 미구현 | 미구현 | 삭제 |
 
 ---
@@ -209,7 +208,7 @@ if (dbUser.deleted_at) redirect("/usedgoods"); // 목록으로 리다이렉트
 
 ```
 messages → chats
-→ used_goods / jobs / rentals / community_posts
+→ used_goods / jobs / rentals
 → comments → common_likes → common_reports
 → posts → dating_profiles → matches
 → public.users → auth.users
@@ -247,7 +246,6 @@ messages → chats
 |---|---|
 | 탈퇴 전 비밀번호 재확인 | 이메일 로그인 유저 보안 강화 |
 | 탈퇴 확인 이메일 발송 | Edge Function + 이메일 서비스 연동 필요 |
-| 커뮤니티 게시글 즉시 비공개 | 미구현 |
 | 찜하기 서버사이드 RLS 보호 | 클라이언트 차단만으로는 DevTools 우회 가능 |
 | rental/create 서버 리다이렉트 | rental create 페이지 구현 시 추가 필요 |
 | D-7, D-1 안내 이메일 | 탈퇴 7일·1일 전 알림 |

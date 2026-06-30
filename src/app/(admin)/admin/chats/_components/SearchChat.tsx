@@ -1,12 +1,13 @@
-"use client";
+﻿"use client";
 
 import { Fragment, useEffect, useRef, useState, useTransition } from "react";
 import { MessageSquare, X, ExternalLink } from "lucide-react";
+import { AdminPagination } from "@/app/(admin)/admin/_components/AdminPagination";
 import { POST_TYPE_LABEL } from "@/app/(admin)/admin/_lib/constants";
 import { fetchChatMessages } from "@/app/(admin)/admin/chats/_actions/fetchChatMessages";
 import { applySanction } from "@/app/(admin)/admin/users/_actions/applySanction";
 import { liftSanction } from "@/app/(admin)/admin/users/_actions/liftSanction";
-import { formatDateDivider, formatMessageTime } from "@/utils/formatTime";
+import { formatDateDivider, formatMessageTime } from "@/utils/format";
 
 interface ChatRoom {
   id: number;
@@ -27,7 +28,6 @@ const POST_TYPE_COLOR: Record<string, { bg: string; fg: string }> = {
   used_goods: { bg: "#f0fdfa", fg: "#0d9488" },
   jobs:       { bg: "#faf5ff", fg: "#7c3aed" },
   rental:     { bg: "#eff6ff", fg: "#2563eb" },
-  community:  { bg: "#fff7ed", fg: "#c2410c" },
 };
 
 export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
@@ -161,7 +161,8 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
 
       
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
-        <div className="overflow-x-auto">
+        
+        <div className="hidden overflow-x-auto lg:block">
           <table className="w-full min-w-[640px] border-collapse">
             <thead>
               <tr className="border-b border-[#f1f4f6] bg-slate-50">
@@ -217,6 +218,53 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
           </table>
         </div>
 
+        
+        {pageItems.length > 0 && (
+          <div className="lg:hidden divide-y divide-[#f3f5f7]">
+            {pageItems.map((chat) => {
+              const c = chat.posts ? POST_TYPE_COLOR[chat.posts.post_type] : null;
+              return (
+                <div key={chat.id} className="px-4 py-3.5">
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="text-[14px] font-bold text-slate-900">
+                      {chat.user1?.name ?? "-"} · {chat.user2?.name ?? "-"}
+                    </span>
+                    {chat.last_message_at && (
+                      <span className="shrink-0 text-[12px] text-slate-400">
+                        {chat.last_message_at.split("T")[0]}
+                      </span>
+                    )}
+                  </div>
+                  {chat.posts && (
+                    <div className="mt-1.5 flex items-center gap-1.5">
+                      {c && (
+                        <span
+                          className="inline-flex shrink-0 items-center rounded-md px-2 py-0.5 text-[11.5px] font-semibold"
+                          style={{ background: c.bg, color: c.fg }}
+                        >
+                          {POST_TYPE_LABEL[chat.posts.post_type] ?? chat.posts.post_type}
+                        </span>
+                      )}
+                      <span className="truncate text-[12.5px] text-slate-600">{chat.posts.title}</span>
+                    </div>
+                  )}
+                  <div className="mt-2 flex items-center justify-between gap-2">
+                    <span className="truncate text-[12.5px] text-slate-400">
+                      {chat.last_message_content ?? "메시지 없음"}
+                    </span>
+                    <button
+                      onClick={() => openDrawer(chat.id)}
+                      className="shrink-0 cursor-pointer rounded-[9px] border border-[#e2e8eb] bg-white px-3.5 py-1.5 text-[12px] font-semibold text-slate-600 hover:bg-slate-50"
+                    >
+                      보기
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         {filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center px-5 py-16 text-center">
             <MessageSquare className="h-12 w-12 text-slate-200" strokeWidth={1.8} />
@@ -226,21 +274,12 @@ export default function SearchChat({ chats }: { chats: ChatRoom[] }) {
         )}
 
         {totalPages > 1 && (
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#f1f4f6] px-[22px] py-4">
-            <span className="text-[13px] text-slate-400">
-              총 <span className="font-semibold text-slate-600">{filtered.length}</span>건 중{" "}
-              <span className="font-semibold text-slate-600">
-                {filtered.length === 0 ? "0" : `${startIdx + 1}–${startIdx + pageItems.length}`}
-              </span>{" "}표시
-            </span>
-            <div className="flex items-center gap-1.5">
-              <button onClick={() => setPage((p) => Math.max(1, p - 1))} className="h-[34px] rounded-[9px] border border-[#e7ebee] bg-white px-[13px] text-[13px] font-semibold" style={{ color: curPage <= 1 ? "#cbd5e1" : "#475569" }}>이전</button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-                <button key={n} onClick={() => setPage(n)} className={["h-[34px] min-w-[34px] rounded-[9px] px-2 text-[13px]", n === curPage ? "border-none bg-teal-500 font-bold text-white" : "border border-[#e7ebee] bg-white font-semibold text-slate-600"].join(" ")}>{n}</button>
-              ))}
-              <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} className="h-[34px] rounded-[9px] border border-[#e7ebee] bg-white px-[13px] text-[13px] font-semibold" style={{ color: curPage >= totalPages ? "#cbd5e1" : "#475569" }}>다음</button>
-            </div>
-          </div>
+          <AdminPagination
+            currentPage={curPage}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            countLabel={<>총 <span className="font-semibold text-slate-600">{filtered.length}</span>건 중 <span className="font-semibold text-slate-600">{filtered.length === 0 ? "0" : `${startIdx + 1}–${startIdx + pageItems.length}`}</span> 표시</>}
+          />
         )}
       </div>
 

@@ -1,14 +1,21 @@
 import { notFound } from "next/navigation";
+import { formatPrice } from "@/utils/format";
+import { after } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getJobDetail } from "@/services/job/jobDetail";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
 import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarresel";
+import BackButton from "./_components/BackButton";
+import VerifyAuthor from "@/components/common/VerifyAuthor";
 import JobTitle from "./_components/JobTitle";
 import JobInfo from "./_components/JobInfo";
 import JobAuthorInfo from "./_components/JobAuthorInfo";
 import JobContent from "./_components/JobContent";
 import CompanyInfo from "./_components/CompanyInfo";
 import { viewCountUp } from "@/services/view";
+import { createClient } from "@/utils/supabase/server";
+import RelatedItemsCarousel, { type RelatedItem } from "@/components/common/RelatedItemsCarousel";
+export { generateMetadata } from "./metadata";
 
 export default async function JobDetailPage({
   params,
@@ -25,13 +32,67 @@ export default async function JobDetailPage({
   }
 
   const images = (job.images as string[]) ?? [];
-  await viewCountUp(job.post_id);
-  const { userId, initialLiked, initialReported } = await getUserLikeReportStatus(job.post_id);
-  const t = await getTranslations("Job");
+  
+  after(() => viewCountUp(job.post_id));
+  
+  const [{ userId, initialLiked, initialReported }, t] = await Promise.all([
+    getUserLikeReportStatus(job.post_id),
+    getTranslations("Job"),
+  ]);
+
+  const supabase = await createClient();
+  const { data: relatedData } = await supabase
+    .from("jobs")
+    .select("id, post_id, images, salary, posts(title)")
+    .eq("location_type", job.location_type)
+    .neq("id", job.id)
+    .limit(8);
+  const relatedItems: RelatedItem[] = (relatedData ?? []).map((item) => ({
+    id: item.id,
+    href: `/job/${item.post_id}`,
+    imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
+    title: (item.posts as { title: string | null } | null)?.title ?? "",
+    priceText: formatPrice(item.salary),
+  }));
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: job.posts.title,
+    description: job.main_task?.slice(0, 160),
+    datePosted: job.created_at,
+    validThrough: job.deadline,
+    hiringOrganization: {
+      "@type": "Organization",
+      name: job.company_name,
+    },
+    jobLocation: {
+      "@type": "Place",
+      address: { "@type": "PostalAddress", addressCountry: "PH" },
+    },
+    baseSalary: {
+      "@type": "MonetaryAmount",
+      currency: "PHP",
+      value: job.salary,
+    },
+  };
 
   return (
-    <div className="page-container w-full py-6">
-      <div className="border border-gray-200 rounded-2xl overflow-hidden divide-y divide-gray-200">
+    <div className="page-container pb-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="flex items-center justify-between mt-4">
+        <BackButton />
+        <VerifyAuthor
+          authorAuthId={job.posts.users?.auth_id}
+          editPath={`/job/${job.post_id}/edit`}
+          postId={job.post_id}
+          redirectPath="/job"
+        />
+      </div>
+      <div className="border border-gray-200 rounded-2xl overflow-hidden divide-y divide-gray-200 mt-4">
         <JobTitle job={job} userId={userId} initialLiked={initialLiked} initialReported={initialReported} />
         <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
           <JobInfo job={job} />
@@ -48,6 +109,7 @@ export default async function JobDetailPage({
         <JobContent job={job} />
         <CompanyInfo job={job} />
       </div>
+      <RelatedItemsCarousel title="관련 공고" items={relatedItems} />
     </div>
   );
 }

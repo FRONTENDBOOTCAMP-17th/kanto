@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -10,8 +11,10 @@ import {
   Users,
   Flag,
   MessageSquare,
-  MapPin,
   Menu,
+  Zap,
+  CreditCard,
+  Settings,
 } from "lucide-react";
 
 type NavItem = {
@@ -30,27 +33,28 @@ export default function AdminSidebar({ pendingCount }: { pendingCount: number })
     { icon: FileText, label: "글 관리", href: "/admin/posts" },
     { icon: Users, label: "유저 관리", href: "/admin/users" },
     { icon: Flag, label: "신고 내역", href: "/admin/reports", badge: pendingCount || undefined },
+    { icon: CreditCard, label: "결제 관리", href: "/admin/payments" },
+    { icon: Zap, label: "번개모임 관리", href: "/admin/go" },
     { icon: MessageSquare, label: "채팅기록", href: "/admin/chats" },
+    { icon: Settings, label: "운영 관리", href: "/admin/operation" },
   ];
 
   return (
     <>
-      
+
       <header className="fixed inset-x-0 top-0 z-50 hidden h-14.5 items-center justify-between border-b border-[#ebeef0] bg-white px-4 max-lg:flex">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-7.5 w-7.5 items-center justify-center rounded-[9px] bg-teal-500">
-            <MapPin
-              className="h-4.5 w-4.5 text-white"
-              strokeWidth={2.2}
-            />
-          </div>
-          <span className="text-[19px] font-extrabold tracking-tight text-slate-900">
-            kanto
-          </span>
-          <span className="rounded-md border border-teal-100 bg-teal-50 px-1.5 py-0.5 text-[10px] font-bold text-teal-600">
+        <Link href="/admin" className="flex items-end hover:opacity-75 transition-opacity">
+          <Image
+            src="/kantomobileLogo.png"
+            alt="kanto 로고"
+            width={40}
+            height={40}
+            className="object-contain"
+          />
+          <span className="-ml-2 mb-0.5 font-(family-name:--font-geist-sans) text-[17px] font-semibold leading-none tracking-widest text-teal-400">
             ADMIN
           </span>
-        </div>
+        </Link>
         <button
           onClick={() => setNavOpen(true)}
           className="relative flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#ebeef0] bg-white"
@@ -70,7 +74,6 @@ export default function AdminSidebar({ pendingCount }: { pendingCount: number })
         />
       )}
 
-      
       <aside
         className={[
           "sticky top-0 flex h-screen w-62.5 shrink-0 flex-col border-r border-[#ebeef0] bg-white px-4 py-5.5",
@@ -81,17 +84,18 @@ export default function AdminSidebar({ pendingCount }: { pendingCount: number })
             : "max-lg:-translate-x-full",
         ].join(" ")}
       >
-        <div className="flex items-center gap-2.5 px-2 pb-5 pt-1.5">
-          <div className="flex h-8.5 w-8.5 items-center justify-center rounded-[10px] bg-teal-500">
-            <MapPin className="h-5 w-5 text-white" strokeWidth={2.2} />
-          </div>
-          <span className="text-[21px] font-extrabold tracking-tight text-slate-900">
-            kanto
-          </span>
-          <span className="rounded-md border border-teal-100 bg-teal-50 px-2 py-0.75 text-[11px] font-bold text-teal-600">
+        <Link href="/admin" className="flex items-end px-2 pb-5 pt-1.5 hover:opacity-75 transition-opacity">
+          <Image
+            src="/kantomobileLogo.png"
+            alt="kanto 로고"
+            width={44}
+            height={15}
+            className="object-contain"
+          />
+          <span className="-ml-2 mb-0 font-(family-name:--font-geist-sans) text-[17px] font-semibold leading-none tracking-widest text-teal-400">
             ADMIN
           </span>
-        </div>
+        </Link>
 
         <div className="px-3 pb-2 pt-2 text-[11px] font-bold tracking-wider text-slate-400">
           운영 메뉴

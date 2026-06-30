@@ -2,20 +2,22 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, CreditCard } from "lucide-react";
+import { useAuthStore } from "@/store/authStore";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
-import { checkBlockedAction, checkUserSuspendedAction, createChatAndSendAction, markChatReadAction, sendMessageAction } from "./actions";
+import { createChatAndSendAction, markChatReadAction, sendMessageAction } from "./actions";
 import { getChatBannerStateAction } from "./paymentActions";
 import { useSpamPrevention } from "@/hooks/chat/useSpamPrevention";
+import { useSpamConfig } from "@/hooks/useSpamConfig";
 import { useChatRoomRealtime } from "@/hooks/chat/useChatRoomRealtime";
 import { useChatMessages } from "@/hooks/chat/useChatMessages";
 import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList";
 import ChatInput from "./ChatInput";
 import PaymentRequestModal from "./PaymentRequestModal";
-import { toggleReserveAction } from "./toggleReserveAction";
+import { toggleReserveAction, sendReserveSystemMessageAction } from "./toggleReserveAction";
 import ReviewBanner from "./ReviewBanner";
 import Toast from "@/components/common/Toast";
 
@@ -30,6 +32,7 @@ interface Props {
   sellerId: number | null;
   postPrice: number | null;
   isReserved: boolean;
+  isSold: boolean;
   onBack?: () => void;
   onLeave?: () => void;
   onChatCreated?: (chatId: number) => void;
@@ -46,14 +49,17 @@ export default function ChatRoomClient({
   sellerId,
   postPrice,
   isReserved: initialIsReserved,
+  isSold,
   onBack,
   onLeave,
   onChatCreated,
 }: Props) {
   const router = useRouter();
+  const { user } = useAuthStore();
   const [activeChatId, setActiveChatId] = useState<number | null>(chatIdProp);
   const [input, setInput] = useState("");
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showNoBankModal, setShowNoBankModal] = useState(false);
   const [isReserved, setIsReserved] = useState(initialIsReserved);
   const [sendError, setSendError] = useState("");
 
@@ -62,7 +68,24 @@ export default function ChatRoomClient({
   const handleToggleReserve = async () => {
     const next = !isReserved;
     setIsReserved(next);
-    await toggleReserveAction(postId, next);
+    try {
+      await toggleReserveAction(postId, next);
+      
+      router.refresh();
+    } catch {
+      setIsReserved(!next);
+      setSendError("예약 상태 변경에 실패했습니다.");
+      setTimeout(() => setSendError(""), 3000);
+      return;
+    }
+    if (activeChatId !== null) {
+      try {
+        await sendReserveSystemMessageAction(postId, next, activeChatId);
+      } catch {
+        setSendError("채팅 알림 전송에 실패했습니다.");
+        setTimeout(() => setSendError(""), 3000);
+      }
+    }
   };
 
   const [paymentRequestBlocked, setPaymentRequestBlocked] = useState(false);
@@ -72,7 +95,12 @@ export default function ChatRoomClient({
     postPrice !== null &&
     !paymentRequestBlocked;
 
-  const { isCooldown, cooldownSeconds, recordSend } = useSpamPrevention();
+  const spamConfig = useSpamConfig();
+  const { isCooldown, cooldownSeconds, recordSend } = useSpamPrevention({
+    windowMs: spamConfig.chat_window_sec * 1000,
+    maxCount: spamConfig.chat_max_count,
+    cooldownSec: spamConfig.chat_cooldown_sec,
+  });
   const {
     messages,
     setMessages,
@@ -100,18 +128,6 @@ export default function ChatRoomClient({
 
     const content = input.trim();
     setInput("");
-
-    if (await checkUserSuspendedAction(partner.id)) {
-      setSendError("정지된 사용자입니다.");
-      setTimeout(() => setSendError(""), 3000);
-      return;
-    }
-
-    if (await checkBlockedAction(partner.id)) {
-      setSendError("차단된 사용자와는 메시지를 주고받을 수 없습니다.");
-      setTimeout(() => setSendError(""), 3000);
-      return;
-    }
 
     const tempId = Date.now();
     const optimistic: MessageWithSender = {
@@ -175,9 +191,6 @@ export default function ChatRoomClient({
   useEffect(() => {
     if (activeChatId === null) return;
     markChatReadAction(activeChatId);
-    return () => {
-      markChatReadAction(activeChatId);
-    };
   }, [activeChatId]);
 
   const [reviewableTxId, setReviewableTxId] = useState<number | null>(null);
@@ -196,6 +209,12 @@ export default function ChatRoomClient({
     refreshBannerState();
   }, [refreshBannerState, systemMsgCount]);
 
+  
+  
+  
+  const isCompleted =
+    isSold || messages.some((m) => m.transaction?.status === "released");
+
   return (
     <div className="relative flex flex-col h-full w-full bg-gray-50">
       <ChatHeader
@@ -205,8 +224,8 @@ export default function ChatRoomClient({
         currentUserId={currentUser.id}
         onBack={onBack ?? (() => router.back())}
         onLeave={onLeave}
-        isReserved={postType === "used_goods" && isSeller ? isReserved : undefined}
-        onToggleReserve={postType === "used_goods" && isSeller ? handleToggleReserve : undefined}
+        isReserved={postType === "used_goods" && isSeller && !isCompleted ? isReserved : undefined}
+        onToggleReserve={postType === "used_goods" && isSeller && !isCompleted ? handleToggleReserve : undefined}
       />
       <MessageList
         messages={messages}
@@ -229,7 +248,13 @@ export default function ChatRoomClient({
       {canRequestPayment && (
         <div className="bg-white border-t border-gray-100 px-4 py-2 md:px-3 shrink-0">
           <button
-            onClick={() => setShowPaymentModal(true)}
+            onClick={() => {
+                if (!user?.bank_code || !user?.bank_account_number) {
+                  setShowNoBankModal(true);
+                } else {
+                  setShowPaymentModal(true);
+                }
+              }}
             className="flex w-full items-center justify-center gap-1.5 rounded-full border border-teal-200 bg-teal-50 py-2 text-sm md:text-xs font-medium text-teal-700 hover:bg-teal-100 transition-colors cursor-pointer"
           >
             <ShieldCheck className="w-4 h-4" />
@@ -244,6 +269,36 @@ export default function ChatRoomClient({
         isCooldown={isCooldown}
         cooldownSeconds={cooldownSeconds}
       />
+      {showNoBankModal && (
+        <div
+          className="absolute inset-0 z-20 flex items-center justify-center bg-black/40 p-4"
+          onClick={() => setShowNoBankModal(false)}
+        >
+          <div
+            className="w-full max-w-xs rounded-2xl bg-white p-5 shadow-xl flex flex-col items-center gap-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-50">
+              <CreditCard className="h-6 w-6 text-teal-500" />
+            </div>
+            <p className="text-center text-base font-semibold text-gray-800">
+              정산 계좌를 먼저 등록해주세요
+            </p>
+            <button
+              onClick={() => router.push("/profile")}
+              className="w-full rounded-full bg-teal-500 py-2.5 text-sm font-medium text-white hover:bg-teal-600 transition-colors cursor-pointer"
+            >
+              계좌 등록하러 가기
+            </button>
+            <button
+              onClick={() => setShowNoBankModal(false)}
+              className="text-sm text-gray-400 hover:text-gray-600"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
       {showPaymentModal && postPrice !== null && activeChatId !== null && (
         <PaymentRequestModal
           chatId={activeChatId}

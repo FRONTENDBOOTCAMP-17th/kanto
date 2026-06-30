@@ -64,3 +64,43 @@ export async function getInvoice(invoiceId: string): Promise<XenditInvoice> {
 export function isInvoicePaid(status: XenditInvoice["status"]) {
   return status === "PAID" || status === "SETTLED";
 }
+
+export interface XenditDisbursement {
+  id: string;
+  external_id: string;
+  bank_code: string;
+  account_number: string;
+  account_holder_name: string;
+  amount: number;
+  status: "PENDING" | "COMPLETED" | "FAILED";
+}
+
+export async function createDisbursement(params: {
+  externalId: string;
+  bankCode: string;
+  accountNumber: string;
+  accountHolderName: string;
+  amount: number;
+  description: string;
+}): Promise<XenditDisbursement> {
+  const res = await fetch(`${XENDIT_API}/disbursements`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: authHeader(),
+    },
+    body: JSON.stringify({
+      external_id: params.externalId,
+      bank_code: params.bankCode,
+      account_holder_name: params.accountHolderName,
+      account_number: params.accountNumber,
+      description: params.description,
+      amount: params.amount,
+    }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Xendit disbursement 실패: ${res.status} ${await res.text()}`);
+  }
+  return res.json();
+}

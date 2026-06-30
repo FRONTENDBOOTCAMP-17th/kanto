@@ -1,9 +1,9 @@
-import { Fragment, useEffect, useState, type RefObject } from "react";
+﻿import { Fragment, useEffect, useState, type RefObject } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
-import { formatDateDivider, formatMessageTime } from "@/utils/formatTime";
+import { formatDateDivider, formatMessageTime } from "@/utils/format";
 import type { Locale } from "@/i18n/config";
 import PaymentCard from "./PaymentCard";
 
@@ -43,6 +43,12 @@ export default function MessageList({
 }: Props) {
   const t = useTranslations("Chat");
   const locale = useLocale() as Locale;
+  const minuteKey = (dateStr: string) => {
+    const date = new Date(dateStr);
+    date.setSeconds(0, 0);
+    return date.getTime();
+  };
+
   return (
     <div
       ref={scrollContainerRef}
@@ -66,6 +72,12 @@ export default function MessageList({
         const msgDate = new Date(msg.created_at).toDateString();
         const prevDate = index > 0 ? new Date(messages[index - 1].created_at).toDateString() : null;
         const showDivider = msgDate !== prevDate;
+        const next = messages[index + 1];
+        const showMeta =
+          !next ||
+          next.type === "system" ||
+          next.sender_id !== msg.sender_id ||
+          minuteKey(next.created_at) !== minuteKey(msg.created_at);
 
         return (
           <Fragment key={msg.id}>
@@ -88,11 +100,34 @@ export default function MessageList({
             <div className={`flex flex-col gap-0.5 ${isMine ? "items-end" : "items-start"}`}>
               <div className={`flex items-end gap-1 ${isMine ? "flex-row-reverse" : ""}`}>
                 {msg.type === "payment" && msg.transaction ? (
-                  <PaymentCard
-                    transaction={msg.transaction}
-                    currentUser={currentUser}
-                    onTransactionChange={onTransactionChange}
-                  />
+                  <div className="flex flex-col items-center gap-1.5">
+                    <PaymentCard
+                      transaction={msg.transaction}
+                      currentUser={currentUser}
+                      onTransactionChange={onTransactionChange}
+                    />
+                    {(() => {
+                      const tx = msg.transaction;
+                      const timedOut =
+                        tx.status === "pending" &&
+                        Date.now() - new Date(tx.created_at).getTime() > 24 * 60 * 60 * 1000;
+                      if (timedOut || tx.status === "expired") {
+                        return (
+                          <span className="rounded-full bg-gray-200/70 px-3 py-1 text-center text-xs md:text-[11px] text-gray-500 break-keep">
+                            {t("payment.expiredNotice")}
+                          </span>
+                        );
+                      }
+                      if (tx.status === "pending") {
+                        return (
+                          <span className="rounded-full bg-gray-200/70 px-3 py-1 text-center text-xs md:text-[11px] text-gray-500 break-keep">
+                            {t("payment.pendingNotice")}
+                          </span>
+                        );
+                      }
+                      return null;
+                    })()}
+                  </div>
                 ) : (
                   <div
                     className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm md:text-xs leading-relaxed break-keep ${
@@ -104,7 +139,7 @@ export default function MessageList({
                     {msg.content}
                   </div>
                 )}
-                <div className={`flex flex-col shrink-0 ${isMine ? "items-end" : "items-start"}`}>
+                <div className={`flex flex-col shrink-0 ${isMine ? "items-end" : "items-start"} ${showMeta ? "" : "invisible"}`}>
                   {isMine && !msg.is_read && <UnreadMark partnerOnline={partnerOnline} />}
                   <time dateTime={msg.created_at} className="text-xs md:text-[10px] text-gray-400">
                     {formatMessageTime(msg.created_at, locale)}

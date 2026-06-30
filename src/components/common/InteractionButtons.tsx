@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Heart, Share2, Siren } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,13 +31,31 @@ export default function InteractionButtons({
   className = "",
 }: InteractionButtonsProps) {
   const t = useTranslations("Common");
+  const tr = useTranslations("Report");
   const { user: storeUser } = useAuthStore();
   const { isSuspended, openModal } = useSuspended();
   const [isLiked, setIsLiked] = useState(initialLiked);
+  const [isReported, setIsReported] = useState(initialReported);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+  const [toastIcon, setToastIcon] = useState<"check" | "x" | "alert">("check");
   const [showReportModal, setShowReportModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showBottomToast = (
+    message: string,
+    type: "success" | "error" = "success",
+    icon: "check" | "x" | "alert" = type === "error" ? "alert" : "check",
+  ) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToastMessage(message);
+    setToastType(type);
+    setToastIcon(icon);
+    setShowToast(true);
+    toastTimerRef.current = setTimeout(() => setShowToast(false), 3000);
+  };
 
   const handleLike = async () => {
     if (!userId) {
@@ -65,9 +83,7 @@ export default function InteractionButtons({
 
   const handleShare = async () => {
     await navigator.clipboard.writeText(window.location.href);
-    setToastMessage(t("urlCopied"));
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+    showBottomToast(t("urlCopied"), "success", "check");
   };
 
   return (
@@ -93,13 +109,25 @@ export default function InteractionButtons({
         <Button
           size={size}
           aria-label={t("report")}
-          onClick={() => { if (isSuspended) { openModal(); return; } setShowReportModal(true); }}
+          onClick={() => {
+            if (!userId) { setShowLoginModal(true); return; }
+            if (isSuspended) { openModal(); return; }
+            if (isReported) {
+              showBottomToast(
+                tr("already", { target: tr("targetNoun.post") }),
+                "error",
+                "x",
+              );
+              return;
+            }
+            setShowReportModal(true);
+          }}
           className="cursor-pointer border rounded-lg bg-white hover:bg-red-300/50 border-gray-200"
         >
           <Siren className="text-black" />
         </Button>
       </div>
-      <Toast message={toastMessage} showMessage={showToast} />
+      <Toast message={toastMessage} showMessage={showToast} type={toastType} icon={toastIcon} />
       <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <ReportModal
         isOpen={showReportModal}
@@ -109,6 +137,8 @@ export default function InteractionButtons({
         initialReported={initialReported}
         categories={POST_REPORT_CATEGORIES}
         targetType="post"
+        onReported={() => setIsReported(true)}
+        onToast={showBottomToast}
       />
     </>
   );

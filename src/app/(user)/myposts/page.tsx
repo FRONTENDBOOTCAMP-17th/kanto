@@ -1,4 +1,6 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getLikeList } from "@/services/likes";
 import { getUsedGoodsList } from "@/services/usedGoods/usedGoods";
@@ -8,6 +10,7 @@ import { UsedGoodsList } from "@/app/(user)/usedgoods/_components/UsedGoodsList"
 import { JobList } from "@/app/(user)/job/_components/JobList";
 import { RentalList } from "@/app/(user)/rental/_components/RentalList";
 import { FavoritesTabs } from "@/app/(user)/favorites/_components/FavoritesTabs";
+import { EmptyState } from "@/components/common/EmptyState";
 import { PaginationUrl } from "@/components/common/PaginationUrl";
 import type { UsedGoodsWithPost } from "@/type/usedGoods";
 import type { JobWithPost } from "@/type/job/jobList";
@@ -17,6 +20,16 @@ const CATEGORY_TYPE = ["used_goods", "jobs", "rental"] as const;
 type TabType = (typeof CATEGORY_TYPE)[number];
 
 const ITEMS_PER_PAGE = 12;
+
+const CREATE_PATHS: Record<TabType, string> = {
+  used_goods: "/usedgoods/create",
+  jobs: "/job/create",
+  rental: "/rental/create",
+};
+
+export const metadata: Metadata = {
+  robots: { index: false },
+};
 
 export default async function MypostsPage({
   searchParams,
@@ -28,7 +41,6 @@ export default async function MypostsPage({
     ? (type as TabType)
     : "used_goods";
   const currentPage = Number(page ?? 1);
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   const { likedIds, currentUserId } = await getLikeList(activeType);
   if (currentUserId === null) redirect("/login");
@@ -40,19 +52,23 @@ export default async function MypostsPage({
   let rentals: RentalWithPost[] = [];
   let totalPages = 1;
 
+  const paging = { page: currentPage, pageSize: ITEMS_PER_PAGE };
   if (activeType === "used_goods") {
-    const all = await getUsedGoodsList({ userId: currentUserId });
-    totalPages = Math.ceil(all.length / ITEMS_PER_PAGE);
-    usedGoods = all.slice(offset, offset + ITEMS_PER_PAGE);
+    const { posts, total } = await getUsedGoodsList({ userId: currentUserId }, paging);
+    totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+    usedGoods = posts;
   } else if (activeType === "jobs") {
-    const all = await getJobList({ userId: currentUserId });
-    totalPages = Math.ceil(all.length / ITEMS_PER_PAGE);
-    jobs = all.slice(offset, offset + ITEMS_PER_PAGE);
+    const { posts, total } = await getJobList({ userId: currentUserId }, paging);
+    totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+    jobs = posts;
   } else {
-    const all = await getRentalList({ userId: currentUserId });
-    totalPages = Math.ceil(all.length / ITEMS_PER_PAGE);
-    rentals = all.slice(offset, offset + ITEMS_PER_PAGE);
+    const { posts, total } = await getRentalList({ userId: currentUserId }, paging);
+    totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+    rentals = posts;
   }
+
+  const isEmpty =
+    (activeType === "used_goods" ? usedGoods : activeType === "jobs" ? jobs : rentals).length === 0;
 
   return (
     <div className="page-wrapper">
@@ -61,34 +77,47 @@ export default async function MypostsPage({
         <FavoritesTabs activeType={activeType} tabPath="/myposts" />
         <div className="border-t border-gray-200 my-6" />
 
-        {activeType === "used_goods" && (
-          <UsedGoodsList
-            initialPosts={usedGoods}
-            initialLikedIds={likedIds}
-            currentUserId={currentUserId}
-            currentPage={currentPage}
-          />
-        )}
-        {activeType === "jobs" && (
-          <JobList
-            posts={jobs}
-            likedIds={likedIds}
-            currentUserId={currentUserId}
-            currentPage={currentPage}
-          />
-        )}
-        {activeType === "rental" && (
-          <RentalList
-            initialPosts={rentals}
-            initialLikedIds={likedIds}
-            currentUserId={currentUserId}
-            currentPage={currentPage}
-          />
-        )}
-        {totalPages > 1 && (
-          <div className="flex justify-center mt-8">
-            <PaginationUrl currentPage={currentPage} totalPage={totalPages} />
-          </div>
+        {isEmpty ? (
+          <EmptyState message={t("myPostsEmpty")} description={t("myPostsEmptyDescription")}>
+            <Link
+              href={CREATE_PATHS[activeType]}
+              className="px-5 py-2.5 rounded-lg bg-teal-500 text-white text-sm font-medium hover:bg-teal-600 transition-colors"
+            >
+              {t("writePost")}
+            </Link>
+          </EmptyState>
+        ) : (
+          <>
+            {activeType === "used_goods" && (
+              <UsedGoodsList
+                initialPosts={usedGoods}
+                initialLikedIds={likedIds}
+                currentUserId={currentUserId}
+                currentPage={currentPage}
+              />
+            )}
+            {activeType === "jobs" && (
+              <JobList
+                posts={jobs}
+                likedIds={likedIds}
+                currentUserId={currentUserId}
+                currentPage={currentPage}
+              />
+            )}
+            {activeType === "rental" && (
+              <RentalList
+                initialPosts={rentals}
+                initialLikedIds={likedIds}
+                currentUserId={currentUserId}
+                currentPage={currentPage}
+              />
+            )}
+            {totalPages > 1 && (
+              <div className="flex justify-center mt-8">
+                <PaginationUrl currentPage={currentPage} totalPage={totalPages} />
+              </div>
+            )}
+          </>
         )}
       </main>
     </div>

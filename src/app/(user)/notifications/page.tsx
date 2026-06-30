@@ -19,6 +19,12 @@ export default function NotificationsPage() {
     if (href) router.push(href);
   };
 
+  
+  
+  const visible = notifications.filter(
+    (n) => !n.is_read && n.type !== "chat",
+  );
+
   return (
     <div className="max-w-lg mx-auto">
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
@@ -33,12 +39,12 @@ export default function NotificationsPage() {
         )}
       </div>
       <div className="divide-y divide-gray-50">
-        {notifications.length === 0 ? (
+        {visible.length === 0 ? (
           <p className="py-8 text-center text-sm text-gray-400">
             {t("empty")}
           </p>
         ) : (
-          notifications.map((n) => (
+          visible.map((n) => (
             <NotificationItem key={n.id} notification={n} onClick={handleClick} size="lg" />
           ))
         )}

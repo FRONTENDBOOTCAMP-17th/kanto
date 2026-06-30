@@ -15,6 +15,7 @@ import {
   ShoppingBag,
   Briefcase,
   Home,
+  MapPin,
   Heart,
   Settings,
   ThumbsUp,
@@ -25,12 +26,13 @@ import {
 import { ROUTES } from "@/constants/routes";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
-import { SuspendedBanner } from "@/components/common/SuspendedBanner";
+import { UnifiedBanner } from "@/components/common/UnifiedBanner";
 import { NotificationBell } from "./header/NotificationBell";
 import type { NotificationBellHandle } from "./header/NotificationBell";
 import type { User as AppUser } from "@/type/user";
 import { useTranslations } from "next-intl";
 import { useSuspended } from "@/hooks/useSuspended";
+import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 
 const HEADER_HEIGHT = 48; 
 
@@ -38,18 +40,21 @@ const NAV_ITEMS = [
   { key: "usedgoods", icon: ShoppingBag, href: ROUTES.usedgoods },
   { key: "jobs", icon: Briefcase, href: ROUTES.jobs },
   { key: "rental", icon: Home, href: ROUTES.rental },
+  { key: "go", icon: MapPin, href: ROUTES.go },
 ] as const;
 
 export function Header({ initialUser }: { initialUser: AppUser | null }) {
   const t = useTranslations("Header");
   const router = useRouter();
   const user = useAuthStore((s) => s.user) ?? initialUser;
+  const clearUser = useAuthStore((s) => s.clearUser);
   useAuthInit();
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const profileRef = useRef<HTMLDivElement>(null);
   const notificationBellRef = useRef<NotificationBellHandle>(null);
@@ -57,12 +62,15 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
+      if (currentScrollY > HEADER_HEIGHT) {
+        setIsMobileOpen(false);
+      }
       if (currentScrollY <= HEADER_HEIGHT) {
-        setIsVisible(true); 
+        setIsVisible(true);
       } else if (currentScrollY > prevScrollY.current) {
-        setIsVisible(false); 
+        setIsVisible(false);
       } else if (currentScrollY < prevScrollY.current) {
-        setIsVisible(true); 
+        setIsVisible(true);
       }
       prevScrollY.current = currentScrollY;
     };
@@ -70,25 +78,27 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const pathname = usePathname();
+  const { isSuspended, openModal } = useSuspended();
+
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
+    setIsMobileOpen(false);
+  }
+
   const handleLogoutClick = () => {
     setIsLogoutModalOpen(true);
     setIsProfileOpen(false);
     setIsMobileOpen(false);
   };
 
-  const pathname = usePathname();
-  const PROTECTED_PATHS = ["/create", "/myposts", "/favorites", "/profile"];
-  const { isSuspended, openModal } = useSuspended();
-
   const handleLogoutConfirm = async () => {
     setIsLogoutModalOpen(false);
     await supabase.auth.signOut();
-    const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
-    if (isProtected) {
-      router.push(ROUTES.login);
-    } else {
-      router.refresh();
-    }
+    clearUser();
+    router.push(ROUTES.home);
+    router.refresh();
   };
 
   useEffect(() => {
@@ -101,17 +111,26 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
   }, [isProfileOpen]);
 
   return (
+    <>
+      {isMobileOpen && (
+        <div
+          className="fixed inset-0 z-40 md:hidden"
+          aria-hidden="true"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
     <header
-      className={`fixed md:sticky top-0 z-50 w-full bg-white border-b border-gray-200 transition-transform duration-300 ${
+      className={`fixed md:sticky top-0 z-50 w-full bg-white transition-transform duration-300 ${
         isVisible || isMobileOpen ? "translate-y-0" : "-translate-y-full md:translate-y-0"
       }`}
     >
-      <div className="page-container">
+      <div className="page-container border-b border-gray-200 relative z-10 bg-white">
         <div className="flex items-center justify-between h-12 md:h-16">
           
           <Link
             href={ROUTES.home}
             className="flex items-center hover:opacity-80 transition-opacity shrink-0"
+            onClick={() => setIsMobileOpen(false)}
           >
             <Image
               src="/kantoMobileLogo.png"
@@ -136,11 +155,13 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
             
             <LanguageSwitcher />
 
-            
             {user && (
               <NotificationBell
                 ref={notificationBellRef}
-                onOpen={() => setIsProfileOpen(false)}
+                onOpen={() => {
+                  setIsProfileOpen(false);
+                  setIsMobileOpen(false);
+                }}
               />
             )}
 
@@ -260,7 +281,11 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
           
           {pathname === ROUTES.home && (
             <button
-              onClick={() => isSuspended ? openModal() : router.push(ROUTES.create)}
+              onClick={() => {
+                if (!user) { setShowLoginModal(true); return; }
+                if (isSuspended) { openModal(); return; }
+                router.push(ROUTES.create);
+              }}
               className="absolute right-0 flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition-colors"
             >
               <SquarePen className="w-4 h-4" />
@@ -340,7 +365,8 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
           </div>
         )}
       </div>
-      <SuspendedBanner />
+      <UnifiedBanner />
+      <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <ConfirmModal
         isOpen={isLogoutModalOpen}
         title={t("logoutConfirm")}
@@ -349,5 +375,6 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
         onCancel={() => setIsLogoutModalOpen(false)}
       />
     </header>
+    </>
   );
 }

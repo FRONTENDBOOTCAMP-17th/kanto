@@ -1,34 +1,83 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useCallback, useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
-import { useChatStore, type PendingNewChat } from "@/store/chatStore";
-import { useSuspended } from "@/hooks/useSuspended";
+import { useChatStore, type PendingNewChat, type PendingGroupRoom } from "@/store/chatStore";
+import { useSuspended, useSuspendedModalStore } from "@/hooks/useSuspended";
 import { useChatListRealtime } from "@/hooks/chat/useChatListRealtime";
+import { useGroupRoomsRealtime } from "@/hooks/go/useGroupRoomsRealtime";
+import { getMyRooms } from "@/services/go/groupChat";
 import ChatBubbleButton from "./ChatBubbleButton";
 import ChatList from "./chatPanel/ChatList";
 import ChatRoom from "./chatPanel/room/ChatRoom";
+import GroupChatRoomBody from "@/components/go/groupChat/GroupChatRoomBody";
 import type { ChatWithUsers } from "@/type/chat/chat";
+import type { MyGroupRoom } from "@/type/groupChat";
+import type { User } from "@/type/user";
 
-export default function FloatingChatWidget() {
+const NEW_CHAT_DRAFT_KEY = "chatWidget:newChatDraft";
+
+const useIsoLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+export default function FloatingChatWidget({
+  initialUser,
+}: {
+  initialUser: User | null;
+}) {
   const t = useTranslations("Chat");
-  const { isLoggedIn, user: authUser } = useAuthStore();
+  
+  
+  const storeUser = useAuthStore((s) => s.user);
+  const authUser = storeUser ?? initialUser;
+  const isLoggedIn = !!authUser;
   const { isSuspended, openModal } = useSuspended();
   const setUnreadCount = useChatStore((s) => s.setUnreadCount);
-  const [isOpen, setIsOpen] = useState(false);
-  const [view, setView] = useState<"list" | "room">("list");
+  const groupRoomsVersion = useChatStore((s) => s.groupRoomsVersion);
+  const isOpen = useChatStore((s) => s.isOpen);
+  const setWidgetOpen = useChatStore((s) => s.setWidgetOpen);
+  const [view, setView] = useState<"list" | "room" | "group-room">("list");
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
   const [pendingNewChatMeta, setPendingNewChatMeta] =
     useState<PendingNewChat | null>(null);
+  const [selectedGroupRoom, setSelectedGroupRoom] = useState<PendingGroupRoom | null>(null);
   const [chats, setChats] = useState<ChatWithUsers[]>([]);
+  const [groupRooms, setGroupRooms] = useState<MyGroupRoom[]>([]);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+
+  const refreshGroupRooms = useCallback(() => {
+    getMyRooms()
+      .then(setGroupRooms)
+      .catch(() => {});
+  }, []);
+
+  
+  
+  const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const debouncedRefreshGroupRooms = useCallback(() => {
+    if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+    refreshTimerRef.current = setTimeout(refreshGroupRooms, 400);
+  }, [refreshGroupRooms]);
+  useEffect(
+    () => () => {
+      if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+    },
+    [],
+  );
+  const handleClose = useCallback(() => {
+    setView("list");
+    setSelectedChatId(null);
+    setPendingNewChatMeta(null);
+    setWidgetOpen(false);
+  }, [setWidgetOpen]);
 
   useEffect(() => {
     return useChatStore.subscribe((state, prev) => {
       if (state.pendingChatId && state.pendingChatId !== prev.pendingChatId) {
-        setIsOpen(true);
+        useChatStore.getState().setWidgetOpen(true);
         setView("room");
         setSelectedChatId(state.pendingChatId);
         setPendingNewChatMeta(null);
@@ -43,11 +92,20 @@ export default function FloatingChatWidget() {
         state.pendingNewChat &&
         state.pendingNewChat !== prev.pendingNewChat
       ) {
-        setIsOpen(true);
+        useChatStore.getState().setWidgetOpen(true);
         setView("room");
         setSelectedChatId(null);
         setPendingNewChatMeta(state.pendingNewChat);
         useChatStore.getState().clearNewChat();
+      }
+      if (
+        state.pendingGroupRoom &&
+        state.pendingGroupRoom !== prev.pendingGroupRoom
+      ) {
+        useChatStore.getState().setWidgetOpen(true);
+        setView("group-room");
+        setSelectedGroupRoom(state.pendingGroupRoom);
+        useChatStore.getState().clearPendingGroupRoom();
       }
     });
   }, []);
@@ -62,6 +120,29 @@ export default function FloatingChatWidget() {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const onPointerDown = (e: PointerEvent) => {
+      const target = e.target;
+      if (!(target instanceof Node)) return;
+      if (rootRef.current?.contains(target)) return;
+      if (
+        target instanceof Element &&
+        target.closest("[data-radix-popper-content-wrapper], [data-radix-portal]")
+      ) {
+        return;
+      }
+
+      handleClose();
+    };
+
+    document.addEventListener("pointerdown", onPointerDown, true);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown, true);
+    };
+  }, [handleClose, isOpen]);
 
   useEffect(() => {
     const el = panelRef.current;
@@ -94,19 +175,150 @@ export default function FloatingChatWidget() {
       });
   }, [isLoggedIn]);
 
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    refreshGroupRooms();
+  }, [isLoggedIn, groupRoomsVersion, refreshGroupRooms]);
+
+  useEffect(() => {
+    if (!isLoggedIn || !isOpen || view !== "list") return;
+    refreshGroupRooms();
+  }, [isLoggedIn, isOpen, refreshGroupRooms, view]);
+
+  
+  
+  useEffect(() => {
+    if (!isLoggedIn || !isOpen || view !== "list") return;
+    const refreshIfVisible = () => {
+      if (document.visibilityState === "visible") refreshGroupRooms();
+    };
+    const id = window.setInterval(refreshIfVisible, 10000);
+    document.addEventListener("visibilitychange", refreshIfVisible);
+    window.addEventListener("focus", refreshGroupRooms);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", refreshIfVisible);
+      window.removeEventListener("focus", refreshGroupRooms);
+    };
+  }, [isLoggedIn, isOpen, refreshGroupRooms, view]);
+
   useChatListRealtime({ currentUserId: currentUserId ?? 0, setChats });
+  
+  useGroupRoomsRealtime(isLoggedIn, debouncedRefreshGroupRooms);
 
   useEffect(() => {
     if (!currentUserId) return;
-    const total = chats.reduce((acc, chat) => {
+    const directTotal = chats.reduce((acc, chat) => {
       const unread =
         currentUserId === chat.user_id_1
           ? (chat.user_id_1_unread ?? 0)
           : (chat.user_id_2_unread ?? 0);
       return acc + unread;
     }, 0);
-    setUnreadCount(total);
-  }, [chats, currentUserId, setUnreadCount]);
+    const groupTotal = groupRooms.reduce((acc, room) => acc + room.unread_count, 0);
+    setUnreadCount(directTotal + groupTotal);
+  }, [chats, groupRooms, currentUserId, setUnreadCount]);
+
+  
+  
+  
+  const restoredRef = useRef(false);
+  useIsoLayoutEffect(() => {
+    if (restoredRef.current || !isLoggedIn) return;
+    restoredRef.current = true;
+
+    
+    
+    
+    const chatParam = new URLSearchParams(window.location.search).get("chat");
+
+    
+    if (chatParam === "list") {
+      setView("list");
+      setSelectedChatId(null);
+      setPendingNewChatMeta(null);
+      setWidgetOpen(true);
+      return;
+    }
+
+    const id = Number(chatParam);
+    if (chatParam && Number.isInteger(id) && id > 0) {
+      const until = useAuthStore.getState().user?.suspended_until;
+      if (until && new Date(until) > new Date()) {
+        useSuspendedModalStore.getState().open();
+        return;
+      }
+      setSelectedChatId(id);
+      setPendingNewChatMeta(null);
+      setView("room");
+      setWidgetOpen(true);
+      return;
+    }
+
+    const draftRaw = sessionStorage.getItem(NEW_CHAT_DRAFT_KEY);
+    if (draftRaw) {
+      try {
+        setPendingNewChatMeta(JSON.parse(draftRaw) as PendingNewChat);
+        setSelectedChatId(null);
+        setView("room");
+        setWidgetOpen(true);
+      } catch {
+        sessionStorage.removeItem(NEW_CHAT_DRAFT_KEY);
+      }
+    }
+  }, [isLoggedIn]);
+
+  
+  
+  const urlSyncReadyRef = useRef(false);
+  useEffect(() => {
+    if (!urlSyncReadyRef.current) {
+      urlSyncReadyRef.current = true; 
+      return;
+    }
+    const params = new URLSearchParams(window.location.search);
+    
+    
+    const inRoom = isOpen && view === "room" && selectedChatId !== null;
+    const inList = isOpen && view === "list";
+    const desired = inRoom ? String(selectedChatId) : inList ? "list" : null;
+    if (desired !== null) {
+      if (params.get("chat") === desired) return;
+      params.set("chat", desired);
+    } else {
+      if (!params.has("chat")) return;
+      params.delete("chat");
+    }
+    const query = params.toString();
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`,
+    );
+  }, [isOpen, view, selectedChatId]);
+
+  
+  
+  const draftSyncReadyRef = useRef(false);
+  useEffect(() => {
+    if (!draftSyncReadyRef.current) {
+      draftSyncReadyRef.current = true; 
+      return;
+    }
+    const isNewDraft =
+      isOpen &&
+      view === "room" &&
+      selectedChatId === null &&
+      pendingNewChatMeta !== null;
+    if (isNewDraft) {
+      sessionStorage.setItem(
+        NEW_CHAT_DRAFT_KEY,
+        JSON.stringify(pendingNewChatMeta),
+      );
+    } else {
+      sessionStorage.removeItem(NEW_CHAT_DRAFT_KEY);
+    }
+  }, [isOpen, view, selectedChatId, pendingNewChatMeta]);
 
   if (!isLoggedIn) return null;
 
@@ -120,14 +332,14 @@ export default function FloatingChatWidget() {
     : null;
 
   return (
-    <div className="flex flex-col items-end gap-2">
+    <div ref={rootRef} className="relative">
       {isOpen && (
         <div
           ref={panelRef}
           className="
+          absolute bottom-0 right-full mr-3
           w-80 h-120 flex flex-col bg-white rounded-2xl shadow-2xl shadow-black/40 border border-gray-100 overflow-hidden
-          md:w-80 md:h-120 md:rounded-2xl
-          max-md:fixed max-md:inset-0 max-md:w-full max-md:h-full max-md:rounded-none max-md:shadow-none max-md:border-0 max-md:z-40
+          max-md:fixed max-md:inset-0 max-md:mr-0 max-md:w-full max-md:h-full max-md:rounded-none max-md:shadow-none max-md:border-0 max-md:z-40
         "
         >
           {!currentUserId ? (
@@ -137,11 +349,29 @@ export default function FloatingChatWidget() {
           ) : view === "list" ? (
             <ChatList
               chats={chats}
+              groupRooms={groupRooms}
               currentUserId={currentUserId}
               onChatSelect={(id) => {
                 setSelectedChatId(id);
                 setPendingNewChatMeta(null);
                 setView("room");
+              }}
+              onGroupSelect={(meetupPostId, title) => {
+                setSelectedGroupRoom({ meetupPostId, title });
+                setView("group-room");
+              }}
+              onClose={handleClose}
+            />
+          ) : view === "group-room" && selectedGroupRoom && currentUserForRoom ? (
+            <GroupChatRoomBody
+              key={selectedGroupRoom.meetupPostId}
+              meetupPostId={selectedGroupRoom.meetupPostId}
+              meetupTitle={selectedGroupRoom.title}
+              currentUser={currentUserForRoom}
+              onBack={() => {
+                setSelectedGroupRoom(null);
+                setView("list");
+                refreshGroupRooms();
               }}
             />
           ) : view === "room" &&
@@ -185,7 +415,7 @@ export default function FloatingChatWidget() {
           ) : null}
         </div>
       )}
-      <div className={view === "room" ? "max-md:hidden" : ""}>
+      <div className={isOpen ? "max-md:hidden" : ""}>
         <ChatBubbleButton
           isOpen={isOpen}
           onToggle={() => {
@@ -197,8 +427,9 @@ export default function FloatingChatWidget() {
               setView("list");
               setSelectedChatId(null);
               setPendingNewChatMeta(null);
+              setSelectedGroupRoom(null);
             }
-            setIsOpen((v) => !v);
+            setWidgetOpen(!isOpen);
           }}
         />
       </div>

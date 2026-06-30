@@ -7,6 +7,8 @@ import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
 import type { User as UserType } from "@/type/user";
 import ProfileAvatar from "./profileAvatar";
+import { ProfileUserInfo } from "./ProfileUserInfo";
+import { ProfileAccountInfo } from "./ProfileAccountInfo";
 import { ProfileAside, ProfileMobileTabs, type Tab } from "./ProfileAside";
 import { ProfileInfoSection } from "./sections/ProfileInfoSection";
 import { ProfileReviewsSection } from "./sections/ProfileReviewsSection";
@@ -14,11 +16,11 @@ import { ProfileAlertsSection } from "./sections/ProfileAlertsSection";
 import type { AlertSettings } from "@/hooks/profile/useAlertSettings";
 import { ProfileBlockedSection } from "./sections/ProfileBlockedSection";
 import { ProfileSettingsSection } from "./sections/ProfileSettingsSection";
+import { ProfilePaymentSection } from "./sections/ProfilePaymentSection";
+import { ProfileTransactionsSection } from "./sections/ProfileTransactionsSection";
 import type { UserIdentity } from "@supabase/supabase-js";
 import type { ReviewWithReviewer } from "@/type/review";
 import { IdentityVerificationModal } from "./IdentityVerificationModal";
-
-const PROVIDER_KEYS = ["google", "kakao", "facebook", "email"] as const;
 
 export function ProfileCard({
   alertSettings,
@@ -58,16 +60,10 @@ function ProfileForm({
   initialIsVerified: boolean;
 }) {
   const [activeTab, setActiveTab] = useState<Tab>("info");
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [isVerificationOpen, setIsVerificationOpen] = useState(false);
   const [isIdentityVerified, setIsIdentityVerified] = useState(initialIsVerified);
   const router = useRouter();
   const t = useTranslations("Profile.card");
-  const tp = useTranslations("Profile.providers");
-  const tt = useTranslations("Time");
-
-  const providerKey = PROVIDER_KEYS.find((p) => p === user.provider) ?? "email";
-  const joinedAt = user.created_at ? new Date(user.created_at) : null;
 
   const reviewCount = reviews.length;
   const avgRating =
@@ -89,7 +85,7 @@ function ProfileForm({
         <h1 className="text-base font-semibold text-gray-900">{t("title")}</h1>
       </div>
 
-      <div className="md:flex md:p-8 p-0 bg-white md:rounded-xl md:border md:border-gray-100">
+      <div className="md:flex md:p-8 p-0 bg-white md:rounded-b-xl md:border md:border-gray-100">
         <ProfileAside activeTab={activeTab} onTabChange={setActiveTab} />
 
         
@@ -100,16 +96,14 @@ function ProfileForm({
             <ProfileAvatar
               avatarUrl={user.avatar_url ?? ""}
               name={user.name ?? ""}
-              onFileChange={setAvatarFile}
+              userId={user.id}
             />
-            <div className="-mt-4 text-center">
-              <p className="font-semibold text-gray-900">{user.name ?? ""}</p>
-              <p className="text-sm text-gray-400 mt-0.5">{user.email ?? ""}</p>
+            <div className="-mt-4">
+              <ProfileUserInfo name={user.name ?? ""} email={user.email ?? ""} />
             </div>
 
             <div className="border-t border-gray-100" />
 
-            
             <div className="flex flex-col gap-3 px-5 md:px-0">
               <h2 className="text-sm font-semibold text-gray-700">{t("stats")}</h2>
               <div className="grid grid-cols-3 gap-2 text-center">
@@ -130,22 +124,7 @@ function ProfileForm({
 
             <div className="border-t border-gray-100" />
 
-            
-            <div className="flex flex-col gap-3 px-5 md:px-0">
-              <h2 className="text-sm font-semibold text-gray-700">{t("account")}</h2>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">{t("joinedAt")}</span>
-                <span className="text-sm text-gray-700">
-                  {joinedAt
-                    ? tt("joinedYearMonth", { year: joinedAt.getFullYear(), month: joinedAt.getMonth() + 1 })
-                    : tt("joinDateUnknown")}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">{t("provider")}</span>
-                <span className="text-sm text-gray-700">{tp(providerKey)}</span>
-              </div>
-            </div>
+            <ProfileAccountInfo provider={user.provider ?? null} createdAt={user.created_at ?? null} />
 
             <div className="border-t border-gray-100" />
 
@@ -157,8 +136,8 @@ function ProfileForm({
               </div>
               <p className="text-xs text-gray-500 leading-relaxed">
                 {isIdentityVerified
-                  ? "본인인증이 완료되었습니다."
-                  : "게시물 작성과 랜덤채팅 참여는 인증이 필요합니다."}
+                  ? t("verifyComplete")
+                  : t("verifyDesc")}
               </p>
               <button
                 type="button"
@@ -174,7 +153,9 @@ function ProfileForm({
 
         
         <div className="flex-1 md:pl-8">
-          {activeTab === "info" && <ProfileInfoSection user={user} avatarFile={avatarFile} />}
+          {activeTab === "info" && <ProfileInfoSection user={user} />}
+          {activeTab === "payment" && <ProfilePaymentSection user={user} />}
+          {activeTab === "history" && <ProfileTransactionsSection />}
           {activeTab === "reviews" && <ProfileReviewsSection reviews={reviews} avgRating={avgRating} reviewCount={reviewCount} />}
           {activeTab === "alerts" && <ProfileAlertsSection initialSettings={alertSettings} />}
           {activeTab === "blocked" && <ProfileBlockedSection />}

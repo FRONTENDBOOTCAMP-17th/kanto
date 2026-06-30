@@ -1,16 +1,17 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
+import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
 import { ImageUploadField } from "@/components/common/ImageUploadField";
+import { moderateImage } from "@/lib/moderateImage";
+import Toast from "@/components/common/Toast";
 import {
   Select,
   SelectContent,
@@ -21,11 +22,17 @@ import {
 import {
   PRODUCT_CATEGORIES,
   PRODUCT_CONDITIONS,
-  TRADE_LOCATIONS,
   type ProductCategory,
   type ProductCondition,
-  type TradeLocation,
 } from "@/type/usedGoods";
+import { LocationPicker } from "@/components/common/LocationPicker";
+import {
+  cityToTradeLocation,
+  roundCoord,
+  formatBarangayLabel,
+  type TradeLocation,
+} from "@/type/location";
+import type { PickedLocation } from "@/type/go";
 
 interface InitialData {
   post_id: number | undefined;
@@ -35,6 +42,10 @@ interface InitialData {
   condition: string | null;
   location_type: string | null;
   location_custom: string | null;
+  location_barangay: string | null;
+  location_city: string | null;
+  location_lat: number | null;
+  location_lng: number | null;
   content: string | null;
   safe_payment: boolean | null;
   images: string[] | null;
@@ -61,12 +72,18 @@ export function CreateUsedGoodsForm({
   const [condition, setCondition] = useState<ProductCondition | "">(
     (initialData?.condition as ProductCondition) ?? "",
   );
-  const [preferredLocation, setPreferredLocation] = useState<
-    TradeLocation | ""
-  >((initialData?.location_type as TradeLocation) ?? "");
-  const [preferredLocationDetail, setPreferredLocationDetail] = useState(
-    initialData?.location_custom ?? "",
-  );
+  
+  const [picked, setPicked] = useState<PickedLocation | null>(null);
+  
+  const fallbackLocationLabel =
+    initialData?.location_barangay || initialData?.location_city
+      ? formatBarangayLabel(
+          initialData.location_barangay ?? null,
+          initialData.location_city ?? null,
+        )
+      : (initialData?.location_type ?? null);
+  
+  const hasExistingLocation = Boolean(initialData?.location_type);
   const [content, setContent] = useState(initialData?.content ?? "");
   const [safePayment, setSafePayment] = useState(
     initialData?.safe_payment ?? false,
@@ -76,22 +93,81 @@ export function CreateUsedGoodsForm({
     initialData?.images ?? [],
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [urlError, setUrlError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const maxUrlsRef = useRef(3);
+  const [isCheckingImages, setIsCheckingImages] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/spam-config")
+      .then((r) => r.json())
+      .then((d) => { if (d?.max_urls_per_post != null) maxUrlsRef.current = d.max_urls_per_post; })
+      .catch(() => {});
+  }, []);
 
   const isFormValid =
-    title.trim() !== "" &&
-    price !== "" &&
+    title.trim().length >= 2 &&
+    price !== "" && Number(price) >= 0 &&
     productCategory !== "" &&
     condition !== "" &&
-    preferredLocation !== "" &&
-    (preferredLocation !== "그 외 지역" || preferredLocationDetail.trim() !== "") &&
-    content.trim() !== "" &&
+    (picked !== null || hasExistingLocation) &&
+    content.trim().length >= 10 &&
     imagePreviews.length > 0;
+
+  const showErrorToast = (message: string) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToastMessage(message);
+    setShowToast(true);
+    toastTimerRef.current = setTimeout(() => setShowToast(false), 3000);
+  };
+
+  
+  const buildLocationFields = () => {
+    if (picked) {
+      return {
+        location_type: cityToTradeLocation(
+          picked.city ?? null,
+          picked.province ?? null,
+        ) as TradeLocation,
+        location_barangay: picked.barangay ?? null,
+        
+        location_city:
+          picked.city ?? picked.province ?? picked.displayName ?? picked.address ?? null,
+        location_lat: roundCoord(picked.lat),
+        location_lng: roundCoord(picked.lng),
+        location_custom: null,
+      };
+    }
+    if (initialData) {
+      return {
+        location_type: initialData.location_type as TradeLocation,
+        location_barangay: initialData.location_barangay ?? null,
+        location_city: initialData.location_city ?? null,
+        location_lat: initialData.location_lat ?? null,
+        location_lng: initialData.location_lng ?? null,
+        location_custom: initialData.location_custom ?? null,
+      };
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!productCategory || !condition || !preferredLocation) return;
+    if (!productCategory || !condition) return;
+    if (imagePreviews.length === 0) return;
+
+    const urlCount = (content.match(/https?:\/\/[^\s]+/g) ?? []).length;
+    if (urlCount > maxUrlsRef.current) {
+      setUrlError(`게시물에 URL은 최대 ${maxUrlsRef.current}개까지 허용됩니다.`);
+      return;
+    }
+    setUrlError("");
     setIsSubmitting(true);
+
+    const locationFields = buildLocationFields();
+    if (!locationFields) return;
 
     if (initialData) {
       if (!postId) return;
@@ -112,9 +188,7 @@ export function CreateUsedGoodsForm({
         }
       }
 
-      const existingUrls = imagePreviews.filter(
-        (url) => !url.startsWith("blob:"),
-      );
+      const existingUrls = imagePreviews.filter((url) => !url.startsWith("blob:"));
       const finalImages = [...existingUrls, ...uploadedUrls];
 
       await supabase.from("posts").update({ title }).eq("id", postId);
@@ -125,8 +199,7 @@ export function CreateUsedGoodsForm({
           price: Number(price),
           category: productCategory,
           condition,
-          location_type: preferredLocation,
-          location_custom: preferredLocationDetail,
+          ...locationFields,
           content,
           safe_payment: safePayment,
           images: finalImages,
@@ -155,7 +228,8 @@ export function CreateUsedGoodsForm({
 
       const uploadedUrls: string[] = [];
       for (const file of imageFiles) {
-        const filePath = `${userId}/${post.id}/${Date.now()}_${file.name}`;
+        const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+        const filePath = `${userId}/${post.id}/${Date.now()}.${ext}`;
         const { error: uploadError } = await supabase.storage
           .from("images")
           .upload(filePath, file);
@@ -181,9 +255,7 @@ export function CreateUsedGoodsForm({
         safe_payment: safePayment,
         content,
         images: uploadedUrls.length > 0 ? uploadedUrls : null,
-        location_type: preferredLocation,
-        location_custom:
-          preferredLocation === "그 외 지역" ? preferredLocationDetail : null,
+        ...locationFields,
       });
 
       if (goodsError) {
@@ -199,17 +271,78 @@ export function CreateUsedGoodsForm({
     fileInputRef.current?.click();
   };
 
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFilesDropped = async (files: File[]) => {
+    const remaining = 10 - imageFiles.length;
+    const candidates = files.slice(0, remaining);
+
+    setIsCheckingImages(true);
+    try {
+      const allowedFiles: File[] = [];
+      let blockedReason: string | null = null;
+
+      for (const file of candidates) {
+        const outcome = await moderateImage(file);
+        if (outcome.allowed) {
+          allowedFiles.push(file);
+        } else {
+          blockedReason = outcome.reason;
+        }
+      }
+
+      if (blockedReason) {
+        showErrorToast(
+          blockedReason === "unavailable"
+            ? tc("imageUpload.unavailable")
+            : tc("imageUpload.blocked"),
+        );
+      }
+
+      setImageFiles((prev) => [...prev, ...allowedFiles]);
+      setImagePreviews((prev) => [
+        ...prev,
+        ...allowedFiles.map((file) => URL.createObjectURL(file)),
+      ]);
+    } finally {
+      setIsCheckingImages(false);
+    }
+  };
+
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
     const remaining = 10 - imageFiles.length;
-    const allowedFiles = files.slice(0, remaining);
-
-    setImageFiles((prev) => [...prev, ...allowedFiles]);
-    setImagePreviews((prev) => [
-      ...prev,
-      ...allowedFiles.map((file) => URL.createObjectURL(file)),
-    ]);
+    const candidates = files.slice(0, remaining);
     e.target.value = "";
+
+    setIsCheckingImages(true);
+    try {
+      const allowedFiles: File[] = [];
+      let blockedReason: string | null = null;
+
+      for (const file of candidates) {
+        const outcome = await moderateImage(file);
+        if (outcome.allowed) {
+          allowedFiles.push(file);
+        } else {
+          blockedReason = outcome.reason;
+        }
+      }
+
+      if (blockedReason) {
+        showErrorToast(
+          blockedReason === "unavailable"
+            ? tc("imageUpload.unavailable")
+            : tc("imageUpload.blocked"),
+        );
+      }
+
+      setImageFiles((prev) => [...prev, ...allowedFiles]);
+      setImagePreviews((prev) => [
+        ...prev,
+        ...allowedFiles.map((file) => URL.createObjectURL(file)),
+      ]);
+    } finally {
+      setIsCheckingImages(false);
+    }
   };
 
   const removeImage = (index: number) => {
@@ -222,20 +355,31 @@ export function CreateUsedGoodsForm({
   };
 
   return (
-    <main className="flex-1 bg-gray-50 py-8 px-4">
-      <div className="max-w-3xl mx-auto">
-        <Button variant="ghost" onClick={() => router.back()} className="mb-6">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          {t("form.back")}
-        </Button>
+    <main className="flex-1 bg-gray-50 py-8 px-4 pb-32">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" onClick={() => router.back()} className="hover:text-teal-500">
+            <ChevronLeft className="w-5 h-5" />
+          </Button>
+          <span className="text-lg font-semibold">{t("form.createTitle")}</span>
+        </div>
 
-        <Card className="p-8">
-          <h1 className="page-title-lg mb-2">
-            {initialData ? t("form.editTitle") : t("form.createTitle")}
-          </h1>
-          <p className="text-gray-600 mb-8">{t("form.subtitle")}</p>
+        <div className="p-8">
+          <form id="create-goods-form" onSubmit={handleSubmit} className="space-y-6">
+            <ImageUploadField
+              fileInputRef={fileInputRef}
+              imagePreviews={imagePreviews}
+              minCount={1}
+              isChecking={isCheckingImages}
+              onUploadClick={handleImageUpload}
+              onSelect={handleImageSelect}
+              onRemove={removeImage}
+              onFilesDropped={handleFilesDropped}
+            />
+            {imagePreviews.length === 0 && (
+              <p className="text-sm text-red-500">{t("form.errorNoImage")}</p>
+            )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="title">{t("form.titleLabel")}</Label>
               <Input
@@ -244,8 +388,12 @@ export function CreateUsedGoodsForm({
                 placeholder={t("form.titlePlaceholder")}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                className="h-12 rounded-sm"
                 required
               />
+              {title.length > 0 && title.trim().length < 2 && (
+                <p className="text-sm text-red-500">{t("form.titleMinLength")}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -253,11 +401,12 @@ export function CreateUsedGoodsForm({
               <div className="relative">
                 <Input
                   id="price"
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   placeholder="0"
                   value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  className="pr-12"
+                  onChange={(e) => setPrice(e.target.value.replace(/[^0-9]/g, ""))}
+                  className="h-12 rounded-sm pr-12"
                   required
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
@@ -273,17 +422,15 @@ export function CreateUsedGoodsForm({
                 onValueChange={(v) => setProductCategory(v as ProductCategory)}
                 required
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-12 rounded-sm">
                   <SelectValue placeholder={t("form.categoryPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {PRODUCT_CATEGORIES.filter((c) => c.id !== "all").map(
-                    (cat) => (
-                      <SelectItem key={cat.id} value={cat.id}>
-                        {te(`productCategory.${cat.id}`)}
-                      </SelectItem>
-                    ),
-                  )}
+                  {PRODUCT_CATEGORIES.filter((c) => c.id !== "all").map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {te(`productCategory.${cat.id}`)}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -295,7 +442,7 @@ export function CreateUsedGoodsForm({
                 onValueChange={(v) => setCondition(v as ProductCondition)}
                 required
               >
-                <SelectTrigger>
+                <SelectTrigger className="h-12 rounded-sm">
                   <SelectValue placeholder={t("form.conditionPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
@@ -309,57 +456,30 @@ export function CreateUsedGoodsForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="preferredLocation">{t("form.locationLabel")}</Label>
-              <Select
-                value={preferredLocation}
-                onValueChange={(v) => setPreferredLocation(v as TradeLocation)}
-                required
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t("form.locationPlaceholder")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {TRADE_LOCATIONS.map((loc) => (
-                    <SelectItem key={loc} value={loc}>
-                      {loc === "그 외 지역" ? te("tradeLocation.otherAreas") : loc}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {preferredLocation === "그 외 지역" && (
-                <Input
-                  placeholder={t("form.locationDetailPlaceholder")}
-                  value={preferredLocationDetail}
-                  onChange={(e) => setPreferredLocationDetail(e.target.value)}
-                  required
-                />
-              )}
+              <Label>{t("form.locationLabel")}</Label>
+              <LocationPicker
+                value={picked}
+                onChange={setPicked}
+                fallbackLabel={fallbackLocationLabel}
+              />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="content">{t("form.contentLabel")}</Label>
               <Textarea
-                className="resize-none min-h-48"
+                className="resize-none min-h-64 rounded-sm p-5 text-xs md:text-sm"
                 id="content"
                 placeholder={t("form.contentPlaceholder")}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
+                maxLength={5000}
                 rows={10}
                 required
               />
+              {content.length > 0 && content.trim().length < 10 && (
+                <p className="text-sm text-red-500">{t("form.contentMinLength")}</p>
+              )}
             </div>
-
-            <ImageUploadField
-              fileInputRef={fileInputRef}
-              imagePreviews={imagePreviews}
-              minCount={1}
-              onUploadClick={handleImageUpload}
-              onSelect={handleImageSelect}
-              onRemove={removeImage}
-            />
-            {imagePreviews.length === 0 && (
-              <p className="text-sm text-red-500">{t("form.errorNoImage")}</p>
-            )}
 
             <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
               <input
@@ -373,29 +493,39 @@ export function CreateUsedGoodsForm({
                 {t("form.safePaymentUse")}
               </Label>
             </div>
-
-            <div className="flex gap-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.back()}
-                className="flex-1"
-                disabled={isSubmitting}
-              >
-                {tc("cancel")}
-              </Button>
-              <Button
-                type="submit"
-                variant="teal"
-                className="flex-1"
-                disabled={isSubmitting || !isFormValid}
-              >
-                {isSubmitting ? t("form.submitting") : t("form.submit")}
-              </Button>
-            </div>
           </form>
-        </Card>
+        </div>
       </div>
+
+      <div className="sticky bottom-0 z-10 bg-gray-50 pb-4 -mx-4 px-4 md:static md:bg-transparent md:pb-0 md:max-w-7xl md:mx-auto md:px-8">
+        <hr className="border-gray-200" />
+        <p className="text-center text-xs md:text-sm text-gray-500 mt-4">{t("form.sellerDisclaimer")}</p>
+
+        {urlError && (
+          <p className="text-[13px] text-red-500 mt-2">{urlError}</p>
+        )}
+        <div className="flex gap-3 pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.back()}
+            className="flex-1 h-12"
+            disabled={isSubmitting}
+          >
+            {tc("cancel")}
+          </Button>
+          <Button
+            type="submit"
+            form="create-goods-form"
+            variant="teal"
+            className="flex-1 h-12"
+            disabled={isSubmitting || !isFormValid}
+          >
+            {isSubmitting ? t("form.submitting") : t("form.submit")}
+          </Button>
+        </div>
+      </div>
+      <Toast message={toastMessage} showMessage={showToast} type="error" icon="alert" />
     </main>
   );
 }

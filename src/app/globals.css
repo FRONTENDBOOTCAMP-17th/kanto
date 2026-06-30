@@ -6,6 +6,24 @@
 /* 이미지 캐러셀 키프레임 */
 @import "../styles/carousel.css";
 
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes slideInUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+@keyframes pullDown {
+  0%   { transform: translateY(0); }
+  40%  { transform: translateY(6px); }
+  100% { transform: translateY(0); }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -153,9 +171,24 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-x-hidden;
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* 새로고침으로 채팅 오버레이를 복원할 때, 하이드레이션 전에 SSR된 밑 페이지가
+   잠깐 보이는 깜빡임을 막는 부팅 커버.
+   layout.tsx의 인라인 스크립트가 html[data-chat-boot]를 설정하고,
+   위젯이 마운트되면 GlobalLayout이 이 속성을 제거한다.
+   오버레이가 전체화면이 되는 모바일(md 미만)에서만 필요하다. */
+@media (max-width: 767px) {
+  html[data-chat-boot] body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: #fff;
+    z-index: 60;
   }
 }

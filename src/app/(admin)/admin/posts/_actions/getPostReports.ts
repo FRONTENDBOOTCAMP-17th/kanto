@@ -1,6 +1,7 @@
 "use server";
 
 import { createAdminClient } from "@/utils/supabase/admin";
+import { requireAdmin } from "@/services/user/user";
 
 export interface PostReport {
   id: number;
@@ -13,6 +14,7 @@ export interface PostReport {
 }
 
 export async function getPostReports(postId: number): Promise<PostReport[]> {
+  await requireAdmin();
   const admin = createAdminClient();
 
   const { data } = await admin

@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import type { Locale } from "@/i18n/config";
 import { MapPin } from "lucide-react";
 import { LikeButton } from "@/components/common/LikeButton";
-import { formatTimeAgo, getDeadlineDiff } from "@/utils/formatTime";
+import { formatTimeAgo, getDeadlineDiff } from "@/utils/format";
 
 interface JobCardProps {
   id: number;

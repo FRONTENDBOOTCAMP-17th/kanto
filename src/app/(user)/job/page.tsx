@@ -1,5 +1,16 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getJobList, getPopularJobs } from "@/services/job/job";
+
+export const metadata: Metadata = {
+  title: "구인구직",
+  description: "필리핀 한인 구인구직 공고를 찾아보세요.",
+  openGraph: {
+    title: "구인구직 | 칸토",
+    description: "필리핀 한인 구인구직 공고를 찾아보세요.",
+    images: [{ url: "/kantoLogo.png", alt: "칸토 로고" }],
+  },
+};
 import { getLikeList } from "@/services/likes";
 import { getSessionUser, getIdentityVerified } from "@/services/user/user";
 import { CategoryWriteButton } from "@/components/common/CategoryWriteButton";
@@ -19,24 +30,23 @@ export default async function JobPage({
   const currentPage = Number(params.page ?? 1);
   const t = await getTranslations("Job");
 
-  const [posts, { likedIds, currentUserId }, popularPosts, sessionUser, isVerified] =
+  const [{ posts, total }, { likedIds, currentUserId }, popularPosts, sessionUser, isVerified] =
     await Promise.all([
-      getJobList({
-        search: params.search,
-        employeeType: params.type,
-        location: params.location,
-      }),
+      getJobList(
+        {
+          search: params.search,
+          employeeType: params.type,
+          location: params.location,
+        },
+        { page: currentPage, pageSize: ITEMS_PER_PAGE },
+      ),
       getLikeList("jobs"),
       getPopularJobs(),
       getSessionUser(),
       getIdentityVerified(),
     ]);
 
-  const totalPages = Math.ceil(posts.length / ITEMS_PER_PAGE);
-  const pagedPosts = posts.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE,
-  );
+  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
   return (
     <div className="page-wrapper">
@@ -69,7 +79,7 @@ export default async function JobPage({
         <PopularJobs posts={popularPosts} likedIds={likedIds} currentUserId={currentUserId} />
 
         <JobList
-          posts={pagedPosts}
+          posts={posts}
           likedIds={likedIds}
           currentUserId={currentUserId}
           currentPage={currentPage}

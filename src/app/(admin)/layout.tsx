@@ -1,8 +1,13 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { REPORTS_TABLE, REPORT_STATUS } from "@/constants/report";
 import AdminSidebar from "./_components/AdminSidebar";
+
+export const metadata: Metadata = {
+  robots: { index: false },
+};
 
 export default async function AdminLayout({
   children,
@@ -20,7 +25,7 @@ export default async function AdminLayout({
     .select("role")
     .eq("auth_id", user.id)
     .single();
-  if (userRow?.role !== "admin") redirect("/");
+  if (!["admin", "super_admin"].includes(userRow?.role ?? "")) redirect("/");
 
   const admin = createAdminClient();
   const { count } = await admin

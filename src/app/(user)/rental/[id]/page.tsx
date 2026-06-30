@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import { formatPrice } from "@/utils/format";
+import { after } from "next/server";
 import { getRentalDetail } from "@/services/rental/rental";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
 import BackButton from "@/app/(user)/rental/[id]/_components/BackButton";
@@ -8,6 +10,9 @@ import RentSellerInfo from "./_components/RentSellerInfo";
 import PostInfo from "./_components/PostInfo";
 import VerifyAuthor from "@/components/common/VerifyAuthor";
 import { viewCountUp } from "@/services/view";
+import { createClient } from "@/utils/supabase/server";
+import RelatedItemsCarousel, { type RelatedItem } from "@/components/common/RelatedItemsCarousel";
+export { generateMetadata } from "./metadata";
 
 export default async function RentalDetail({
   params,
@@ -24,14 +29,51 @@ export default async function RentalDetail({
   }
 
   const images = (rental.images as string[]) ?? [];
-  await viewCountUp(rental.post_id ?? 0);
-
   const postId = rental.post_id ?? 0;
+
+  
+  after(() => viewCountUp(postId));
   const { userId, initialLiked, initialReported } = await getUserLikeReportStatus(postId);
+
+  let relatedItems: RelatedItem[] = [];
+  if (rental.location) {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("rentals")
+      .select("id, post_id, images, price, posts(title)")
+      .eq("location", rental.location)
+      .neq("id", rental.id)
+      .limit(8);
+    relatedItems = (data ?? []).map((item) => ({
+      id: item.id,
+      href: `/rental/${item.post_id}`,
+      imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
+      title: (item.posts as { title: string | null } | null)?.title ?? "",
+      priceText: formatPrice(item.price),
+    }));
+  }
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: rental.posts.title,
+    description: rental.description?.slice(0, 160),
+    image: images[0],
+    offers: {
+      "@type": "Offer",
+      price: rental.price,
+      priceCurrency: "PHP",
+      priceSpecification: { "@type": "UnitPriceSpecification", unitCode: "MON" },
+    },
+  };
 
   return (
     <div className="page-container pb-12">
-      <div className="flex items-center justify-between">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="flex items-center justify-between mt-4">
         <BackButton />
         <VerifyAuthor
           authorAuthId={rental.posts.users?.auth_id}
@@ -69,6 +111,7 @@ export default async function RentalDetail({
         initialLiked={initialLiked}
         initialReported={initialReported}
       />
+      <RelatedItemsCarousel title="관련 매물" items={relatedItems} />
     </div>
   );
 }

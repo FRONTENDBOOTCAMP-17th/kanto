@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ShieldCheck, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { SellerInfo } from "@/type/user";
@@ -25,10 +26,15 @@ export default function PaymentCard({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const t = useTranslations("Chat.payment");
+  const router = useRouter();
 
   const isBuyer = currentUser.id === transaction.buyer_id;
   const isSeller = currentUser.id === transaction.seller_id;
   const amount = `₱${transaction.amount.toLocaleString()}`;
+
+  const isTimedOut =
+    transaction.status === "pending" &&
+    Date.now() - new Date(transaction.created_at).getTime() > 24 * 60 * 60 * 1000;
 
   const run = async (fn: () => Promise<unknown>) => {
     setIsLoading(true);
@@ -51,6 +57,8 @@ export default function PaymentCard({
     run(async () => {
       const updated = await confirmReceiptAction(transaction.id);
       onTransactionChange(updated);
+      
+      router.refresh();
       setIsLoading(false);
     });
 
@@ -67,6 +75,16 @@ export default function PaymentCard({
     "w-full rounded-full border border-gray-200 py-2 text-xs font-medium text-gray-500 hover:bg-gray-50 transition-colors disabled:opacity-50 cursor-pointer";
 
   const renderBody = () => {
+    if (isTimedOut) {
+      return (
+        <StatusLine
+          icon={<Clock className="w-4 h-4 text-gray-400" />}
+          text={t("expiredStatus")}
+          muted
+        />
+      );
+    }
+
     switch (transaction.status) {
       case "pending":
         return (
@@ -151,8 +169,10 @@ export default function PaymentCard({
     }
   };
 
+  const isBlocked = isTimedOut || transaction.status === "expired" || transaction.status === "cancelled";
+
   return (
-    <div className="max-w-[75%] w-56 rounded-2xl border border-teal-100 bg-white p-3 shadow-sm flex flex-col gap-2">
+    <div className={`max-w-[75%] w-56 rounded-2xl border bg-white p-3 shadow-sm flex flex-col gap-2 ${isBlocked ? "border-gray-100 opacity-60 pointer-events-none" : "border-teal-100"}`}>
       <div className="flex items-center justify-between">
         <span className="text-xs text-gray-500">{t("safePayment")}</span>
         <span className="text-sm font-semibold text-gray-800">{amount}</span>

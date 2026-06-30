@@ -62,13 +62,18 @@ export const NotificationBell = forwardRef<NotificationBellHandle, Props>(
 
     const handleNotificationClick = async (n: Notification) => {
       await markAsRead(n);
-      setIsOpen(false);
       if (n.related_type === "chat" && n.related_id) {
+        setIsOpen(false);
         useChatStore.getState().openWidget(n.related_id);
         return;
       }
       const href = getNotificationHref(n);
-      if (href) router.push(href);
+      if (href) {
+        setIsOpen(false);
+        router.push(href);
+      }
+      
+      
     };
 
     return (

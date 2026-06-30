@@ -1,5 +1,7 @@
 import { Wifi, AirVent, Car, Utensils } from "lucide-react";
 import { ContentCard } from "@/components/common/ContentCard";
+import PopularBadge from "@/app/(user)/main/_components/PopularBadge";
+import { formatBarangayLabel } from "@/type/location";
 
 const AMENITY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   wifi: Wifi,
@@ -14,6 +16,8 @@ interface RentalCardProps {
   price: number | null;
   location: string | null;
   locationDetail: string | null;
+  barangay: string | null;
+  city: string | null;
   createdAt: string;
   images: string[];
   amenities: string[];
@@ -21,6 +25,7 @@ interface RentalCardProps {
   initialIsLiked: boolean;
   currentUserId: number | null;
   fromPage?: number;
+  isPopular?: boolean;
 }
 
 export function RentalCard({
@@ -29,6 +34,8 @@ export function RentalCard({
   price,
   location,
   locationDetail,
+  barangay,
+  city,
   createdAt,
   images,
   amenities,
@@ -36,9 +43,14 @@ export function RentalCard({
   initialIsLiked,
   currentUserId,
   fromPage,
+  isPopular,
 }: RentalCardProps) {
   const displayLocation =
-    location === "그 외 지역" ? (locationDetail ?? location) : location;
+    barangay || city
+      ? formatBarangayLabel(barangay, city)
+      : location === "그 외 지역"
+        ? (locationDetail ?? location)
+        : location;
 
   const visibleAmenities = amenities.filter((a) => a in AMENITY_ICONS);
   const amenityTags = visibleAmenities.length > 0 ? (
@@ -71,6 +83,7 @@ export function RentalCard({
       initialIsLiked={initialIsLiked}
       currentUserId={currentUserId}
       tags={amenityTags}
+      badge={isPopular ? <PopularBadge /> : undefined}
     />
   );
 }

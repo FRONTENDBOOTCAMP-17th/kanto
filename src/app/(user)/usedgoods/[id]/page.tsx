@@ -1,11 +1,13 @@
 export const dynamic = "force-dynamic";
 
 import { notFound } from "next/navigation";
+import { after } from "next/server";
 import { getUsedGoodsItem } from "@/services/usedGoods/usedGoods";
 import { supabase } from "@/lib/supabase";
 import UsedGoodsDetail from "@/app/(user)/usedgoods/[id]/_components/UsedGoodsDetail";
 import { viewCountUp } from "@/services/view";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
+export { generateMetadata } from "./metadata";
 
 export default async function UsedGoodsDetailPage({
   params,
@@ -17,19 +19,41 @@ export default async function UsedGoodsDetailPage({
 
   if (!data) notFound();
 
-  const { data: relatedData } = await supabase
-    .from("used_goods")
-    .select(`*, posts (*, users!posts_user_id_fkey (id, name, avatar_url, auth_id, role, post_count, created_at))`)
-    .eq("category", data.category ?? "")
-    .neq("id", data.id)
-    .limit(8);
+  
+  const [{ data: relatedData }, { userId, initialLiked, initialReported }] =
+    await Promise.all([
+      supabase
+        .from("used_goods")
+        .select(`*, posts (title)`)
+        .eq("category", data.category ?? "")
+        .neq("id", data.id)
+        .limit(8),
+      getUserLikeReportStatus(data.post_id),
+    ]);
 
-  const { userId, initialLiked, initialReported } = await getUserLikeReportStatus(data.post_id);
+  
+  after(() => viewCountUp(data.post_id));
 
-  await viewCountUp(data.post_id);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: (data.posts as { title: string } | null)?.title,
+    description: data.content?.slice(0, 160),
+    image: (data.images as string[] | null)?.[0],
+    offers: {
+      "@type": "Offer",
+      price: data.price,
+      priceCurrency: "PHP",
+      availability: "https://schema.org/InStock",
+    },
+  };
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <UsedGoodsDetail
         data={data}
         relatedData={relatedData}

@@ -1,8 +1,9 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Flag, FileText, User, X, ExternalLink } from "lucide-react";
+import { AdminPagination } from "@/app/(admin)/admin/_components/AdminPagination";
 import { REPORT_STATUS } from "@/constants/report";
 import {
   REASON_STYLE,
@@ -11,6 +12,7 @@ import {
   SANCTION_LABEL,
   PAGE_SIZE,
 } from "../_lib/constants";
+import { formatDateTime } from "@/utils/format";
 import type { Report, Outcome, ReportType, Status, Sanction } from "@/type/admin";
 import {
   resolveReport,
@@ -333,33 +335,20 @@ export default function ReportsClient({ reports }: Props) {
 
       
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[760px] table-fixed border-collapse">
-            <colgroup>
-              <col className="w-1/6" />
-              <col className="w-1/6" />
-              <col className="w-1/6" />
-              <col className="w-1/6" />
-              <col className="w-1/6" />
-              <col className="w-1/6" />
-            </colgroup>
+        
+        <div className="hidden overflow-x-auto lg:block">
+          <table className="w-full min-w-[760px] border-collapse">
             <thead>
               <tr className="border-b border-[#f1f4f6] bg-slate-50">
-                {[
-                  { label: "유형", align: "text-center" },
-                  { label: "대상", align: "text-center" },
-                  { label: "신고 사유", align: "text-center" },
-                  { label: "신고일", align: "text-center" },
-                  { label: "상태", align: "text-center" },
-                ].map(({ label, align }) => (
+                {["유형", "대상", "신고 사유", "신고일", "상태"].map((h) => (
                   <th
-                    key={label}
-                    className={`px-[18px] py-[13px] ${align} text-[12px] font-bold uppercase tracking-wide text-slate-400`}
+                    key={h}
+                    className="px-[18px] py-[13px] text-left text-[12px] font-bold uppercase tracking-wide text-slate-400"
                   >
-                    {label}
+                    {h}
                   </th>
                 ))}
-                <th className="px-[18px] py-[13px] text-center text-[12px] font-bold uppercase tracking-wide text-slate-400">
+                <th className="px-[18px] py-[13px] text-right text-[12px] font-bold uppercase tracking-wide text-slate-400">
                   액션
                 </th>
               </tr>
@@ -377,7 +366,7 @@ export default function ReportsClient({ reports }: Props) {
                     className="cursor-pointer border-t border-[#f3f5f7] hover:bg-slate-50"
                   >
                     <td className="px-[18px] py-[15px]">
-                      <div className="flex items-center justify-center gap-2">
+                      <div className="flex items-center gap-2">
                         <span
                           style={{
                             color: r.type === "post" ? "#0d9488" : "#8b5cf6",
@@ -395,9 +384,9 @@ export default function ReportsClient({ reports }: Props) {
                         </span>
                       </div>
                     </td>
-                    <td className="px-[18px] py-[15px] text-center">
+                    <td className="px-[18px] py-[15px]">
                       <div className="min-w-0">
-                        <div className="truncate text-[14px] font-bold text-slate-900">
+                        <div className="max-w-[320px] truncate text-[14px] font-bold text-slate-900">
                           {r.targetName}
                         </div>
                         {cat && (
@@ -410,17 +399,17 @@ export default function ReportsClient({ reports }: Props) {
                         )}
                       </div>
                     </td>
-                    <td className="px-[18px] py-[15px] text-center">
+                    <td className="px-[18px] py-[15px]">
                       <Pill text={r.reason} fg={reason.fg} bg={reason.bg} />
                     </td>
-                    <td className="whitespace-nowrap px-[18px] py-[15px] text-center text-[13.5px] text-slate-500">
+                    <td className="whitespace-nowrap px-[18px] py-[15px] text-[13.5px] text-slate-500">
                       {r.reportDate}
                     </td>
-                    <td className="px-[18px] py-[15px] text-center">
+                    <td className="px-[18px] py-[15px]">
                       <Pill text={st.label} fg={st.fg} bg={st.bg} bold />
                     </td>
                     <td className="px-[18px] py-[15px]">
-                      <div className="flex items-center justify-center">
+                      <div className="flex items-center justify-end">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -445,6 +434,59 @@ export default function ReportsClient({ reports }: Props) {
         </div>
 
         
+        {pageItems.length > 0 && (
+          <div className="lg:hidden divide-y divide-[#f3f5f7]">
+            {pageItems.map((r) => {
+              const reason = REASON_STYLE[r.reason] ?? REASON_STYLE["기타"];
+              const st = STATUS_STYLE[r.status];
+              const isPending = r.status === REPORT_STATUS.PENDING;
+              return (
+                <div
+                  key={r.id}
+                  onClick={() => openDrawer(r.id)}
+                  className="cursor-pointer px-4 py-3.5 hover:bg-slate-50"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <span
+                        style={{ color: r.type === "post" ? "#0d9488" : "#8b5cf6" }}
+                        className="flex shrink-0"
+                      >
+                        {r.type === "post" ? (
+                          <FileText className="h-4 w-4" />
+                        ) : (
+                          <User className="h-4 w-4" />
+                        )}
+                      </span>
+                      <span className="truncate text-[14px] font-bold text-slate-900">
+                        {r.targetName}
+                      </span>
+                    </div>
+                    <Pill text={st.label} fg={st.fg} bg={st.bg} bold />
+                  </div>
+                  <div className="mt-2 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <Pill text={r.reason} fg={reason.fg} bg={reason.bg} />
+                      <span className="text-[12.5px] text-slate-400">{r.reportDate}</span>
+                    </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); openDrawer(r.id); }}
+                      className={[
+                        "shrink-0 rounded-[9px] px-3.5 py-1.5 text-[12px]",
+                        isPending
+                          ? "bg-teal-500 font-bold text-white"
+                          : "border border-[#e2e8eb] bg-white font-semibold text-slate-600",
+                      ].join(" ")}
+                    >
+                      {isPending ? "검토" : "상세"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         {filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center px-5 py-16 text-center">
             <Flag className="h-12 w-12 text-slate-200" strokeWidth={1.8} />
@@ -459,51 +501,12 @@ export default function ReportsClient({ reports }: Props) {
 
         
         {totalPages > 1 && (
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#f1f4f6] px-[22px] py-4">
-            <span className="text-[13px] text-slate-400">
-              총{" "}
-              <span className="font-semibold text-slate-600">
-                {filtered.length}
-              </span>
-              건 중{" "}
-              <span className="font-semibold text-slate-600">
-                {filtered.length === 0
-                  ? "0"
-                  : `${startIdx + 1}–${startIdx + pageItems.length}`}
-              </span>{" "}
-              표시
-            </span>
-            <div className="flex items-center gap-1.5">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="h-[34px] rounded-[9px] border border-[#e7ebee] bg-white px-[13px] text-[13px] font-semibold"
-                style={{ color: curPage <= 1 ? "#cbd5e1" : "#475569" }}
-              >
-                이전
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-                <button
-                  key={n}
-                  onClick={() => setPage(n)}
-                  className={[
-                    "h-[34px] min-w-[34px] rounded-[9px] px-2 text-[13px]",
-                    n === curPage
-                      ? "border-none bg-teal-500 font-bold text-white"
-                      : "border border-[#e7ebee] bg-white font-semibold text-slate-600",
-                  ].join(" ")}
-                >
-                  {n}
-                </button>
-              ))}
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className="h-[34px] rounded-[9px] border border-[#e7ebee] bg-white px-[13px] text-[13px] font-semibold"
-                style={{ color: curPage >= totalPages ? "#cbd5e1" : "#475569" }}
-              >
-                다음
-              </button>
-            </div>
-          </div>
+          <AdminPagination
+            currentPage={curPage}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            countLabel={<>총 <span className="font-semibold text-slate-600">{filtered.length}</span>건 중 <span className="font-semibold text-slate-600">{filtered.length === 0 ? "0" : `${startIdx + 1}–${startIdx + pageItems.length}`}</span> 표시</>}
+          />
         )}
       </div>
 
@@ -869,15 +872,6 @@ export default function ReportsClient({ reports }: Props) {
 
                     
                     {(() => {
-                      function formatDateTime(d: string | null | undefined) {
-                        if (!d) return "-";
-                        return new Intl.DateTimeFormat("ko-KR", {
-                          year: "numeric", month: "2-digit", day: "2-digit",
-                          hour: "2-digit", minute: "2-digit", second: "2-digit",
-                          hour12: false,
-                        }).format(new Date(d));
-                      }
-
                       type LogEntry = { key: string; color: string; bg: string; label: string; by: string | null; at: string | null };
                       const logs: LogEntry[] = [];
 

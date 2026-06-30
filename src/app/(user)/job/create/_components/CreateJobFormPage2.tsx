@@ -2,12 +2,17 @@
 
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUploadField } from "@/components/common/ImageUploadField";
 import { useImageUpload } from "@/hooks/useImageUpload";
+import Toast from "@/components/common/Toast";
+import { APIProvider } from "@vis.gl/react-google-maps";
+import { PlaceAutocomplete } from "@/components/go/PlaceAutocomplete";
+import type { PickedLocation } from "@/type/go";
+
+const RequiredMark = () => <span> *</span>;
 
 const URL_REGEX = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&/=]*)$/i;
 
@@ -19,16 +24,15 @@ interface CreateJobFormPageTwoProps {
   industry: string; setIndustry: (v: string) => void;
   companyYear: string; setCompanyYear: (v: string) => void;
   employeeCount: string; setEmployeeCount: (v: string) => void;
-  companyAddress: string; setCompanyAddress: (v: string) => void;
+  companyAddress: string;
+  companyLocation: PickedLocation | null; setCompanyLocation: (l: PickedLocation) => void;
   companyWebsite: string; setCompanyWebsite: (v: string) => void;
   managerName: string;
   managerTitle: string; setManagerTitle: (v: string) => void;
   managerPhone: string; setManagerPhone: (v: string) => void;
   managerEmail: string; setManagerEmail: (v: string) => void;
-  isSubmitting: boolean;
   imageUpload: ReturnType<typeof useImageUpload>;
   handleSubmit: () => void;
-  handlePrevStep: () => void;
 }
 
 export function CreateJobFormPageTwo({
@@ -39,21 +43,34 @@ export function CreateJobFormPageTwo({
   industry, setIndustry,
   companyYear, setCompanyYear,
   employeeCount, setEmployeeCount,
-  companyAddress, setCompanyAddress,
+  companyAddress,
+  companyLocation, setCompanyLocation,
   companyWebsite, setCompanyWebsite,
   managerName,
   managerTitle, setManagerTitle,
   managerPhone, setManagerPhone,
   managerEmail, setManagerEmail,
-  isSubmitting,
   imageUpload,
   handleSubmit,
-  handlePrevStep,
 }: CreateJobFormPageTwoProps) {
   const t = useTranslations("Job");
+  const tc = useTranslations("Common");
   const [websiteError, setWebsiteError] = useState("");
   const logoInputRef = useRef<HTMLInputElement>(null);
   const logoPreview = companyLogoFile ? URL.createObjectURL(companyLogoFile) : companyLogoUrl || null;
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleImageSelectWithToast = (e: React.ChangeEvent<HTMLInputElement>) =>
+    imageUpload.handleImageSelect(e, (reason) => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+      setToastMessage(
+        reason === "unavailable" ? tc("imageUpload.unavailable") : tc("imageUpload.blocked"),
+      );
+      setShowToast(true);
+      toastTimerRef.current = setTimeout(() => setShowToast(false), 3000);
+    });
 
   const handleWebsiteBlur = () => {
     if (companyWebsite && !URL_REGEX.test(companyWebsite)) {
@@ -64,11 +81,15 @@ export function CreateJobFormPageTwo({
   };
 
   return (
-    <div className="space-y-6">
-      <p className="text-gray-500">{t("form.page2Subtitle")}</p>
-
+    <form
+      className="space-y-6"
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit();
+      }}
+    >
       <div className="space-y-4">
-        <h2 className="font-semibold text-gray-900">{t("form.companyInfo")}</h2>
+        <h2 className="font-semibold text-xl text-gray-900">{t("form.companyInfo")}</h2>
         <div className="space-y-2">
           <Label>{t("form.companyLogoLabel")} <span className="text-gray-400 font-normal text-sm">{t("form.optional")}</span></Label>
           <div className="flex items-center gap-4">
@@ -106,65 +127,73 @@ export function CreateJobFormPageTwo({
         </div>
         <div className="space-y-2">
           <Label htmlFor="companyName">{t("form.companyNameLabel")}</Label>
-          <Input id="companyName" placeholder={t("form.companyNamePlaceholder")} value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
+          <Input id="companyName" placeholder={t("form.companyNamePlaceholder")} value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="h-12 rounded-sm" required />
         </div>
         <div className="space-y-2">
           <Label htmlFor="companyIntro">{t("form.companyIntroLabel")}</Label>
-          <Textarea id="companyIntro" placeholder={t("form.companyIntroPlaceholder")} value={companyIntro} onChange={(e) => setCompanyIntro(e.target.value)} className="resize-none min-h-28" />
+          <Textarea id="companyIntro" placeholder={t("form.companyIntroPlaceholder")} value={companyIntro} onChange={(e) => setCompanyIntro(e.target.value)} className="resize-none min-h-52 rounded-sm p-5 text-xs md:text-sm" required />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="industry">{t("form.industryLabel")}</Label>
-          <Input id="industry" placeholder={t("form.industryPlaceholder")} value={industry} onChange={(e) => setIndustry(e.target.value)} />
+          <Label htmlFor="industry">{t("form.industryLabel")}<RequiredMark /></Label>
+          <Input id="industry" placeholder={t("form.industryPlaceholder")} value={industry} onChange={(e) => setIndustry(e.target.value)} className="h-12 rounded-sm" required />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="companyYear">{t("form.foundedYearLabel")}</Label>
-            <Input id="companyYear" inputMode="numeric" placeholder={t("form.foundedYearPlaceholder")} value={companyYear} onChange={(e) => setCompanyYear(e.target.value.replace(/\D/g, ""))} />
+            <Input id="companyYear" inputMode="numeric" placeholder={t("form.foundedYearPlaceholder")} value={companyYear} onChange={(e) => setCompanyYear(e.target.value.replace(/\D/g, ""))} className="h-12 rounded-sm" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="employeeCount">{t("form.employeeCountLabel")}</Label>
-            <Input id="employeeCount" inputMode="numeric" placeholder={t("form.employeeCountPlaceholder")} value={employeeCount} onChange={(e) => setEmployeeCount(e.target.value.replace(/\D/g, ""))} />
+            <Input id="employeeCount" inputMode="numeric" placeholder={t("form.employeeCountPlaceholder")} value={employeeCount} onChange={(e) => setEmployeeCount(e.target.value.replace(/\D/g, ""))} className="h-12 rounded-sm" />
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="companyAddress">{t("form.addressLabel")}</Label>
-          <Input id="companyAddress" placeholder={t("form.addressPlaceholder")} value={companyAddress} onChange={(e) => setCompanyAddress(e.target.value)} />
+          <Label htmlFor="companyAddress">{t("form.addressLabel")}<RequiredMark /></Label>
+          <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
+            <PlaceAutocomplete
+              selected={companyLocation}
+              onSelect={setCompanyLocation}
+              fallbackLabel={companyLocation ? null : companyAddress || null}
+            />
+          </APIProvider>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="companyWebsite">{t("form.websiteLabel")}</Label>
+          <Label htmlFor="companyWebsite">{t("form.websiteLabel")}<RequiredMark /></Label>
           <Input
             id="companyWebsite"
             placeholder={t("form.websitePlaceholder")}
             value={companyWebsite}
             onChange={(e) => setCompanyWebsite(e.target.value)}
             onBlur={handleWebsiteBlur}
+            className="h-12 rounded-sm"
+            required
           />
           {websiteError && <p className="text-xs text-red-500">{websiteError}</p>}
         </div>
       </div>
 
       <div className="space-y-4">
-        <h2 className="font-semibold text-gray-900">{t("form.managerInfo")}</h2>
+        <h2 className="font-semibold text-xl text-gray-900">{t("form.managerInfo")}</h2>
         <div className="space-y-2">
           <Label htmlFor="managerName">{t("form.managerNameLabel")}</Label>
           <Input
             id="managerName"
             value={managerName}
             readOnly
-            className="bg-gray-100 text-gray-500 cursor-not-allowed"
+            className="h-12 rounded-sm bg-gray-100 text-gray-500 cursor-not-allowed"
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="managerTitle">{t("form.managerTitleLabel")}</Label>
-          <Input id="managerTitle" placeholder={t("form.managerTitlePlaceholder")} value={managerTitle} onChange={(e) => setManagerTitle(e.target.value)} />
+          <Label htmlFor="managerTitle">{t("form.managerTitleLabel")}<RequiredMark /></Label>
+          <Input id="managerTitle" placeholder={t("form.managerTitlePlaceholder")} value={managerTitle} onChange={(e) => setManagerTitle(e.target.value)} className="h-12 rounded-sm" required />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="managerPhone">{t("form.managerPhoneLabel")}</Label>
-          <Input id="managerPhone" placeholder={t("form.managerPhonePlaceholder")} value={managerPhone} onChange={(e) => setManagerPhone(e.target.value)} />
+          <Label htmlFor="managerPhone">{t("form.managerPhoneLabel")}<RequiredMark /></Label>
+          <Input id="managerPhone" placeholder={t("form.managerPhonePlaceholder")} value={managerPhone} onChange={(e) => setManagerPhone(e.target.value)} className="h-12 rounded-sm" required />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="managerEmail">{t("form.managerEmailLabel")}</Label>
-          <Input id="managerEmail" type="email" placeholder={t("form.managerEmailPlaceholder")} value={managerEmail} onChange={(e) => setManagerEmail(e.target.value)} />
+          <Label htmlFor="managerEmail">{t("form.managerEmailLabel")}<RequiredMark /></Label>
+          <Input id="managerEmail" type="email" placeholder={t("form.managerEmailPlaceholder")} value={managerEmail} onChange={(e) => setManagerEmail(e.target.value)} className="h-12 rounded-sm" required />
         </div>
       </div>
 
@@ -175,18 +204,14 @@ export function CreateJobFormPageTwo({
         <ImageUploadField
           fileInputRef={imageUpload.fileInputRef}
           imagePreviews={imageUpload.imagePreviews}
+          isChecking={imageUpload.isChecking}
           onUploadClick={imageUpload.handleImageUpload}
-          onSelect={imageUpload.handleImageSelect}
+          onSelect={handleImageSelectWithToast}
           onRemove={imageUpload.removeImage}
         />
       </div>
 
-      <div className="flex gap-3 pt-2">
-        <Button type="button" variant="outline" onClick={handlePrevStep} className="flex-1" disabled={isSubmitting}>{t("form.prev")}</Button>
-        <Button type="button" variant="teal" onClick={handleSubmit} className="flex-1" disabled={isSubmitting}>
-          {isSubmitting ? t("form.submitting") : t("form.submit")}
-        </Button>
-      </div>
-    </div>
+      <Toast message={toastMessage} showMessage={showToast} type="error" icon="alert" />
+    </form>
   );
 }

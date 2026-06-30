@@ -20,6 +20,7 @@ export const PRODUCT_CONDITIONS = [
   { id: "미개봉", label: "미개봉" },
   { id: "가벼운 사용감", label: "가벼운 사용감" },
   { id: "사용감 있음", label: "사용감 있음" },
+  { id: "기타", label: "기타" },
 ] as const;
 
 export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number]["id"];

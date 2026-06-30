@@ -1,6 +1,7 @@
 "use client";
 
-import { ImagePlus, X } from "lucide-react";
+import { useState } from "react";
+import { ImagePlus, Loader2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Label } from "@/components/ui/label";
 
@@ -9,9 +10,12 @@ interface ImageUploadFieldProps {
   imagePreviews: string[];
   maxCount?: number;
   minCount?: number;
+  required?: boolean;
+  isChecking?: boolean;
   onUploadClick: () => void;
   onSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onRemove: (index: number) => void;
+  onFilesDropped?: (files: File[]) => void;
 }
 
 export function ImageUploadField({
@@ -19,17 +23,44 @@ export function ImageUploadField({
   imagePreviews,
   maxCount = 10,
   minCount,
+  required = false,
+  isChecking = false,
   onUploadClick,
   onSelect,
   onRemove,
+  onFilesDropped,
 }: ImageUploadFieldProps) {
   const t = useTranslations("Common");
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (!onFilesDropped) return;
+    const remaining = maxCount - imagePreviews.length;
+    const files = Array.from(e.dataTransfer.files)
+      .filter((f) => f.type.startsWith("image/"))
+      .slice(0, remaining);
+    if (files.length > 0) onFilesDropped(files);
+  };
+
   return (
     <div className="space-y-2">
       <Label>
         {minCount !== undefined
           ? t("imageUpload.labelWithMin", { minCount, maxCount })
           : t("imageUpload.label", { maxCount })}
+        {required && " *"}
       </Label>
       <input
         ref={fileInputRef}
@@ -65,12 +96,31 @@ export function ImageUploadField({
           <button
             type="button"
             onClick={onUploadClick}
-            className="w-full border-2 border-dashed border-gray-300 rounded-lg p-8 hover:border-teal-500 transition-colors"
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            disabled={isChecking}
+            className={`w-full border-2 border-dashed rounded-lg p-8 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 ${
+              isDragging
+                ? "border-teal-500 bg-teal-50"
+                : "border-gray-300 hover:border-teal-500"
+            }`}
           >
             <div className="flex flex-col items-center gap-2 text-gray-500">
-              <ImagePlus className="w-8 h-8" />
-              <span className="text-sm">{t("imageUpload.add")}</span>
-              <span className="text-xs">({imagePreviews.length}/{maxCount})</span>
+              {isChecking ? (
+                <>
+                  <Loader2 className="w-8 h-8 animate-spin" />
+                  <span className="text-sm">{t("imageUpload.checking")}</span>
+                </>
+              ) : (
+                <>
+                  <ImagePlus className="w-8 h-8" />
+                  <span className="text-sm">
+                    {isDragging ? t("imageUpload.drop") : t("imageUpload.add")}
+                  </span>
+                  <span className="text-xs">({imagePreviews.length}/{maxCount})</span>
+                </>
+              )}
             </div>
           </button>
         )}

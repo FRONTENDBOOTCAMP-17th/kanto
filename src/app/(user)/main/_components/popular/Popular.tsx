@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { getPopularList } from "@/services/main/main";
 import { getLikeList } from "@/services/likes";
 import PopularTabs from "./PopularTabs";
+import PopularRefreshButton from "./PopularRefreshButton";
 
 export default async function Popular() {
   const t = await getTranslations("Main");
@@ -21,7 +22,7 @@ export default async function Popular() {
       location: p.used_goods[0].location_type,
       likeCount: p.like_count,
       createdAt: p.created_at,
-      popular: p.like_count >= 20,
+      popular: p.is_popular ?? false,
       imageSrc: (p.used_goods[0].images as string[] | null)?.[0],
       initialIsLiked: likedIds.includes(p.id),
       currentUserId,
@@ -38,7 +39,7 @@ export default async function Popular() {
       location: p.rentals[0].location ?? "",
       likeCount: p.like_count,
       createdAt: p.created_at,
-      popular: p.like_count >= 20,
+      popular: p.is_popular ?? false,
       imageSrc: (p.rentals[0].images as string[] | null)?.[0],
       initialIsLiked: likedIds.includes(p.id),
       currentUserId,
@@ -63,8 +64,9 @@ export default async function Popular() {
 
   return (
     <>
-      <div className="mt-8">
-        <h1 className="page-title-lg mb-6 md:mb-10">{t("popularTitle")}</h1>
+      <div className="mt-8 mb-6 md:mb-10 flex items-center justify-between">
+        <h1 className="page-title-lg">{t("popularTitle")}</h1>
+        {process.env.NODE_ENV === "development" && <PopularRefreshButton />}
       </div>
       <PopularTabs
         usedGoodsItems={usedGoodsItems}

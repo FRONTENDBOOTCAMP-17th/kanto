@@ -1,4 +1,7 @@
+"use client";
+
 import { AlertTriangle, ArrowRight } from "lucide-react";
+import { useReportCenter } from "./DashboardReportCenter";
 
 interface Props {
   pendingTotal: number;
@@ -13,6 +16,8 @@ export default function UrgentReportBanner({
   pendingPost,
   oldestDays,
 }: Props) {
+  const { openQueue } = useReportCenter();
+
   if (pendingTotal === 0) return null;
 
   return (
@@ -40,7 +45,10 @@ export default function UrgentReportBanner({
           )}
         </div>
       </div>
-      <button className="flex items-center gap-1.5 whitespace-nowrap rounded-[11px] bg-red-500 px-5 py-3 text-[14px] font-bold text-white shadow-[0_6px_16px_rgba(239,68,68,0.3)] hover:bg-red-600">
+      <button
+        onClick={openQueue}
+        className="flex items-center gap-1.5 whitespace-nowrap rounded-[11px] bg-red-500 px-5 py-3 text-[14px] font-bold text-white shadow-[0_6px_16px_rgba(239,68,68,0.3)] hover:bg-red-600"
+      >
         지금 처리하기
         <ArrowRight className="h-[17px] w-[17px]" strokeWidth={2.2} />
       </button>

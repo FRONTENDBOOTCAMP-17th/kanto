@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { X, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -50,7 +49,6 @@ interface CreateJobFormPageOneProps {
   preferredTags: string[];
   setPreferredTags: (v: string[]) => void;
   handleNextStep: () => void;
-  handleBack: () => void;
 }
 
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
@@ -93,7 +91,6 @@ export function CreateJobFormPageOne({
   preferredTags,
   setPreferredTags,
   handleNextStep,
-  handleBack,
 }: CreateJobFormPageOneProps) {
   const [showPreferredModal, setShowPreferredModal] = useState(false);
 
@@ -125,7 +122,7 @@ export function CreateJobFormPageOne({
     );
 
   const handleSalaryChange = (value: string) => {
-    const rawNumber = value.replace(/\D/g, ""); 
+    const rawNumber = value.replace(/\D/g, "");
     setSalary(rawNumber);
   };
 
@@ -138,19 +135,26 @@ export function CreateJobFormPageOne({
       setWorkHoursStart("");
       setWorkHoursEnd("");
       setWorkDays([]);
+    } else {
+      setWorkHoursStart("00:00");
+      setWorkHoursEnd("00:00");
     }
   };
 
   return (
-    <div className="space-y-4">
+    <form
+      className="space-y-4"
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleNextStep();
+      }}
+    >
       <div>
-        <p className="text-gray-500 text-sm">{t("form.page1Subtitle")}</p>
-        <h2 className="font-semibold text-xl text-gray-900 mt-1">
+        <h2 className="font-semibold text-xl text-gray-900">
           {t("form.jobInfo")}
         </h2>
       </div>
 
-      
       <div className="space-y-2">
         <Label htmlFor="title">{t("form.titleLabel")}</Label>
         <Input
@@ -158,10 +162,14 @@ export function CreateJobFormPageOne({
           placeholder={t("form.titlePlaceholder")}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          className="h-12 rounded-sm"
+          required
         />
+        {title.length > 0 && title.trim().length < 2 && (
+          <p className="text-[13px] text-red-500">{t("form.titleMinLength")}</p>
+        )}
       </div>
 
-      
       <div className="space-y-2">
         <Label>{t("form.employeeTypeLabel")}</Label>
         <ResponsiveSelect
@@ -169,10 +177,11 @@ export function CreateJobFormPageOne({
           onValueChange={(v) => setEmployeeType(v as EmployeeType)}
           options={EMPLOYEE_OPTIONS}
           placeholder={t("form.employeeTypePlaceholder")}
+          className="h-12 rounded-sm"
+          required
         />
       </div>
 
-      
       <div className="space-y-2">
         <Label htmlFor="salary">{t("form.salaryLabel")}</Label>
         <div className="flex gap-2">
@@ -184,7 +193,8 @@ export function CreateJobFormPageOne({
               placeholder="0"
               value={salary ? Number(salary).toLocaleString() : ""}
               onChange={(e) => handleSalaryChange(e.target.value)}
-              className="pr-12"
+              className="h-12 rounded-sm pr-12"
+              required
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm pointer-events-none">
               PHP
@@ -195,12 +205,11 @@ export function CreateJobFormPageOne({
             onValueChange={(v) => setSalaryType(v as SalaryType)}
             options={SALARY_OPTIONS}
             placeholder={t("form.salaryUnitPlaceholder")}
-            className="w-28"
+            className="w-28 h-12 rounded-sm"
           />
         </div>
       </div>
 
-      
       <div className="space-y-2">
         <Label>{t("form.locationLabel")}</Label>
         <ResponsiveSelect
@@ -208,17 +217,20 @@ export function CreateJobFormPageOne({
           onValueChange={(v) => setLocationType(v as TradeLocation)}
           options={LOCATION_OPTIONS}
           placeholder={t("form.locationPlaceholder")}
+          className="h-12 rounded-sm"
+          required
         />
         {locationType === "그 외 지역" && (
           <Input
             placeholder={t("form.locationDetailPlaceholder")}
             value={locationCustom}
             onChange={(e) => setLocationCustom(e.target.value)}
+            className="h-12 rounded-sm"
+            required
           />
         )}
       </div>
 
-      
       <div className="space-y-2">
         <Label htmlFor="deadline">{t("form.deadlineLabel")}</Label>
         <Input
@@ -226,10 +238,11 @@ export function CreateJobFormPageOne({
           type="date"
           value={deadline}
           onChange={(e) => setDeadline(e.target.value)}
+          className="h-12 rounded-sm"
+          required
         />
       </div>
 
-      
       <div className="space-y-4 border-t pt-4 mt-2">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
@@ -243,60 +256,58 @@ export function CreateJobFormPageOne({
             </label>
           </div>
 
-          <div className="flex items-center gap-2">
-            
-            <ResponsiveSelect
-              className="w-24"
-              disabled={isTimeNegotiable}
-              value={startHour}
-              onValueChange={(h) =>
-                setWorkHoursStart(`${h}:${startMinute || "00"}`)
-              }
-              options={HOUR_OPTIONS}
-              placeholder={t("form.hour")}
-            />
-            
-            <ResponsiveSelect
-              className="w-24"
-              disabled={isTimeNegotiable}
-              value={startMinute}
-              onValueChange={(m) =>
-                setWorkHoursStart(`${startHour || "00"}:${m}`)
-              }
-              options={MINUTE_OPTIONS}
-              placeholder={t("form.minute")}
-            />
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
+            <div className="flex items-center gap-2">
+              <ResponsiveSelect
+                className="flex-1 h-12 rounded-sm sm:w-24 sm:flex-none"
+                disabled={isTimeNegotiable}
+                value={startHour}
+                onValueChange={(h) =>
+                  setWorkHoursStart(`${h}:${startMinute || "00"}`)
+                }
+                options={HOUR_OPTIONS}
+                placeholder={t("form.hour")}
+              />
+              <ResponsiveSelect
+                className="flex-1 h-12 rounded-sm sm:w-24 sm:flex-none"
+                disabled={isTimeNegotiable}
+                value={startMinute}
+                onValueChange={(m) =>
+                  setWorkHoursStart(`${startHour || "00"}:${m}`)
+                }
+                options={MINUTE_OPTIONS}
+                placeholder={t("form.minute")}
+              />
+            </div>
 
-            <span className="text-gray-500 mx-1">~</span>
+            <span className="text-gray-400 text-sm text-center sm:mx-1 sm:text-base sm:text-gray-500">~</span>
 
-            
-            <ResponsiveSelect
-              className="w-24"
-              disabled={isTimeNegotiable}
-              value={endHour}
-              onValueChange={(h) =>
-                setWorkHoursEnd(`${h}:${endMinute || "00"}`)
-              }
-              options={HOUR_OPTIONS}
-              placeholder={t("form.hour")}
-            />
-            
-            <ResponsiveSelect
-              className="w-24"
-              disabled={isTimeNegotiable}
-              value={endMinute}
-              onValueChange={(m) => setWorkHoursEnd(`${endHour || "00"}:${m}`)}
-              options={MINUTE_OPTIONS}
-              placeholder={t("form.minute")}
-            />
+            <div className="flex items-center gap-2">
+              <ResponsiveSelect
+                className="flex-1 h-12 rounded-sm sm:w-24 sm:flex-none"
+                disabled={isTimeNegotiable}
+                value={endHour}
+                onValueChange={(h) =>
+                  setWorkHoursEnd(`${h}:${endMinute || "00"}`)
+                }
+                options={HOUR_OPTIONS}
+                placeholder={t("form.hour")}
+              />
+              <ResponsiveSelect
+                className="flex-1 h-12 rounded-sm sm:w-24 sm:flex-none"
+                disabled={isTimeNegotiable}
+                value={endMinute}
+                onValueChange={(m) => setWorkHoursEnd(`${endHour || "00"}:${m}`)}
+                options={MINUTE_OPTIONS}
+                placeholder={t("form.minute")}
+              />
+            </div>
           </div>
         </div>
 
-        
         <div className="space-y-2">
           <Label>{t("form.workDaysLabel")}</Label>
 
-          
           <div className="flex flex-wrap gap-2">
             {DAY_PRESETS.map((preset) => (
               <button
@@ -311,7 +322,6 @@ export function CreateJobFormPageOne({
             ))}
           </div>
 
-          
           <div className="flex flex-wrap gap-2">
             {WORK_DAYS.map((day) => {
               const selected = workDays.includes(day);
@@ -335,19 +345,23 @@ export function CreateJobFormPageOne({
         </div>
       </div>
 
-      
       <div className="space-y-2">
         <Label htmlFor="mainTask">{t("form.mainTaskLabel")}</Label>
         <Textarea
           id="mainTask"
           placeholder={t("form.mainTaskPlaceholder")}
           value={mainTask}
-          onChange={(e) => setMainTask(e.target.value)}
-          className="resize-none min-h-28"
+          onChange={(e) => setMainTask(e.target.value.slice(0, 5000))}
+          className="resize-none min-h-68 rounded-sm p-5 text-xs md:text-sm"
+          maxLength={5000}
+          required
         />
+        {mainTask.length > 0 && mainTask.trim().length < 10 && (
+          <p className="text-[13px] text-red-500">{t("form.mainTaskMinLength")}</p>
+        )}
+        <p className="text-right text-xs text-gray-400">{mainTask.length}/5000</p>
       </div>
 
-      
       <div className="space-y-2">
         <Label>{t("form.preferredLabel")}</Label>
         <button
@@ -361,7 +375,6 @@ export function CreateJobFormPageOne({
             : t("form.preferredSelect")}
         </button>
 
-        
         {preferredTags.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {preferredTags.map((key) => (
@@ -374,9 +387,9 @@ export function CreateJobFormPageOne({
                   type="button"
                   onClick={() => toggleTag(key)}
                   aria-label={tc("delete")}
-                  className="transition-colors hover:text-teal-900 flex justify-center "
+                  className="transition-colors hover:text-teal-900 flex justify-center"
                 >
-                  <X className="h-3.5 w-3.5 " />
+                  <X className="h-3.5 w-3.5" />
                 </button>
               </span>
             ))}
@@ -387,36 +400,16 @@ export function CreateJobFormPageOne({
           placeholder={t("form.preferredPlaceholder")}
           value={preferred}
           onChange={(e) => setPreferred(e.target.value)}
+          className="h-12 rounded-sm"
         />
       </div>
 
-      
-      <div className="flex gap-3 pt-4 border-t">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleBack}
-          className="flex-1"
-        >
-          {tc("cancel")}
-        </Button>
-        <Button
-          type="button"
-          variant="teal"
-          onClick={handleNextStep}
-          className="flex-1"
-        >
-          {t("form.next")}
-        </Button>
-      </div>
-
-      
       <JobPreferredModal
         isOpen={showPreferredModal}
         onClose={() => setShowPreferredModal(false)}
         selected={preferredTags}
         onToggle={toggleTag}
       />
-    </div>
+    </form>
   );
 }

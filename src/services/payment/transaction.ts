@@ -49,16 +49,26 @@ export async function getReleasedTransactionsForChat(
   return (data as Transaction[]) ?? [];
 }
 
+export const PAYMENT_PENDING_EXPIRY_MS = 24 * 60 * 60 * 1000;
+
 export async function hasBlockingTransactionForChat(
   chatId: number,
 ): Promise<boolean> {
   const { data } = await supabaseAdmin
     .from("transactions")
-    .select("id")
+    .select("id, status, created_at")
     .eq("chat_id", chatId)
-    .in("status", ["pending", "paid", "released"])
-    .limit(1);
-  return (data?.length ?? 0) > 0;
+    .in("status", ["pending", "paid", "released"]);
+
+  
+  
+  const expiryThreshold = Date.now() - PAYMENT_PENDING_EXPIRY_MS;
+  const blocking = (data ?? []).filter((t) =>
+    t.status === "pending"
+      ? new Date(t.created_at).getTime() > expiryThreshold
+      : true,
+  );
+  return blocking.length > 0;
 }
 
 export async function getTransactionByExternalId(
@@ -78,6 +88,7 @@ export async function updateTransaction(
     status?: TransactionStatus;
     xendit_invoice_id?: string;
     xendit_invoice_url?: string;
+    xendit_disbursement_id?: string;
     paid_at?: string;
     released_at?: string;
   },
@@ -91,6 +102,22 @@ export async function updateTransaction(
 
   if (error) throw new Error(error.message);
   return data as Transaction;
+}
+
+export async function claimTransactionRelease(
+  id: number,
+  buyerId: number,
+): Promise<Transaction | null> {
+  const { data } = await supabaseAdmin
+    .from("transactions")
+    .update({ status: "released", released_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq("buyer_id", buyerId)
+    .eq("status", "paid")
+    .select()
+    .single();
+
+  return (data as Transaction) ?? null;
 }
 
 export async function postSystemMessage(

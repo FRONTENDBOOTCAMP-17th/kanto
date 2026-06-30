@@ -71,7 +71,10 @@ export default function LoginForm() {
   return (
     <>
       <button
-        onClick={() => router.push("/")}
+        onClick={() => {
+          router.push("/");
+          router.refresh();
+        }}
         className="absolute top-4 left-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
       >
         <X className="w-5 h-5 text-gray-600" />

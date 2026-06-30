@@ -1,8 +1,13 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { ProfileCard } from "@/app/(user)/profile/_components/ProfileCard";
 import { getReviewsForUser } from "@/services/review/review";
 import type { AlertSettings } from "@/hooks/profile/useAlertSettings";
+
+export const metadata: Metadata = {
+  robots: { index: false },
+};
 
 export default async function ProfilePage() {
   const supabase = await createClient();

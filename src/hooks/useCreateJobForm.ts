@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { useImageUpload } from "@/hooks/useImageUpload";
 import type { TradeLocation } from "@/type/location";
 import type { EmployeeType, SalaryType, JobInitialData } from "@/type/job/jobCreate";
+import type { PickedLocation } from "@/type/go";
 
 export function useCreateJobForm(userId: number, userName: string, initialData?: JobInitialData) {
   const router = useRouter();
@@ -20,8 +21,8 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   const [locationType, setLocationType] = useState<TradeLocation | "">(initialData?.location_type as TradeLocation ?? "");
   const [locationCustom, setLocationCustom] = useState(initialData?.location_custom ?? "");
   const [deadline, setDeadline] = useState(initialData?.deadline ?? "");
-  const [workHoursStart, setWorkHoursStart] = useState(() => (initialData?.work_hours ?? "").split(" - ")[0] ?? "");
-  const [workHoursEnd, setWorkHoursEnd] = useState(() => (initialData?.work_hours ?? "").split(" - ")[1] ?? "");
+  const [workHoursStart, setWorkHoursStart] = useState(() => (initialData?.work_hours ?? "").split(" - ")[0] || "00:00");
+  const [workHoursEnd, setWorkHoursEnd] = useState(() => (initialData?.work_hours ?? "").split(" - ")[1] || "00:00");
   const [workDays, setWorkDays] = useState<string[]>(initialData?.work_days ?? []);
   const [isTimeNegotiable, setIsTimeNegotiable] = useState(initialData?.is_time_negotiable ?? false);
   const [mainTask, setMainTask] = useState(initialData?.main_task ?? "");
@@ -34,6 +35,16 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   const [companyYear, setCompanyYear] = useState(initialData?.company_year?.toString() ?? "");
   const [employeeCount, setEmployeeCount] = useState(initialData?.employee_count?.toString() ?? "");
   const [companyAddress, setCompanyAddress] = useState(initialData?.company_address ?? "");
+  
+  const [companyLocation, setCompanyLocation] = useState<PickedLocation | null>(
+    initialData?.company_lat != null && initialData?.company_lng != null
+      ? {
+          lat: initialData.company_lat,
+          lng: initialData.company_lng,
+          address: initialData.company_address ?? "",
+        }
+      : null,
+  );
   const [companyWebsite, setCompanyWebsite] = useState(initialData?.company_website ?? "");
   const [managerName, setManagerName] = useState(userName);
   const [managerTitle, setManagerTitle] = useState(initialData?.manager_title ?? "");
@@ -42,19 +53,35 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   const [companyLogoUrl, setCompanyLogoUrl] = useState(initialData?.company_logo ?? "");
   const [companyLogoFile, setCompanyLogoFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [urlError, setUrlError] = useState("");
   const imageUpload = useImageUpload(initialData?.images as string[] ?? []);
+  const maxUrlsRef = useRef(3);
+
+  useEffect(() => {
+    fetch("/api/admin/spam-config")
+      .then((r) => r.json())
+      .then((d) => { if (d?.max_urls_per_post != null) maxUrlsRef.current = d.max_urls_per_post; })
+      .catch(() => {});
+  }, []);
+
+  const isStep1Valid =
+    title.trim().length >= 2 &&
+    employeeType !== "" &&
+    salary !== "" &&
+    salaryType !== "" &&
+    locationType !== "" &&
+    (locationType !== "그 외 지역" || locationCustom.trim() !== "") &&
+    deadline !== "" &&
+    (isTimeNegotiable || (!!workHoursStart && !!workHoursEnd)) &&
+    mainTask.trim().length >= 10;
+
+  const isStep2Valid =
+    companyName.trim() !== "" &&
+    companyIntro.trim() !== "";
 
   const handleNextStep = () => {
-    if (!title || !employeeType || !salary || !locationType || !deadline || !mainTask) {
-      alert(t("errorRequired"));
-      return;
-    }
-    if (!isTimeNegotiable && (!workHoursStart || !workHoursEnd || workDays.length === 0)) {
-      alert("근무 시간과 근무 요일을 입력하거나 시간 협의를 선택해주세요.");
-      return;
-    }
-    if (locationType === "그 외 지역" && !locationCustom) {
-      alert(t("errorLocationDetail"));
+    if (!isTimeNegotiable && (!workHoursStart || !workHoursEnd)) {
+      alert("근무 시간을 입력하거나 시간 협의를 선택해주세요.");
       return;
     }
     setStep(2);
@@ -62,10 +89,27 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   };
 
   const handleSubmit = async () => {
-    if (!companyName || !companyIntro || !managerName) {
-      alert(t("errorRequired"));
+    
+    const resolvedAddress = companyLocation?.address ?? companyAddress;
+    if (
+      !industry.trim() ||
+      !resolvedAddress.trim() ||
+      !companyWebsite.trim() ||
+      !managerTitle.trim() ||
+      !managerPhone.trim() ||
+      !managerEmail.trim()
+    ) {
+      alert("업종, 주소, 웹사이트, 담당자 직함, 전화번호, 이메일을 모두 입력해주세요.");
       return;
     }
+
+    const checkText = [mainTask, companyIntro].join(" ");
+    const urlCount = (checkText.match(/https?:\/\/[^\s]+/g) ?? []).length;
+    if (urlCount > maxUrlsRef.current) {
+      setUrlError(`게시물에 URL은 최대 ${maxUrlsRef.current}개까지 허용됩니다.`);
+      return;
+    }
+    setUrlError("");
     setIsSubmitting(true);
 
     const uploadLogo = async (postId: number): Promise<string | null> => {
@@ -93,7 +137,9 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       is_time_negotiable: isTimeNegotiable,
       company_year: companyYear ? Number(companyYear) : null,
       employee_count: employeeCount ? Number(employeeCount) : null,
-      company_address: companyAddress || null,
+      company_address: resolvedAddress || null,
+      company_lat: companyLocation?.lat ?? initialData?.company_lat ?? null,
+      company_lng: companyLocation?.lng ?? initialData?.company_lng ?? null,
       company_website: companyWebsite || null,
       preferred: preferred || null,
       preferred_tags: preferredTags.length > 0 ? preferredTags : null,
@@ -207,6 +253,8 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     mainTask, setMainTask,
     preferred, setPreferred,
     preferredTags, setPreferredTags,
+    isStep1Valid,
+    isStep2Valid,
     handleNextStep,
     companyName, setCompanyName,
     companyIntro, setCompanyIntro,
@@ -214,6 +262,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     companyYear, setCompanyYear,
     employeeCount, setEmployeeCount,
     companyAddress, setCompanyAddress,
+    companyLocation, setCompanyLocation,
     companyWebsite, setCompanyWebsite,
     managerName, setManagerName,
     managerTitle, setManagerTitle,
@@ -222,6 +271,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     companyLogoUrl, setCompanyLogoUrl,
     companyLogoFile, setCompanyLogoFile,
     isSubmitting,
+    urlError,
     imageUpload,
     handleSubmit,
     handleBack: () => router.back(),

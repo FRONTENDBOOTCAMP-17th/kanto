@@ -1,12 +1,15 @@
 import { createClient } from "@/utils/supabase/server";
 import type { RentalWithPost } from "@/type/rental/rentalList";
 import type { RentalWithPost as RentalDetail } from "@/type/rental/rentalDetail";
+import type { Pagination, PagedResult } from "@/services/usedGoods/usedGoods";
+import type { TradeLocation } from "@/type/location";
 
 const RENTAL_DETAIL_SELECT =
-  `*, posts(*, users!posts_user_id_fkey(id, name, avatar_url, auth_id, role, post_count, created_at))` as const;
+  `*, posts(*, users!posts_user_id_fkey(id, name, avatar_url, auth_id, created_at))` as const;
+
 const RENTAL_LIST_SELECT = `
   *,
-  rentals(*),
+  rentals!inner(*),
   users!posts_user_id_fkey(id, name, avatar_url, created_at)
 ` as const;
 
@@ -21,6 +24,11 @@ export async function getRentalDetail(postId: number): Promise<RentalDetail> {
 
   if (error) throw new Error(error.message);
 
+  const post = (data as unknown as RentalDetail).posts;
+  if (post && (post as unknown as { status: string }).status === "deleted") {
+    throw new Error("NOT_FOUND");
+  }
+
   return data as unknown as RentalDetail;
 }
 
@@ -28,48 +36,70 @@ interface RentalListFilter {
   search?: string;
   roomType?: string;
   location?: string;
+  barangay?: string;
   targetIds?: number[];
   userId?: number;
 }
 
 export async function getRentalList(
   filter?: RentalListFilter,
-): Promise<RentalWithPost[]> {
+  pagination?: Pagination,
+): Promise<PagedResult<RentalWithPost>> {
   const supabase = await createClient();
 
   let query = supabase
     .from("posts")
-    .select(RENTAL_LIST_SELECT)
+    .select(RENTAL_LIST_SELECT, { count: "exact" })
     .eq("post_type", "rental")
     .eq("status", "active")
-    .order("created_at", { ascending: false });
+    .order("is_popular", { ascending: false })
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false });
 
   if (filter?.targetIds !== undefined) {
-    if (filter.targetIds.length === 0) return [];
+    if (filter.targetIds.length === 0) return { posts: [], total: 0 };
     query = query.in("id", filter.targetIds);
   }
-  if (filter?.userId) {
-    query = query.eq("user_id", filter.userId);
-  }
-  if (filter?.search) {
-    query = query.ilike("title", `%${filter.search}%`);
+  if (filter?.userId) query = query.eq("user_id", filter.userId);
+  if (filter?.search) query = query.ilike("title", `%${filter.search}%`);
+  
+  if (filter?.roomType) query = query.eq("rentals.room_type", filter.roomType);
+  if (filter?.location) query = query.eq("rentals.location", filter.location as TradeLocation);
+  if (filter?.barangay) query = query.eq("rentals.location_barangay", filter.barangay);
+
+  if (pagination) {
+    const from = (pagination.page - 1) * pagination.pageSize;
+    query = query.range(from, from + pagination.pageSize - 1);
   }
 
-  const { data, error } = await query;
+  const { data, count, error } = await query;
   if (error) throw new Error(error.message);
 
-  let result = data as unknown as RentalWithPost[];
+  return { posts: (data as unknown as RentalWithPost[]) ?? [], total: count ?? 0 };
+}
 
-  if (filter?.roomType) {
-    result = result.filter(
-      (p) => p.rentals?.[0]?.room_type === filter.roomType,
-    );
-  }
-  if (filter?.location) {
-    result = result.filter((p) => p.rentals?.[0]?.location === filter.location);
-  }
+export async function getRentalBarangays(): Promise<Record<string, string[]>> {
+  const supabase = await createClient();
 
-  return result;
+  const { data, error } = await supabase
+    .from("rentals")
+    .select("location, location_barangay, posts!inner(status)")
+    .eq("posts.status", "active")
+    .not("location_barangay", "is", null)
+    .limit(2000);
+
+  if (error) throw new Error(error.message);
+
+  const grouped: Record<string, Set<string>> = {};
+  for (const row of data ?? []) {
+    const type = row.location as string | null;
+    const barangay = row.location_barangay as string;
+    if (!type) continue;
+    (grouped[type] ??= new Set()).add(barangay);
+  }
+  return Object.fromEntries(
+    Object.entries(grouped).map(([k, v]) => [k, [...v].sort()]),
+  );
 }
 
 interface RentalCreate {

@@ -1,12 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { BadgeCheck, Heart, Clock, Eye, MoveLeft, User } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Tables } from "@/type/supabase";
-import { formatTimeAgo } from "@/utils/formatTime";
+import { formatTimeAgo, formatPrice } from "@/utils/format";
 import type { Locale } from "@/i18n/config";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import VerifyAuthor from "@/components/common/VerifyAuthor";
@@ -17,11 +16,19 @@ import { useSuspended } from "@/hooks/useSuspended";
 import InteractionButtons from "@/components/common/InteractionButtons";
 import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarresel";
 import { Button } from "@/components/ui/button";
+import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
+import RelatedItemsCarousel, { type RelatedItem } from "@/components/common/RelatedItemsCarousel";
+import { ApproxAreaMapWithProvider } from "@/components/common/ApproxAreaMap";
+import { formatBarangayLabel } from "@/type/location";
 
 type UsedGoods = Tables<"used_goods"> & {
   posts: Tables<"posts"> & {
-    users: Pick<Tables<"users">, "id" | "name" | "avatar_url" | "auth_id" | "role" | "post_count" | "created_at">;
+    users: Pick<Tables<"users">, "id" | "name" | "avatar_url" | "auth_id" | "created_at">;
   };
+};
+
+type RelatedUsedGoods = Tables<"used_goods"> & {
+  posts: Pick<Tables<"posts">, "title"> | null;
 };
 
 export default function UsedGoodsDetail({
@@ -32,7 +39,7 @@ export default function UsedGoodsDetail({
   initialReported,
 }: {
   data: UsedGoods;
-  relatedData: UsedGoods[] | null;
+  relatedData: RelatedUsedGoods[] | null;
   initialLiked: boolean;
   userId: number | undefined;
   initialReported: boolean;
@@ -48,15 +55,34 @@ export default function UsedGoodsDetail({
   const isOwner = storeUser?.auth_id === data.posts.users?.auth_id;
   const images = (data.images as string[]) ?? [];
   const [likeCount, setLikeCount] = useState(data.posts.like_count ?? 0);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const { isSuspended, openModal } = useSuspended();
+
+  const relatedItems: RelatedItem[] = (relatedData ?? []).map((item) => ({
+    id: item.id,
+    href: `/usedgoods/${item.id}`,
+    imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
+    title: item.posts?.title ?? "",
+    priceText: formatPrice(item.price),
+  }));
 
   const accession = data.posts.users?.created_at
     ? new Date(data.posts.users.created_at)
     : null;
 
+  
+  const locationLabel =
+    data.location_barangay || data.location_city
+      ? formatBarangayLabel(data.location_barangay, data.location_city)
+      : data.location_type === "그 외 지역"
+        ? te("tradeLocation.otherAreas")
+        : data.location_type;
+  const hasCoords = data.location_lat != null && data.location_lng != null;
+
   const handleChat = async () => {
+    if (!userId) { setShowLoginModal(true); return; }
     if (isSuspended) { openModal(); return; }
-    if (!userId || !data.posts.users) return;
+    if (!data.posts.users) return;
     const chatId = await findChat(userId, data.posts.users.id, data.post_id);
     if (chatId !== null) {
       useChatStore.getState().openWidget(chatId);
@@ -77,6 +103,15 @@ export default function UsedGoodsDetail({
       });
     }
   };
+
+  const approxMap = hasCoords && (
+    <div className="mt-4">
+      <ApproxAreaMapWithProvider
+        lat={data.location_lat as number}
+        lng={data.location_lng as number}
+      />
+    </div>
+  );
 
   return (
     <div className="page-container pb-12">
@@ -111,7 +146,7 @@ export default function UsedGoodsDetail({
               </div>
             ) : null}
           </div>
-          <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-[450px]">
+          <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-112.5">
             
             <div>
               <h2 className="text-xl font-semibold mb-3">{t("productInfo")}</h2>
@@ -121,9 +156,9 @@ export default function UsedGoodsDetail({
                 <dt className="text-gray-500 font-medium">{t("condition")}</dt>
                 <dd className="text-gray-700">· {data.condition ? te(`productCondition.${data.condition}`) : ""}</dd>
                 <dt className="text-gray-500 font-medium">{t("price")}</dt>
-                <dd className="text-orange-500">· ₱ {data.price?.toLocaleString()}</dd>
+                <dd className="text-orange-500">· {formatPrice(data.price)}</dd>
                 <dt className="text-gray-500 font-medium">{t("tradeLocation")}</dt>
-                <dd className="text-gray-700">· {data.location_type === "그 외 지역" ? te("tradeLocation.otherAreas") : data.location_type}</dd>
+                <dd className="text-gray-700">· {locationLabel}</dd>
                 {data.safe_payment !== null && (
                   <>
                     <dt className="text-gray-500 font-medium">{t("safePayment")}</dt>
@@ -133,9 +168,10 @@ export default function UsedGoodsDetail({
                   </>
                 )}
               </dl>
+              {approxMap}
             </div>
             <hr className="border-gray-200" />
-            
+
             <div className="flex flex-col gap-4">
               <h2 className="text-xl font-semibold">{t("sellerInfo")}</h2>
               <div className="flex items-center gap-3">
@@ -165,7 +201,7 @@ export default function UsedGoodsDetail({
                 </div>
               </div>
               {!isOwner && (
-                <Button variant="teal" className="cursor-pointer w-full" onClick={handleChat}>
+                <Button variant="teal" className="cursor-pointer self-start min-w-72" onClick={handleChat}>
                   {t("chat")}
                 </Button>
               )}
@@ -184,9 +220,9 @@ export default function UsedGoodsDetail({
                 <dt className="text-gray-500 font-medium">{t("condition")}</dt>
                 <dd className="text-gray-700">· {data.condition ? te(`productCondition.${data.condition}`) : ""}</dd>
                 <dt className="text-gray-500 font-medium">{t("price")}</dt>
-                <dd className="text-orange-500">· ₱ {data.price?.toLocaleString()}</dd>
+                <dd className="text-orange-500">· {formatPrice(data.price)}</dd>
                 <dt className="text-gray-500 font-medium">{t("tradeLocation")}</dt>
-                <dd className="text-gray-700">· {data.location_type === "그 외 지역" ? te("tradeLocation.otherAreas") : data.location_type}</dd>
+                <dd className="text-gray-700">· {locationLabel}</dd>
                 {data.safe_payment !== null && (
                   <>
                     <dt className="text-gray-500 font-medium">{t("safePayment")}</dt>
@@ -196,6 +232,7 @@ export default function UsedGoodsDetail({
                   </>
                 )}
               </dl>
+              {approxMap}
             </div>
             <div className="p-6 flex flex-col gap-4">
               <h2 className="text-xl font-semibold">{t("sellerInfo")}</h2>
@@ -226,7 +263,7 @@ export default function UsedGoodsDetail({
                 </div>
               </div>
               {!isOwner && (
-                <Button variant="teal" className="cursor-pointer w-full" onClick={handleChat}>
+                <Button variant="teal" className="cursor-pointer self-start min-w-72" onClick={handleChat}>
                   {t("chat")}
                 </Button>
               )}
@@ -284,31 +321,9 @@ export default function UsedGoodsDetail({
       </div>
 
       
-      {relatedData && relatedData.length > 0 && (
-        <div className="mt-2 md:mt-4 border border-gray-200 rounded-2xl p-6">
-          <h2 className="text-xl font-semibold mb-4">{t("related")}</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {relatedData.map((item) => {
-              const itemImages = (item.images as string[]) ?? [];
-              return (
-                <Link key={item.id} href={`/usedgoods/${item.id}`} className="block">
-                  <div className="relative w-full aspect-square overflow-hidden border rounded-xl">
-                    <ImageWithFallback
-                      src={itemImages[0] ?? "/fallback-image.svg"}
-                      alt={item.posts?.title ?? ""}
-                      fill
-                      sizes="(max-width: 768px) 50vw, 25vw"
-                      className="object-cover"
-                    />
-                  </div>
-                  <p className="text-sm font-medium line-clamp-1 mt-1">{item.posts?.title}</p>
-                  <p className="text-sm text-orange-500">₱ {item.price?.toLocaleString()}</p>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+
+      <RelatedItemsCarousel title={t("related")} items={relatedItems} />
     </div>
   );
 }

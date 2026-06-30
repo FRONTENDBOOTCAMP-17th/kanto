@@ -194,7 +194,6 @@ WHERE u.alert_post = true
 | `used_goods` | `usedgoods` |
 | `jobs` | `jobs` |
 | `rental` | `rental` |
-| `community` | `community` |
 
 ---
 

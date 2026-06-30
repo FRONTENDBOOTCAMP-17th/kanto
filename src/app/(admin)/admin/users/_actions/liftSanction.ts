@@ -1,25 +1,12 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { requireAdmin } from "@/services/user/user";
+import { insertAuditLog } from "@/services/admin/auditLog";
 
 export async function liftSanction(userId: number): Promise<void> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const sessionUser = await requireAdmin();
   const admin = createAdminClient();
-
-  let adminId: number | null = null;
-  if (user) {
-    const { data } = await admin
-      .from("users")
-      .select("id")
-      .eq("auth_id", user.id)
-      .single();
-    adminId = data?.id ?? null;
-  }
 
   await admin
     .from("users")
@@ -28,7 +15,7 @@ export async function liftSanction(userId: number): Promise<void> {
 
   await admin.from("user_sanctions").insert({
     user_id: userId,
-    admin_id: adminId,
+    admin_id: sessionUser.id,
     sanction_type: "lifted",
     expires_at: null,
   } as never);
@@ -39,4 +26,6 @@ export async function liftSanction(userId: number): Promise<void> {
     body: "관리자 조치로 인해 계정 정지가 해제되었습니다. 서비스를 정상적으로 이용하실 수 있습니다.",
     type: "suspension",
   } as never);
+
+  insertAuditLog(sessionUser, "revoke_sanction", { targetType: "user", targetId: userId });
 }
