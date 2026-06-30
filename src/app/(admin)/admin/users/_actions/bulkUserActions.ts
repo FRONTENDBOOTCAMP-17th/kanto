@@ -33,7 +33,6 @@ function calcExpiresAt(type: "7d" | "30d" | "perm"): string {
   return d.toISOString();
 }
 
-/** 선택한 유저들에게 일괄 제재를 부여하고, 대기중 신고를 처리완료 처리한다. */
 export async function bulkApplySanction(
   ids: number[],
   type: "7d" | "30d" | "perm",
@@ -82,7 +81,6 @@ export async function bulkApplySanction(
   revalidatePath("/admin");
 }
 
-/** 선택한 유저들을 삭제(soft delete) 처리한다. */
 export async function bulkDeleteUsers(ids: number[]): Promise<void> {
   if (ids.length === 0) return;
   const admin = createAdminClient();

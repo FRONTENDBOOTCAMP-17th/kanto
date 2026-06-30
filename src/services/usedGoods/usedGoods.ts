@@ -8,7 +8,6 @@ const USED_GOODS_SELECT = `
   users!posts_user_id_fkey(id, name, avatar_url, created_at)
 ` as const;
 
-// 목록용: used_goods 를 inner join 해 자식 컬럼(category/location_type)으로 DB 필터링 가능.
 const USED_GOODS_LIST_SELECT = `
   *,
   used_goods!inner(*),
@@ -55,7 +54,7 @@ export async function getUsedGoodsList(
   }
   if (filter?.userId) query = query.eq("user_id", filter.userId);
   if (filter?.search) query = query.ilike("title", `%${filter.search}%`);
-  // 카테고리/지역 필터를 DB(inner join 자식 컬럼)로 push.
+  
   if (filter?.category) query = query.eq("used_goods.category", filter.category);
   if (filter?.location) query = query.eq("used_goods.location_type", filter.location as TradeLocation);
   if (filter?.barangay) query = query.eq("used_goods.location_barangay", filter.barangay);
@@ -101,8 +100,6 @@ export async function getUsedGoodsItem(postId: number) {
   return data;
 }
 
-// 2단계 지역 필터용: 활성 매물이 있는 바랑가이를 광역(location_type)별로 묶어 반환.
-// 하드코딩 없이 실제 데이터에서 동적 생성.
 export async function getUsedGoodsBarangays(): Promise<Record<string, string[]>> {
   const supabase = await createClient();
 

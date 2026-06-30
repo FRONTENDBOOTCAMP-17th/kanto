@@ -6,7 +6,7 @@ import type { TradeLocation } from "@/type/location";
 
 const RENTAL_DETAIL_SELECT =
   `*, posts(*, users!posts_user_id_fkey(id, name, avatar_url, auth_id, created_at))` as const;
-// 목록용: rentals 를 inner join 해 자식 컬럼(room_type/location)으로 DB 필터링 가능.
+
 const RENTAL_LIST_SELECT = `
   *,
   rentals!inner(*),
@@ -62,7 +62,7 @@ export async function getRentalList(
   }
   if (filter?.userId) query = query.eq("user_id", filter.userId);
   if (filter?.search) query = query.ilike("title", `%${filter.search}%`);
-  // 방 종류/지역 필터를 DB(inner join 자식 컬럼)로 push.
+  
   if (filter?.roomType) query = query.eq("rentals.room_type", filter.roomType);
   if (filter?.location) query = query.eq("rentals.location", filter.location as TradeLocation);
   if (filter?.barangay) query = query.eq("rentals.location_barangay", filter.barangay);
@@ -78,7 +78,6 @@ export async function getRentalList(
   return { posts: (data as unknown as RentalWithPost[]) ?? [], total: count ?? 0 };
 }
 
-// 2단계 지역 필터용: 활성 매물이 있는 바랑가이를 광역(location)별로 묶어 반환.
 export async function getRentalBarangays(): Promise<Record<string, string[]>> {
   const supabase = await createClient();
 

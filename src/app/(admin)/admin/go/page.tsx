@@ -1,7 +1,5 @@
 "use client";
 
-// 어드민 — 번개모임 관리 페이지
-
 import { useEffect, useState, useMemo } from "react";
 import {
   Zap, Search, X, Calendar, MapPin, Users,
@@ -16,8 +14,6 @@ import { TopicBadge } from "@/components/go/TopicBadge";
 import { GoToast } from "@/components/go/GoToast";
 import type { AdminMeetup } from "@/type/go";
 import type { MeetupTopicKey } from "@/constants/meetupTopics";
-
-// ─── 헬퍼 ─────────────────────────────────────────────────────
 
 type StatusFilter = "all" | "active" | "upcoming" | "ended";
 
@@ -51,8 +47,6 @@ function StatusPill({ status }: { status: "active" | "upcoming" | "ended" }) {
   );
 }
 
-// ─── 메인 페이지 ──────────────────────────────────────────────
-
 const PAGE_SIZE = 8;
 
 export default function AdminGoPage() {
@@ -77,9 +71,9 @@ export default function AdminGoPage() {
     }
   };
 
-  // 초기 로드는 effect 내에서 직접 fetch — 동기 setState(setLoading) 호출을 피해
-  // react-hooks/set-state-in-effect(불필요한 cascading render) 경고를 방지한다.
-  // (loading 초기값이 이미 true라 진입 시 setLoading(true)가 필요 없음)
+  
+  
+  
   useEffect(() => {
     let active = true;
     adminGetMeetups()
@@ -93,7 +87,7 @@ export default function AdminGoPage() {
     setTimeout(() => setToast(""), 2800);
   };
 
-  // ─── 필터링 ─────────────────────────────────
+  
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return meetups.filter((m) => {
@@ -109,7 +103,7 @@ export default function AdminGoPage() {
   const pageItems = filtered.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
   const selected = meetups.find((m) => m.post_id === selectedId) ?? null;
 
-  // ─── 통계 ────────────────────────────────────
+  
   const stats = useMemo(() => ({
     active: meetups.filter((m) => m.status === "active").length,
     upcoming: meetups.filter((m) => m.status === "upcoming").length,
@@ -141,7 +135,7 @@ export default function AdminGoPage() {
   return (
     <div className="flex flex-col gap-5">
 
-      {/* ── 헤더 ── */}
+      
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
@@ -157,7 +151,7 @@ export default function AdminGoPage() {
         </div>
       </div>
 
-      {/* ── 통계 카드 ── */}
+      
       <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-3.5">
         {[
           { label: "진행 중", value: stats.active, unit: "건", icon: Zap, iconColor: "#0d9488", iconBg: "#f0fdfa" },
@@ -179,9 +173,9 @@ export default function AdminGoPage() {
         ))}
       </div>
 
-      {/* ── 필터 ── */}
+      
       <div className="flex flex-col gap-3.5 rounded-[16px] border border-[#e7ebee] bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
-        {/* 검색 */}
+        
         <div className="flex items-center gap-2.5 rounded-[12px] border border-[#ebeef0] bg-[#f7f9fa] px-3.5 py-3">
           <Search className="h-[18px] w-[18px] flex-shrink-0 text-slate-400" strokeWidth={2} />
           <input
@@ -193,7 +187,7 @@ export default function AdminGoPage() {
         </div>
 
         <div className="flex flex-wrap items-start gap-6">
-          {/* 주제 필터 */}
+          
           <div>
             <div className="mb-2.5 text-[11.5px] font-bold uppercase tracking-widest text-slate-400">주제</div>
             <div className="flex flex-wrap gap-1.5">
@@ -218,7 +212,7 @@ export default function AdminGoPage() {
             </div>
           </div>
 
-          {/* 상태 탭 */}
+          
           <div>
             <div className="mb-2.5 text-[11.5px] font-bold uppercase tracking-widest text-slate-400">상태</div>
             <div className="inline-flex gap-1 rounded-[11px] bg-[#f1f4f6] p-1">
@@ -232,9 +226,9 @@ export default function AdminGoPage() {
         </div>
       </div>
 
-      {/* ── 테이블 ── */}
+      
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
-        {/* 데스크탑: 테이블 */}
+        
         <div className="hidden overflow-x-auto lg:block">
           <table className="w-full min-w-[740px] border-collapse">
             <thead>
@@ -315,7 +309,7 @@ export default function AdminGoPage() {
           </table>
         </div>
 
-        {/* 모바일: 카드 */}
+        
         {loading ? (
           <div className="py-16 text-center text-[14px] text-slate-400 lg:hidden">불러오는 중...</div>
         ) : pageItems.length === 0 ? (
@@ -382,13 +376,13 @@ export default function AdminGoPage() {
         )}
       </div>
 
-      {/* ── 상세 Drawer ── */}
+      
       {selected && (
         <>
           <div onClick={() => setSelectedId(null)} className="fixed inset-0 z-[70] bg-slate-900/45" />
           <div className="fixed right-0 top-0 z-[71] flex h-screen w-[480px] max-w-full flex-col bg-white shadow-2xl animate-[slideInRight_.26s_cubic-bezier(.4,0,.2,1)]">
 
-            {/* Drawer 헤더 */}
+            
             <div className="flex-shrink-0 border-b border-slate-100 px-6 py-5">
               <div className="mb-3 flex items-start justify-between gap-3">
                 <h2 className="flex-1 text-[18px] font-extrabold leading-snug tracking-tight text-slate-900">{selected.title}</h2>
@@ -408,9 +402,9 @@ export default function AdminGoPage() {
               </div>
             </div>
 
-            {/* Drawer 내용 */}
+            
             <div className="flex flex-1 flex-col gap-5 overflow-y-auto px-6 py-5">
-              {/* 주최자 */}
+              
               <div className="flex items-center gap-3.5 rounded-[14px] border border-slate-100 bg-slate-50 p-4">
                 <MeetupAvatar name={selected.host_name} size={44} />
                 <div>
@@ -421,7 +415,7 @@ export default function AdminGoPage() {
                 </div>
               </div>
 
-              {/* 일시/장소/설명 */}
+              
               <div className="overflow-hidden rounded-[14px] border border-slate-100">
                 {[
                   {
@@ -452,7 +446,7 @@ export default function AdminGoPage() {
                 </div>
               </div>
 
-              {/* 참여자 */}
+              
               <div>
                 <div className="mb-3 flex items-center justify-between">
                   <span className="text-[13px] font-bold text-slate-900">참여자</span>
@@ -485,7 +479,7 @@ export default function AdminGoPage() {
                 </div>
               </div>
 
-              {/* 신고 섹션 */}
+              
               {selected.reports > 0 && (
                 <div className="overflow-hidden rounded-[14px] border border-red-200">
                   <div className="flex items-center gap-2.5 border-b border-red-200 bg-red-50 px-[18px] py-3.5">
@@ -507,7 +501,7 @@ export default function AdminGoPage() {
               )}
             </div>
 
-            {/* Drawer 푸터 — 강제 종료 */}
+            
             <div className="flex-shrink-0 border-t border-slate-100 px-6 py-4">
               {selected.status === "ended" ? (
                 <div className="flex items-center justify-center gap-2 rounded-[11px] bg-slate-50 py-3 text-[13.5px] font-semibold text-slate-500">
@@ -544,7 +538,7 @@ export default function AdminGoPage() {
         </>
       )}
 
-      {/* 토스트 */}
+      
       {toast && <GoToast message={toast} showIcon />}
     </div>
   );

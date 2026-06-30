@@ -50,8 +50,8 @@ export function PublicProfileView({
 
   useClickOutside(menuRef, () => setMenuOpen(false));
 
-  // 채팅에서 프로필로 진입할 때, 위젯을 미리 닫지 않고 이 페이지가 마운트된 뒤 닫는다.
-  // (모바일 전체화면 오버레이를 네비게이션 커밋까지 유지해 직전 페이지가 잠깐 비치는 현상 방지)
+  
+  
   useEffect(() => {
     useChatStore.getState().closeWidget();
   }, []);

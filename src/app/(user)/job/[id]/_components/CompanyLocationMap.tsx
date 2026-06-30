@@ -1,8 +1,5 @@
 "use client";
 
-// 구인구직 상세 — 회사의 정확한 위치를 지도에 핀으로 표시.
-// 글쓰기에서 Google Places 로 선택해 저장한 좌표(company_lat/lng)를 사용한다.
-
 import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
 import { MapPin } from "lucide-react";
 

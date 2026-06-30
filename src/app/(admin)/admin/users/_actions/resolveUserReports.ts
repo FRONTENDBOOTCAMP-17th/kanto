@@ -20,7 +20,6 @@ async function getCurrentAdminId(): Promise<number | null> {
   return data?.id ?? null;
 }
 
-/** 해당 유저를 대상으로 한 대기중 신고를 모두 처리완료 처리한다. */
 export async function resolveUserReports(userId: number): Promise<void> {
   const admin = createAdminClient();
   const adminId = await getCurrentAdminId();

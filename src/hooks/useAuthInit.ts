@@ -30,9 +30,9 @@ export function useAuthInit() {
     return () => authListener.subscription.unsubscribe();
   }, [setUser, clearUser]);
 
-  // 제재/해제 알림(common_notifications, type='suspension') 수신 시 users 행을
-  // 다시 읽어 authStore.suspended_until 을 즉시 갱신한다. users 테이블 자체에는
-  // realtime 구독이 없어, admin 조치가 새로고침 전까지 배너에 반영되지 않던 문제 해결.
+  
+  
+  
   useEffect(() => {
     if (!userId) return;
 

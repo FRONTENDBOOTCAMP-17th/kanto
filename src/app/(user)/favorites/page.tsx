@@ -69,8 +69,8 @@ export default async function FavoritesPage({
     }
   }
 
-  // 실제로 표시할 게시글 기준으로 빈 화면을 판정한다(찜했지만 삭제/비활성으로
-  // 목록에 안 잡히는 경우에도 모든 탭에서 동일한 빈 화면+버튼이 뜨도록).
+  
+  
   const isEmpty =
     (activeType === "used_goods" ? usedGoods : activeType === "jobs" ? jobs : rentals).length === 0;
 

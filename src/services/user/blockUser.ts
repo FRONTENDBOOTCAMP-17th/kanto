@@ -2,8 +2,6 @@
 
 import { createClient } from "@/utils/supabase/server";
 
-// 채팅방과 무관하게 유저를 차단한다. (chats 테이블은 건드리지 않음)
-// 채팅방 내 차단은 채팅 나감 처리까지 필요하므로 blockUserAction(chatId, ...)을 그대로 사용한다.
 export async function blockUserStandaloneAction(blockedId: number) {
   const supabase = await createClient();
 
@@ -29,7 +27,6 @@ export async function blockUserStandaloneAction(blockedId: number) {
     );
 }
 
-// 전역 차단 해제 — user_blocks에서 제거. (프로필 차단 목록·모임 채팅 등에서 공용 사용)
 export async function unblockUserStandaloneAction(blockedId: number) {
   const supabase = await createClient();
 

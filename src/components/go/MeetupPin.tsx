@@ -1,13 +1,10 @@
 "use client";
 
-// 지도 위 번개모임 핀 컴포넌트 (@vis.gl/react-google-maps AdvancedMarker 사용)
-
 import { AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
 import { useTranslations } from "next-intl";
 import { TOPIC_META } from "@/constants/meetupTopics";
 import type { Meetup } from "@/type/go";
 
-// page.tsx의 <Map id> 와 동일해야 useMap이 인스턴스를 찾는다.
 const MAP_ID = "kanto-go-map";
 
 interface MeetupPinProps {
@@ -19,7 +16,7 @@ interface MeetupPinProps {
 export function MeetupPin({ meetup, isSelected, onClick }: MeetupPinProps) {
   const t = useTranslations("Go.pin");
   const meta = TOPIC_META[meetup.topic] ?? TOPIC_META.other;
-  const totalCount = meetup.participant_count + 1; // 주최자 포함
+  const totalCount = meetup.participant_count + 1; 
   const isFull = totalCount >= meetup.max_participants;
   const isAlmostFull =
     !isFull && totalCount / meetup.max_participants >= 0.88;
@@ -32,7 +29,7 @@ export function MeetupPin({ meetup, isSelected, onClick }: MeetupPinProps) {
       title={meetup.title}
     >
       <div className="relative cursor-pointer select-none">
-        {/* 마감/마감임박 뱃지 */}
+        
         {(isFull || isAlmostFull) && (
           <div
             className="absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded px-1.5 py-0.5 text-[10px] font-bold text-white"
@@ -42,7 +39,7 @@ export function MeetupPin({ meetup, isSelected, onClick }: MeetupPinProps) {
           </div>
         )}
 
-        {/* 핀 SVG */}
+        
         <svg
           width={isSelected ? 48 : 38}
           height={isSelected ? 62 : 50}
@@ -64,8 +61,6 @@ export function MeetupPin({ meetup, isSelected, onClick }: MeetupPinProps) {
   );
 }
 
-// 좌표가 겹치는(≈11m 이내) 모임들을 하나로 묶어 개수를 표시하는 클러스터 핀.
-// 클릭 시 해당 위치로 확대해 개별 핀으로 분리한다.
 export function ClusterPin({ meetups }: { meetups: Meetup[] }) {
   const t = useTranslations("Go.map");
   const map = useMap(MAP_ID);

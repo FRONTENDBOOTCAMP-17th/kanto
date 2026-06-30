@@ -1,4 +1,4 @@
-// 이름 해시 기반 6색 아바타 — 상세 패널·어드민에서 공용으로 사용.
+
 
 interface MeetupAvatarProps {
   name: string;

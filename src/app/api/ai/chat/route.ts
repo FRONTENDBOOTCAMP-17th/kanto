@@ -8,7 +8,6 @@ import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
 
-// ── 지식베이스 파싱 ──────────────────────────────────────────
 interface KBSection {
   title: string;
   content: string;
@@ -54,7 +53,6 @@ const raw = fs.readFileSync(
 const { preamble, sections } = parseKB(raw);
 const alwaysSections = sections.filter((s) => ALWAYS_INCLUDE.has(s.title));
 
-// ── 클라이언트 초기화 ────────────────────────────────────────
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
@@ -79,7 +77,6 @@ const RATE_LIMIT = 10;
 const RATE_WINDOW_SEC = 60;
 const MAX_MESSAGES = 10;
 
-// ── 스트리밍 헬퍼 ────────────────────────────────────────────
 async function streamGemini(
   systemPrompt: string,
   trimmed: { role: string; content: string }[],
@@ -136,7 +133,6 @@ async function streamCerebras(
   });
 }
 
-// ── Route Handler ────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
@@ -176,7 +172,7 @@ export async function POST(req: NextRequest) {
       const done = () =>
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
 
-      // 1차: Gemini (최대 3회 재시도)
+      
       let geminiResult: GenerateContentStreamResult | null = null;
       let useGroqFallback = false;
 
@@ -199,13 +195,13 @@ export async function POST(req: NextRequest) {
 
       try {
         if (!useGroqFallback && geminiResult) {
-          // 1차: Gemini
+          
           for await (const chunk of geminiResult.stream) {
             const delta = chunk.text();
             if (delta) send(delta);
           }
         } else {
-          // 2차 폴백: Groq → 실패 시 3차: Cerebras
+          
           let openaiStream: AsyncIterable<OpenAI.Chat.ChatCompletionChunk>;
           try {
             openaiStream = await streamGroq(systemPrompt, trimmed);

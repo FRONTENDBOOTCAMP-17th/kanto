@@ -84,9 +84,7 @@ export default async function RootLayout({
             }),
           }}
         />
-        {/* 하이드레이션 전에 실행: 새로고침으로 채팅 오버레이가 복원될 상황이면
-            모바일에서 흰 커버(globals.css)를 깔아 밑 페이지 깜빡임을 막는다.
-            'chatWidget:newChatDraft' 키는 FloatingChatWidget의 NEW_CHAT_DRAFT_KEY와 일치시켜야 한다. */}
+        
         <script
           dangerouslySetInnerHTML={{
             __html: `try{if(innerWidth<768){var c=new URLSearchParams(location.search).get('chat');if(c||sessionStorage.getItem('chatWidget:newChatDraft'))document.documentElement.setAttribute('data-chat-boot','')}}catch(e){}`,

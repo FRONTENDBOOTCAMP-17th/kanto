@@ -75,7 +75,7 @@ export default function SpamConfigCard() {
     },
   });
 
-  // draft: 수정 중인 로컬 값. null이면 서버값(savedConfig)을 표시.
+  
   const [draft, setDraft] = useState<SpamConfig | null>(null);
   const [spamSaved, setSpamSaved] = useState(false);
 

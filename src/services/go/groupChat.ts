@@ -1,8 +1,5 @@
 "use server";
 
-// 칸토 go! 번개모임 단체채팅 서비스
-// 방 생성/종료/멤버 변이는 admin 클라이언트(RLS 우회), 읽기/메시지 작성은 세션 클라이언트(RLS)
-
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { getSessionUser } from "@/services/user/user";
@@ -15,10 +12,6 @@ const GRACE_PERIOD_MS = 24 * 60 * 60 * 1000;
 const GROUP_MESSAGE_SELECT = `id, room_id, sender_id, content, type, created_at,
     sender:users!meetup_chat_messages_sender_id_fkey(id, name, avatar_url, created_at)`;
 
-/**
- * 모임 생성 직후 호출 — 채팅방 생성. 실패해도 모임 생성 자체는 막지 않음(비치명적).
- * expires_at = end_at + 24h (그라이스 기간), 첫 입장 시점에 lazy하게 재생성 가능.
- */
 export async function createRoomForMeetup(meetupPostId: number, endAtISO: string): Promise<void> {
   try {
     const admin = createAdminClient();
@@ -30,14 +23,10 @@ export async function createRoomForMeetup(meetupPostId: number, endAtISO: string
     } as never);
     if (error) throw error;
   } catch {
-    // 방 생성 실패는 모임 생성 자체를 막지 않는다.
+    
   }
 }
 
-/**
- * 모임 종료 시 호출 — 모임 채팅방을 즉시 삭제한다.
- * 메시지/읽음 상태는 FK cascade로 함께 제거되어 채팅 목록에서도 사라진다.
- */
 export async function endRoom(meetupPostId: number): Promise<void> {
   try {
     const admin = createAdminClient();
@@ -51,7 +40,7 @@ export async function endRoom(meetupPostId: number): Promise<void> {
       .delete()
       .eq("id", room.id);
   } catch {
-    // 종료 처리 중 채팅방 정리에 실패해도 모임 종료 자체는 유지한다.
+    
   }
 }
 
@@ -67,9 +56,6 @@ async function getRoomRowByMeetup(
   return (data as GroupChatRoom) ?? null;
 }
 
-/**
- * 채팅방 조회 (RLS — 멤버만 통과). 만료된 방은 lazy 삭제 후 null 반환.
- */
 export async function getRoomByMeetup(meetupPostId: number): Promise<GroupChatRoom | null> {
   const supabase = await createClient();
   const { data } = await supabase
@@ -86,7 +72,7 @@ export async function getRoomByMeetup(meetupPostId: number): Promise<GroupChatRo
       const admin = createAdminClient();
       await admin.from("meetup_chat_rooms").delete().eq("id", room.id);
     } catch {
-      // 만료 정리는 best-effort로 처리한다.
+      
     }
     return null;
   }
@@ -94,9 +80,6 @@ export async function getRoomByMeetup(meetupPostId: number): Promise<GroupChatRo
   return room;
 }
 
-/**
- * 이 방에서 보이지 않아야 할 유저 id 집합 — 전역 차단(user_blocks) ∪ 이 방 전용 차단(meetup_chat_blocks).
- */
 export async function getRoomBlockedIds(roomId: number, userId: number): Promise<Set<number>> {
   const supabase = await createClient();
   const [{ data: global }, { data: room }] = await Promise.all([
@@ -110,9 +93,6 @@ export async function getRoomBlockedIds(roomId: number, userId: number): Promise
   return new Set([...(global ?? []).map((r) => r.blocked_id), ...(room ?? []).map((r) => r.blocked_id)]);
 }
 
-/**
- * 이 채팅에서만 차단 (room 범위, 프로필 차단 목록에는 노출되지 않음)
- */
 export async function blockMemberInRoom(roomId: number, blockedId: number): Promise<void> {
   const supabase = await createClient();
   const sessionUser = await getSessionUser();
@@ -126,9 +106,6 @@ export async function blockMemberInRoom(roomId: number, blockedId: number): Prom
     );
 }
 
-/**
- * 이 채팅 전용 차단 해제
- */
 export async function unblockMemberInRoom(roomId: number, blockedId: number): Promise<void> {
   const supabase = await createClient();
   const sessionUser = await getSessionUser();
@@ -142,9 +119,6 @@ export async function unblockMemberInRoom(roomId: number, blockedId: number): Pr
     .eq("blocked_id", blockedId);
 }
 
-/**
- * 방 메시지 페이지네이션 (50개, before 기준). 차단한 유저 메시지는 호출자가 필터링.
- */
 export async function getRoomMessages(
   roomId: number,
   before?: string,
@@ -162,9 +136,6 @@ export async function getRoomMessages(
   return (data as unknown as GroupMessageWithSender[]).reverse();
 }
 
-/**
- * 메시지 작성 (RLS — sender_id는 세션 유저로 강제)
- */
 export async function postGroupMessage(roomId: number, content: string): Promise<GroupMessageWithSender> {
   const supabase = await createClient();
   const sessionUser = await getSessionUser();
@@ -185,9 +156,6 @@ export async function postGroupMessage(roomId: number, content: string): Promise
   return data as unknown as GroupMessageWithSender;
 }
 
-/**
- * 시스템 메시지 (입장/퇴장/종료 안내) — admin으로 삽입, sender_id는 모임 호스트로 표기.
- */
 export async function postSystemMessage(roomId: number, content: string): Promise<void> {
   try {
     const admin = createAdminClient();
@@ -215,13 +183,10 @@ export async function postSystemMessage(roomId: number, content: string): Promis
       type: "system",
     } as never);
   } catch {
-    // 시스템 메시지는 보조 기능이라 실패해도 사용자 플로우를 깨지 않는다.
+    
   }
 }
 
-/**
- * join/cancelJoin에서 호출 — meetupPostId 기준으로 방을 찾아 system 메시지 삽입.
- */
 export async function postSystemMessageForMeetup(meetupPostId: number, content: string): Promise<void> {
   try {
     const admin = createAdminClient();
@@ -229,14 +194,10 @@ export async function postSystemMessageForMeetup(meetupPostId: number, content: 
     if (!room) return;
     await postSystemMessage(room.id, content);
   } catch {
-    // 시스템 메시지는 보조 기능이라 실패해도 사용자 플로우를 깨지 않는다.
+    
   }
 }
 
-/**
- * "내 모임 채팅" 목록 — 내가 멤버인 방 + 마지막 메시지 미리보기 + unread.
- * RLS가 멤버 방만 select하게 해주므로, 전체 active+ended 방을 한 번에 긁어 가공.
- */
 export async function getMyRooms(): Promise<MyGroupRoom[]> {
   const supabase = await createClient();
   const sessionUser = await getSessionUser();
@@ -265,7 +226,7 @@ export async function getMyRooms(): Promise<MyGroupRoom[]> {
       const admin = createAdminClient();
       await admin.from("meetup_chat_rooms").delete().in("id", expiredRoomIds);
     } catch {
-      // 만료 정리는 목록 표시를 막지 않는다.
+      
     }
   }
 
@@ -325,9 +286,6 @@ export async function getMyRooms(): Promise<MyGroupRoom[]> {
   });
 }
 
-/**
- * 읽음 처리 — last_read_at upsert.
- */
 export async function markRoomRead(roomId: number): Promise<void> {
   const supabase = await createClient();
   const sessionUser = await getSessionUser();
@@ -339,9 +297,6 @@ export async function markRoomRead(roomId: number): Promise<void> {
   );
 }
 
-/**
- * 현재 사용자의 이 방 마지막 읽음 시각.
- */
 export async function getRoomLastReadAt(roomId: number): Promise<string | null> {
   const supabase = await createClient();
   const sessionUser = await getSessionUser();
@@ -357,9 +312,6 @@ export async function getRoomLastReadAt(roomId: number): Promise<string | null> 
   return data?.last_read_at ?? null;
 }
 
-/**
- * 방 멤버 목록 — 호스트 + joined 참여자.
- */
 export async function getRoomMembers(meetupPostId: number): Promise<MeetupParticipant[]> {
   const { meetup, participants } = await getMeetupDetail(meetupPostId);
 

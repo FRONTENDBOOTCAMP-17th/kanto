@@ -42,7 +42,7 @@ export async function insertAuditLog(
       detail: opts?.detail ?? {},
     } as never);
   } catch {
-    // audit log failure must not break the main action
+    
   }
 }
 

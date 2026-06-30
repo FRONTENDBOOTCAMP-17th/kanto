@@ -12,7 +12,7 @@ function resolveGrade(ktsGrade: string | null | undefined): Grade {
   return "D";
 }
 
-const DURATION = 1200; // ms
+const DURATION = 1200; 
 
 export default function ProfileScore({ user }: { user: UserType }) {
   const target = user.kts_score ?? 0;
@@ -28,7 +28,7 @@ export default function ProfileScore({ user }: { user: UserType }) {
     function tick(now: number) {
       const elapsed = now - start;
       const progress = Math.min(elapsed / DURATION, 1);
-      // easeOutQuart
+      
       const eased = 1 - Math.pow(1 - progress, 4);
       setDisplayed(Math.round(eased * target));
       if (progress < 1) rafRef.current = requestAnimationFrame(tick);

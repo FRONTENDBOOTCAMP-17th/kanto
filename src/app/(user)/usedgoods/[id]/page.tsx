@@ -19,7 +19,7 @@ export default async function UsedGoodsDetailPage({
 
   if (!data) notFound();
 
-  // 본문(data) 외 나머지는 서로 독립이라 병렬로 가져온다(직렬 워터폴 제거).
+  
   const [{ data: relatedData }, { userId, initialLiked, initialReported }] =
     await Promise.all([
       supabase
@@ -31,7 +31,7 @@ export default async function UsedGoodsDetailPage({
       getUserLikeReportStatus(data.post_id),
     ]);
 
-  // 조회수 증가는 강한 일관성이 필요 없으므로 응답 후로 미뤄 렌더를 막지 않는다.
+  
   after(() => viewCountUp(data.post_id));
 
   const jsonLd = {

@@ -2,8 +2,6 @@ import { cache } from "react";
 import { createClient } from "@/utils/supabase/server";
 import type { User } from "@/type/user";
 
-// 한 요청 안에서 auth.getUser() 왕복을 공유한다.
-// 여러 서비스(getSessionUser/getLikeList/getIdentityVerified 등)가 각자 호출하던 것을 dedupe.
 export const getAuthUser = cache(async () => {
   const supabase = await createClient();
   const {
@@ -12,7 +10,6 @@ export const getAuthUser = cache(async () => {
   return user;
 });
 
-// auth_id → 내부 users.id 해석도 한 요청 1회로 공유.
 export const getCurrentUserId = cache(async (): Promise<number | null> => {
   const authUser = await getAuthUser();
   if (!authUser) return null;

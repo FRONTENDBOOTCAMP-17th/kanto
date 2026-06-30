@@ -72,8 +72,8 @@ export const NotificationBell = forwardRef<NotificationBellHandle, Props>(
         setIsOpen(false);
         router.push(href);
       }
-      // 이동할 곳이 없는 알림(정지/해제 등)은 드롭다운을 유지하고
-      // 읽음 처리된 항목만 미읽음 필터에서 사라진다.
+      
+      
     };
 
     return (

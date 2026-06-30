@@ -29,7 +29,6 @@ const POST_STATUS_STYLE: Record<string, { label: string; bg: string; fg: string 
   inactive: { label: "비공개", bg: "#f1f5f9", fg: "#94a3b8" },
 };
 
-
 function Pill({ text, fg, bg, bold }: { text: string; fg: string; bg: string; bold?: boolean }) {
   return (
     <span

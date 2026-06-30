@@ -232,7 +232,7 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
       </div>
 
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
-        {/* 데스크탑: 테이블 */}
+        
         <div className="hidden overflow-x-auto lg:block">
           <AdminUsersTable
             users={pageItems}
@@ -244,7 +244,7 @@ export default function AdminUsersClient({ users }: AdminUsersClientProps) {
           />
         </div>
 
-        {/* 모바일: 카드 */}
+        
         {pageItems.length > 0 && (
           <div className="lg:hidden">
             <AdminUsersCard users={pageItems} onOpen={(id) => setSelId(id)} />

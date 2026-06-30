@@ -13,7 +13,6 @@ export default async function NotFound() {
           4
         </span>
 
-
         <div className="relative w-32 h-37.5 mx-1 shrink-0" aria-label="kanto">
           <div className="absolute left-2.25 top-0 w-27.5 h-27.5 bg-teal-500 rounded-[50%_50%_50%_0] -rotate-45" />
           <svg
@@ -35,7 +34,6 @@ export default async function NotFound() {
         </span>
       </div>
 
-
       <div className="flex flex-col items-center gap-2.5">
         <h1 className="text-2xl font-semibold text-slate-800">
           {t("title")}
@@ -44,7 +42,6 @@ export default async function NotFound() {
           {t("description")}
         </p>
       </div>
-
 
       <Link
         href="/main"

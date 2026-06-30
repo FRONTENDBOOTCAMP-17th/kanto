@@ -35,7 +35,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   const [companyYear, setCompanyYear] = useState(initialData?.company_year?.toString() ?? "");
   const [employeeCount, setEmployeeCount] = useState(initialData?.employee_count?.toString() ?? "");
   const [companyAddress, setCompanyAddress] = useState(initialData?.company_address ?? "");
-  // 주소 자동완성으로 선택한 위치(좌표+주소). 상세 페이지 지도 핀에 사용.
+  
   const [companyLocation, setCompanyLocation] = useState<PickedLocation | null>(
     initialData?.company_lat != null && initialData?.company_lng != null
       ? {
@@ -89,7 +89,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   };
 
   const handleSubmit = async () => {
-    // 2단계 필수 항목 검증(제출 버튼이 폼 밖에 있어 native required 가 우회되므로 직접 검증).
+    
     const resolvedAddress = companyLocation?.address ?? companyAddress;
     if (
       !industry.trim() ||

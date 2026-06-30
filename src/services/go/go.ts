@@ -1,8 +1,5 @@
 "use server";
 
-// 번개모임(칸토 go!) Supabase 서버 액션
-// 변이는 user 세션(RLS) 클라이언트, 알림/어드민은 admin 클라이언트 사용
-
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { getSessionUser, requireAdmin } from "@/services/user/user";
@@ -70,12 +67,6 @@ type AdminMeetupRow = Omit<MeetupRow, "meetup_participants"> & {
   }> | null;
 };
 
-// ─── 사용자 API ──────────────────────────────────────────────
-
-/**
- * 현재 진행 중인 번개모임 목록 조회
- * end_at > now() + posts.status = 'active' 로 종료/숨김 모임 자동 제외
- */
 export async function getActiveMeetups(): Promise<Meetup[]> {
   const supabase = await createClient();
   const now = new Date().toISOString();
@@ -114,9 +105,6 @@ export async function getActiveMeetups(): Promise<Meetup[]> {
   }));
 }
 
-/**
- * 특정 모임 상세 조회 (joined 참여자 포함)
- */
 export async function getMeetupDetail(postId: number): Promise<{
   meetup: Meetup;
   participants: MeetupParticipant[];
@@ -171,19 +159,16 @@ export async function getMeetupDetail(postId: number): Promise<{
   };
 }
 
-/**
- * 번개모임 생성 — posts 행 → meetups 행 순서로 삽입. 생성된 post_id 반환.
- */
 export async function createMeetup(input: CreateMeetupInput): Promise<number> {
   const supabase = await createClient();
   const sessionUser = await getSessionUser();
   if (!sessionUser) throw new Error("MUST_LOGIN");
 
-  // 입력은 마닐라 현지 벽시계 — 서버 TZ에 의존하지 않도록 +08:00 오프셋으로 해석한다.
+  
   const startAt = manilaWallTimeToISO(input.date, input.startTime);
   const endAt = manilaWallTimeToISO(input.date, input.endTime);
 
-  // 1) posts 행 생성 (post_type = 'meetup')
+  
   const { data: post, error: postError } = await supabase
     .from("posts")
     .insert({
@@ -198,7 +183,7 @@ export async function createMeetup(input: CreateMeetupInput): Promise<number> {
   if (postError) throw postError;
   const postId = (post as { id: number }).id;
 
-  // 2) meetups 행 생성
+  
   const { error: meetupError } = await supabase.from("meetups").insert({
     post_id: postId,
     topic: input.topic,
@@ -219,10 +204,6 @@ export async function createMeetup(input: CreateMeetupInput): Promise<number> {
   return postId;
 }
 
-/**
- * 현재 유저의 이 모임 참여 상태 — 재입장 차단 판단용.
- * "cancelled"면 다시 참여 불가(영구), "joined"면 참여 중, "none"이면 미참여.
- */
 export async function getMyMeetupStatus(
   meetupPostId: number,
 ): Promise<"joined" | "cancelled" | "none"> {
@@ -240,16 +221,12 @@ export async function getMyMeetupStatus(
   return (data?.status as "joined" | "cancelled" | undefined) ?? "none";
 }
 
-/**
- * 모임 참여 + 주최자 알림.
- * 한 번 취소한 모임은 재입장 불가(meetup_participants UNIQUE 제약 + 취소 이력 보존).
- */
 export async function joinMeetup(meetupPostId: number): Promise<void> {
   const supabase = await createClient();
   const sessionUser = await getSessionUser();
   if (!sessionUser) throw new Error("MUST_LOGIN");
 
-  // 취소 이력이 있으면 재입장 차단(코드로 throw → 클라이언트가 토스트 매핑)
+  
   const { data: existing, error: existingError } = await supabase
     .from("meetup_participants")
     .select("status")
@@ -259,7 +236,7 @@ export async function joinMeetup(meetupPostId: number): Promise<void> {
 
   if (existingError) throw new Error("JOIN_FAILED");
   if (existing?.status === "cancelled") throw new Error("REENTRY_FORBIDDEN");
-  if (existing?.status === "joined") return; // 이미 참여 중 — 멱등 처리
+  if (existing?.status === "joined") return; 
 
   const { error } = await supabase.from("meetup_participants").insert({
     meetup_post_id: meetupPostId,
@@ -271,7 +248,7 @@ export async function joinMeetup(meetupPostId: number): Promise<void> {
 
   await postSystemMessageForMeetup(meetupPostId, `${sessionUser.name}님이 참여했습니다.`);
 
-  // 주최자 알림 (RLS 우회를 위해 admin 클라이언트 — 기존 알림 insert 패턴과 동일)
+  
   const { data: meetupData } = await supabase
     .from("meetups")
     .select("posts!inner(user_id, title)")
@@ -294,15 +271,12 @@ export async function joinMeetup(meetupPostId: number): Promise<void> {
           related_id: meetupPostId,
         } as never);
       } catch {
-        // 알림 실패는 참여 성공을 되돌리지 않는다.
+        
       }
     }
   }
 }
 
-/**
- * 모임 참여 취소 (시작 전만 가능)
- */
 export async function cancelJoin(meetupPostId: number): Promise<void> {
   const supabase = await createClient();
   const sessionUser = await getSessionUser();
@@ -329,10 +303,6 @@ export async function cancelJoin(meetupPostId: number): Promise<void> {
   await postSystemMessageForMeetup(meetupPostId, `${sessionUser.name}님이 나갔습니다.`);
 }
 
-/**
- * 주최자 모임 종료 — posts.status = 'inactive' (핀 자동 제거)
- * RLS 세션 클라이언트 사용. 호스트 본인 검증은 defense-in-depth로 명시적으로 한 번 더 수행.
- */
 export async function hostEndMeetup(postId: number): Promise<void> {
   const supabase = await createClient();
   const sessionUser = await getSessionUser();
@@ -356,8 +326,8 @@ export async function hostEndMeetup(postId: number): Promise<void> {
 
   if (error) throw error;
 
-  // posts 테이블은 supabase_realtime publication에 없어 클라이언트가 변경을 못 감지함.
-  // meetups 행을 touch(no-op update)해 publication에 등록된 테이블의 이벤트로 갱신을 트리거.
+  
+  
   await supabase
     .from("meetups")
     .update({ post_id: postId } as never)
@@ -366,11 +336,6 @@ export async function hostEndMeetup(postId: number): Promise<void> {
   await endRoom(postId);
 }
 
-// ─── 어드민 API ──────────────────────────────────────────────
-
-/**
- * 어드민용 전체 모임 목록 (RLS 우회 admin 클라이언트)
- */
 export async function adminGetMeetups(): Promise<AdminMeetup[]> {
   await requireAdmin();
   const admin = createAdminClient();
@@ -445,9 +410,6 @@ export async function adminGetMeetups(): Promise<AdminMeetup[]> {
   });
 }
 
-/**
- * 어드민 강제 종료 — posts.status = 'inactive' (핀 자동 제거)
- */
 export async function adminForceEndMeetup(postId: number): Promise<void> {
   await requireAdmin();
   const admin = createAdminClient();
@@ -457,8 +419,8 @@ export async function adminForceEndMeetup(postId: number): Promise<void> {
     .eq("id", postId);
   if (error) throw error;
 
-  // posts 테이블은 supabase_realtime publication에 없어 클라이언트가 변경을 못 감지함.
-  // meetups 행을 touch(no-op update)해 publication에 등록된 테이블의 이벤트로 갱신을 트리거.
+  
+  
   await admin
     .from("meetups")
     .update({ post_id: postId } as never)

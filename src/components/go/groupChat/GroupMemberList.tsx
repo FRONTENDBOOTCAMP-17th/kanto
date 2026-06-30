@@ -28,7 +28,7 @@ export default function GroupMemberList({
   const t = useTranslations("Go.chat");
   const router = useRouter();
 
-  // 참여자 이름 클릭 → 공개 프로필로 이동(채팅 위젯은 닫는다). 본인/탈퇴 회원은 이동 안 함.
+  
   const goToProfile = (m: MeetupParticipant) => {
     if (m.user_id === currentUserId || m.is_deleted) return;
     useChatStore.getState().closeWidget();

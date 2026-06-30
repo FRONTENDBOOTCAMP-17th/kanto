@@ -1,8 +1,5 @@
 "use client";
 
-// 상세페이지 거래지역 — 정확한 핀 대신 대략적 원형 영역만 표시 (프라이버시).
-// 저장된 좌표는 이미 소수점 2자리로 클램프되어 있으므로 건물 단위 특정 불가.
-
 import { useEffect } from "react";
 import { APIProvider, Map, useMap } from "@vis.gl/react-google-maps";
 import { useTranslations } from "next-intl";
@@ -40,7 +37,7 @@ function AreaCircle({
 interface Props {
   lat: number;
   lng: number;
-  radius?: number; // meters
+  radius?: number; 
   className?: string;
 }
 
@@ -65,7 +62,6 @@ export function ApproxAreaMap({ lat, lng, radius = 400, className }: Props) {
   );
 }
 
-// APIProvider 로 감싼 단독 사용용 래퍼 (상세페이지에서 바로 사용)
 export function ApproxAreaMapWithProvider(props: Props) {
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>

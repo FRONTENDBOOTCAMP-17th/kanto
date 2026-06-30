@@ -28,7 +28,7 @@ export async function moderateImage(
     console.warn("[ImageModeration] Groq 실패, fail-closed 처리:", err);
   }
 
-  // fail-closed: 제공자 실패 시 통과시키지 않고 재시도를 유도한다.
+  
   return {
     allowed: false,
     action: "review",

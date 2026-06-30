@@ -1,7 +1,5 @@
 "use client";
 
-// 번개모임 생성 모달 (장소 자동완성 + 폼 입력)
-
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { X, Zap, Loader2 } from "lucide-react";
@@ -14,11 +12,10 @@ import { manilaWallTimeToISO } from "@/utils/goTime";
 import type { MeetupTopicKey } from "@/constants/meetupTopics";
 import type { PickedLocation } from "@/type/go";
 
-// 드롭다운 옵션
-const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0")); // "00".."23"
+const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0")); 
 const MINUTES = ["00", "10", "20", "30", "40", "50"];
-const PARTICIPANTS = Array.from({ length: 29 }, (_, i) => i + 2); // 2..30
-const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1); // 1..12
+const PARTICIPANTS = Array.from({ length: 29 }, (_, i) => i + 2); 
+const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1); 
 
 const toMinutes = (h: string, m: string) => Number(h) * 60 + Number(m);
 
@@ -32,7 +29,7 @@ export function MeetupCreateModal({
   onCreated,
 }: MeetupCreateModalProps) {
   const t = useTranslations("Go");
-  // 번개모임은 근시일(올해 안) 한정 — 모달 렌더 시점 기준으로 현재 시간을 계산한다.
+  
   const now = new Date();
   const CURRENT_YEAR = now.getFullYear();
   const CURRENT_MONTH = now.getMonth() + 1;
@@ -67,7 +64,7 @@ export function MeetupCreateModal({
   const setField = (k: keyof typeof form) => (value: string) =>
     setForm((f) => ({ ...f, [k]: value }));
 
-  // 선택한 월/일이 "오늘" 기준 이미 지난 시작시간을 가리키면 시작/종료를 초기화
+  
   const clearPastStart = (next: typeof form) => {
     const isToday =
       Number(next.month) === CURRENT_MONTH && Number(next.day) === CURRENT_DAY;
@@ -83,7 +80,7 @@ export function MeetupCreateModal({
     }
   };
 
-  // 월 변경 → 선택일이 말일을 넘으면 일 초기화, 오늘 이전 시작시간이면 시간도 초기화
+  
   const setMonth = (value: string) =>
     setForm((f) => {
       const next = { ...f, month: value };
@@ -95,7 +92,7 @@ export function MeetupCreateModal({
       return next;
     });
 
-  // 일 변경 → 오늘로 바뀌면서 이미 지난 시작시간이면 초기화
+  
   const setDay = (value: string) =>
     setForm((f) => {
       const next = { ...f, day: value };
@@ -103,7 +100,7 @@ export function MeetupCreateModal({
       return next;
     });
 
-  // 시작 변경 → 종료가 시작 이하이면 종료 초기화
+  
   const setStart =
     (k: "startHour" | "startMinute") =>
     (value: string) =>
@@ -123,7 +120,7 @@ export function MeetupCreateModal({
         return next;
       });
 
-  // 선택한 월의 말일 (윤년·월별 일수 반영, 항상 올해 기준)
+  
   const daysInMonth = form.month
     ? new Date(CURRENT_YEAR, Number(form.month), 0).getDate()
     : 31;
@@ -131,13 +128,13 @@ export function MeetupCreateModal({
   const DAYS = Array.from({ length: daysInMonth }, (_, i) => i + 1).filter(
     (d) => !isSelectedMonthCurrent || d >= CURRENT_DAY,
   );
-  // 월은 올해 남은 달만 선택 가능(년도 입력 없이 항상 올해로 생성)
+  
   const MONTH_OPTIONS = MONTHS.filter((m) => m >= CURRENT_MONTH);
 
   const isSelectedDateToday =
     isSelectedMonthCurrent && Number(form.day) === CURRENT_DAY;
 
-  // 종료는 시작 이후만 — 드롭다운 옵션을 시작 이후로 제한
+  
   const startSet = form.startHour !== "" && form.startMinute !== "";
   const startHourOptions = isSelectedDateToday
     ? HOURS.filter((h) => Number(h) >= CURRENT_HOUR)
@@ -171,7 +168,7 @@ export function MeetupCreateModal({
     if (!isValid || submitting) return;
     const date = `${CURRENT_YEAR}-${form.month.padStart(2, "0")}-${form.day.padStart(2, "0")}`;
     const startTime = `${form.startHour}:${form.startMinute}`;
-    // 마닐라 벽시계 기준으로 과거 여부 판단 (저장 경로와 동일 기준)
+    
     if (new Date(manilaWallTimeToISO(date, startTime)) <= new Date()) {
       alert(t("create.pastTimeError"));
       return;
@@ -202,12 +199,12 @@ export function MeetupCreateModal({
 
   return (
     <>
-      {/* 백드롭 */}
+      
       <div onClick={onClose} className="fixed inset-0 z-50 bg-slate-900/55" />
 
-      {/* 모달 */}
+      
       <div className="fixed left-1/2 top-1/2 z-51 flex max-h-[90vh] w-140 max-w-[calc(100vw-32px)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-[20px] bg-white shadow-2xl">
-        {/* 헤더 */}
+        
         <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-6 py-5">
           <div className="flex items-center gap-2.5">
             <Zap className="h-5 w-5 text-teal-500" strokeWidth={2.2} />
@@ -224,7 +221,7 @@ export function MeetupCreateModal({
         </div>
 
         {done ? (
-          /* 완료 화면 */
+          
           <div className="flex flex-1 flex-col items-center justify-center px-8 py-14 text-center">
             <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-[22px] bg-teal-50">
               <Zap className="h-8 w-8 text-teal-500" strokeWidth={2} />
@@ -238,9 +235,9 @@ export function MeetupCreateModal({
           </div>
         ) : (
           <>
-            {/* 폼 */}
+            
             <div className="flex flex-1 flex-col gap-5 overflow-y-auto px-6 py-5">
-              {/* 장소 — 주소/장소명 자동완성 */}
+              
               <div>
                 <label className="mb-2 block text-[13px] font-bold text-slate-600">
                   {t("create.locationLabel")}{" "}
@@ -259,7 +256,7 @@ export function MeetupCreateModal({
                 </APIProvider>
               </div>
 
-              {/* 제목 */}
+              
               <div>
                 <label className="mb-2 block text-[13px] font-bold text-slate-600">
                   {t("create.titleLabel")}{" "}
@@ -273,7 +270,7 @@ export function MeetupCreateModal({
                 />
               </div>
 
-              {/* 주제 */}
+              
               <div>
                 <label className="mb-2.5 block text-[13px] font-bold text-slate-600">
                   {t("create.topicLabel")}{" "}
@@ -303,7 +300,7 @@ export function MeetupCreateModal({
                 </div>
               </div>
 
-              {/* 날짜 (월 / 일 드롭다운, 항상 올해) */}
+              
               <div>
                 <label className="mb-2 block text-[13px] font-bold text-slate-600">
                   {t("create.dateLabel")}{" "}
@@ -333,7 +330,7 @@ export function MeetupCreateModal({
                 </div>
               </div>
 
-              {/* 시작 / 종료 시간 (시 + 분 드롭다운, 24시간제) */}
+              
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="mb-2 block text-[13px] font-bold text-slate-600">
@@ -395,7 +392,7 @@ export function MeetupCreateModal({
                 </div>
               </div>
 
-              {/* 최대 인원 (드롭다운) */}
+              
               <div>
                 <label className="mb-2 block text-[13px] font-bold text-slate-600">
                   {t("create.maxParticipants")}
@@ -411,7 +408,7 @@ export function MeetupCreateModal({
                 />
               </div>
 
-              {/* 상세 위치 */}
+              
               <div>
                 <label className="mb-2 block text-[13px] font-bold text-slate-600">
                   {t("create.locationDetailLabel")}
@@ -424,7 +421,7 @@ export function MeetupCreateModal({
                 />
               </div>
 
-              {/* 한줄 설명 */}
+              
               <div>
                 <label className="mb-2 block text-[13px] font-bold text-slate-600">
                   {t("create.descriptionLabel")}{" "}
@@ -439,7 +436,7 @@ export function MeetupCreateModal({
               </div>
             </div>
 
-            {/* 하단 버튼 */}
+            
             <div className="flex shrink-0 gap-2.5 border-t border-slate-100 px-6 py-4">
               <button
                 onClick={onClose}

@@ -31,7 +31,7 @@ export default async function RentalDetail({
   const images = (rental.images as string[]) ?? [];
   const postId = rental.post_id ?? 0;
 
-  // 조회수 증가는 응답 후로 미뤄 렌더를 막지 않는다.
+  
   after(() => viewCountUp(postId));
   const { userId, initialLiked, initialReported } = await getUserLikeReportStatus(postId);
 

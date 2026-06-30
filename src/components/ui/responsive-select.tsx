@@ -65,7 +65,6 @@ export function ResponsiveSelect({
         <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
       </button>
 
-
       <Select value={value} onValueChange={onValueChange} disabled={disabled}>
         <SelectTrigger className="hidden h-full w-full md:flex">
           <SelectValue placeholder={placeholder} />
@@ -79,7 +78,7 @@ export function ResponsiveSelect({
         </SelectContent>
       </Select>
 
-      {/* 모바일/데스크톱 모두에서 브라우저 기본 필수 검증이 동작하도록 하는 숨김 select */}
+      
       {required && (
         <select
           aria-hidden
@@ -97,7 +96,6 @@ export function ResponsiveSelect({
           ))}
         </select>
       )}
-
 
       {mobileOpen &&
         createPortal(

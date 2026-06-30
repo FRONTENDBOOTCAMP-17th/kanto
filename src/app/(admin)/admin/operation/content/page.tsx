@@ -13,7 +13,7 @@ export default function ContentPage() {
 
   return (
     <div className="p-6 lg:p-8">
-      {/* 페이지 헤더 */}
+      
       <div className="mb-7">
         <Link
           href="/admin/operation"
@@ -33,7 +33,7 @@ export default function ContentPage() {
         </p>
       </div>
 
-      {/* 섹션 탭 */}
+      
       <div className="mb-6">
         <div className="flex w-fit gap-1 rounded-xl border border-[#ebeef0] bg-slate-50 p-1">
           <button

@@ -155,7 +155,6 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
             
             <LanguageSwitcher />
 
-
             {user && (
               <NotificationBell
                 ref={notificationBellRef}

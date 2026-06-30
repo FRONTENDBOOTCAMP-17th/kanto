@@ -122,7 +122,7 @@ export default function SpamConfigPage() {
 
   return (
     <div className="p-6 lg:p-8">
-      {/* Header */}
+      
       <div className="mb-7">
         <Link
           href="/admin/operation"
@@ -143,11 +143,11 @@ export default function SpamConfigPage() {
       </div>
 
       <div className="flex flex-col gap-5">
-        {/* Config card */}
+        
         <div className="rounded-2xl border border-[#ebeef0] bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
           <p className="mb-5 text-[15px] font-semibold text-slate-800">감지 민감도 설정</p>
 
-          {/* Chat spam */}
+          
           <div className="mb-5">
             <p className="mb-3 text-[12px] font-bold uppercase tracking-wider text-slate-400">
               채팅 도배 감지
@@ -176,7 +176,7 @@ export default function SpamConfigPage() {
 
           <div className="my-5 border-t border-[#ebeef0]" />
 
-          {/* Post URL limit */}
+          
           <div className="mb-5">
             <p className="mb-3 text-[12px] font-bold uppercase tracking-wider text-slate-400">
               게시글 제한
@@ -191,7 +191,7 @@ export default function SpamConfigPage() {
 
           <div className="my-5 border-t border-[#ebeef0]" />
 
-          {/* Auto sanction */}
+          
           <div>
             <p className="mb-3 text-[12px] font-bold uppercase tracking-wider text-slate-400">
               자동 제재 기준
@@ -211,7 +211,7 @@ export default function SpamConfigPage() {
               />
             </div>
 
-            {/* Toggle */}
+            
             <div className="flex items-center justify-between rounded-xl border border-[#ebeef0] bg-slate-50 px-4 py-3.5">
               <div>
                 <p className="text-[14px] font-medium text-slate-800">자동 제재 활성화</p>
@@ -239,7 +239,7 @@ export default function SpamConfigPage() {
             </div>
           </div>
 
-          {/* Save row */}
+          
           <div className="mt-5 flex items-center justify-end gap-3">
             {saved && (
               <span className="flex items-center gap-1 text-[13px] text-teal-600">
@@ -256,7 +256,7 @@ export default function SpamConfigPage() {
           </div>
         </div>
 
-        {/* Templates card */}
+        
         <div className="rounded-2xl border border-[#ebeef0] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
           <div className="border-b border-[#ebeef0] px-6 py-4">
             <p className="text-[15px] font-semibold text-slate-800">제재 알림 템플릿</p>

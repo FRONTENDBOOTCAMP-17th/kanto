@@ -43,7 +43,7 @@ export default function AccommondationInfo({ rental }: { rental: Rental }) {
   const amenityLabel = (amenity: string) =>
     te.has(`amenities.${amenity}`) ? te(`amenities.${amenity}`) : amenity;
 
-  // 정식 값이 아닌 레거시 enum 값(예: rent_type "단기")은 번역 키가 없으므로 원본을 그대로 보여준다.
+  
   const enumLabel = (group: string, value: string | null) =>
     value ? (te.has(`${group}.${value}`) ? te(`${group}.${value}`) : value) : "";
 

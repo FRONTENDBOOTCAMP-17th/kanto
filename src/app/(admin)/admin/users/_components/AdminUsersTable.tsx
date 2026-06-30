@@ -10,7 +10,6 @@ interface AdminUsersTableProps {
   allSelected: boolean;
 }
 
-
 export default function AdminUsersTable({
   users,
   onOpen,

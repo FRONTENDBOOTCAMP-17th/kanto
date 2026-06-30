@@ -15,7 +15,6 @@ const SANCTION_OPTIONS: { key: "7d" | "30d" | "perm"; label: string }[] = [
   { key: "perm", label: "영구 정지" },
 ];
 
-
 const SANCTION_PAGE_SIZE = 5;
 
 interface Props {

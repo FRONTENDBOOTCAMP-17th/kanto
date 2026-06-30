@@ -24,8 +24,8 @@ export default function ProfanityForm({
 }: Props) {
   const queryClient = useQueryClient();
 
-  // 부모에서 key={editingId ?? "new"}로 마운트되므로
-  // initialScopes/initialWords는 항상 올바른 초기값입니다.
+  
+  
   const [scopes, setScopes] = useState<Scope[]>(initialScopes);
   const [words, setWords] = useState<string[]>(initialWords);
   const [wordInput, setWordInput] = useState("");
@@ -88,7 +88,7 @@ export default function ProfanityForm({
         {editingId !== null ? "금칙어 룰 수정" : "새 금칙어 룰 등록"}
       </p>
       <div className="flex flex-col gap-5">
-        {/* 적용 범위 */}
+        
         <div>
           <label className="mb-2 block text-[13px] font-medium text-slate-600">
             적용 범위
@@ -113,7 +113,7 @@ export default function ProfanityForm({
           </div>
         </div>
 
-        {/* 금칙어 목록 */}
+        
         <div>
           <label className="mb-1.5 block text-[13px] font-medium text-slate-600">
             금칙어 목록
@@ -153,7 +153,7 @@ export default function ProfanityForm({
           )}
         </div>
 
-        {/* 영향받는 기존 게시물 */}
+        
         <div className="border-t border-[#ebeef0] pt-4">
           <div className="mb-3 flex items-center justify-between">
             <div>
@@ -243,7 +243,7 @@ export default function ProfanityForm({
           )}
         </div>
 
-        {/* 취소 / 등록 버튼 */}
+        
         <div className="flex justify-end gap-2 border-t border-[#ebeef0] pt-4">
           <button
             onClick={onCancel}

@@ -12,7 +12,6 @@ import { APIProvider } from "@vis.gl/react-google-maps";
 import { PlaceAutocomplete } from "@/components/go/PlaceAutocomplete";
 import type { PickedLocation } from "@/type/go";
 
-// 기존 라벨의 " *" 와 동일하게 라벨 색을 상속(검은색)하도록 색상 클래스 없이 표시.
 const RequiredMark = () => <span> *</span>;
 
 const URL_REGEX = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&/=]*)$/i;
