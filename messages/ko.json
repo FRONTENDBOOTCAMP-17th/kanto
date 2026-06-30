@@ -903,7 +903,8 @@
       "loading": "...",
       "createMeetup": "번개모임 만들기",
       "myLocation": "내 위치",
-      "clusterCount": "{count}개 모임"
+      "clusterCount": "{count}개 모임",
+      "myMeetups": "내 모임 보기"
     },
     "filter": {
       "all": "전체",
@@ -917,6 +918,12 @@
       "trip": "나들이/여행",
       "social": "친목/수다",
       "other": "기타"
+    },
+    "myList": {
+      "title": "내 모임",
+      "hosted": "만든 모임",
+      "joined": "참여한 모임",
+      "empty": "해당하는 모임이 없습니다"
     },
     "list": {
       "title": "모임 목록",

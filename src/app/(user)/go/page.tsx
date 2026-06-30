@@ -10,6 +10,7 @@ import {
 } from "@vis.gl/react-google-maps";
 import { Plus, Crosshair, Zap } from "lucide-react";
 import { useLiveMeetups } from "@/hooks/go/useLiveMeetups";
+import { getMyJoinedMeetupIds } from "@/services/go/go";
 import { MeetupPin, ClusterPin } from "@/components/go/MeetupPin";
 import { MeetupDetailPanel } from "@/components/go/MeetupDetailPanel";
 import { MeetupListPanel } from "@/components/go/MeetupListPanel";
@@ -99,6 +100,9 @@ export default function GoPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showList, setShowList] = useState(false);
+  const [showMyMeetups, setShowMyMeetups] = useState(false);
+  const [joinedMeetupIds, setJoinedMeetupIds] = useState<number[]>([]);
+  const [detailListMode, setDetailListMode] = useState<"all" | "mine">("all");
   const [listEnterAnim, setListEnterAnim] = useState<"up" | "left">("up");
   const [detailFromList, setDetailFromList] = useState(false);
   const [zoom, setZoom] = useState(12);
@@ -116,6 +120,21 @@ export default function GoPage() {
 
   const { meetups, allMeetups, loading } = useLiveMeetups({ topicFilter });
 
+  const hostedMeetups = useMemo(
+    () => allMeetups.filter((m) => m.host_id === currentUserId),
+    [allMeetups, currentUserId],
+  );
+
+  const joinedMeetups = useMemo(
+    () =>
+      allMeetups.filter(
+        (m) =>
+          m.host_id !== currentUserId &&
+          joinedMeetupIds.includes(m.post_id),
+      ),
+    [allMeetups, currentUserId, joinedMeetupIds],
+  );
+
   
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
@@ -132,9 +151,9 @@ export default function GoPage() {
   }, [selectedMeetupId, setDetailOpen]);
 
   useEffect(() => {
-    setListOpen(showList);
+    setListOpen(showList || showMyMeetups);
     return () => setListOpen(false);
-  }, [showList, setListOpen]);
+  }, [showList, showMyMeetups, setListOpen]);
 
   const activeTopics =
     loading || !bounds
@@ -202,7 +221,7 @@ export default function GoPage() {
   
   const selectedMeetup =
     meetups.find((m) => m.post_id === selectedMeetupId) ?? null;
-  const mobileSheetOpen = showList || selectedMeetupId !== null;
+  const mobileSheetOpen = showList || showMyMeetups || selectedMeetupId !== null;
 
   const handlePinClick = (meetup: Meetup) => {
     setDetailFromList(false);
@@ -214,16 +233,27 @@ export default function GoPage() {
   
   const handleSelectFromList = (meetup: Meetup) => {
     setDetailFromList(true);
+    setDetailListMode("all");
     setSelectedMeetupId(meetup.post_id);
     if (isMobile) setShowList(false);
   };
 
-  
+  const handleSelectFromMyList = (meetup: Meetup) => {
+    setDetailFromList(true);
+    setDetailListMode("mine");
+    setSelectedMeetupId(meetup.post_id);
+    if (isMobile) setShowMyMeetups(false);
+  };
+
   const handleBackToList = () => {
     setSelectedMeetupId(null);
     setDetailFromList(false);
     setListEnterAnim("left");
-    setShowList(true);
+    if (detailListMode === "mine") {
+      setShowMyMeetups(true);
+    } else {
+      setShowList(true);
+    }
   };
 
   const handleCloseDetail = () => {
@@ -232,8 +262,26 @@ export default function GoPage() {
   };
 
   const toggleList = () => {
-    if (!showList) setListEnterAnim("up");
+    if (!showList) {
+      setListEnterAnim("up");
+      setShowMyMeetups(false);
+    }
     setShowList((prev) => !prev);
+  };
+
+  const toggleMyMeetups = async () => {
+    if (!currentUserId) {
+      setShowLoginModal(true);
+      return;
+    }
+    if (showMyMeetups) {
+      setShowMyMeetups(false);
+      return;
+    }
+    setShowList(false);
+    const ids = await getMyJoinedMeetupIds();
+    setJoinedMeetupIds(ids);
+    setShowMyMeetups(true);
   };
 
   const handleCreated = () => {
@@ -333,31 +381,46 @@ export default function GoPage() {
           </div>
         </div>
 
-        
-        <button
-          onClick={toggleList}
-          className={`absolute left-5 z-10 flex items-center gap-1.5 rounded-full bg-slate-900/78 px-3.5 py-1.75 backdrop-blur-md transition-[top,background-color] hover:bg-slate-900/90 md:top-18 ${
+
+        <div
+          className={`absolute left-5 z-10 flex flex-col gap-2 transition-[top] md:top-18 ${
             mobileSheetOpen ? "top-[calc(15vh+4px)]" : "top-20"
           }`}
         >
-          <Zap className="h-3 w-3 text-emerald-400" strokeWidth={2.5} />
-          <span className="text-[13px] font-semibold text-white">
-            {loading
-              ? t("map.loading")
-              : t("map.inProgress", { count: meetups.length })}
-          </span>
-        </button>
+          <button
+            onClick={toggleList}
+            className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.75 backdrop-blur-md transition-colors hover:bg-slate-900/90 ${
+              showList ? "bg-slate-900" : "bg-slate-900/78"
+            }`}
+          >
+            <Zap className="h-3 w-3 text-emerald-400" strokeWidth={2.5} />
+            <span className="text-[13px] font-semibold text-white">
+              {loading
+                ? t("map.loading")
+                : t("map.inProgress", { count: meetups.length })}
+            </span>
+          </button>
+          <button
+            onClick={toggleMyMeetups}
+            className={`flex items-center gap-1.5 self-start rounded-full px-3.5 py-1.75 backdrop-blur-md transition-colors hover:bg-slate-700/90 ${
+              showMyMeetups ? "bg-teal-600" : "bg-slate-900/78"
+            }`}
+          >
+            <span className="text-[13px] font-semibold text-white">
+              {t("map.myMeetups")}
+            </span>
+          </button>
+        </div>
 
-        
+
         <div
           className={`absolute bottom-7 z-10 left-5 transition-[left] duration-280 ease-in-out ${
-            showList ? "md:left-80 lg:left-90" : ""
+            showList || showMyMeetups ? "md:left-80 lg:left-90" : ""
           }`}
         >
           <RecenterButton />
         </div>
 
-        
         {showList && (
           <MeetupListPanel
             meetups={meetups}
@@ -368,13 +431,25 @@ export default function GoPage() {
           />
         )}
 
-        
+        {showMyMeetups && (
+          <MeetupListPanel
+            meetups={[]}
+            mode="mine"
+            hostedMeetups={hostedMeetups}
+            joinedMeetups={joinedMeetups}
+            selectedId={selectedMeetupId}
+            onSelect={handleSelectFromMyList}
+            onClose={() => setShowMyMeetups(false)}
+            enterAnim="up"
+          />
+        )}
+
         <MeetupDetailPanel
           meetup={selectedMeetup}
           onClose={handleCloseDetail}
           onBackToList={detailFromList ? handleBackToList : undefined}
           currentUserId={currentUserId}
-          suppressOverlay={showList}
+          suppressOverlay={showList || showMyMeetups}
         />
 
         

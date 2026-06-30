@@ -105,6 +105,20 @@ export async function getActiveMeetups(): Promise<Meetup[]> {
   }));
 }
 
+export async function getMyJoinedMeetupIds(): Promise<number[]> {
+  const supabase = await createClient();
+  const sessionUser = await getSessionUser();
+  if (!sessionUser) return [];
+
+  const { data } = await supabase
+    .from("meetup_participants")
+    .select("meetup_post_id")
+    .eq("user_id", sessionUser.id)
+    .eq("status", "joined");
+
+  return (data ?? []).map((p) => (p as { meetup_post_id: number }).meetup_post_id);
+}
+
 export async function getMeetupDetail(postId: number): Promise<{
   meetup: Meetup;
   participants: MeetupParticipant[];
