@@ -7,10 +7,35 @@ export type Json =
   | Json[]
 
 export type Database = {
-  
-  
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5"
+  }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
@@ -126,11 +151,11 @@ export type Database = {
           user_id_1: number | null
           user_id_1_active: boolean
           user_id_1_left: boolean | null
-          user_id_1_unread: number | null
+          user_id_1_unread: number
           user_id_2: number | null
           user_id_2_active: boolean
           user_id_2_left: boolean | null
-          user_id_2_unread: number | null
+          user_id_2_unread: number
         }
         Insert: {
           created_at?: string | null
@@ -141,11 +166,11 @@ export type Database = {
           user_id_1?: number | null
           user_id_1_active?: boolean
           user_id_1_left?: boolean | null
-          user_id_1_unread?: number | null
+          user_id_1_unread?: number
           user_id_2?: number | null
           user_id_2_active?: boolean
           user_id_2_left?: boolean | null
-          user_id_2_unread?: number | null
+          user_id_2_unread?: number
         }
         Update: {
           created_at?: string | null
@@ -156,11 +181,11 @@ export type Database = {
           user_id_1?: number | null
           user_id_1_active?: boolean
           user_id_1_left?: boolean | null
-          user_id_1_unread?: number | null
+          user_id_1_unread?: number
           user_id_2?: number | null
           user_id_2_active?: boolean
           user_id_2_left?: boolean | null
-          user_id_2_unread?: number | null
+          user_id_2_unread?: number
         }
         Relationships: [
           {
@@ -1038,6 +1063,8 @@ export type Database = {
           id: number
           starts_at: string
           title: string
+          title_en: string | null
+          title_fil: string | null
         }
         Insert: {
           created_at?: string
@@ -1046,6 +1073,8 @@ export type Database = {
           id?: never
           starts_at: string
           title: string
+          title_en?: string | null
+          title_fil?: string | null
         }
         Update: {
           created_at?: string
@@ -1054,6 +1083,8 @@ export type Database = {
           id?: never
           starts_at?: string
           title?: string
+          title_en?: string | null
+          title_fil?: string | null
         }
         Relationships: [
           {
@@ -1409,6 +1440,8 @@ export type Database = {
           chat_window_sec: number
           id: number
           max_urls_per_post: number
+          post_max_count: number
+          post_window_sec: number
           profanity_strike_max: number
           report_strike_max: number
           updated_at: string
@@ -1421,6 +1454,8 @@ export type Database = {
           chat_window_sec?: number
           id?: number
           max_urls_per_post?: number
+          post_max_count?: number
+          post_window_sec?: number
           profanity_strike_max?: number
           report_strike_max?: number
           updated_at?: string
@@ -1433,6 +1468,8 @@ export type Database = {
           chat_window_sec?: number
           id?: number
           max_urls_per_post?: number
+          post_max_count?: number
+          post_window_sec?: number
           profanity_strike_max?: number
           report_strike_max?: number
           updated_at?: string
@@ -2130,6 +2167,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       product_condition: ["미개봉", "가벼운 사용감", "사용감 있음", "기타"],

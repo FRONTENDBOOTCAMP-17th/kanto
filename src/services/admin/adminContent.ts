@@ -14,6 +14,8 @@ export interface SpamConfig {
   chat_window_sec: number;
   chat_max_count: number;
   chat_cooldown_sec: number;
+  post_window_sec: number;
+  post_max_count: number;
   max_urls_per_post: number;
   profanity_strike_max: number;
   report_strike_max: number;
@@ -79,7 +81,7 @@ export async function getSpamConfig(): Promise<SpamConfig> {
   const { data, error } = await supabaseAdmin
     .from("spam_config")
     .select(
-      "chat_window_sec, chat_max_count, chat_cooldown_sec, max_urls_per_post, profanity_strike_max, report_strike_max, auto_sanction_enabled, updated_at",
+      "chat_window_sec, chat_max_count, chat_cooldown_sec, post_window_sec, post_max_count, max_urls_per_post, profanity_strike_max, report_strike_max, auto_sanction_enabled, updated_at",
     )
     .eq("id", 1)
     .single();
@@ -96,7 +98,7 @@ export async function updateSpamConfig(
     .update({ ...payload, updated_by: updatedBy, updated_at: new Date().toISOString() })
     .eq("id", 1)
     .select(
-      "chat_window_sec, chat_max_count, chat_cooldown_sec, max_urls_per_post, profanity_strike_max, report_strike_max, auto_sanction_enabled, updated_at",
+      "chat_window_sec, chat_max_count, chat_cooldown_sec, post_window_sec, post_max_count, max_urls_per_post, profanity_strike_max, report_strike_max, auto_sanction_enabled, updated_at",
     )
     .single();
   if (error) throw new Error(error.message);

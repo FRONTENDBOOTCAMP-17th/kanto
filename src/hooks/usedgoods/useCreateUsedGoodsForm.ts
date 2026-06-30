@@ -29,6 +29,14 @@ export function useCreateUsedGoodsForm(userId: number) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!productCategory || !condition || !preferredLocation) return;
+
+    const rateRes = await fetch("/api/posts/rate-check");
+    if (!rateRes.ok) {
+      const { message } = await rateRes.json().catch(() => ({}));
+      alert(message ?? "도배 방지를 위해 짧은 시간안에 글 작성을 금지하고 있습니다. 잠시 후 다시 시도해주세요.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     const { data: post, error: postError } = await supabase

@@ -37,6 +37,8 @@ export async function PUT(req: NextRequest) {
     chat_window_sec,
     chat_max_count,
     chat_cooldown_sec,
+    post_window_sec,
+    post_max_count,
     max_urls_per_post,
     profanity_strike_max,
     report_strike_max,
@@ -47,6 +49,8 @@ export async function PUT(req: NextRequest) {
     chat_window_sec == null ||
     chat_max_count == null ||
     chat_cooldown_sec == null ||
+    post_window_sec == null ||
+    post_max_count == null ||
     max_urls_per_post == null ||
     profanity_strike_max == null ||
     report_strike_max == null ||
@@ -61,6 +65,8 @@ export async function PUT(req: NextRequest) {
         chat_window_sec,
         chat_max_count,
         chat_cooldown_sec,
+        post_window_sec,
+        post_max_count,
         max_urls_per_post,
         profanity_strike_max,
         report_strike_max,
@@ -71,7 +77,7 @@ export async function PUT(req: NextRequest) {
     insertAuditLog(admin, "update_spam", {
       targetType: "spam_config",
       targetId: 1,
-      detail: { chat_window_sec, chat_max_count, chat_cooldown_sec, max_urls_per_post, profanity_strike_max, report_strike_max, auto_sanction_enabled },
+      detail: { chat_window_sec, chat_max_count, chat_cooldown_sec, post_window_sec, post_max_count, max_urls_per_post, profanity_strike_max, report_strike_max, auto_sanction_enabled },
     });
     return NextResponse.json(data);
   } catch (e) {
