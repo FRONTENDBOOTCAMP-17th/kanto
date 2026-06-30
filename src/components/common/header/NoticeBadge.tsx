@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Megaphone } from "lucide-react";
 import Link from "next/link";
 import { useAuthStore } from "@/store/authStore";
+import { useTranslations } from "next-intl";
 
 const STORAGE_KEY = "notice_hidden_until";
 
@@ -26,6 +27,7 @@ function getHiddenIds(): number[] {
 }
 
 export function NoticeBadge() {
+  const t = useTranslations("Notice.Badge");
   const [count, setCount] = useState(0);
   const [animating, setAnimating] = useState(false);
   const user = useAuthStore((s) => s.user);
@@ -56,7 +58,7 @@ export function NoticeBadge() {
       
       {isSuspended && (
         <span className="md:hidden inline-flex items-center px-2 py-0.5 rounded-full bg-red-500 text-white text-[10px] font-bold tracking-wide leading-none">
-          정지
+          {t("suspended")}
         </span>
       )}
 
@@ -64,7 +66,7 @@ export function NoticeBadge() {
       {count > 0 && (
         <Link
           href="/notices"
-          aria-label={`공지사항 ${count}개`}
+          aria-label={t("ariaLabel", { count })}
           onClick={() => setAnimating(true)}
           onAnimationEnd={() => setAnimating(false)}
           className={`relative flex items-center gap-1 px-1.5 py-1 rounded-lg text-gray-600 hover:text-teal-600 hover:bg-teal-50 transition-colors${animating ? " animate-[pullDown_0.35s_ease]" : ""}`}
