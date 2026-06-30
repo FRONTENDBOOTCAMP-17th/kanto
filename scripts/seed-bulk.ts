@@ -28,7 +28,7 @@ const admin = createClient(
 // ──────────────────────────────────────────────
 const PASSWORD = "Kanto1234!";
 
-function rand<T>(arr: T[]): T { return arr[Math.floor(Math.random() * arr.length)]; }
+function rand<T>(arr: readonly T[]): T { return arr[Math.floor(Math.random() * arr.length)]; }
 function randInt(min: number, max: number): number { return Math.floor(Math.random() * (max - min + 1)) + min; }
 function daysAgo(n: number): string { const d = new Date(); d.setDate(d.getDate() - n); return d.toISOString(); }
 function daysFromNow(n: number): string { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString(); }
@@ -600,12 +600,14 @@ async function seedBulkTrustHistory(userIds: number[]) {
       const historicScore = Math.max(0, Math.min(100, (u.kts_score ?? 36) + trendOffset));
       const historicGrade = historicScore >= 90 ? 4 : historicScore >= 75 ? 3 : historicScore >= 50 ? 2 : historicScore >= 30 ? 1 : 0;
 
-      await admin.from("user_trust_history").insert({
-        user_id: u.id,
-        week_date: weekStr,
-        kts_score: Math.round(historicScore),
-        grade_level: historicGrade,
-      }).catch(() => {});
+      try {
+        await admin.from("user_trust_history").insert({
+          user_id: u.id,
+          week_date: weekStr,
+          kts_score: Math.round(historicScore),
+          grade_level: historicGrade,
+        });
+      } catch {}
     }
   }
   console.log(`  ✅ ${users.length}명 KTS 히스토리 생성`);
