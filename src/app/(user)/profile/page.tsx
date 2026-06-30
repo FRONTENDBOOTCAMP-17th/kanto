@@ -28,8 +28,27 @@ export default async function ProfilePage() {
     alert_keywords: data?.alert_keywords ?? null,
   };
 
-  const reviews = data?.id ? await getReviewsForUser(data.id) : [];
+  const userId = data?.id ?? null;
+  const reviews = userId ? await getReviewsForUser(userId) : [];
   const initialIsVerified = user.user_metadata?.identity_verified === true;
+
+  const [postCount, likeCount] = userId
+    ? await Promise.all([
+        supabase
+          .from("posts")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", userId)
+          .eq("status", "active")
+          .then(({ count }) => count ?? 0),
+        supabase
+          .from("common_likes")
+          .select("target_id, posts!inner(id)", { count: "exact", head: true })
+          .eq("user_id", userId)
+          .eq("target_type", "post")
+          .eq("posts.status", "active")
+          .then(({ count }) => count ?? 0),
+      ])
+    : [0, 0];
 
   return (
     <div className="bg-white md:bg-teal-50">
@@ -39,6 +58,8 @@ export default async function ProfilePage() {
           initialIdentities={user.identities ?? []}
           reviews={reviews}
           initialIsVerified={initialIsVerified}
+          postCount={postCount ?? 0}
+          likeCount={likeCount ?? 0}
         />
       </div>
     </div>

@@ -27,11 +27,15 @@ export function ProfileCard({
   initialIdentities,
   reviews,
   initialIsVerified,
+  postCount,
+  likeCount,
 }: {
   alertSettings: AlertSettings;
   initialIdentities: UserIdentity[];
   reviews: ReviewWithReviewer[];
   initialIsVerified: boolean;
+  postCount: number;
+  likeCount: number;
 }) {
   const { user } = useAuthStore();
   if (!user) return null;
@@ -42,6 +46,8 @@ export function ProfileCard({
       initialIdentities={initialIdentities}
       reviews={reviews}
       initialIsVerified={initialIsVerified}
+      postCount={postCount}
+      likeCount={likeCount}
     />
   );
 }
@@ -52,12 +58,16 @@ function ProfileForm({
   initialIdentities,
   reviews,
   initialIsVerified,
+  postCount,
+  likeCount,
 }: {
   user: UserType;
   alertSettings: AlertSettings;
   initialIdentities: UserIdentity[];
   reviews: ReviewWithReviewer[];
   initialIsVerified: boolean;
+  postCount: number;
+  likeCount: number;
 }) {
   const [activeTab, setActiveTab] = useState<Tab>("info");
   const [isVerificationOpen, setIsVerificationOpen] = useState(false);
@@ -108,11 +118,11 @@ function ProfileForm({
               <h2 className="text-sm font-semibold text-gray-700">{t("stats")}</h2>
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-xl font-bold text-gray-900">{user.post_count ?? 0}</span>
+                  <span className="text-xl font-bold text-gray-900">{postCount}</span>
                   <span className="text-xs text-gray-500">{t("posts")}</span>
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-xl font-bold text-gray-900">0</span>
+                  <span className="text-xl font-bold text-gray-900">{likeCount}</span>
                   <span className="text-xs text-gray-500">{t("favorites")}</span>
                 </div>
                 <div className="flex flex-col gap-0.5">
