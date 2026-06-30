@@ -279,9 +279,9 @@ export default function GoPage() {
       return;
     }
     setShowList(false);
+    setShowMyMeetups(true);
     const ids = await getMyJoinedMeetupIds();
     setJoinedMeetupIds(ids);
-    setShowMyMeetups(true);
   };
 
   const handleCreated = () => {
@@ -358,7 +358,7 @@ export default function GoPage() {
         
         <div
           className={`pointer-events-none absolute right-0 top-0 z-10 pt-3.5 left-0 transition-[left] duration-280 ease-in-out ${
-            showList ? "md:left-75 lg:left-85" : ""
+            showList || showMyMeetups ? "md:left-75 lg:left-85" : ""
           }`}
         >
           <div className="pointer-events-auto relative flex min-w-0 items-start px-5 pr-18.5 md:pr-47.5">
