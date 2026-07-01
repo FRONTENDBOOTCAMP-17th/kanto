@@ -168,7 +168,7 @@ export function SignupForm({
       )}
 
       {isSuccess && (
-        <div className="text-sm text-teal-600 text-center bg-teal-50 rounded-md p-3">
+        <div className="text-sm text-teal-600 text-center bg-teal-50 rounded-md p-3 whitespace-pre-line">
           {t("success")}
         </div>
       )}
