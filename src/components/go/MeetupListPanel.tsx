@@ -13,7 +13,10 @@ interface MeetupListPanelProps {
   selectedId: number | null;
   onSelect: (meetup: Meetup) => void;
   onClose: () => void;
-  enterAnim?: "up" | "left"; 
+  enterAnim?: "up" | "left";
+  mode?: "all" | "mine";
+  hostedMeetups?: Meetup[];
+  joinedMeetups?: Meetup[];
 }
 
 export function MeetupListPanel({
@@ -22,13 +25,21 @@ export function MeetupListPanel({
   onSelect,
   onClose,
   enterAnim = "up",
+  mode = "all",
+  hostedMeetups = [],
+  joinedMeetups = [],
 }: MeetupListPanelProps) {
   const t = useTranslations("Go");
   const [query, setQuery] = useState("");
+  const [mineTab, setMineTab] = useState<"hosted" | "joined">("hosted");
+
+  const activeMeetups = mode === "mine"
+    ? (mineTab === "hosted" ? hostedMeetups : joinedMeetups)
+    : meetups;
 
   const filtered = query.trim()
-    ? meetups.filter((m) => m.title.toLowerCase().includes(query.toLowerCase()))
-    : meetups;
+    ? activeMeetups.filter((m) => m.title.toLowerCase().includes(query.toLowerCase()))
+    : activeMeetups;
 
   return (
     <div
@@ -39,19 +50,21 @@ export function MeetupListPanel({
       }`}
       style={{ zIndex: 41 }}
     >
-      
+
       <div className="mx-auto mt-2 mb-1 h-1 w-10 shrink-0 rounded-full bg-slate-300 md:hidden" />
 
-      
+
       <div className="shrink-0 border-b border-slate-100 px-6 py-5 max-md:pt-3">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <h2 className="text-[18px] font-extrabold tracking-tight text-slate-900">
-              {t("list.title")}
+              {mode === "mine" ? t("myList.title") : t("list.title")}
             </h2>
-            <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[12px] font-bold text-emerald-600">
-              {t("list.inProgress", { count: meetups.length })}
-            </span>
+            {mode === "all" && (
+              <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[12px] font-bold text-emerald-600">
+                {t("list.inProgress", { count: meetups.length })}
+              </span>
+            )}
           </div>
           <button
             onClick={onClose}
@@ -62,7 +75,32 @@ export function MeetupListPanel({
           </button>
         </div>
 
-        
+        {mode === "mine" && (
+          <div className="mt-3.5 flex gap-2">
+            <button
+              onClick={() => { setMineTab("hosted"); setQuery(""); }}
+              className={`flex-1 rounded-[10px] py-2 text-[13px] font-bold transition-colors ${
+                mineTab === "hosted"
+                  ? "bg-slate-900 text-white"
+                  : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+              }`}
+            >
+              {t("myList.hosted")} {hostedMeetups.length}
+            </button>
+            <button
+              onClick={() => { setMineTab("joined"); setQuery(""); }}
+              className={`flex-1 rounded-[10px] py-2 text-[13px] font-bold transition-colors ${
+                mineTab === "joined"
+                  ? "bg-slate-900 text-white"
+                  : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+              }`}
+            >
+              {t("myList.joined")} {joinedMeetups.length}
+            </button>
+          </div>
+        )}
+
+
         <div className="mt-3.5 flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5">
           <Search
             className="h-3.75 w-3.75 shrink-0 text-slate-400"
@@ -86,13 +124,17 @@ export function MeetupListPanel({
         </div>
       </div>
 
-      
+
       <div className="flex-1 overflow-y-auto">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-2 py-16 text-slate-400">
             <MapPin className="h-8 w-8 opacity-40" strokeWidth={1.5} />
             <p className="text-[14px]">
-              {query ? t("list.noResults") : t("list.empty")}
+              {query
+                ? t("list.noResults")
+                : mode === "mine"
+                  ? t("myList.empty")
+                  : t("list.empty")}
             </p>
           </div>
         ) : (
