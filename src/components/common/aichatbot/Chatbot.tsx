@@ -106,6 +106,13 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
   }, [isOpen]);
 
   useEffect(() => {
+    if (isOpen && window.innerWidth < 768) {
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = ""; };
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
