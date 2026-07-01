@@ -144,6 +144,11 @@ export default function GoPage() {
     return () => mq.removeEventListener("change", update);
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
+
   
   useEffect(() => {
     setDetailOpen(selectedMeetupId !== null);
