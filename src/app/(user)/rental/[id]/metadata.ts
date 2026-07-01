@@ -18,7 +18,7 @@ export async function generateMetadata({
   if (!data) return { title: "게시글을 찾을 수 없습니다", robots: { index: false } };
 
   const title = (data.posts as { title: string }).title;
-  const ogImage = (data.images as string[] | null)?.[0] ?? "/og-image.png";
+  const ogImage = (data.images as string[] | null)?.[0] ?? "/kantoLogo.png";
 
   return {
     title,
