@@ -6,13 +6,13 @@ import type { UsedGoodsWithPost } from "@/type/usedGoods";
 const POPULAR_RENTAL_SELECT = `
   *,
   rentals!inner(*),
-  public_profiles!posts_user_id_fkey(id, name, avatar_url, created_at)
+  users:public_profiles!posts_user_id_fkey(id, name, avatar_url, created_at)
 ` as const;
 
 const POPULAR_USED_GOODS_SELECT = `
   *,
   used_goods!inner(*),
-  public_profiles!posts_user_id_fkey(id, name, avatar_url, created_at)
+  users:public_profiles!posts_user_id_fkey(id, name, avatar_url, created_at)
 ` as const;
 
 export async function getPopularList() {

@@ -7,8 +7,8 @@ export type Json =
   | Json[]
 
 export type Database = {
-  
-  
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
@@ -68,6 +68,13 @@ export type Database = {
             foreignKeyName: "audit_logs_actor_id_fkey"
             columns: ["actor_id"]
             isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_logs_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
             referencedRelation: "public_user_profiles"
             referencedColumns: ["id"]
           },
@@ -104,6 +111,13 @@ export type Database = {
             foreignKeyName: "banned_keywords_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "banned_keywords_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
             referencedRelation: "public_user_profiles"
             referencedColumns: ["id"]
           },
@@ -126,11 +140,11 @@ export type Database = {
           user_id_1: number | null
           user_id_1_active: boolean
           user_id_1_left: boolean | null
-          user_id_1_unread: number | null
+          user_id_1_unread: number
           user_id_2: number | null
           user_id_2_active: boolean
           user_id_2_left: boolean | null
-          user_id_2_unread: number | null
+          user_id_2_unread: number
         }
         Insert: {
           created_at?: string | null
@@ -141,11 +155,11 @@ export type Database = {
           user_id_1?: number | null
           user_id_1_active?: boolean
           user_id_1_left?: boolean | null
-          user_id_1_unread?: number | null
+          user_id_1_unread?: number
           user_id_2?: number | null
           user_id_2_active?: boolean
           user_id_2_left?: boolean | null
-          user_id_2_unread?: number | null
+          user_id_2_unread?: number
         }
         Update: {
           created_at?: string | null
@@ -156,11 +170,11 @@ export type Database = {
           user_id_1?: number | null
           user_id_1_active?: boolean
           user_id_1_left?: boolean | null
-          user_id_1_unread?: number | null
+          user_id_1_unread?: number
           user_id_2?: number | null
           user_id_2_active?: boolean
           user_id_2_left?: boolean | null
-          user_id_2_unread?: number | null
+          user_id_2_unread?: number
         }
         Relationships: [
           {
@@ -168,6 +182,13 @@ export type Database = {
             columns: ["post_id"]
             isOneToOne: false
             referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chats_user_id_1_fkey"
+            columns: ["user_id_1"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -182,6 +203,13 @@ export type Database = {
             columns: ["user_id_1"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chats_user_id_2_fkey"
+            columns: ["user_id_2"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -240,6 +268,13 @@ export type Database = {
             foreignKeyName: "comments_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "public_user_profiles"
             referencedColumns: ["id"]
           },
@@ -280,6 +315,13 @@ export type Database = {
             columns: ["target_id"]
             isOneToOne: false
             referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "common_likes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -333,6 +375,13 @@ export type Database = {
           type?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "common.notifications_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "common.notifications_receiver_id_fkey"
             columns: ["receiver_id"]
@@ -400,6 +449,13 @@ export type Database = {
             foreignKeyName: "common_reports_handled_by_fkey"
             columns: ["handled_by"]
             isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "common_reports_handled_by_fkey"
+            columns: ["handled_by"]
+            isOneToOne: false
             referencedRelation: "public_user_profiles"
             referencedColumns: ["id"]
           },
@@ -408,6 +464,13 @@ export type Database = {
             columns: ["handled_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "common_reports_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -505,6 +568,13 @@ export type Database = {
           user_id?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "dating_profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "dating_profiles_user_id_fkey"
             columns: ["user_id"]
@@ -658,6 +728,13 @@ export type Database = {
             foreignKeyName: "matches_user_id_1_fkey"
             columns: ["user_id_1"]
             isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_user_id_1_fkey"
+            columns: ["user_id_1"]
+            isOneToOne: false
             referencedRelation: "public_user_profiles"
             referencedColumns: ["id"]
           },
@@ -666,6 +743,13 @@ export type Database = {
             columns: ["user_id_1"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_user_id_2_fkey"
+            columns: ["user_id_2"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -711,6 +795,13 @@ export type Database = {
             foreignKeyName: "meetup_chat_blocks_blocked_id_fkey"
             columns: ["blocked_id"]
             isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetup_chat_blocks_blocked_id_fkey"
+            columns: ["blocked_id"]
+            isOneToOne: false
             referencedRelation: "public_user_profiles"
             referencedColumns: ["id"]
           },
@@ -719,6 +810,13 @@ export type Database = {
             columns: ["blocked_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetup_chat_blocks_blocker_id_fkey"
+            columns: ["blocker_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -781,6 +879,13 @@ export type Database = {
             foreignKeyName: "meetup_chat_messages_sender_id_fkey"
             columns: ["sender_id"]
             isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetup_chat_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
             referencedRelation: "public_user_profiles"
             referencedColumns: ["id"]
           },
@@ -815,6 +920,13 @@ export type Database = {
             columns: ["room_id"]
             isOneToOne: false
             referencedRelation: "meetup_chat_rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meetup_chat_reads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -894,6 +1006,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "meetups"
             referencedColumns: ["post_id"]
+          },
+          {
+            foreignKeyName: "meetup_participants_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "meetup_participants_user_id_fkey"
@@ -1011,6 +1130,13 @@ export type Database = {
             foreignKeyName: "messages_sender_id_fkey"
             columns: ["sender_id"]
             isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
             referencedRelation: "public_user_profiles"
             referencedColumns: ["id"]
           },
@@ -1038,6 +1164,8 @@ export type Database = {
           id: number
           starts_at: string
           title: string
+          title_en: string | null
+          title_fil: string | null
         }
         Insert: {
           created_at?: string
@@ -1046,6 +1174,8 @@ export type Database = {
           id?: never
           starts_at: string
           title: string
+          title_en?: string | null
+          title_fil?: string | null
         }
         Update: {
           created_at?: string
@@ -1054,8 +1184,17 @@ export type Database = {
           id?: never
           starts_at?: string
           title?: string
+          title_en?: string | null
+          title_fil?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "notices_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "notices_created_by_fkey"
             columns: ["created_by"]
@@ -1132,6 +1271,13 @@ export type Database = {
             foreignKeyName: "posts_handled_by_fkey"
             columns: ["handled_by"]
             isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_handled_by_fkey"
+            columns: ["handled_by"]
+            isOneToOne: false
             referencedRelation: "public_user_profiles"
             referencedColumns: ["id"]
           },
@@ -1140,6 +1286,13 @@ export type Database = {
             columns: ["handled_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -1184,6 +1337,13 @@ export type Database = {
           words?: string[]
         }
         Relationships: [
+          {
+            foreignKeyName: "profanity_rules_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "profanity_rules_created_by_fkey"
             columns: ["created_by"]
@@ -1326,6 +1486,13 @@ export type Database = {
             foreignKeyName: "reviews_reviewee_id_fkey"
             columns: ["reviewee_id"]
             isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reviewee_id_fkey"
+            columns: ["reviewee_id"]
+            isOneToOne: false
             referencedRelation: "public_user_profiles"
             referencedColumns: ["id"]
           },
@@ -1334,6 +1501,13 @@ export type Database = {
             columns: ["reviewee_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -1389,6 +1563,13 @@ export type Database = {
             foreignKeyName: "sanction_templates_updated_by_fkey"
             columns: ["updated_by"]
             isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sanction_templates_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
             referencedRelation: "public_user_profiles"
             referencedColumns: ["id"]
           },
@@ -1409,6 +1590,8 @@ export type Database = {
           chat_window_sec: number
           id: number
           max_urls_per_post: number
+          post_max_count: number
+          post_window_sec: number
           profanity_strike_max: number
           report_strike_max: number
           updated_at: string
@@ -1421,6 +1604,8 @@ export type Database = {
           chat_window_sec?: number
           id?: number
           max_urls_per_post?: number
+          post_max_count?: number
+          post_window_sec?: number
           profanity_strike_max?: number
           report_strike_max?: number
           updated_at?: string
@@ -1433,12 +1618,21 @@ export type Database = {
           chat_window_sec?: number
           id?: number
           max_urls_per_post?: number
+          post_max_count?: number
+          post_window_sec?: number
           profanity_strike_max?: number
           report_strike_max?: number
           updated_at?: string
           updated_by?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "spam_config_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "spam_config_updated_by_fkey"
             columns: ["updated_by"]
@@ -1532,6 +1726,13 @@ export type Database = {
             foreignKeyName: "transactions_buyer_id_fkey"
             columns: ["buyer_id"]
             isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
             referencedRelation: "public_user_profiles"
             referencedColumns: ["id"]
           },
@@ -1554,6 +1755,13 @@ export type Database = {
             columns: ["post_id"]
             isOneToOne: false
             referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -1655,6 +1863,13 @@ export type Database = {
             foreignKeyName: "user_blocks_blocked_id_fkey"
             columns: ["blocked_id"]
             isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_blocks_blocked_id_fkey"
+            columns: ["blocked_id"]
+            isOneToOne: false
             referencedRelation: "public_user_profiles"
             referencedColumns: ["id"]
           },
@@ -1663,6 +1878,13 @@ export type Database = {
             columns: ["blocked_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_blocks_blocker_id_fkey"
+            columns: ["blocker_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -1714,6 +1936,13 @@ export type Database = {
             foreignKeyName: "user_sanctions_admin_id_fkey"
             columns: ["admin_id"]
             isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_sanctions_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
             referencedRelation: "public_user_profiles"
             referencedColumns: ["id"]
           },
@@ -1729,6 +1958,13 @@ export type Database = {
             columns: ["report_id"]
             isOneToOne: false
             referencedRelation: "common_reports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_sanctions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -1767,6 +2003,13 @@ export type Database = {
           week_date?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "user_trust_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "user_trust_history_user_id_fkey"
             columns: ["user_id"]
@@ -1883,6 +2126,33 @@ export type Database = {
       }
     }
     Views: {
+      public_profiles: {
+        Row: {
+          auth_id: string | null
+          avatar_url: string | null
+          created_at: string | null
+          deleted_at: string | null
+          id: number | null
+          name: string | null
+        }
+        Insert: {
+          auth_id?: string | null
+          avatar_url?: string | null
+          created_at?: string | null
+          deleted_at?: string | null
+          id?: number | null
+          name?: string | null
+        }
+        Update: {
+          auth_id?: string | null
+          avatar_url?: string | null
+          created_at?: string | null
+          deleted_at?: string | null
+          id?: number | null
+          name?: string | null
+        }
+        Relationships: []
+      }
       public_user_profiles: {
         Row: {
           auth_id: string | null
