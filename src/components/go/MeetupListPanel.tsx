@@ -153,7 +153,7 @@ export function MeetupListPanel({
           {onCreateClick && (
             <button
               onClick={onCreateClick}
-              className="flex cursor-pointer items-center justify-center rounded-[10px] bg-slate-900 p-2 text-white transition-colors hover:bg-slate-700"
+              className="max-md:hidden flex cursor-pointer items-center justify-center rounded-[10px] bg-slate-900 p-2 text-white transition-colors hover:bg-slate-700"
             >
               <Plus className="h-4 w-4" strokeWidth={2.5} />
             </button>

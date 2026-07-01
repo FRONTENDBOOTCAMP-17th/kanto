@@ -394,10 +394,10 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
         </div>
 
         <div
-          className={`absolute left-5 z-10 flex flex-col gap-2 md:top-18 ${
-            mobileSheetOpen ? "top-[calc(15vh+4px)]" : "top-[56px]"
-          } ${shiftButtons ? "md:left-80 lg:left-90" : ""} ${uiVisible ? "opacity-100" : "opacity-0"}`}
-          style={{ transition: "left 280ms cubic-bezier(.4,0,.2,1), top 500ms, opacity 500ms" }}
+          className={`absolute left-5 z-10 flex flex-col gap-2 top-[56px] md:top-18 ${
+            shiftButtons ? "md:left-80 lg:left-90" : ""
+          } ${uiVisible ? "opacity-100" : "opacity-0"} ${mobileSheetOpen ? "max-md:opacity-0 max-md:pointer-events-none" : ""}`}
+          style={{ transition: "left 280ms cubic-bezier(.4,0,.2,1), opacity 280ms" }}
         >
           <button
             onClick={toggleList}
