@@ -3,17 +3,14 @@
 import { useState, useRef, useEffect } from "react";
 import { MapPin, ChevronDown, ArrowRight, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { TRADE_LOCATIONS, formatBarangayLabel } from "@/type/location";
+import { TRADE_LOCATIONS } from "@/type/location";
 
 const LOCATION_IDS = ["all", ...TRADE_LOCATIONS] as const;
 
 interface SearchBarProps {
   givenSearch?: string;
   defaultLocation?: string;
-  defaultBarangay?: string;
-  
-  barangaysByLocation?: Record<string, string[]>;
-  onSearch?: (query: string, location: string, barangay: string) => void;
+  onSearch?: (query: string, location: string) => void;
   showLocation?: boolean;
   children?: React.ReactNode;
 }
@@ -21,8 +18,6 @@ interface SearchBarProps {
 export function SearchBar({
   givenSearch = "",
   defaultLocation = "all",
-  defaultBarangay = "all",
-  barangaysByLocation,
   onSearch,
   showLocation = false,
   children,
@@ -31,19 +26,9 @@ export function SearchBar({
   const te = useTranslations("Enums");
   const [searchInput, setSearchInput] = useState(givenSearch);
   const [locationFilter, setLocationFilter] = useState(defaultLocation);
-  const [barangayFilter, setBarangayFilter] = useState(defaultBarangay);
   const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
-  const [barangayDropdownOpen, setBarangayDropdownOpen] = useState(false);
   const [mobileLocationOpen, setMobileLocationOpen] = useState(false);
-  const [mobileBarangayOpen, setMobileBarangayOpen] = useState(false);
   const locationDropdownRef = useRef<HTMLDivElement>(null);
-  const barangayDropdownRef = useRef<HTMLDivElement>(null);
-
-  
-  const barangayOptions =
-    locationFilter !== "all" ? (barangaysByLocation?.[locationFilter] ?? []) : [];
-  const showBarangay = showLocation && barangayOptions.length > 0;
-  const barangayIds = ["all", ...barangayOptions];
 
   const locationLabel = (id: string) =>
     id === "all"
@@ -52,17 +37,7 @@ export function SearchBar({
         ? te("tradeLocation.otherAreas")
         : id;
 
-  const barangayLabel = (id: string) =>
-    id === "all" ? t("allBarangays") : formatBarangayLabel(id, null);
-
   const selectedLocationLabel = locationLabel(locationFilter);
-  const selectedBarangayLabel = barangayLabel(barangayFilter);
-
-  
-  const selectLocation = (id: string) => {
-    setLocationFilter(id);
-    setBarangayFilter("all");
-  };
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -72,28 +47,21 @@ export function SearchBar({
       ) {
         setLocationDropdownOpen(false);
       }
-      if (
-        barangayDropdownRef.current &&
-        !barangayDropdownRef.current.contains(e.target as Node)
-      ) {
-        setBarangayDropdownOpen(false);
-      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow =
-      mobileLocationOpen || mobileBarangayOpen ? "hidden" : "";
+    document.body.style.overflow = mobileLocationOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [mobileLocationOpen, mobileBarangayOpen]);
+  }, [mobileLocationOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSearch?.(searchInput, locationFilter, barangayFilter);
+    onSearch?.(searchInput, locationFilter);
   };
 
   return (
@@ -117,22 +85,6 @@ export function SearchBar({
                 <span>{selectedLocationLabel}</span>
                 <ChevronDown className="w-4 h-4" />
               </button>
-              {showBarangay && (
-                <button
-                  type="button"
-                  onClick={() => setMobileBarangayOpen(true)}
-                  aria-expanded={mobileBarangayOpen}
-                  aria-haspopup="dialog"
-                  className={`flex items-center gap-1.5 h-11 px-4 rounded-full border-2 transition-colors font-semibold text-sm whitespace-nowrap ${
-                    barangayFilter !== "all"
-                      ? "border-teal-400 bg-teal-50 text-teal-700"
-                      : "border-gray-200 bg-white text-gray-800"
-                  }`}
-                >
-                  <span>{selectedBarangayLabel}</span>
-                  <ChevronDown className="w-4 h-4" />
-                </button>
-              )}
             </div>
           )}
 
@@ -188,7 +140,7 @@ export function SearchBar({
                       key={id}
                       type="button"
                       onClick={() => {
-                        selectLocation(id);
+                        setLocationFilter(id);
                         setLocationDropdownOpen(false);
                       }}
                       className={`dropdown-item ${
@@ -198,48 +150,6 @@ export function SearchBar({
                       }`}
                     >
                       {locationLabel(id)}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {showBarangay && (
-            <div className="relative shrink-0" ref={barangayDropdownRef}>
-              <button
-                type="button"
-                onClick={() => setBarangayDropdownOpen((v) => !v)}
-                aria-expanded={barangayDropdownOpen}
-                aria-haspopup="listbox"
-                className={`flex items-center gap-1 px-3 h-8 rounded-full font-semibold text-sm whitespace-nowrap transition-colors select-none ${
-                  barangayFilter !== "all"
-                    ? "text-teal-700"
-                    : "text-gray-800 hover:bg-gray-100"
-                }`}
-              >
-                <span>{selectedBarangayLabel}</span>
-                <ChevronDown
-                  className={`w-3.5 h-3.5 text-gray-500 transition-transform duration-200 ${barangayDropdownOpen ? "rotate-180" : ""}`}
-                />
-              </button>
-              {barangayDropdownOpen && (
-                <div className="absolute top-full left-0 mt-2 max-h-72 w-56 overflow-y-auto bg-white rounded-2xl shadow-xl border border-gray-200 py-2 z-50">
-                  {barangayIds.map((id) => (
-                    <button
-                      key={id}
-                      type="button"
-                      onClick={() => {
-                        setBarangayFilter(id);
-                        setBarangayDropdownOpen(false);
-                      }}
-                      className={`dropdown-item ${
-                        barangayFilter === id
-                          ? "bg-teal-50 text-teal-600 font-semibold"
-                          : "text-gray-700"
-                      }`}
-                    >
-                      {barangayLabel(id)}
                     </button>
                   ))}
                 </div>
@@ -300,7 +210,7 @@ export function SearchBar({
                   key={id}
                   type="button"
                   onClick={() => {
-                    selectLocation(id);
+                    setLocationFilter(id);
                     setMobileLocationOpen(false);
                   }}
                   className={`w-full flex items-center justify-between px-5 py-4 rounded-xl mb-2 transition-colors ${
@@ -322,54 +232,6 @@ export function SearchBar({
         </div>
       )}
 
-      {showBarangay && mobileBarangayOpen && (
-        <div className="md:hidden fixed inset-0 z-50 flex flex-col justify-end">
-          <div
-            className="absolute inset-0 bg-black/40"
-            onClick={() => setMobileBarangayOpen(false)}
-          />
-          <div className="relative bg-white rounded-t-3xl w-full pb-8">
-            <div className="flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1 rounded-full bg-gray-300" />
-            </div>
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <span className="font-bold text-gray-900 text-lg">{t("selectBarangay")}</span>
-              <button
-                type="button"
-                onClick={() => setMobileBarangayOpen(false)}
-                aria-label={t("closeRegionSelect")}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
-              >
-                <X className="w-5 h-5 text-gray-500" />
-              </button>
-            </div>
-            <div className="px-4 py-3 max-h-[60vh] overflow-y-auto">
-              {barangayIds.map((id) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => {
-                    setBarangayFilter(id);
-                    setMobileBarangayOpen(false);
-                  }}
-                  className={`w-full flex items-center justify-between px-5 py-4 rounded-xl mb-2 transition-colors ${
-                    barangayFilter === id
-                      ? "bg-teal-50 text-teal-600"
-                      : "text-gray-700 hover:bg-gray-50"
-                  }`}
-                >
-                  <span
-                    className={`text-base ${barangayFilter === id ? "font-semibold" : ""}`}
-                  >
-                    {barangayLabel(id)}
-                  </span>
-                  {barangayFilter === id && <CheckMark />}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

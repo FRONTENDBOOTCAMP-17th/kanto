@@ -17,15 +17,16 @@ export default async function UsedGoodsDetailPage({
   const { id } = await params;
   const data = await getUsedGoodsItem(Number(id));
 
-  if (!data) notFound();
+  if (!data || !data.posts) notFound();
 
-  
+
   const [{ data: relatedData }, { userId, initialLiked, initialReported }] =
     await Promise.all([
       supabase
         .from("used_goods")
-        .select(`*, posts (title)`)
+        .select(`*, posts!inner (title, is_sold)`)
         .eq("category", data.category ?? "")
+        .eq("posts.status", "active")
         .neq("id", data.id)
         .limit(8),
       getUserLikeReportStatus(data.post_id),
@@ -55,7 +56,7 @@ export default async function UsedGoodsDetailPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <UsedGoodsDetail
-        data={data}
+        data={data as unknown as Parameters<typeof UsedGoodsDetail>[0]["data"]}
         relatedData={relatedData}
         initialLiked={initialLiked}
         userId={userId}

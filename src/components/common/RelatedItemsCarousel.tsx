@@ -11,6 +11,7 @@ export interface RelatedItem {
   imageSrc: string | null;
   title: string;
   priceText: string;
+  overlayLabel?: string;
 }
 
 interface Props {
@@ -81,6 +82,11 @@ export default function RelatedItemsCarousel({ title, items }: Props) {
                   sizes="(max-width: 768px) 50vw, 25vw"
                   className="object-cover"
                 />
+                {item.overlayLabel && (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/50">
+                    <span className="text-base md:text-lg font-bold text-white">{item.overlayLabel}</span>
+                  </div>
+                )}
               </div>
               <p className="text-sm font-medium line-clamp-1 mt-1">{item.title}</p>
               <p className="text-sm text-orange-500">{item.priceText}</p>

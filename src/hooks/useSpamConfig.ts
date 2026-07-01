@@ -5,6 +5,8 @@ const DEFAULT: SpamConfig = {
   chat_window_sec: 3,
   chat_max_count: 5,
   chat_cooldown_sec: 10,
+  post_window_sec: 60,
+  post_max_count: 3,
   max_urls_per_post: 3,
   profanity_strike_max: 3,
   report_strike_max: 5,

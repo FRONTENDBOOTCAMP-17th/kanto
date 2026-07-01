@@ -18,7 +18,6 @@
       "usedgoods": "Palengke",
       "jobs": "Trabaho",
       "rental": "Paupahan",
-      "dating": "Random na Chat",
       "go": "Kanto GO!"
     },
     "login": "Mag-log in",
@@ -163,6 +162,7 @@
       "write": "Hindi makakagawa ng bagong post ang account na malapit nang burahin."
     },
     "soldOut": "Nabenta Na",
+    "dealClosed": "Tapos Na",
     "suspended": {
       "title": "Ang iyong account ay nasuspinde",
       "permanent": "Ang iyong account ay permanenteng nasuspinde.",
@@ -214,7 +214,11 @@
     "cancelReserve": "Kanselahin ang Reserbasyon",
     "report": "Mag-ulat",
     "block": "I-block",
-    "blockConfirmMessage": "I-block si {name}? Aalis ka sa chat na ito pagkatapos i-block.",
+    "unblock": "I-unblock",
+    "blockConfirmMessage": "I-block si {name}?",
+    "blockedCannotChat": "Na-block mo ang user na ito.",
+    "blockedInputPlaceholder": "Naka-block ang user na ito.",
+    "blockFailed": "Nabigo ang pag-block. Pakisubukang muli.",
     "leave": "Umalis sa chat",
     "moreMenu": "Higit pang menu",
     "viewProfile": "Tingnan ang profile ni {name}",
@@ -632,7 +636,8 @@
       "reviews": "Mga review",
       "alerts": "Mga abiso",
       "blocked": "Naka-block",
-      "settings": "Mga setting ng app"
+      "settings": "Mga setting ng app",
+      "meetings": "Mga Pagtitipon"
     },
     "avatar": {
       "alt": "Profile",
@@ -731,8 +736,7 @@
       "alertCategories": {
         "usedgoods": "Mga Gamit na Bagay",
         "jobs": "Mga Trabaho",
-        "rental": "Mga Paupahan",
-        "dating": "Random Chat"
+        "rental": "Mga Paupahan"
       }
     },
     "blocked": {
@@ -799,7 +803,7 @@
       "confirmError": "Hindi magkatugma ang mga password.",
       "showPassword": "Ipakita ang password",
       "hidePassword": "Itago ang password",
-      "success": "Tapos na ang pag-sign up! Maligayang pagdating sa Kanto!",
+      "success": "Tapos na ang pag-sign up!\nMaligayang pagdating sa Kanto!",
       "processing": "Pinoproseso...",
       "submit": "Mag-sign up"
     },
@@ -901,7 +905,8 @@
       "loading": "...",
       "createMeetup": "Gumawa ng Meetup",
       "myLocation": "Aking lokasyon",
-      "clusterCount": "{count} meetup"
+      "clusterCount": "{count} meetup",
+      "myMeetups": "Aking Meetup"
     },
     "filter": {
       "all": "Lahat",
@@ -915,6 +920,12 @@
       "trip": "Lakad/Biyahe",
       "social": "Pakikipagkaibigan/Kwentuhan",
       "other": "Iba pa"
+    },
+    "myList": {
+      "title": "Aking Meetup",
+      "hosted": "Ginawa ko",
+      "joined": "Sumali ako",
+      "empty": "Walang meetup na nahanap"
     },
     "list": {
       "title": "Mga Meetup",
@@ -1029,6 +1040,49 @@
       "placeholder": "Maglagay ng pangalan ng lugar o address (hal. SM Aura)",
       "loading": "Nilo-load ang mapa…",
       "empty": "Wala pang napiling lokasyon"
+    }
+  },
+  "Notice": {
+    "Admin": {
+      "breadcrumb": "Pamamahala ng Operasyon",
+      "pageTitle": "Pamamahala ng Abiso",
+      "pageDescription": "Mag-register at pamahalaan ang mga abiso na ipapakita sa lahat ng user.",
+      "tabList": "Listahan ng Abiso",
+      "tabCreate": "Magdagdag ng Abiso",
+      "loading": "Nilo-load...",
+      "form": {
+        "titleEdit": "I-edit ang Abiso",
+        "titleCreate": "Bagong Abiso",
+        "fieldTitle": "Pamagat ng Abiso",
+        "fieldTitlePlaceholder": "Ilagay ang pamagat ng abiso",
+        "fieldStartsAt": "Petsa at Oras ng Simula",
+        "fieldEndsAt": "Petsa at Oras ng Pagtatapos",
+        "endsAtError": "Ang petsa ng pagtatapos ay dapat pagkatapos ng petsa ng simula.",
+        "cancel": "Kanselahin",
+        "submitEdit": "I-save",
+        "submitCreate": "Idagdag",
+        "previewPlaceholder": "Ang pamagat ng abiso ay lalabas dito"
+      },
+      "table": {
+        "empty": "Walang nakarehistrong abiso.",
+        "colTitle": "Pamagat",
+        "colStart": "Simula",
+        "colEnd": "Wakas",
+        "colStatus": "Status"
+      }
+    },
+    "Banner": {
+      "hideToday": "Huwag ipakita ngayon",
+      "closeAriaLabel": "Isara ang abiso",
+      "viewAriaLabel": "Tingnan ang abiso",
+      "modalTitle": "Mga Abiso",
+      "prevAriaLabel": "Nakaraan",
+      "nextAriaLabel": "Susunod",
+      "closeModalAriaLabel": "Isara"
+    },
+    "Badge": {
+      "suspended": "Nasuspinde",
+      "ariaLabel": "{count} abiso"
     }
   }
 }

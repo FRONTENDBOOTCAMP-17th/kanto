@@ -76,7 +76,7 @@ export async function getActiveMeetups(): Promise<Meetup[]> {
     .select(
       `
       *,
-      posts!inner ( title, user_id, status, created_at, users!posts_user_id_fkey ( name ) ),
+      posts!inner ( title, user_id, status, created_at, users:public_profiles!posts_user_id_fkey ( name ) ),
       meetup_participants ( status )
     `,
     )
@@ -105,6 +105,20 @@ export async function getActiveMeetups(): Promise<Meetup[]> {
   }));
 }
 
+export async function getMyJoinedMeetupIds(): Promise<number[]> {
+  const supabase = await createClient();
+  const sessionUser = await getSessionUser();
+  if (!sessionUser) return [];
+
+  const { data } = await supabase
+    .from("meetup_participants")
+    .select("meetup_post_id")
+    .eq("user_id", sessionUser.id)
+    .eq("status", "joined");
+
+  return (data ?? []).map((p) => (p as { meetup_post_id: number }).meetup_post_id);
+}
+
 export async function getMeetupDetail(postId: number): Promise<{
   meetup: Meetup;
   participants: MeetupParticipant[];
@@ -114,12 +128,12 @@ export async function getMeetupDetail(postId: number): Promise<{
   const [meetupRes, participantsRes] = await Promise.all([
     supabase
       .from("meetups")
-      .select(`*, posts!inner(title, user_id, status, users!posts_user_id_fkey(name))`)
+      .select(`*, posts!inner(title, user_id, status, users:public_profiles!posts_user_id_fkey(name))`)
       .eq("post_id", postId)
       .single(),
     supabase
       .from("meetup_participants")
-      .select(`*, users(name, avatar_url, deleted_at)`)
+      .select(`*, users:public_profiles(name, avatar_url, deleted_at)`)
       .eq("meetup_post_id", postId)
       .eq("status", "joined"),
   ]);

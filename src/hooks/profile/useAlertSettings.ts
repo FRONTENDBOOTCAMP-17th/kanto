@@ -12,7 +12,6 @@ export const CATEGORIES = [
   { key: "usedgoods" },
   { key: "jobs" },
   { key: "rental" },
-  { key: "dating" },
 ];
 
 export const ALL_KEYS = CATEGORIES.map((c) => c.key);

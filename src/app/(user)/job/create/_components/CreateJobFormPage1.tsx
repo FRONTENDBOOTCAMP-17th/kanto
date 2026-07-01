@@ -8,8 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ResponsiveSelect } from "@/components/ui/responsive-select";
+import { APIProvider } from "@vis.gl/react-google-maps";
+import { PlaceAutocomplete } from "@/components/go/PlaceAutocomplete";
+import type { PickedLocation } from "@/type/go";
 import { JobPreferredModal } from "./JobPreferredModal";
-import { TRADE_LOCATIONS, type TradeLocation } from "@/type/location";
 import {
   EMPLOYEE_TYPES,
   SALARY_TYPES,
@@ -28,10 +30,9 @@ interface CreateJobFormPageOneProps {
   setSalary: (v: string) => void;
   salaryType: SalaryType | "";
   setSalaryType: (v: SalaryType | "") => void;
-  locationType: TradeLocation | "";
-  setLocationType: (v: TradeLocation | "") => void;
-  locationCustom: string;
-  setLocationCustom: (v: string) => void;
+  workLocation: PickedLocation | null;
+  onWorkLocationSelect: (l: PickedLocation) => void;
+  locationFallbackLabel: string | null;
   deadline: string;
   setDeadline: (v: string) => void;
   workHoursStart: string;
@@ -59,7 +60,6 @@ const EMPLOYEE_OPTIONS = EMPLOYEE_TYPES.map((t) => ({
   label: t.label,
 }));
 const SALARY_OPTIONS = SALARY_TYPES.map((t) => ({ value: t, label: t }));
-const LOCATION_OPTIONS = TRADE_LOCATIONS.map((l) => ({ value: l, label: l }));
 
 export function CreateJobFormPageOne({
   title,
@@ -70,10 +70,9 @@ export function CreateJobFormPageOne({
   setSalary,
   salaryType,
   setSalaryType,
-  locationType,
-  setLocationType,
-  locationCustom,
-  setLocationCustom,
+  workLocation,
+  onWorkLocationSelect,
+  locationFallbackLabel,
   deadline,
   setDeadline,
   workHoursStart,
@@ -163,7 +162,6 @@ export function CreateJobFormPageOne({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="h-12 rounded-sm"
-          required
         />
         {title.length > 0 && title.trim().length < 2 && (
           <p className="text-[13px] text-red-500">{t("form.titleMinLength")}</p>
@@ -178,7 +176,6 @@ export function CreateJobFormPageOne({
           options={EMPLOYEE_OPTIONS}
           placeholder={t("form.employeeTypePlaceholder")}
           className="h-12 rounded-sm"
-          required
         />
       </div>
 
@@ -194,7 +191,6 @@ export function CreateJobFormPageOne({
               value={salary ? Number(salary).toLocaleString() : ""}
               onChange={(e) => handleSalaryChange(e.target.value)}
               className="h-12 rounded-sm pr-12"
-              required
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm pointer-events-none">
               PHP
@@ -212,23 +208,13 @@ export function CreateJobFormPageOne({
 
       <div className="space-y-2">
         <Label>{t("form.locationLabel")}</Label>
-        <ResponsiveSelect
-          value={locationType}
-          onValueChange={(v) => setLocationType(v as TradeLocation)}
-          options={LOCATION_OPTIONS}
-          placeholder={t("form.locationPlaceholder")}
-          className="h-12 rounded-sm"
-          required
-        />
-        {locationType === "그 외 지역" && (
-          <Input
-            placeholder={t("form.locationDetailPlaceholder")}
-            value={locationCustom}
-            onChange={(e) => setLocationCustom(e.target.value)}
-            className="h-12 rounded-sm"
-            required
+        <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
+          <PlaceAutocomplete
+            selected={workLocation}
+            onSelect={onWorkLocationSelect}
+            fallbackLabel={workLocation ? null : locationFallbackLabel}
           />
-        )}
+        </APIProvider>
       </div>
 
       <div className="space-y-2">
@@ -239,7 +225,6 @@ export function CreateJobFormPageOne({
           value={deadline}
           onChange={(e) => setDeadline(e.target.value)}
           className="h-12 rounded-sm"
-          required
         />
       </div>
 
@@ -354,7 +339,6 @@ export function CreateJobFormPageOne({
           onChange={(e) => setMainTask(e.target.value.slice(0, 5000))}
           className="resize-none min-h-68 rounded-sm p-5 text-xs md:text-sm"
           maxLength={5000}
-          required
         />
         {mainTask.length > 0 && mainTask.trim().length < 10 && (
           <p className="text-[13px] text-red-500">{t("form.mainTaskMinLength")}</p>

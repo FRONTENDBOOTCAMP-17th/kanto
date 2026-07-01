@@ -26,6 +26,7 @@ interface RentalCardProps {
   currentUserId: number | null;
   fromPage?: number;
   isPopular?: boolean;
+  isSold?: boolean;
 }
 
 export function RentalCard({
@@ -44,6 +45,7 @@ export function RentalCard({
   currentUserId,
   fromPage,
   isPopular,
+  isSold,
 }: RentalCardProps) {
   const displayLocation =
     barangay || city
@@ -84,6 +86,8 @@ export function RentalCard({
       currentUserId={currentUserId}
       tags={amenityTags}
       badge={isPopular ? <PopularBadge /> : undefined}
+      soldOverlay={isSold}
+      soldLabelKey="dealClosed"
     />
   );
 }

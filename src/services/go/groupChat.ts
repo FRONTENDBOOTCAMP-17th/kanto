@@ -10,7 +10,7 @@ import type { MeetupParticipant } from "@/type/go";
 const GRACE_PERIOD_MS = 24 * 60 * 60 * 1000;
 
 const GROUP_MESSAGE_SELECT = `id, room_id, sender_id, content, type, created_at,
-    sender:users!meetup_chat_messages_sender_id_fkey(id, name, avatar_url, created_at)`;
+    sender:public_profiles!meetup_chat_messages_sender_id_fkey(id, name, avatar_url, created_at)`;
 
 export async function createRoomForMeetup(meetupPostId: number, endAtISO: string): Promise<void> {
   try {

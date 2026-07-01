@@ -19,7 +19,7 @@ export async function getJobList(
 
   let query = supabase
     .from("posts")
-    .select("*, jobs!inner(*), users!posts_user_id_fkey(id, name, avatar_url, created_at)", {
+    .select("*, jobs!inner(*), users:public_profiles!posts_user_id_fkey(id, name, avatar_url, created_at)", {
       count: "exact",
     })
     .eq("post_type", "jobs")
@@ -54,7 +54,7 @@ export async function getPopularJobs(): Promise<JobWithPost[]> {
   
   const { data, error } = await supabase
     .from("posts")
-    .select("*, jobs!inner(*), users!posts_user_id_fkey(id, name, avatar_url, created_at)")
+    .select("*, jobs!inner(*), users:public_profiles!posts_user_id_fkey(id, name, avatar_url, created_at)")
     .eq("post_type", "jobs")
     .eq("status", "active")
     .not("jobs.popular_count", "is", null);

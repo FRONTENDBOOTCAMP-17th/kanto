@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
     },
     alternates: {
-      canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/go`,
+      canonical: `${process.env.NEXT_PUBLIC_BASE_URL!.replace(/\/$/, "")}/go`,
     },
   };
 }

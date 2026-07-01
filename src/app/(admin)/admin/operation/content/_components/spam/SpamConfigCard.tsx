@@ -9,6 +9,8 @@ const DEFAULT_SPAM_CONFIG: SpamConfig = {
   chat_window_sec: 3,
   chat_max_count: 5,
   chat_cooldown_sec: 10,
+  post_window_sec: 60,
+  post_max_count: 3,
   max_urls_per_post: 3,
   profanity_strike_max: 3,
   report_strike_max: 5,
@@ -127,7 +129,29 @@ export default function SpamConfigCard() {
 
           <div className="mb-5">
             <p className="mb-3 text-[12px] font-bold uppercase tracking-wider text-slate-400">
-              게시글 제한
+              게시글 도배 감지
+            </p>
+            <div className="flex flex-wrap gap-6">
+              <NumberField
+                label="감지 윈도우"
+                value={config.post_window_sec}
+                onChange={(v) => setField("post_window_sec", v)}
+                suffix="초 내에"
+              />
+              <NumberField
+                label="최대 작성 수"
+                value={config.post_max_count}
+                onChange={(v) => setField("post_max_count", v)}
+                suffix="개 초과 시 차단"
+              />
+            </div>
+          </div>
+
+          <div className="my-5 border-t border-[#ebeef0]" />
+
+          <div className="mb-5">
+            <p className="mb-3 text-[12px] font-bold uppercase tracking-wider text-slate-400">
+              게시글 URL 제한
             </p>
             <NumberField
               label="포스트당 최대 URL 수"

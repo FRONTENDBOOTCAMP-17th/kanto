@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Megaphone, X } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 const STORAGE_KEY = "notice_hidden_until";
 
@@ -25,6 +26,7 @@ function isHiddenToday(noticeId: number): boolean {
 }
 
 export function NoticeBanner() {
+  const t = useTranslations("Notice.Banner");
   const pathname = usePathname();
   const [notice, setNotice] = useState<Notice | null>(null);
   const [dismissed, setDismissed] = useState(false);
@@ -71,12 +73,12 @@ export function NoticeBanner() {
               onChange={(e) => setHideToday(e.target.checked)}
               className="w-3.5 h-3.5 accent-white cursor-pointer"
             />
-            <span className="text-xs opacity-90">오늘 하루 안보기</span>
+            <span className="text-xs opacity-90">{t("hideToday")}</span>
           </label>
           <button
             onClick={handleDismiss}
             className="p-1 hover:opacity-70 transition-opacity"
-            aria-label="공지 닫기"
+            aria-label={t("closeAriaLabel")}
           >
             <X className="w-4 h-4" />
           </button>

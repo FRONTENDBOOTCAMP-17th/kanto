@@ -1,19 +1,22 @@
 "use client";
 
-import { User, Star, Bell, UserX, Settings2, CreditCard, Receipt } from "lucide-react";
+import { User, Star, Bell, UserX, Settings2, CreditCard, Receipt, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-export type Tab = "info" | "payment" | "history" | "reviews" | "alerts" | "blocked" | "settings";
+export type Tab = "info" | "payment" | "history" | "reviews" | "meetings" | "alerts" | "blocked" | "settings";
 
 const TABS: { key: Tab; icon: React.ElementType }[] = [
   { key: "info", icon: User },
   { key: "payment", icon: CreditCard },
   { key: "history", icon: Receipt },
   { key: "reviews", icon: Star },
+  { key: "meetings", icon: Users },
   { key: "alerts", icon: Bell },
   { key: "blocked", icon: UserX },
   { key: "settings", icon: Settings2 },
 ];
+
+export const TAB_KEYS = TABS.map((t) => t.key);
 
 export function ProfileAside({
   activeTab,

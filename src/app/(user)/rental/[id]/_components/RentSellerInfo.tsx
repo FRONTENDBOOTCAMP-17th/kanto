@@ -3,10 +3,13 @@
 import { useState } from "react";
 import { RentalWithPost } from "@/type/rental/rentalDetail";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import findChat from "@/services/chat/postChat";
+import { checkBlockedAction } from "@/components/common/chat/chatPanel/room/actions";
+import Toast from "@/components/common/Toast";
 import { useChatStore } from "@/store/chatStore";
 import { useSuspended } from "@/hooks/useSuspended";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
@@ -18,14 +21,25 @@ export default function RentSellorInfo({
   rental: RentalWithPost;
   userId: number | undefined;
 }) {
+  const router = useRouter();
   const isOwner = userId !== undefined && userId === rental.posts.users?.id;
   const { isSuspended, openModal } = useSuspended();
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showBlockToast, setShowBlockToast] = useState(false);
+
+  const handleOpenProfile = () => {
+    if (rental.posts.users?.id) router.push(`/user/${rental.posts.users.id}`);
+  };
 
   const handleChat = async () => {
     if (!userId) { setShowLoginModal(true); return; }
     if (isSuspended) { openModal(); return; }
     if (!rental.posts.users || rental.post_id === null) return;
+    if (await checkBlockedAction(rental.posts.users.id)) {
+      setShowBlockToast(true);
+      setTimeout(() => setShowBlockToast(false), 3000);
+      return;
+    }
     const chatId = await findChat(userId, rental.posts.users.id, rental.post_id);
     if (chatId !== null) {
       useChatStore.getState().openWidget(chatId);
@@ -49,13 +63,18 @@ export default function RentSellorInfo({
 
   const t = useTranslations("Rental");
   const tt = useTranslations("Time");
+  const tChat = useTranslations("Chat");
   const createdAt = rental.posts.users?.created_at;
   const joined = createdAt ? new Date(createdAt) : null;
 
   return (
     <>
       <h2 className="text-xl font-semibold">{t("landlordInfo")}</h2>
-      <div className="flex items-center gap-3">
+      <button
+        type="button"
+        onClick={handleOpenProfile}
+        className="flex items-center gap-3 text-left rounded-lg -mx-1 px-1 py-0.5 hover:bg-gray-50 transition-colors cursor-pointer"
+      >
         {rental.posts.users?.avatar_url ? (
           <Image
             src={rental.posts.users.avatar_url}
@@ -80,7 +99,7 @@ export default function RentSellorInfo({
               : tt("joinDateUnknown")}
           </p>
         </div>
-      </div>
+      </button>
 
       {!isOwner && (
         <Button
@@ -92,6 +111,7 @@ export default function RentSellorInfo({
         </Button>
       )}
       <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+      <Toast message={tChat("blockedCannotChat")} showMessage={showBlockToast} type="error" icon="x" />
     </>
   );
 }
