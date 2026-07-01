@@ -4,7 +4,7 @@ export const alt = "칸토";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const BASE = process.env.NEXT_PUBLIC_BASE_URL!;
+const BASE = process.env.NEXT_PUBLIC_BASE_URL!.replace(/\/$/, "");
 
 export default function OgImage() {
   return new ImageResponse(
