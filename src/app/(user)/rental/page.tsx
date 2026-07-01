@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import { getRentalList, getRentalBarangays } from "@/services/rental/rental";
+import { getRentalList } from "@/services/rental/rental";
 
 export const metadata: Metadata = {
   title: "부동산",
@@ -38,7 +38,7 @@ export default async function RentalPage({
   const currentPage = Number(params.page ?? 1);
   const t = await getTranslations("Rental");
 
-  const [{ posts, total }, { likedIds, currentUserId }, sessionUser, isVerified, barangaysByLocation] =
+  const [{ posts, total }, { likedIds, currentUserId }, sessionUser, isVerified] =
     await Promise.all([
       getRentalList(
         {
@@ -52,7 +52,6 @@ export default async function RentalPage({
       getLikeList("rental"),
       getSessionUser(),
       getIdentityVerified(),
-      getRentalBarangays(),
     ]);
 
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
@@ -81,8 +80,6 @@ export default async function RentalPage({
           givenSearch={params.search ?? ""}
           defaultRoomType={params.roomType ?? "all"}
           defaultLocation={params.location ?? sessionUser?.region ?? "all"}
-          defaultBarangay={params.barangay ?? "all"}
-          barangaysByLocation={barangaysByLocation}
         />
 
         <div className="border-t border-gray-200 my-6" />

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
+import { createClient } from "@/utils/supabase/server";
 import { getLikeList } from "@/services/likes";
 import { getUsedGoodsList } from "@/services/usedGoods/usedGoods";
 import { getJobList } from "@/services/job/job";
@@ -45,32 +46,49 @@ export default async function FavoritesPage({
   const { likedIds, currentUserId } = await getLikeList(activeType);
   if (currentUserId === null) redirect("/login");
 
-  const t = await getTranslations("Favorites");
+  const [t, supabase] = await Promise.all([
+    getTranslations("Favorites"),
+    createClient(),
+  ]);
+
+  const countTypes = ["used_goods", "jobs", "rental"] as const;
+  const [countResults, postsResult] = await Promise.all([
+    Promise.all(
+      countTypes.map((postType) =>
+        supabase
+          .from("common_likes")
+          .select("target_id, posts!inner(id)", { count: "exact", head: true })
+          .eq("user_id", currentUserId)
+          .eq("target_type", "post")
+          .eq("posts.post_type", postType)
+          .eq("posts.status", "active")
+          .then(({ count }) => count ?? 0),
+      ),
+    ),
+    (async () => {
+      if (likedIds.length === 0) return null;
+      const paging = { page: currentPage, pageSize: ITEMS_PER_PAGE };
+      if (activeType === "used_goods") return getUsedGoodsList({ targetIds: likedIds }, paging);
+      if (activeType === "jobs") return getJobList({ targetIds: likedIds }, paging);
+      return getRentalList({ targetIds: likedIds }, paging);
+    })(),
+  ]);
+
+  const counts = { used_goods: countResults[0], jobs: countResults[1], rental: countResults[2] };
 
   let usedGoods: UsedGoodsWithPost[] = [];
   let jobs: JobWithPost[] = [];
   let rentals: RentalWithPost[] = [];
   let totalPages = 1;
 
-  if (likedIds.length > 0) {
-    const paging = { page: currentPage, pageSize: ITEMS_PER_PAGE };
-    if (activeType === "used_goods") {
-      const { posts, total } = await getUsedGoodsList({ targetIds: likedIds }, paging);
-      totalPages = Math.ceil(total / ITEMS_PER_PAGE);
-      usedGoods = posts;
-    } else if (activeType === "jobs") {
-      const { posts, total } = await getJobList({ targetIds: likedIds }, paging);
-      totalPages = Math.ceil(total / ITEMS_PER_PAGE);
-      jobs = posts;
-    } else {
-      const { posts, total } = await getRentalList({ targetIds: likedIds }, paging);
-      totalPages = Math.ceil(total / ITEMS_PER_PAGE);
-      rentals = posts;
-    }
+  if (postsResult) {
+    const { posts, total } = postsResult;
+    totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+    if (activeType === "used_goods") usedGoods = posts as UsedGoodsWithPost[];
+    else if (activeType === "jobs") jobs = posts as JobWithPost[];
+    else rentals = posts as RentalWithPost[];
   }
 
-  
-  
   const isEmpty =
     (activeType === "used_goods" ? usedGoods : activeType === "jobs" ? jobs : rentals).length === 0;
 
@@ -78,7 +96,7 @@ export default async function FavoritesPage({
     <div className="page-wrapper">
       <main className="flex-1 page-container w-full py-8">
         <h1 className="page-title mb-6">{t("title")}</h1>
-        <FavoritesTabs activeType={activeType} tabPath="/favorites" />
+        <FavoritesTabs activeType={activeType} tabPath="/favorites" counts={counts} />
         <div className="border-t border-gray-200 my-6" />
 
         {isEmpty ? (

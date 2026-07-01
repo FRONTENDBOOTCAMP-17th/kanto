@@ -55,6 +55,7 @@ export function UnifiedBanner() {
   const pathname = usePathname();
   const { user } = useAuthStore();
   const t = useTranslations("Common");
+  const tb = useTranslations("Notice.Banner");
   const locale = useLocale();
   const isGo = pathname.startsWith("/go");
   const goDetailOpen = useGoUiStore((s) => s.detailOpen);
@@ -92,7 +93,7 @@ export function UnifiedBanner() {
         setNotices(active);
       })
       .catch(() => {});
-  }, []);
+  }, [locale]);
 
   const items = useMemo<BannerItem[]>(() => {
     const result: BannerItem[] = [];
@@ -168,7 +169,7 @@ export function UnifiedBanner() {
           {noticeCount > 0 && (
             <button
               onClick={() => setNoticeModalOpen(true)}
-              aria-label="공지 보기"
+              aria-label={tb("viewAriaLabel")}
               className="relative w-12 h-12 bg-teal-500 hover:bg-teal-600 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-105 active:scale-95"
             >
               <Megaphone className="w-5 h-5" />
@@ -235,7 +236,7 @@ export function UnifiedBanner() {
             <div className="bg-teal-500 text-white px-4 py-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Megaphone className="w-4 h-4 shrink-0" />
-                <span className="text-sm font-semibold">공지사항</span>
+                <span className="text-sm font-semibold">{tb("modalTitle")}</span>
               </div>
               <div className="flex items-center gap-1">
                 {hasMultipleNotices && (
@@ -244,7 +245,7 @@ export function UnifiedBanner() {
                       onClick={() => setNoticeIndex((i) => Math.max(0, i - 1))}
                       disabled={safeNoticeIndex === 0}
                       className="p-0.5 hover:opacity-70 disabled:opacity-30 transition-opacity"
-                      aria-label="이전"
+                      aria-label={tb("prevAriaLabel")}
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </button>
@@ -255,7 +256,7 @@ export function UnifiedBanner() {
                       onClick={() => setNoticeIndex((i) => Math.min(noticeItems.length - 1, i + 1))}
                       disabled={safeNoticeIndex === noticeItems.length - 1}
                       className="p-0.5 hover:opacity-70 disabled:opacity-30 transition-opacity"
-                      aria-label="다음"
+                      aria-label={tb("nextAriaLabel")}
                     >
                       <ChevronRight className="w-4 h-4" />
                     </button>
@@ -264,7 +265,7 @@ export function UnifiedBanner() {
                 <button
                   onClick={() => setNoticeModalOpen(false)}
                   className="p-1 hover:opacity-70 transition-opacity"
-                  aria-label="닫기"
+                  aria-label={tb("closeModalAriaLabel")}
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -287,7 +288,7 @@ export function UnifiedBanner() {
                     }}
                     className="w-4 h-4 accent-teal-500 cursor-pointer"
                   />
-                  <span className="text-xs text-gray-500">오늘 하루 안보기</span>
+                  <span className="text-xs text-gray-500">{tb("hideToday")}</span>
                 </label>
               </div>
             )}
@@ -344,7 +345,7 @@ export function UnifiedBanner() {
                 onClick={() => setDesktopIndex((i) => Math.max(0, i - 1))}
                 disabled={safeDesktopIndex === 0}
                 className="p-0.5 hover:opacity-70 disabled:opacity-30 transition-opacity"
-                aria-label="이전"
+                aria-label={tb("prevAriaLabel")}
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -353,7 +354,7 @@ export function UnifiedBanner() {
                 onClick={() => setDesktopIndex((i) => Math.min(items.length - 1, i + 1))}
                 disabled={safeDesktopIndex === items.length - 1}
                 className="p-0.5 hover:opacity-70 disabled:opacity-30 transition-opacity"
-                aria-label="다음"
+                aria-label={tb("nextAriaLabel")}
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -388,12 +389,12 @@ export function UnifiedBanner() {
                   onChange={(e) => setHideTodayChecked(e.target.checked)}
                   className="w-3.5 h-3.5 accent-white cursor-pointer"
                 />
-                <span className="text-xs opacity-90">오늘 하루 안보기</span>
+                <span className="text-xs opacity-90">{tb("hideToday")}</span>
               </label>
               <button
                 onClick={() => handleDismissNotice(desktopCurrent.notice.id)}
                 className="p-1 hover:opacity-70 transition-opacity"
-                aria-label="공지 닫기"
+                aria-label={tb("closeAriaLabel")}
               >
                 <X className="w-4 h-4" />
               </button>

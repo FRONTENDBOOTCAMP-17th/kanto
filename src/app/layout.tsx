@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale } from "next-intl/server";
+import { getLocale, getMessages } from "next-intl/server";
 import { GlobalLayout } from "@/components/common/GlobalLayout";
 import { Providers } from "@/components/common/Providers";
 import { WebVitalsReporter } from "@/components/common/WebVitalsReporter";
@@ -63,6 +63,7 @@ export default async function RootLayout({
 }>) {
   const initialUser = await getSessionUser();
   const locale = (await getLocale()) as Locale;
+  const messages = await getMessages();
 
   return (
     <html
@@ -91,7 +92,7 @@ export default async function RootLayout({
           }}
         />
         <WebVitalsReporter />
-        <NextIntlClientProvider>
+        <NextIntlClientProvider messages={messages}>
           <Providers>
             <GlobalLayout initialUser={initialUser}>{children}</GlobalLayout>
           </Providers>
