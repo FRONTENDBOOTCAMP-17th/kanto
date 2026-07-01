@@ -902,7 +902,8 @@
       "loading": "...",
       "createMeetup": "Gumawa ng Meetup",
       "myLocation": "Aking lokasyon",
-      "clusterCount": "{count} meetup"
+      "clusterCount": "{count} meetup",
+      "myMeetups": "Aking Meetup"
     },
     "filter": {
       "all": "Lahat",
@@ -916,6 +917,12 @@
       "trip": "Lakad/Biyahe",
       "social": "Pakikipagkaibigan/Kwentuhan",
       "other": "Iba pa"
+    },
+    "myList": {
+      "title": "Aking Meetup",
+      "hosted": "Ginawa ko",
+      "joined": "Sumali ako",
+      "empty": "Walang meetup na nahanap"
     },
     "list": {
       "title": "Mga Meetup",

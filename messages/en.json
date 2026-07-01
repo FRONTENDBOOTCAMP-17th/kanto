@@ -896,7 +896,8 @@
       "loading": "...",
       "createMeetup": "Create Meetup",
       "myLocation": "My location",
-      "clusterCount": "{count} meetups"
+      "clusterCount": "{count} meetups",
+      "myMeetups": "My Meetups"
     },
     "filter": {
       "all": "All",
@@ -910,6 +911,12 @@
       "trip": "Outing/Travel",
       "social": "Social/Chat",
       "other": "Other"
+    },
+    "myList": {
+      "title": "My Meetups",
+      "hosted": "Created",
+      "joined": "Joined",
+      "empty": "No meetups found"
     },
     "list": {
       "title": "Meetups",
