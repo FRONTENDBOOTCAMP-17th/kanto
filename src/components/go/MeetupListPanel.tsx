@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { X, Search, MapPin, Users, Clock } from "lucide-react";
 import { TOPIC_META } from "@/constants/meetupTopics";
@@ -17,6 +17,7 @@ interface MeetupListPanelProps {
   mode?: "all" | "mine";
   hostedMeetups?: Meetup[];
   joinedMeetups?: Meetup[];
+  isClosing?: boolean;
 }
 
 export function MeetupListPanel({
@@ -28,10 +29,68 @@ export function MeetupListPanel({
   mode = "all",
   hostedMeetups = [],
   joinedMeetups = [],
+  isClosing = false,
 }: MeetupListPanelProps) {
   const t = useTranslations("Go");
   const [query, setQuery] = useState("");
   const [mineTab, setMineTab] = useState<"hosted" | "joined">("hosted");
+  const [dragOffset, setDragOffset] = useState(0);
+  const [snapClosing, setSnapClosing] = useState(false);
+  const touchStartY = useRef<number | null>(null);
+  const dragOffsetRef = useRef(0);
+
+  useEffect(() => {
+    setQuery("");
+    setMineTab("hosted");
+  }, [mode]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+    setSnapClosing(false);
+  };
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartY.current === null) return;
+    const delta = e.touches[0].clientY - touchStartY.current;
+    if (delta > 0) setDragOffset(delta);
+  };
+  const handleTouchEnd = () => {
+    touchStartY.current = null;
+    if (dragOffset > 80) {
+      setSnapClosing(true);
+      setDragOffset(window.innerHeight);
+      onClose();
+    } else {
+      setDragOffset(0);
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    const startY = e.clientY;
+    setSnapClosing(false);
+    dragOffsetRef.current = 0;
+
+    const onMouseMove = (ev: MouseEvent) => {
+      const delta = ev.clientY - startY;
+      if (delta > 0) {
+        dragOffsetRef.current = delta;
+        setDragOffset(delta);
+      }
+    };
+    const onMouseUp = () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+      if (dragOffsetRef.current > 80) {
+        setSnapClosing(true);
+        setDragOffset(window.innerHeight);
+        onClose();
+      } else {
+        setDragOffset(0);
+      }
+      dragOffsetRef.current = 0;
+    };
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+  };
 
   const activeMeetups = mode === "mine"
     ? (mineTab === "hosted" ? hostedMeetups : joinedMeetups)
@@ -43,15 +102,38 @@ export function MeetupListPanel({
 
   return (
     <div
-      className={`fixed bottom-0 left-0 top-15 md:top-27.25 flex w-75 max-w-full flex-col bg-white shadow-[8px_0_36px_rgba(0,0,0,0.12)] md:animate-[slideInLeft_.28s_cubic-bezier(.4,0,.2,1)] lg:w-85 max-md:top-auto max-md:right-0 max-md:h-[85vh] max-md:w-full max-md:rounded-t-2xl ${
-        enterAnim === "left"
-          ? "max-md:animate-[slideInLeft_.28s_cubic-bezier(.4,0,.2,1)]"
-          : "max-md:animate-[slideInUp_.28s_cubic-bezier(.4,0,.2,1)]"
+      className={`fixed bottom-0 left-0 top-15 md:top-27.25 flex w-75 max-w-full flex-col bg-white shadow-[8px_0_36px_rgba(0,0,0,0.12)] lg:w-85 max-md:top-auto max-md:right-0 max-md:h-[85vh] max-md:w-full max-md:rounded-t-2xl ${
+        snapClosing
+          ? ""
+          : isClosing
+            ? `md:animate-[slideOutLeft_.28s_cubic-bezier(.4,0,.2,1)_forwards] ${
+                enterAnim === "left"
+                  ? "max-md:animate-[slideOutLeft_.28s_cubic-bezier(.4,0,.2,1)_forwards]"
+                  : "max-md:animate-[slideOutDown_.28s_cubic-bezier(.4,0,.2,1)_forwards]"
+              }`
+            : `md:animate-[slideInLeft_.28s_cubic-bezier(.4,0,.2,1)] ${
+                enterAnim === "left"
+                  ? "max-md:animate-[slideInLeft_.28s_cubic-bezier(.4,0,.2,1)]"
+                  : "max-md:animate-[slideInUp_.28s_cubic-bezier(.4,0,.2,1)]"
+              }`
       }`}
-      style={{ zIndex: 41 }}
+      style={{
+        zIndex: 41,
+        ...(dragOffset > 0 && {
+          transform: `translateY(${dragOffset}px)`,
+          transition: snapClosing ? "transform 0.28s ease" : "none",
+        }),
+      }}
     >
-
-      <div className="mx-auto mt-2 mb-1 h-1 w-10 shrink-0 rounded-full bg-slate-300 md:hidden" />
+      <div
+        className="flex justify-center pt-2 pb-2 touch-none cursor-grab active:cursor-grabbing select-none"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+      >
+        <div className="h-1 w-10 rounded-full bg-slate-300" />
+      </div>
 
 
       <div className="shrink-0 border-b border-slate-100 px-6 py-5 max-md:pt-3">
@@ -66,13 +148,6 @@ export function MeetupListPanel({
               </span>
             )}
           </div>
-          <button
-            onClick={onClose}
-            aria-label={t("list.close")}
-            className="flex h-8 w-8 items-center justify-center rounded-[9px] border border-slate-200 text-slate-500 hover:bg-slate-100"
-          >
-            <X className="h-4.5 w-4.5" strokeWidth={2.2} />
-          </button>
         </div>
 
         {mode === "mine" && (

@@ -9,21 +9,24 @@ import type { MeetupTopicKey } from "@/constants/meetupTopics";
 interface TopicFilterChipsProps {
   value: MeetupTopicKey | "all";
   onChange: (topic: MeetupTopicKey | "all") => void;
-  activeTopics?: Set<string>;
+  activeTopics?: Set<string> | null;
 }
 
 export function TopicFilterChips({ value, onChange, activeTopics }: TopicFilterChipsProps) {
   const t = useTranslations("Go");
   const [isOpen, setIsOpen] = useState(true);
 
-  const visibleOptions = activeTopics
-    ? TOPIC_OPTIONS.filter((opt) => activeTopics.has(opt.value) || value === opt.value)
-    : TOPIC_OPTIONS;
+  const visibleOptions =
+    activeTopics === undefined
+      ? TOPIC_OPTIONS
+      : activeTopics === null
+        ? []
+        : TOPIC_OPTIONS.filter((opt) => activeTopics.has(opt.value) || value === opt.value);
 
-  const all = [
-    { value: "all" as const, color: "#0f172a", border: "#0f172a" },
-    ...visibleOptions,
-  ];
+  const all =
+    activeTopics === null
+      ? []
+      : [{ value: "all" as const, color: "#0f172a", border: "#0f172a" }, ...visibleOptions];
 
   const hasFilter = value !== "all";
 

@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations, useFormatter } from "next-intl";
 import {
-  X,
   Calendar,
   MapPin,
   Zap,
@@ -41,18 +40,38 @@ interface MeetupDetailPanelProps {
 
 type MeetupDetailPanelContentProps = Omit<MeetupDetailPanelProps, "meetup"> & {
   meetup: Meetup;
+  isClosing?: boolean;
 };
 
 type MyMeetupStatus = "loading" | "joined" | "cancelled" | "none";
 
-export function MeetupDetailPanel({
-  meetup,
-  ...props
-}: MeetupDetailPanelProps) {
-  if (!meetup) return null;
+export function MeetupDetailPanel({ meetup, ...props }: MeetupDetailPanelProps) {
+  const [renderMeetup, setRenderMeetup] = useState<Meetup | null>(meetup);
+  const [isClosing, setIsClosing] = useState(false);
+
+  useEffect(() => {
+    if (meetup) {
+      setRenderMeetup(meetup);
+      setIsClosing(false);
+      return;
+    }
+    setIsClosing(true);
+    const id = setTimeout(() => {
+      setRenderMeetup(null);
+      setIsClosing(false);
+    }, 280);
+    return () => clearTimeout(id);
+  }, [meetup]);
+
+  if (!renderMeetup) return null;
 
   return (
-    <MeetupDetailPanelContent key={meetup.post_id} meetup={meetup} {...props} />
+    <MeetupDetailPanelContent
+      key={renderMeetup.post_id}
+      meetup={renderMeetup}
+      isClosing={isClosing}
+      {...props}
+    />
   );
 }
 
@@ -62,9 +81,63 @@ function MeetupDetailPanelContent({
   onBackToList,
   currentUserId,
   suppressOverlay,
+  isClosing = false,
 }: MeetupDetailPanelContentProps) {
   const t = useTranslations("Go");
   const format = useFormatter();
+  const [dragOffset, setDragOffset] = useState(0);
+  const [snapClosing, setSnapClosing] = useState(false);
+  const touchStartY = useRef<number | null>(null);
+  const dragOffsetRef = useRef(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+    setSnapClosing(false);
+  };
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartY.current === null) return;
+    const delta = e.touches[0].clientY - touchStartY.current;
+    if (delta > 0) setDragOffset(delta);
+  };
+  const handleTouchEnd = () => {
+    touchStartY.current = null;
+    if (dragOffset > 80) {
+      setSnapClosing(true);
+      setDragOffset(window.innerHeight);
+      onClose();
+    } else {
+      setDragOffset(0);
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    const startY = e.clientY;
+    setSnapClosing(false);
+    dragOffsetRef.current = 0;
+
+    const onMouseMove = (ev: MouseEvent) => {
+      const delta = ev.clientY - startY;
+      if (delta > 0) {
+        dragOffsetRef.current = delta;
+        setDragOffset(delta);
+      }
+    };
+    const onMouseUp = () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+      if (dragOffsetRef.current > 80) {
+        setSnapClosing(true);
+        setDragOffset(window.innerHeight);
+        onClose();
+      } else {
+        setDragOffset(0);
+      }
+      dragOffsetRef.current = 0;
+    };
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+  };
+
   const [participants, setParticipants] = useState<MeetupParticipant[]>([]);
   const [joining, setJoining] = useState(false);
   const [myStatusState, setMyStatusState] = useState<{
@@ -236,11 +309,30 @@ function MeetupDetailPanelContent({
 
       
       <div
-        className="fixed bottom-0 right-0 top-15 md:top-27.25 flex w-85 max-w-full flex-col bg-white shadow-[-8px_0_36px_rgba(0,0,0,0.12)] animate-[slideInRight_.28s_cubic-bezier(.4,0,.2,1)] lg:w-97.5 max-md:left-0 max-md:top-auto max-md:h-[85vh] max-md:w-full max-md:rounded-t-2xl"
-        style={{ zIndex: 41 }}
+        className={`fixed bottom-0 right-0 top-15 md:top-27.25 flex w-85 max-w-full flex-col bg-white shadow-[-8px_0_36px_rgba(0,0,0,0.12)] lg:w-97.5 max-md:left-0 max-md:top-auto max-md:h-[85vh] max-md:w-full max-md:rounded-t-2xl ${
+          snapClosing
+            ? ""
+            : isClosing
+              ? "animate-[slideOutRight_.28s_cubic-bezier(.4,0,.2,1)_forwards] max-md:animate-[slideOutDown_.28s_cubic-bezier(.4,0,.2,1)_forwards]"
+              : "animate-[slideInRight_.28s_cubic-bezier(.4,0,.2,1)] max-md:animate-[slideInUp_.28s_cubic-bezier(.4,0,.2,1)]"
+        }`}
+        style={{
+          zIndex: 41,
+          ...(dragOffset > 0 && {
+            transform: `translateY(${dragOffset}px)`,
+            transition: snapClosing ? "transform 0.28s ease" : "none",
+          }),
+        }}
       >
-        
-        <div className="mx-auto mt-2 mb-1 h-1 w-10 shrink-0 rounded-full bg-slate-300 md:hidden" />
+        <div
+          className="flex justify-center pt-2 pb-1 touch-none cursor-grab active:cursor-grabbing select-none"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onMouseDown={handleMouseDown}
+        >
+          <div className="h-1 w-10 rounded-full bg-slate-300" />
+        </div>
 
         
         <div className="shrink-0 border-b border-slate-100 px-6 py-5 max-md:pt-3">
@@ -272,15 +364,6 @@ function MeetupDetailPanelContent({
                   </span>
                 </button>
               )}
-              <button
-                onClick={onClose}
-                aria-label={t("detail.close")}
-                className={`flex h-8 w-8 items-center justify-center rounded-[9px] border border-slate-200 text-slate-500 hover:bg-slate-100 ${
-                  onBackToList ? "max-md:hidden" : ""
-                }`}
-              >
-                <X className="h-4.5 w-4.5" strokeWidth={2.2} />
-              </button>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
