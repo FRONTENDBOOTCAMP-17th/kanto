@@ -163,6 +163,7 @@
       "write": "Hindi makakagawa ng bagong post ang account na malapit nang burahin."
     },
     "soldOut": "Nabenta Na",
+    "dealClosed": "Tapos Na",
     "suspended": {
       "title": "Ang iyong account ay nasuspinde",
       "permanent": "Ang iyong account ay permanenteng nasuspinde.",
@@ -214,7 +215,11 @@
     "cancelReserve": "Kanselahin ang Reserbasyon",
     "report": "Mag-ulat",
     "block": "I-block",
-    "blockConfirmMessage": "I-block si {name}? Aalis ka sa chat na ito pagkatapos i-block.",
+    "unblock": "I-unblock",
+    "blockConfirmMessage": "I-block si {name}?",
+    "blockedCannotChat": "Na-block mo ang user na ito.",
+    "blockedInputPlaceholder": "Naka-block ang user na ito.",
+    "blockFailed": "Nabigo ang pag-block. Pakisubukang muli.",
     "leave": "Umalis sa chat",
     "moreMenu": "Higit pang menu",
     "viewProfile": "Tingnan ang profile ni {name}",
@@ -799,7 +804,7 @@
       "confirmError": "Hindi magkatugma ang mga password.",
       "showPassword": "Ipakita ang password",
       "hidePassword": "Itago ang password",
-      "success": "Tapos na ang pag-sign up! Maligayang pagdating sa Kanto!",
+      "success": "Tapos na ang pag-sign up!\nMaligayang pagdating sa Kanto!",
       "processing": "Pinoproseso...",
       "submit": "Mag-sign up"
     },

@@ -163,6 +163,7 @@
       "write": "Accounts pending deletion cannot create new posts."
     },
     "soldOut": "Sold Out",
+    "dealClosed": "Completed",
     "suspended": {
       "title": "Your account has been suspended",
       "permanent": "Your account has been permanently suspended.",
@@ -214,7 +215,11 @@
     "cancelReserve": "Cancel Reservation",
     "report": "Report",
     "block": "Block",
-    "blockConfirmMessage": "Block {name}? You will leave this chat after blocking.",
+    "unblock": "Unblock",
+    "blockConfirmMessage": "Block {name}?",
+    "blockedCannotChat": "You have blocked this user.",
+    "blockedInputPlaceholder": "This user is blocked.",
+    "blockFailed": "Failed to block. Please try again.",
     "leave": "Leave chat",
     "moreMenu": "More menu",
     "viewProfile": "View {name}'s profile",
@@ -793,7 +798,7 @@
       "confirmError": "Passwords do not match.",
       "showPassword": "Show password",
       "hidePassword": "Hide password",
-      "success": "Sign-up complete! Welcome to Kanto!",
+      "success": "Sign-up complete!\nWelcome to Kanto!",
       "processing": "Processing...",
       "submit": "Sign up"
     },

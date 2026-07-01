@@ -163,6 +163,7 @@
       "write": "탈퇴 예정 계정은 새 글을 작성할 수 없습니다."
     },
     "soldOut": "판매완료",
+    "dealClosed": "거래 완료",
     "suspended": {
       "title": "계정이 정지되었습니다",
       "permanent": "영구 정지 처리된 계정입니다.",
@@ -214,7 +215,11 @@
     "cancelReserve": "예약 취소",
     "report": "신고하기",
     "block": "차단하기",
-    "blockConfirmMessage": "{name}님을 차단하시겠어요? 차단하면 채팅방을 나가게 됩니다.",
+    "unblock": "차단 해제",
+    "blockConfirmMessage": "{name}님을 차단하시겠어요?",
+    "blockedCannotChat": "차단한 사용자입니다.",
+    "blockedInputPlaceholder": "차단된 사용자입니다.",
+    "blockFailed": "차단에 실패했습니다. 다시 시도해주세요.",
     "leave": "채팅방 나가기",
     "moreMenu": "더보기 메뉴",
     "viewProfile": "{name}님 프로필 보기",
@@ -801,7 +806,7 @@
       "confirmError": "비밀번호가 일치하지 않습니다.",
       "showPassword": "비밀번호 표시",
       "hidePassword": "비밀번호 숨기기",
-      "success": "가입이 완료되었습니다! 칸토에 오신 것을 환영합니다.",
+      "success": "가입이 완료되었습니다!\n칸토에 오신 것을 환영합니다.",
       "processing": "처리 중...",
       "submit": "회원가입"
     },
