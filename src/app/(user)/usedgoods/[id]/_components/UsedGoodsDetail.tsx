@@ -25,7 +25,7 @@ import { formatBarangayLabel } from "@/type/location";
 
 type UsedGoods = Tables<"used_goods"> & {
   posts: Tables<"posts"> & {
-    users: Pick<Tables<"users">, "id" | "name" | "avatar_url" | "auth_id" | "created_at">;
+    users: Pick<Tables<"users">, "id" | "avatar_url" | "auth_id" | "created_at"> & { name: string | null };
   };
 };
 
@@ -110,7 +110,7 @@ export default function UsedGoodsDetail({
         postPrice: data.price,
         partner: {
           id: data.posts.users.id,
-          name: data.posts.users.name,
+          name: data.posts.users.name ?? "",
           avatar_url: data.posts.users.avatar_url,
           created_at: data.posts.users.created_at,
         },

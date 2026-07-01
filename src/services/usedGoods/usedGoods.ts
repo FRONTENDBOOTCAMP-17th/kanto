@@ -5,13 +5,13 @@ import type { TradeLocation } from "@/type/location";
 const USED_GOODS_SELECT = `
   *,
   used_goods(*),
-  users!posts_user_id_fkey(id, name, avatar_url, created_at)
+  users:public_profiles!posts_user_id_fkey(id, name, avatar_url, created_at)
 ` as const;
 
 const USED_GOODS_LIST_SELECT = `
   *,
   used_goods!inner(*),
-  users!posts_user_id_fkey(id, name, avatar_url, created_at)
+  users:public_profiles!posts_user_id_fkey(id, name, avatar_url, created_at)
 ` as const;
 
 interface UsedGoodsListFilter {
@@ -67,7 +67,7 @@ export async function getUsedGoodsList(
   const { data, count, error } = await query;
   if (error) throw new Error(error.message);
 
-  return { posts: (data as UsedGoodsWithPost[]) ?? [], total: count ?? 0 };
+  return { posts: (data as unknown as UsedGoodsWithPost[]) ?? [], total: count ?? 0 };
 }
 
 export async function getUsedGoodsDetail(
@@ -85,7 +85,7 @@ export async function getUsedGoodsDetail(
 
   if (error) throw new Error(error.message);
 
-  return data as UsedGoodsWithPost;
+  return data as unknown as UsedGoodsWithPost;
 }
 
 export async function getUsedGoodsItem(postId: number) {
@@ -93,9 +93,10 @@ export async function getUsedGoodsItem(postId: number) {
 
   const { data } = await supabase
     .from("used_goods")
-    .select(`*, posts (*, users!posts_user_id_fkey (id, name, avatar_url, auth_id, created_at))`)
+    .select(`*, posts (*, users:public_profiles!posts_user_id_fkey (id, name, avatar_url, auth_id, created_at))`)
     .eq("post_id", postId)
-    .single();
+    .neq("posts.status", "deleted")
+    .maybeSingle();
 
   return data;
 }
@@ -136,5 +137,5 @@ export async function getUsedGoodsByCategory() {
 
   if (error) throw new Error(error.message);
 
-  return data as UsedGoodsWithPost[];
+  return data as unknown as UsedGoodsWithPost[];
 }

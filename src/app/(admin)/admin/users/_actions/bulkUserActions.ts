@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { REPORTS_TABLE, REPORT_STATUS } from "@/constants/report";
+import { requireAdmin } from "@/services/user/user";
 
 const MESSAGE: Record<string, string> = {
   "7d": "관리자 조치로 인해 7일간 서비스 이용이 제한됩니다.",
@@ -37,6 +38,7 @@ export async function bulkApplySanction(
   ids: number[],
   type: "7d" | "30d" | "perm",
 ): Promise<void> {
+  await requireAdmin();
   if (ids.length === 0) return;
   const admin = createAdminClient();
   const adminId = await getCurrentAdminId();
@@ -82,6 +84,7 @@ export async function bulkApplySanction(
 }
 
 export async function bulkDeleteUsers(ids: number[]): Promise<void> {
+  await requireAdmin();
   if (ids.length === 0) return;
   const admin = createAdminClient();
   const { error } = await admin

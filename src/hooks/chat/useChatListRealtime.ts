@@ -8,8 +8,8 @@ interface Props {
 }
 
 const CHAT_LIST_SELECT = `*,
-  user1:users!chats_user_id_1_fkey(id, name, avatar_url, created_at),
-  user2:users!chats_user_id_2_fkey(id, name, avatar_url, created_at),
+  user1:public_profiles!chats_user_id_1_fkey(id, name, avatar_url, created_at),
+  user2:public_profiles!chats_user_id_2_fkey(id, name, avatar_url, created_at),
   posts(title, post_type)`;
 
 export function useChatListRealtime({ currentUserId, setChats }: Props) {

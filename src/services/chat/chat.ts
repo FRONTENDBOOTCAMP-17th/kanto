@@ -2,8 +2,8 @@ import { createClient } from "@/utils/supabase/server";
 import { ChatWithUsers } from "@/type/chat/chat";
 
 const CHAT_SELECT = `*,
-      user1:users!chats_user_id_1_fkey(id, name, avatar_url, created_at),
-      user2:users!chats_user_id_2_fkey(id, name, avatar_url, created_at),
+      user1:public_profiles!chats_user_id_1_fkey(id, name, avatar_url, created_at),
+      user2:public_profiles!chats_user_id_2_fkey(id, name, avatar_url, created_at),
       posts(title, post_type)` as const;
 
 export async function getChatList(
