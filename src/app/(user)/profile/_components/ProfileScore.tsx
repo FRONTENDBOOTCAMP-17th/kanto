@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { refreshKtsScore } from "../_lib/actions";
 import type { User as UserType } from "@/type/user";
 
@@ -15,8 +16,11 @@ function resolveGrade(ktsGrade: string | null | undefined): Grade {
 const DURATION = 1200; 
 
 export default function ProfileScore({ user }: { user: UserType }) {
+  const t = useTranslations("Common");
   const target = user.kts_score ?? 0;
   const grade = resolveGrade(user.kts_grade);
+  const isSuspended =
+    !!user.suspended_until && new Date(user.suspended_until) > new Date();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [displayed, setDisplayed] = useState(0);
@@ -37,6 +41,14 @@ export default function ProfileScore({ user }: { user: UserType }) {
     rafRef.current = requestAnimationFrame(tick);
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
   }, [target]);
+
+  if (isSuspended) {
+    return (
+      <p className="text-red-500 font-semibold">
+        {t("suspended.bannerTitle")}
+      </p>
+    );
+  }
 
   const pct = (displayed / 100) * 100;
   const barColor =
