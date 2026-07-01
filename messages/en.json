@@ -18,7 +18,6 @@
       "usedgoods": "Marketplace",
       "jobs": "Jobs",
       "rental": "Rentals",
-      "dating": "Random Chat",
       "go": "Kanto GO!"
     },
     "login": "Log in",
@@ -726,8 +725,7 @@
       "alertCategories": {
         "usedgoods": "Used Goods",
         "jobs": "Jobs",
-        "rental": "Rentals",
-        "dating": "Random Chat"
+        "rental": "Rentals"
       }
     },
     "blocked": {

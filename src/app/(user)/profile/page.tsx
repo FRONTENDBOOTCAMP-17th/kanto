@@ -10,7 +10,12 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-export default async function ProfilePage() {
+export default async function ProfilePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
+  const { tab } = await searchParams;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -131,6 +136,7 @@ export default async function ProfilePage() {
           likeCount={likeCount ?? 0}
           createdMeetups={createdMeetups}
           joinedMeetups={joinedMeetups}
+          initialTab={tab}
         />
       </div>
     </div>

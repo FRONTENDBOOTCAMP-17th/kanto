@@ -285,7 +285,7 @@ export default function ChatRoomClient({
               정산 계좌를 먼저 등록해주세요
             </p>
             <button
-              onClick={() => router.push("/profile")}
+              onClick={() => router.push("/profile?tab=payment")}
               className="w-full rounded-full bg-teal-500 py-2.5 text-sm font-medium text-white hover:bg-teal-600 transition-colors cursor-pointer"
             >
               계좌 등록하러 가기

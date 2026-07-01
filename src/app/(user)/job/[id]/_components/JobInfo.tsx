@@ -8,11 +8,8 @@ export default function JobInfo({ job }: { job: JobDetail }) {
   const locale = useLocale() as Locale;
 
   const location =
-    job.location_type === "그 외 지역" && job.location_custom
-      ? job.location_custom
-      : job.location_type === "그 외 지역"
-        ? te("tradeLocation.otherAreas")
-        : job.location_type;
+    job.location_custom ??
+    (job.location_type === "그 외 지역" ? te("tradeLocation.otherAreas") : job.location_type);
 
   const deadline = new Date(job.deadline).toLocaleDateString(BCP47_LOCALE[locale], {
     year: "numeric",
