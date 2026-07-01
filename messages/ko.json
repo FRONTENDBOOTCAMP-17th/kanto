@@ -18,7 +18,6 @@
       "usedgoods": "중고거래",
       "jobs": "구인구직",
       "rental": "부동산",
-      "dating": "랜덤채팅",
       "go": "Kanto GO!"
     },
     "login": "로그인",
@@ -639,7 +638,8 @@
       "reviews": "후기",
       "alerts": "알림",
       "blocked": "차단",
-      "settings": "앱 설정"
+      "settings": "앱 설정",
+      "meetings": "모임"
     },
     "avatar": {
       "alt": "프로필",
@@ -738,8 +738,7 @@
       "alertCategories": {
         "usedgoods": "중고거래",
         "jobs": "구인구직",
-        "rental": "부동산",
-        "dating": "랜덤채팅"
+        "rental": "부동산"
       }
     },
     "blocked": {
@@ -908,7 +907,8 @@
       "loading": "...",
       "createMeetup": "번개모임 만들기",
       "myLocation": "내 위치",
-      "clusterCount": "{count}개 모임"
+      "clusterCount": "{count}개 모임",
+      "myMeetups": "내 모임 보기"
     },
     "filter": {
       "all": "전체",
@@ -922,6 +922,12 @@
       "trip": "나들이/여행",
       "social": "친목/수다",
       "other": "기타"
+    },
+    "myList": {
+      "title": "내 모임",
+      "hosted": "만든 모임",
+      "joined": "참여한 모임",
+      "empty": "해당하는 모임이 없습니다"
     },
     "list": {
       "title": "모임 목록",
@@ -1036,6 +1042,49 @@
       "placeholder": "장소명 또는 주소를 입력하세요 (예: SM Aura)",
       "loading": "지도 로딩 중…",
       "empty": "아직 위치가 선택되지 않았습니다"
+    }
+  },
+  "Notice": {
+    "Admin": {
+      "breadcrumb": "운영 관리",
+      "pageTitle": "공지 관리",
+      "pageDescription": "전체 사용자에게 표시할 공지를 등록하고 관리합니다.",
+      "tabList": "공지 내역",
+      "tabCreate": "공지 등록",
+      "loading": "불러오는 중...",
+      "form": {
+        "titleEdit": "공지 수정",
+        "titleCreate": "새 공지 등록",
+        "fieldTitle": "공지 제목",
+        "fieldTitlePlaceholder": "공지 제목을 입력하세요",
+        "fieldStartsAt": "시작 일시",
+        "fieldEndsAt": "종료 일시",
+        "endsAtError": "종료 일시는 시작 일시보다 이후여야 합니다.",
+        "cancel": "취소",
+        "submitEdit": "수정",
+        "submitCreate": "등록",
+        "previewPlaceholder": "공지 제목이 여기에 표시됩니다"
+      },
+      "table": {
+        "empty": "등록된 공지가 없습니다.",
+        "colTitle": "제목",
+        "colStart": "시작",
+        "colEnd": "종료",
+        "colStatus": "상태"
+      }
+    },
+    "Banner": {
+      "hideToday": "오늘 하루 안보기",
+      "closeAriaLabel": "공지 닫기",
+      "viewAriaLabel": "공지 보기",
+      "modalTitle": "공지사항",
+      "prevAriaLabel": "이전",
+      "nextAriaLabel": "다음",
+      "closeModalAriaLabel": "닫기"
+    },
+    "Badge": {
+      "suspended": "정지",
+      "ariaLabel": "공지사항 {count}개"
     }
   }
 }

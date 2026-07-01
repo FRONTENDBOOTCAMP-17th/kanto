@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { getNotices, createNotice } from "@/services/admin/adminNotices";
 import { insertAuditLog } from "@/services/admin/auditLog";
+import { translateNoticeTitle } from "@/lib/translate";
 
 async function getAdminUser() {
   const supabase = await createClient();
@@ -24,8 +26,16 @@ async function getAdminUser() {
 
 export async function GET() {
   try {
+    const locale = (await cookies()).get("NEXT_LOCALE")?.value ?? "ko";
     const data = await getNotices();
-    return NextResponse.json(data);
+    const localized = data.map(({ title, title_en, title_fil, ...rest }) => ({
+      ...rest,
+      title:
+        locale === "en" ? (title_en ?? title) :
+        locale === "fil" ? (title_fil ?? title) :
+        title,
+    }));
+    return NextResponse.json(localized);
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });
   }
@@ -43,7 +53,8 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const data = await createNotice({ title, starts_at, ends_at }, admin.id);
+    const { title_en, title_fil } = await translateNoticeTitle(title);
+    const data = await createNotice({ title, title_en, title_fil, starts_at, ends_at }, admin.id);
     insertAuditLog(admin, "write_notice", { targetType: "notice", targetId: data.id, detail: { title, starts_at, ends_at } });
     return NextResponse.json(data, { status: 201 });
   } catch (e) {

@@ -164,6 +164,14 @@ export function CreateUsedGoodsForm({
       return;
     }
     setUrlError("");
+
+    const rateRes = await fetch("/api/posts/rate-check");
+    if (!rateRes.ok) {
+      const { message } = await rateRes.json().catch(() => ({}));
+      showErrorToast(message ?? "글 작성이 일시적으로 제한되었습니다. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     const locationFields = buildLocationFields();

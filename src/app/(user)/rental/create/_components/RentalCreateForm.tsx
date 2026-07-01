@@ -248,6 +248,14 @@ export default function RentalCreateForm({
       return;
     }
     setUrlError("");
+
+    const rateRes = await fetch("/api/posts/rate-check");
+    if (!rateRes.ok) {
+      const { message } = await rateRes.json().catch(() => ({}));
+      showErrorToast(message ?? "도배 방지를 위해 짧은 시간안에 글 작성을 금지하고 있습니다. 잠시 후 다시 시도해주세요.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     const locationFields = buildLocationFields();

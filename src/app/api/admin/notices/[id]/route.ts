@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { updateNotice, deleteNotice } from "@/services/admin/adminNotices";
 import { insertAuditLog } from "@/services/admin/auditLog";
+import { translateNoticeTitle } from "@/lib/translate";
 
 async function getAdminUser() {
   const supabase = await createClient();
@@ -35,7 +36,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 
   try {
-    const data = await updateNotice(Number(id), { title, starts_at, ends_at });
+    const { title_en, title_fil } = await translateNoticeTitle(title);
+    const data = await updateNotice(Number(id), { title, title_en, title_fil, starts_at, ends_at });
     return NextResponse.json(data);
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });

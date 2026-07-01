@@ -30,7 +30,7 @@ export async function generateMetadata({
       type: "article",
     },
     alternates: {
-      canonical: `${process.env.NEXT_PUBLIC_BASE_URL}/rental/${id}`,
+      canonical: `${process.env.NEXT_PUBLIC_BASE_URL!.replace(/\/$/, "")}/rental/${id}`,
     },
   };
 }

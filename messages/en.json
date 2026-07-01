@@ -18,7 +18,6 @@
       "usedgoods": "Marketplace",
       "jobs": "Jobs",
       "rental": "Rentals",
-      "dating": "Random Chat",
       "go": "Kanto GO!"
     },
     "login": "Log in",
@@ -631,7 +630,8 @@
       "reviews": "Reviews",
       "alerts": "Alerts",
       "blocked": "Blocked",
-      "settings": "App Settings"
+      "settings": "App Settings",
+      "meetings": "Meetups"
     },
     "avatar": {
       "alt": "Profile",
@@ -730,8 +730,7 @@
       "alertCategories": {
         "usedgoods": "Used Goods",
         "jobs": "Jobs",
-        "rental": "Rentals",
-        "dating": "Random Chat"
+        "rental": "Rentals"
       }
     },
     "blocked": {
@@ -900,7 +899,8 @@
       "loading": "...",
       "createMeetup": "Create Meetup",
       "myLocation": "My location",
-      "clusterCount": "{count} meetups"
+      "clusterCount": "{count} meetups",
+      "myMeetups": "My Meetups"
     },
     "filter": {
       "all": "All",
@@ -914,6 +914,12 @@
       "trip": "Outing/Travel",
       "social": "Social/Chat",
       "other": "Other"
+    },
+    "myList": {
+      "title": "My Meetups",
+      "hosted": "Created",
+      "joined": "Joined",
+      "empty": "No meetups found"
     },
     "list": {
       "title": "Meetups",
@@ -1028,6 +1034,49 @@
       "placeholder": "Enter a place name or address (e.g. SM Aura)",
       "loading": "Loading map…",
       "empty": "No location selected yet"
+    }
+  },
+  "Notice": {
+    "Admin": {
+      "breadcrumb": "Operations",
+      "pageTitle": "Notice Management",
+      "pageDescription": "Register and manage notices to be displayed to all users.",
+      "tabList": "Notice List",
+      "tabCreate": "Add Notice",
+      "loading": "Loading...",
+      "form": {
+        "titleEdit": "Edit Notice",
+        "titleCreate": "New Notice",
+        "fieldTitle": "Notice Title",
+        "fieldTitlePlaceholder": "Enter notice title",
+        "fieldStartsAt": "Start Date & Time",
+        "fieldEndsAt": "End Date & Time",
+        "endsAtError": "End date must be after start date.",
+        "cancel": "Cancel",
+        "submitEdit": "Save",
+        "submitCreate": "Add",
+        "previewPlaceholder": "Notice title will appear here"
+      },
+      "table": {
+        "empty": "No notices registered.",
+        "colTitle": "Title",
+        "colStart": "Start",
+        "colEnd": "End",
+        "colStatus": "Status"
+      }
+    },
+    "Banner": {
+      "hideToday": "Don't show today",
+      "closeAriaLabel": "Close notice",
+      "viewAriaLabel": "View notice",
+      "modalTitle": "Notices",
+      "prevAriaLabel": "Previous",
+      "nextAriaLabel": "Next",
+      "closeModalAriaLabel": "Close"
+    },
+    "Badge": {
+      "suspended": "Suspended",
+      "ariaLabel": "{count} notices"
     }
   }
 }
