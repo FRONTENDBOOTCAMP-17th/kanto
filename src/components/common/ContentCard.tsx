@@ -23,6 +23,7 @@ export interface ContentCardProps {
   currentUserId: number | null;
   badge?: React.ReactNode;
   soldOverlay?: boolean;
+  soldLabelKey?: "soldOut" | "dealClosed";
   subtitle?: string;
   tags?: React.ReactNode;
   listOnMobile?: boolean;
@@ -41,6 +42,7 @@ export function ContentCard({
   currentUserId,
   badge,
   soldOverlay,
+  soldLabelKey = "soldOut",
   subtitle,
   tags,
   listOnMobile = false,
@@ -116,7 +118,7 @@ export function ContentCard({
             )}
             {soldOverlay && (
               <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/50">
-                <span className="text-2xl md:text-3xl font-bold text-white">{t("soldOut")}</span>
+                <span className="text-2xl md:text-3xl font-bold text-white">{t(soldLabelKey)}</span>
               </div>
             )}
             {!soldOverlay && badge && <div className="absolute top-2 left-2 z-10">{badge}</div>}

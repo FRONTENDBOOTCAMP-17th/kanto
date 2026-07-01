@@ -7,7 +7,7 @@ import { useAuthStore } from "@/store/authStore";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
-import { createChatAndSendAction, markChatReadAction, sendMessageAction } from "./actions";
+import { createChatAndSendAction, getBlockStateAction, markChatReadAction, sendMessageAction } from "./actions";
 import { getChatBannerStateAction } from "./paymentActions";
 import { useSpamPrevention } from "@/hooks/chat/useSpamPrevention";
 import { useSpamConfig } from "@/hooks/useSpamConfig";
@@ -62,6 +62,21 @@ export default function ChatRoomClient({
   const [showNoBankModal, setShowNoBankModal] = useState(false);
   const [isReserved, setIsReserved] = useState(initialIsReserved);
   const [sendError, setSendError] = useState("");
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [iBlocked, setIBlocked] = useState(false);
+
+  const refreshBlockState = useCallback(() => {
+    getBlockStateAction(partner.id)
+      .then(({ blocked, iBlocked }) => {
+        setIsBlocked(blocked);
+        setIBlocked(iBlocked);
+      })
+      .catch(() => {});
+  }, [partner.id]);
+
+  useEffect(() => {
+    refreshBlockState();
+  }, [refreshBlockState]);
 
   const isSeller = sellerId !== null && currentUser.id === sellerId;
 
@@ -224,6 +239,8 @@ export default function ChatRoomClient({
         currentUserId={currentUser.id}
         onBack={onBack ?? (() => router.back())}
         onLeave={onLeave}
+        iBlocked={iBlocked}
+        onBlockChange={refreshBlockState}
         isReserved={postType === "used_goods" && isSeller && !isCompleted ? isReserved : undefined}
         onToggleReserve={postType === "used_goods" && isSeller && !isCompleted ? handleToggleReserve : undefined}
       />
@@ -268,6 +285,7 @@ export default function ChatRoomClient({
         onSend={handleSend}
         isCooldown={isCooldown}
         cooldownSeconds={cooldownSeconds}
+        blocked={isBlocked}
       />
       {showNoBankModal && (
         <div

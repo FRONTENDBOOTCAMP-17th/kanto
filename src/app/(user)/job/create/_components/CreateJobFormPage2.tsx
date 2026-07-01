@@ -127,15 +127,15 @@ export function CreateJobFormPageTwo({
         </div>
         <div className="space-y-2">
           <Label htmlFor="companyName">{t("form.companyNameLabel")}</Label>
-          <Input id="companyName" placeholder={t("form.companyNamePlaceholder")} value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="h-12 rounded-sm" required />
+          <Input id="companyName" placeholder={t("form.companyNamePlaceholder")} value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="h-12 rounded-sm" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="companyIntro">{t("form.companyIntroLabel")}</Label>
-          <Textarea id="companyIntro" placeholder={t("form.companyIntroPlaceholder")} value={companyIntro} onChange={(e) => setCompanyIntro(e.target.value)} className="resize-none min-h-52 rounded-sm p-5 text-xs md:text-sm" required />
+          <Textarea id="companyIntro" placeholder={t("form.companyIntroPlaceholder")} value={companyIntro} onChange={(e) => setCompanyIntro(e.target.value)} className="resize-none min-h-52 rounded-sm p-5 text-xs md:text-sm" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="industry">{t("form.industryLabel")}<RequiredMark /></Label>
-          <Input id="industry" placeholder={t("form.industryPlaceholder")} value={industry} onChange={(e) => setIndustry(e.target.value)} className="h-12 rounded-sm" required />
+          <Input id="industry" placeholder={t("form.industryPlaceholder")} value={industry} onChange={(e) => setIndustry(e.target.value)} className="h-12 rounded-sm" />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -158,7 +158,7 @@ export function CreateJobFormPageTwo({
           </APIProvider>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="companyWebsite">{t("form.websiteLabel")}<RequiredMark /></Label>
+          <Label htmlFor="companyWebsite">{t("form.websiteLabel")}</Label>
           <Input
             id="companyWebsite"
             placeholder={t("form.websitePlaceholder")}
@@ -166,7 +166,6 @@ export function CreateJobFormPageTwo({
             onChange={(e) => setCompanyWebsite(e.target.value)}
             onBlur={handleWebsiteBlur}
             className="h-12 rounded-sm"
-            required
           />
           {websiteError && <p className="text-xs text-red-500">{websiteError}</p>}
         </div>
@@ -185,15 +184,15 @@ export function CreateJobFormPageTwo({
         </div>
         <div className="space-y-2">
           <Label htmlFor="managerTitle">{t("form.managerTitleLabel")}<RequiredMark /></Label>
-          <Input id="managerTitle" placeholder={t("form.managerTitlePlaceholder")} value={managerTitle} onChange={(e) => setManagerTitle(e.target.value)} className="h-12 rounded-sm" required />
+          <Input id="managerTitle" placeholder={t("form.managerTitlePlaceholder")} value={managerTitle} onChange={(e) => setManagerTitle(e.target.value)} className="h-12 rounded-sm" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="managerPhone">{t("form.managerPhoneLabel")}<RequiredMark /></Label>
-          <Input id="managerPhone" placeholder={t("form.managerPhonePlaceholder")} value={managerPhone} onChange={(e) => setManagerPhone(e.target.value)} className="h-12 rounded-sm" required />
+          <Input id="managerPhone" placeholder={t("form.managerPhonePlaceholder")} value={managerPhone} onChange={(e) => setManagerPhone(e.target.value)} className="h-12 rounded-sm" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="managerEmail">{t("form.managerEmailLabel")}<RequiredMark /></Label>
-          <Input id="managerEmail" type="email" placeholder={t("form.managerEmailPlaceholder")} value={managerEmail} onChange={(e) => setManagerEmail(e.target.value)} className="h-12 rounded-sm" required />
+          <Input id="managerEmail" type="email" placeholder={t("form.managerEmailPlaceholder")} value={managerEmail} onChange={(e) => setManagerEmail(e.target.value)} className="h-12 rounded-sm" />
         </div>
       </div>
 

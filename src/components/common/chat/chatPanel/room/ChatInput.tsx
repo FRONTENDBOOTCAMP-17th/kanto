@@ -9,6 +9,7 @@ interface Props {
   onSend: () => void;
   isCooldown: boolean;
   cooldownSeconds: number;
+  blocked?: boolean;
 }
 
 export default function ChatInput({
@@ -17,6 +18,7 @@ export default function ChatInput({
   onSend,
   isCooldown,
   cooldownSeconds,
+  blocked = false,
 }: Props) {
   const t = useTranslations("Chat");
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -32,20 +34,22 @@ export default function ChatInput({
       <input
         type="text"
         aria-label={t("messageInputLabel")}
-        value={input}
-        disabled={isCooldown}
+        value={blocked ? "" : input}
+        disabled={isCooldown || blocked}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={
-          isCooldown
-            ? t("cooldown", { seconds: cooldownSeconds })
-            : t("inputPlaceholder")
+          blocked
+            ? t("blockedInputPlaceholder")
+            : isCooldown
+              ? t("cooldown", { seconds: cooldownSeconds })
+              : t("inputPlaceholder")
         }
         className="flex-1 min-w-0 text-base md:text-sm bg-gray-50 rounded-full px-4 py-2.5 md:py-2 outline-none border border-gray-200 focus:border-teal-400 focus:bg-white transition-colors disabled:opacity-50"
       />
       <button
         onClick={onSend}
-        disabled={!input.trim() || isCooldown}
+        disabled={!input.trim() || isCooldown || blocked}
         aria-label={t("messageSend")}
         className="w-10 h-10 md:w-8 md:h-8 rounded-full bg-teal-500 flex items-center justify-center shrink-0 disabled:opacity-30 hover:bg-teal-600 transition-colors"
       >

@@ -100,12 +100,11 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     if (
       !industry.trim() ||
       !resolvedAddress.trim() ||
-      !companyWebsite.trim() ||
       !managerTitle.trim() ||
       !managerPhone.trim() ||
       !managerEmail.trim()
     ) {
-      alert("업종, 주소, 웹사이트, 담당자 직함, 전화번호, 이메일을 모두 입력해주세요.");
+      alert("업종, 주소, 담당자 직함, 전화번호, 이메일을 모두 입력해주세요.");
       return;
     }
 

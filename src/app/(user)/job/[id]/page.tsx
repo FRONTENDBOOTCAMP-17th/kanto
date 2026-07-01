@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { formatPrice } from "@/utils/format";
+import { formatPrice, getDeadlineDiff } from "@/utils/format";
 import { after } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { getJobDetail } from "@/services/job/jobDetail";
@@ -35,16 +35,18 @@ export default async function JobDetailPage({
   
   after(() => viewCountUp(job.post_id));
   
-  const [{ userId, initialLiked, initialReported }, t] = await Promise.all([
+  const [{ userId, initialLiked, initialReported }, t, tCommon] = await Promise.all([
     getUserLikeReportStatus(job.post_id),
     getTranslations("Job"),
+    getTranslations("Common"),
   ]);
 
   const supabase = await createClient();
   const { data: relatedData } = await supabase
     .from("jobs")
-    .select("id, post_id, images, salary, posts(title)")
+    .select("id, post_id, images, salary, deadline, posts!inner(title)")
     .eq("location_type", job.location_type)
+    .eq("posts.status", "active")
     .neq("id", job.id)
     .limit(8);
   const relatedItems: RelatedItem[] = (relatedData ?? []).map((item) => ({
@@ -53,6 +55,7 @@ export default async function JobDetailPage({
     imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
     title: (item.posts as { title: string | null } | null)?.title ?? "",
     priceText: formatPrice(item.salary),
+    overlayLabel: getDeadlineDiff(item.deadline) < 0 ? tCommon("dealClosed") : undefined,
   }));
 
   const jsonLd = {

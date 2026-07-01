@@ -1,6 +1,6 @@
 "use client";
 
-import { BadgeCheck, Heart, Clock, Eye, MoveLeft, User } from "lucide-react";
+import { BadgeCheck, Heart, Clock, Eye, ChevronLeft, User } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
@@ -10,6 +10,8 @@ import type { Locale } from "@/i18n/config";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import VerifyAuthor from "@/components/common/VerifyAuthor";
 import findChat from "@/services/chat/postChat";
+import { checkBlockedAction } from "@/components/common/chat/chatPanel/room/actions";
+import Toast from "@/components/common/Toast";
 import { useAuthStore } from "@/store/authStore";
 import { useChatStore } from "@/store/chatStore";
 import { useSuspended } from "@/hooks/useSuspended";
@@ -28,7 +30,7 @@ type UsedGoods = Tables<"used_goods"> & {
 };
 
 type RelatedUsedGoods = Tables<"used_goods"> & {
-  posts: Pick<Tables<"posts">, "title"> | null;
+  posts: Pick<Tables<"posts">, "title" | "is_sold"> | null;
 };
 
 export default function UsedGoodsDetail({
@@ -47,6 +49,7 @@ export default function UsedGoodsDetail({
   const t = useTranslations("UsedGoods");
   const te = useTranslations("Enums");
   const tt = useTranslations("Time");
+  const tChat = useTranslations("Chat");
   const locale = useLocale() as Locale;
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -56,14 +59,16 @@ export default function UsedGoodsDetail({
   const images = (data.images as string[]) ?? [];
   const [likeCount, setLikeCount] = useState(data.posts.like_count ?? 0);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showBlockToast, setShowBlockToast] = useState(false);
   const { isSuspended, openModal } = useSuspended();
 
   const relatedItems: RelatedItem[] = (relatedData ?? []).map((item) => ({
     id: item.id,
-    href: `/usedgoods/${item.id}`,
+    href: `/usedgoods/${item.post_id}`,
     imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
     title: item.posts?.title ?? "",
     priceText: formatPrice(item.price),
+    overlayLabel: item.posts?.is_sold ? t("soldOut") : undefined,
   }));
 
   const accession = data.posts.users?.created_at
@@ -79,10 +84,19 @@ export default function UsedGoodsDetail({
         : data.location_type;
   const hasCoords = data.location_lat != null && data.location_lng != null;
 
+  const handleOpenProfile = () => {
+    if (data.posts.users?.id) router.push(`/user/${data.posts.users.id}`);
+  };
+
   const handleChat = async () => {
     if (!userId) { setShowLoginModal(true); return; }
     if (isSuspended) { openModal(); return; }
     if (!data.posts.users) return;
+    if (await checkBlockedAction(data.posts.users.id)) {
+      setShowBlockToast(true);
+      setTimeout(() => setShowBlockToast(false), 3000);
+      return;
+    }
     const chatId = await findChat(userId, data.posts.users.id, data.post_id);
     if (chatId !== null) {
       useChatStore.getState().openWidget(chatId);
@@ -118,7 +132,7 @@ export default function UsedGoodsDetail({
       
       <div className="flex items-center justify-between mt-4">
         <button onClick={() => router.push(fromPage ? `/usedgoods?page=${fromPage}` : "/usedgoods")} className="flex gap-2 cursor-pointer">
-          <MoveLeft />
+          <ChevronLeft />
           {t("backToList")}
         </button>
         <VerifyAuthor
@@ -174,7 +188,11 @@ export default function UsedGoodsDetail({
 
             <div className="flex flex-col gap-4">
               <h2 className="text-xl font-semibold">{t("sellerInfo")}</h2>
-              <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleOpenProfile}
+                className="flex items-center gap-3 text-left rounded-lg -mx-1 px-1 py-0.5 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
                 {data.posts.users?.avatar_url ? (
                   <ImageWithFallback
                     src={data.posts.users.avatar_url}
@@ -199,7 +217,7 @@ export default function UsedGoodsDetail({
                       : tt("joinDateUnknown")}
                   </p>
                 </div>
-              </div>
+              </button>
               {!isOwner && (
                 <Button variant="teal" className="cursor-pointer self-start min-w-72" onClick={handleChat}>
                   {t("chat")}
@@ -236,7 +254,11 @@ export default function UsedGoodsDetail({
             </div>
             <div className="p-6 flex flex-col gap-4">
               <h2 className="text-xl font-semibold">{t("sellerInfo")}</h2>
-              <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleOpenProfile}
+                className="flex items-center gap-3 text-left rounded-lg -mx-1 px-1 py-0.5 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
                 {data.posts.users?.avatar_url ? (
                   <ImageWithFallback
                     src={data.posts.users.avatar_url}
@@ -261,7 +283,7 @@ export default function UsedGoodsDetail({
                       : tt("joinDateUnknown")}
                   </p>
                 </div>
-              </div>
+              </button>
               {!isOwner && (
                 <Button variant="teal" className="cursor-pointer self-start min-w-72" onClick={handleChat}>
                   {t("chat")}
@@ -322,6 +344,7 @@ export default function UsedGoodsDetail({
 
       
       <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+      <Toast message={tChat("blockedCannotChat")} showMessage={showBlockToast} type="error" icon="x" />
 
       <RelatedItemsCarousel title={t("related")} items={relatedItems} />
     </div>

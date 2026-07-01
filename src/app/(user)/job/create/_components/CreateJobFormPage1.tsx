@@ -162,7 +162,6 @@ export function CreateJobFormPageOne({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="h-12 rounded-sm"
-          required
         />
         {title.length > 0 && title.trim().length < 2 && (
           <p className="text-[13px] text-red-500">{t("form.titleMinLength")}</p>
@@ -177,7 +176,6 @@ export function CreateJobFormPageOne({
           options={EMPLOYEE_OPTIONS}
           placeholder={t("form.employeeTypePlaceholder")}
           className="h-12 rounded-sm"
-          required
         />
       </div>
 
@@ -193,7 +191,6 @@ export function CreateJobFormPageOne({
               value={salary ? Number(salary).toLocaleString() : ""}
               onChange={(e) => handleSalaryChange(e.target.value)}
               className="h-12 rounded-sm pr-12"
-              required
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm pointer-events-none">
               PHP
@@ -228,7 +225,6 @@ export function CreateJobFormPageOne({
           value={deadline}
           onChange={(e) => setDeadline(e.target.value)}
           className="h-12 rounded-sm"
-          required
         />
       </div>
 
@@ -343,7 +339,6 @@ export function CreateJobFormPageOne({
           onChange={(e) => setMainTask(e.target.value.slice(0, 5000))}
           className="resize-none min-h-68 rounded-sm p-5 text-xs md:text-sm"
           maxLength={5000}
-          required
         />
         {mainTask.length > 0 && mainTask.trim().length < 10 && (
           <p className="text-[13px] text-red-500">{t("form.mainTaskMinLength")}</p>
