@@ -49,7 +49,11 @@ export function JobCard({
     deadlineDiff === 0 ? t("deadlineToday") :
     `D-${deadlineDiff}`;
   const dDayClass =
-    deadlineDiff === 0 ? "bg-red-50 text-red-400" : "bg-gray-100 text-gray-400";
+    deadlineDiff < 0
+      ? "bg-red-100 text-red-600"
+      : deadlineDiff === 0
+        ? "bg-red-50 text-red-500"
+        : "bg-gray-100 text-gray-700";
 
   const employeeTypeClass =
     employeeType === "정규직"
