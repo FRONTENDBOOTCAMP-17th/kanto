@@ -9,7 +9,7 @@ import type { User as UserType } from "@/type/user";
 import ProfileAvatar from "./profileAvatar";
 import { ProfileUserInfo } from "./ProfileUserInfo";
 import { ProfileAccountInfo } from "./ProfileAccountInfo";
-import { ProfileAside, ProfileMobileTabs, type Tab } from "./ProfileAside";
+import { ProfileAside, ProfileMobileTabs, TAB_KEYS, type Tab } from "./ProfileAside";
 import { ProfileInfoSection } from "./sections/ProfileInfoSection";
 import { ProfileReviewsSection } from "./sections/ProfileReviewsSection";
 import { ProfileAlertsSection } from "./sections/ProfileAlertsSection";
@@ -27,11 +27,13 @@ export function ProfileCard({
   initialIdentities,
   reviews,
   initialIsVerified,
+  initialTab,
 }: {
   alertSettings: AlertSettings;
   initialIdentities: UserIdentity[];
   reviews: ReviewWithReviewer[];
   initialIsVerified: boolean;
+  initialTab?: string;
 }) {
   const { user } = useAuthStore();
   if (!user) return null;
@@ -42,6 +44,7 @@ export function ProfileCard({
       initialIdentities={initialIdentities}
       reviews={reviews}
       initialIsVerified={initialIsVerified}
+      initialTab={initialTab}
     />
   );
 }
@@ -52,14 +55,18 @@ function ProfileForm({
   initialIdentities,
   reviews,
   initialIsVerified,
+  initialTab,
 }: {
   user: UserType;
   alertSettings: AlertSettings;
   initialIdentities: UserIdentity[];
   reviews: ReviewWithReviewer[];
   initialIsVerified: boolean;
+  initialTab?: string;
 }) {
-  const [activeTab, setActiveTab] = useState<Tab>("info");
+  const [activeTab, setActiveTab] = useState<Tab>(
+    TAB_KEYS.includes(initialTab as Tab) ? (initialTab as Tab) : "info"
+  );
   const [isVerificationOpen, setIsVerificationOpen] = useState(false);
   const [isIdentityVerified, setIsIdentityVerified] = useState(initialIsVerified);
   const router = useRouter();

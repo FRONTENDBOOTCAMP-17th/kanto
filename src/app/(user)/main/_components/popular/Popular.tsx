@@ -53,7 +53,7 @@ export default async function Popular() {
       href: `/job/${p.id}`,
       title: p.title,
       price: p.jobs[0].salary,
-      location: p.jobs[0].location_type,
+      location: p.jobs[0].location_custom ?? p.jobs[0].location_type,
       likeCount: p.like_count,
       createdAt: p.created_at,
       popular: p.like_count >= 20,

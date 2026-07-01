@@ -15,6 +15,8 @@ const TABS: { key: Tab; icon: React.ElementType }[] = [
   { key: "settings", icon: Settings2 },
 ];
 
+export const TAB_KEYS = TABS.map((t) => t.key);
+
 export function ProfileAside({
   activeTab,
   onTabChange,

@@ -9,7 +9,12 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-export default async function ProfilePage() {
+export default async function ProfilePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
+  const { tab } = await searchParams;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -39,6 +44,7 @@ export default async function ProfilePage() {
           initialIdentities={user.identities ?? []}
           reviews={reviews}
           initialIsVerified={initialIsVerified}
+          initialTab={tab}
         />
       </div>
     </div>

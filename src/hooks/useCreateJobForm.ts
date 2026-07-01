@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { useImageUpload } from "@/hooks/useImageUpload";
-import type { TradeLocation } from "@/type/location";
+import { cityToTradeLocation, type TradeLocation } from "@/type/location";
 import type { EmployeeType, SalaryType, JobInitialData } from "@/type/job/jobCreate";
 import type { PickedLocation } from "@/type/go";
 
@@ -20,6 +20,13 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   const [salaryType, setSalaryType] = useState<SalaryType | "">(initialData?.salary_type as SalaryType ?? "");
   const [locationType, setLocationType] = useState<TradeLocation | "">(initialData?.location_type as TradeLocation ?? "");
   const [locationCustom, setLocationCustom] = useState(initialData?.location_custom ?? "");
+  const [workLocation, setWorkLocation] = useState<PickedLocation | null>(null);
+
+  const handleWorkLocationSelect = (loc: PickedLocation) => {
+    setWorkLocation(loc);
+    setLocationType(cityToTradeLocation(loc.city ?? null, loc.province ?? null));
+    setLocationCustom(loc.address);
+  };
   const [deadline, setDeadline] = useState(initialData?.deadline ?? "");
   const [workHoursStart, setWorkHoursStart] = useState(() => (initialData?.work_hours ?? "").split(" - ")[0] || "00:00");
   const [workHoursEnd, setWorkHoursEnd] = useState(() => (initialData?.work_hours ?? "").split(" - ")[1] || "00:00");
@@ -70,7 +77,6 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     salary !== "" &&
     salaryType !== "" &&
     locationType !== "" &&
-    (locationType !== "그 외 지역" || locationCustom.trim() !== "") &&
     deadline !== "" &&
     (isTimeNegotiable || (!!workHoursStart && !!workHoursEnd)) &&
     mainTask.trim().length >= 10;
@@ -127,7 +133,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       company_intro: companyIntro,
       industry: industry || null,
       location_type: locationType as TradeLocation,
-      location_custom: locationType === "그 외 지역" ? locationCustom : null,
+      location_custom: locationCustom || null,
       main_task: mainTask,
       employee_type: employeeType as EmployeeType,
       salary: Number(salary),
@@ -243,8 +249,9 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     employeeType, setEmployeeType,
     salary, setSalary,
     salaryType, setSalaryType,
-    locationType, setLocationType,
-    locationCustom, setLocationCustom,
+    workLocation,
+    handleWorkLocationSelect,
+    locationFallbackLabel: locationCustom || locationType || null,
     deadline, setDeadline,
     workHoursStart, setWorkHoursStart,
     workHoursEnd, setWorkHoursEnd,

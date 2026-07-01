@@ -3,7 +3,6 @@ export const ROUTES = {
   usedgoods: "/usedgoods",
   jobs: "/job",
   rental: "/rental",
-  dating: "/dating",
   go: "/go",
   create: "/create",
   notifications: "/notifications",
