@@ -11,16 +11,12 @@ interface Props {
   givenSearch: string;
   defaultCategory: string;
   defaultLocation: string;
-  defaultBarangay: string;
-  barangaysByLocation: Record<string, string[]>;
 }
 
 export function UsedGoodsFilters({
   givenSearch,
   defaultCategory,
   defaultLocation,
-  defaultBarangay,
-  barangaysByLocation,
 }: Props) {
   const t = useTranslations("UsedGoods");
   const te = useTranslations("Enums");
@@ -36,13 +32,11 @@ export function UsedGoodsFilters({
     <SearchBar
       givenSearch={givenSearch}
       defaultLocation={defaultLocation}
-      defaultBarangay={defaultBarangay}
-      barangaysByLocation={barangaysByLocation}
-      onSearch={(query, location, barangay) =>
+      onSearch={(query, location) =>
         updateParams({
           search: query,
           location,
-          barangay,
+          barangay: "all",
           category: pendingCategory,
         })
       }

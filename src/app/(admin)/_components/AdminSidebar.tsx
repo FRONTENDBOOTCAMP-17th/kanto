@@ -45,7 +45,7 @@ export default function AdminSidebar({ pendingCount }: { pendingCount: number })
       <header className="fixed inset-x-0 top-0 z-50 hidden h-14.5 items-center justify-between border-b border-[#ebeef0] bg-white px-4 max-lg:flex">
         <Link href="/admin" className="flex items-end hover:opacity-75 transition-opacity">
           <Image
-            src="/kantomobileLogo.png"
+            src="/kantoMobileLogo.png"
             alt="kanto 로고"
             width={40}
             height={40}
@@ -86,7 +86,7 @@ export default function AdminSidebar({ pendingCount }: { pendingCount: number })
       >
         <Link href="/admin" className="flex items-end px-2 pb-5 pt-1.5 hover:opacity-75 transition-opacity">
           <Image
-            src="/kantomobileLogo.png"
+            src="/kantoMobileLogo.png"
             alt="kanto 로고"
             width={44}
             height={15}

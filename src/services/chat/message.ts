@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { MessageWithSender } from "@/type/chat/message";
 
 const MESSAGE_SELECT = `id, content, sender_id, chat_id, post_id, is_read, type, created_at, transaction_id,
-    sender:users!messages_sender_id_fkey(id, name, avatar_url, created_at)`;
+    sender:public_profiles!messages_sender_id_fkey(id, name, avatar_url, created_at)`;
 
 export async function getMessageList(
   chatId: number,

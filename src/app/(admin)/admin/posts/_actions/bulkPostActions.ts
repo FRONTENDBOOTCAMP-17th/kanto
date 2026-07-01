@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { requireAdmin } from "@/services/user/user";
 
 async function getCurrentAdminId(): Promise<number | null> {
   const supabase = await createClient();
@@ -20,6 +21,7 @@ async function getCurrentAdminId(): Promise<number | null> {
 }
 
 export async function bulkTogglePostStatus(ids: number[]): Promise<void> {
+  await requireAdmin();
   if (ids.length === 0) return;
   const admin = createAdminClient();
   const handledById = await getCurrentAdminId();
@@ -52,6 +54,7 @@ export async function bulkTogglePostStatus(ids: number[]): Promise<void> {
 }
 
 export async function bulkRestorePosts(ids: number[]): Promise<void> {
+  await requireAdmin();
   if (ids.length === 0) return;
   const admin = createAdminClient();
   const { error } = await admin
@@ -65,6 +68,7 @@ export async function bulkRestorePosts(ids: number[]): Promise<void> {
 }
 
 export async function bulkDeletePosts(ids: number[]): Promise<void> {
+  await requireAdmin();
   if (ids.length === 0) return;
   const admin = createAdminClient();
   const { error } = await admin

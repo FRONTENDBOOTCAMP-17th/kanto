@@ -56,7 +56,7 @@ export function useGroupChatRealtime({
           let sender = senderCacheRef.current.get(newMsg.sender_id);
           if (!sender) {
             const { data } = await supabase
-              .from("users")
+              .from("public_profiles")
               .select("id, name, avatar_url, created_at")
               .eq("id", newMsg.sender_id)
               .single();

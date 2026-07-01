@@ -11,7 +11,7 @@ import ReportModal, { USER_REPORT_CATEGORIES } from "@/components/common/ReportM
 import Toast from "@/components/common/Toast";
 import { checkReported } from "@/services/report";
 import { leaveChatAction } from "./leaveChatAction";
-import { blockUserAction } from "./blockUserAction";
+import { blockUserStandaloneAction, unblockUserStandaloneAction } from "@/services/user/blockUser";
 
 interface Props {
   partner: SellerInfo;
@@ -20,6 +20,8 @@ interface Props {
   currentUserId: number;
   onBack: () => void;
   onLeave?: () => void;
+  iBlocked?: boolean;
+  onBlockChange?: () => void;
   isReserved?: boolean;
   onToggleReserve?: () => void;
 }
@@ -31,6 +33,8 @@ export default function ChatHeader({
   currentUserId,
   onBack,
   onLeave,
+  iBlocked = false,
+  onBlockChange,
   isReserved,
   onToggleReserve,
 }: Props) {
@@ -77,9 +81,25 @@ export default function ChatHeader({
 
   const handleBlock = async () => {
     setIsBlocking(true);
-    await blockUserAction(chatId, partner.id);
-    setShowBlockConfirm(false);
-    onLeave?.();
+    try {
+      await blockUserStandaloneAction(partner.id);
+      setShowBlockConfirm(false);
+      onBlockChange?.();
+    } catch {
+      showBottomToast(t("blockFailed"), "error", "x");
+    } finally {
+      setIsBlocking(false);
+    }
+  };
+
+  const handleUnblock = async () => {
+    setMenuOpen(false);
+    try {
+      await unblockUserStandaloneAction(partner.id);
+      onBlockChange?.();
+    } catch {
+      showBottomToast(t("blockFailed"), "error", "x");
+    }
   };
 
   const handleReportClick = async () => {
@@ -170,12 +190,21 @@ export default function ChatHeader({
             >
               {t("report")}
             </button>
-            <button
-              onClick={() => { setShowBlockConfirm(true); setMenuOpen(false); }}
-              className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors border-t border-gray-100"
-            >
-              {t("block")}
-            </button>
+            {iBlocked ? (
+              <button
+                onClick={handleUnblock}
+                className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors border-t border-gray-100"
+              >
+                {t("unblock")}
+              </button>
+            ) : (
+              <button
+                onClick={() => { setShowBlockConfirm(true); setMenuOpen(false); }}
+                className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors border-t border-gray-100"
+              >
+                {t("block")}
+              </button>
+            )}
             <button
               onClick={handleLeave}
               className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors border-t border-gray-100"

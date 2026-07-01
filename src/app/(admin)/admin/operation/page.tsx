@@ -5,7 +5,10 @@ import {
   BarChart2,
   KeyRound,
   ScrollText,
+  TrendingUp,
 } from "lucide-react";
+import { createClient } from "@/utils/supabase/server";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 const sections = [
   {
@@ -27,6 +30,13 @@ const sections = [
     href: "/admin/operation/monitoring",
   },
   {
+    icon: TrendingUp,
+    label: "인기 관리",
+    description: "구인구직 게시글의 인기 순위(1~5위)를 직접 지정합니다. (슈퍼어드민 전용)",
+    href: "/admin/operation/popular-jobs",
+    allowedUserId: 181,
+  },
+  {
     icon: KeyRound,
     label: "권한 관리",
     description: "어드민 계정과 기능별 접근 권한을 관리합니다. (슈퍼어드민 전용)",
@@ -40,7 +50,24 @@ const sections = [
   },
 ];
 
-export default function OperationPage() {
+export default async function OperationPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  let currentUserId: number | null = null;
+  if (user) {
+    const { data } = await supabaseAdmin
+      .from("users")
+      .select("id")
+      .eq("auth_id", user.id)
+      .single();
+    currentUserId = data?.id ?? null;
+  }
+
+  const visibleSections = sections.filter(
+    (s) => !("allowedUserId" in s) || s.allowedUserId === currentUserId,
+  );
+
   return (
     <div className="p-6 lg:p-8">
       <div className="mb-8">
@@ -51,7 +78,7 @@ export default function OperationPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {sections.map(({ icon: Icon, label, description, href }) => (
+        {visibleSections.map(({ icon: Icon, label, description, href }) => (
           <Link
             key={label}
             href={href}

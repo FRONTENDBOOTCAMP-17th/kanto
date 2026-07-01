@@ -54,7 +54,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen min-w-97.5 bg-linear-to-br from-teal-50 to-teal-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-teal-50 to-teal-100 flex items-center justify-center p-4">
       <div className="w-full max-w-97.5 bg-white rounded-2xl shadow-md p-8 my-8">
         <Link href="/" className="text-sm text-teal-600 font-semibold">
           {t("home")}

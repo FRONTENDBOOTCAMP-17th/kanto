@@ -10,7 +10,7 @@ export interface BlockedUser {
 export async function getBlockedUsers(userId: number): Promise<BlockedUser[]> {
   const { data } = await supabase
     .from("user_blocks")
-    .select("blocked:users!user_blocks_blocked_id_fkey(id, name, avatar_url)")
+    .select("blocked:public_profiles!user_blocks_blocked_id_fkey(id, name, avatar_url)")
     .eq("blocker_id", userId);
 
   return (data ?? [])

@@ -2,7 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { getMessageList, postMessage } from "@/services/chat/message";
-import { isBlockedPair } from "@/services/chat/block";
+import { isBlockedPair, hasBlockedUser } from "@/services/chat/block";
 import type { MessageWithSender } from "@/type/chat/message";
 
 export async function checkBlockedAction(partnerId: number) {
@@ -20,6 +20,28 @@ export async function checkBlockedAction(partnerId: number) {
   if (!userData) return false;
 
   return isBlockedPair(userData.id, partnerId);
+}
+
+// 양방향 차단 여부(blocked)와 내가 차단했는지(iBlocked)를 함께 반환한다.
+export async function getBlockStateAction(partnerId: number) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { blocked: false, iBlocked: false };
+
+  const { data: userData } = await supabase
+    .from("users")
+    .select("id")
+    .eq("auth_id", user.id)
+    .single();
+  if (!userData) return { blocked: false, iBlocked: false };
+
+  const [blocked, iBlocked] = await Promise.all([
+    isBlockedPair(userData.id, partnerId),
+    hasBlockedUser(userData.id, partnerId),
+  ]);
+  return { blocked, iBlocked };
 }
 
 export async function checkUserSuspendedAction(partnerId: number) {
@@ -83,16 +105,12 @@ export async function sendMessageAction(params: {
     supabase,
   );
 
-  if (isUser1 && chat.user_id_2_left) {
-    await supabase
-      .from("chats")
-      .update({ user_id_2_left: false })
-      .eq("id", params.chatId);
-  } else if (!isUser1 && chat.user_id_1_left) {
-    await supabase
-      .from("chats")
-      .update({ user_id_1_left: false })
-      .eq("id", params.chatId);
+  // 새 메시지가 오가면 (차단 해제 후 재대화 포함) 양쪽 모두에게 채팅을 다시 노출한다.
+  const revive: { user_id_1_left?: boolean; user_id_2_left?: boolean } = {};
+  if (chat.user_id_1_left) revive.user_id_1_left = false;
+  if (chat.user_id_2_left) revive.user_id_2_left = false;
+  if (Object.keys(revive).length > 0) {
+    await supabase.from("chats").update(revive).eq("id", params.chatId);
   }
 
   return result;

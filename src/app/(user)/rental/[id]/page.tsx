@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { formatPrice } from "@/utils/format";
 import { after } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { getRentalDetail } from "@/services/rental/rental";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
 import BackButton from "@/app/(user)/rental/[id]/_components/BackButton";
@@ -38,18 +39,25 @@ export default async function RentalDetail({
   let relatedItems: RelatedItem[] = [];
   if (rental.location) {
     const supabase = await createClient();
-    const { data } = await supabase
-      .from("rentals")
-      .select("id, post_id, images, price, posts(title)")
-      .eq("location", rental.location)
-      .neq("id", rental.id)
-      .limit(8);
+    const [{ data }, tCommon] = await Promise.all([
+      supabase
+        .from("rentals")
+        .select("id, post_id, images, price, posts!inner(title, is_sold)")
+        .eq("location", rental.location)
+        .eq("posts.status", "active")
+        .neq("id", rental.id)
+        .limit(8),
+      getTranslations("Common"),
+    ]);
     relatedItems = (data ?? []).map((item) => ({
       id: item.id,
       href: `/rental/${item.post_id}`,
       imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
-      title: (item.posts as { title: string | null } | null)?.title ?? "",
+      title: (item.posts as { title: string | null; is_sold: boolean } | null)?.title ?? "",
       priceText: formatPrice(item.price),
+      overlayLabel: (item.posts as { is_sold: boolean } | null)?.is_sold
+        ? tCommon("dealClosed")
+        : undefined,
     }));
   }
 

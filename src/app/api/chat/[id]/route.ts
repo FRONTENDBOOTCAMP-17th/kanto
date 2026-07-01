@@ -58,7 +58,7 @@ export async function GET(
   const postPrice =
     posts?.post_type === "used_goods"
       ? (posts.used_goods[0]?.price ?? null)
-      : posts?.post_type === "rentals"
+      : posts?.post_type === "rental"
         ? (posts.rentals[0]?.price ?? null)
         : null;
 

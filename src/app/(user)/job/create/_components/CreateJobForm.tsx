@@ -37,10 +37,9 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
               setSalary={form.setSalary}
               salaryType={form.salaryType}
               setSalaryType={form.setSalaryType}
-              locationType={form.locationType}
-              setLocationType={form.setLocationType}
-              locationCustom={form.locationCustom}
-              setLocationCustom={form.setLocationCustom}
+              workLocation={form.workLocation}
+              onWorkLocationSelect={form.handleWorkLocationSelect}
+              locationFallbackLabel={form.locationFallbackLabel}
               deadline={form.deadline}
               setDeadline={form.setDeadline}
               workHoursStart={form.workHoursStart}
