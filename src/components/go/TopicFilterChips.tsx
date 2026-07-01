@@ -9,21 +9,24 @@ import type { MeetupTopicKey } from "@/constants/meetupTopics";
 interface TopicFilterChipsProps {
   value: MeetupTopicKey | "all";
   onChange: (topic: MeetupTopicKey | "all") => void;
-  activeTopics?: Set<string>;
+  activeTopics?: Set<string> | null;
 }
 
 export function TopicFilterChips({ value, onChange, activeTopics }: TopicFilterChipsProps) {
   const t = useTranslations("Go");
   const [isOpen, setIsOpen] = useState(true);
 
-  const visibleOptions = activeTopics
-    ? TOPIC_OPTIONS.filter((opt) => activeTopics.has(opt.value) || value === opt.value)
-    : TOPIC_OPTIONS;
+  const visibleOptions =
+    activeTopics === undefined
+      ? TOPIC_OPTIONS
+      : activeTopics === null
+        ? []
+        : TOPIC_OPTIONS.filter((opt) => activeTopics.has(opt.value) || value === opt.value);
 
-  const all = [
-    { value: "all" as const, color: "#0f172a", border: "#0f172a" },
-    ...visibleOptions,
-  ];
+  const all =
+    activeTopics === null
+      ? []
+      : [{ value: "all" as const, color: "#0f172a", border: "#0f172a" }, ...visibleOptions];
 
   const hasFilter = value !== "all";
 
@@ -33,7 +36,7 @@ export function TopicFilterChips({ value, onChange, activeTopics }: TopicFilterC
       <button
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label={t("filter.toggle")}
-        className="relative flex-none flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border bg-white/92 shadow-md backdrop-blur-md transition-colors hover:bg-white"
+        className="relative flex-none flex h-9 w-9 max-md:h-8 max-md:w-8 cursor-pointer items-center justify-center rounded-full border bg-white/92 shadow-md backdrop-blur-md transition-colors hover:bg-white"
         style={{ borderColor: hasFilter ? "#0f172a" : "#e2e8f0" }}
       >
         <SlidersHorizontal className="h-4 w-4 text-slate-700" strokeWidth={2} />
@@ -54,7 +57,7 @@ export function TopicFilterChips({ value, onChange, activeTopics }: TopicFilterC
               <button
                 key={opt.value}
                 onClick={() => onChange(active && opt.value !== "all" ? "all" : opt.value)}
-                className="flex-none cursor-pointer whitespace-nowrap rounded-full border px-3.5 py-1.5 text-[13px] font-semibold backdrop-blur-md transition-all"
+                className="flex-none cursor-pointer whitespace-nowrap rounded-full border px-3.5 py-1.5 max-md:px-3 max-md:py-1 text-[13px] max-md:text-[11.5px] font-semibold backdrop-blur-md transition-all"
                 style={{
                   background: active ? opt.color : "rgba(255,255,255,0.9)",
                   color: active ? "#fff" : opt.color,

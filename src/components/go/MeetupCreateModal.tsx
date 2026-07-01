@@ -203,7 +203,7 @@ export function MeetupCreateModal({
       <div onClick={onClose} className="fixed inset-0 z-50 bg-slate-900/55" />
 
       
-      <div className="fixed left-1/2 top-1/2 z-51 flex max-h-[90vh] w-140 max-w-[calc(100vw-32px)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-[20px] bg-white shadow-2xl">
+      <div className="fixed left-1/2 top-1/2 z-51 flex max-h-[90vh] w-140 max-w-[calc(100vw-32px)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-[20px] bg-white shadow-2xl max-md:left-0 max-md:right-0 max-md:bottom-0 max-md:top-auto max-md:translate-x-0 max-md:translate-y-0 max-md:w-full max-md:max-w-full max-md:rounded-t-2xl max-md:rounded-b-none max-md:animate-[slideInUp_.3s_cubic-bezier(.4,0,.2,1)]">
         
         <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-6 py-5">
           <div className="flex items-center gap-2.5">
