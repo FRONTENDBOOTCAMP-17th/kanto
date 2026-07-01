@@ -24,8 +24,9 @@ export default async function UsedGoodsDetailPage({
     await Promise.all([
       supabase
         .from("used_goods")
-        .select(`*, posts (title)`)
+        .select(`*, posts!inner (title, is_sold)`)
         .eq("category", data.category ?? "")
+        .eq("posts.status", "active")
         .neq("id", data.id)
         .limit(8),
       getUserLikeReportStatus(data.post_id),
