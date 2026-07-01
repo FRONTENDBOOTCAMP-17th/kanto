@@ -5,12 +5,12 @@ import type { Pagination, PagedResult } from "@/services/usedGoods/usedGoods";
 import type { TradeLocation } from "@/type/location";
 
 const RENTAL_DETAIL_SELECT =
-  `*, posts(*, users!posts_user_id_fkey(id, name, avatar_url, auth_id, created_at))` as const;
+  `*, posts(*, public_profiles!posts_user_id_fkey(id, name, avatar_url, auth_id, created_at))` as const;
 
 const RENTAL_LIST_SELECT = `
   *,
   rentals!inner(*),
-  users!posts_user_id_fkey(id, name, avatar_url, created_at)
+  public_profiles!posts_user_id_fkey(id, name, avatar_url, created_at)
 ` as const;
 
 export async function getRentalDetail(postId: number): Promise<RentalDetail> {

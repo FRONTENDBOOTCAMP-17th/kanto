@@ -5,13 +5,13 @@ import type { TradeLocation } from "@/type/location";
 const USED_GOODS_SELECT = `
   *,
   used_goods(*),
-  users!posts_user_id_fkey(id, name, avatar_url, created_at)
+  public_profiles!posts_user_id_fkey(id, name, avatar_url, created_at)
 ` as const;
 
 const USED_GOODS_LIST_SELECT = `
   *,
   used_goods!inner(*),
-  users!posts_user_id_fkey(id, name, avatar_url, created_at)
+  public_profiles!posts_user_id_fkey(id, name, avatar_url, created_at)
 ` as const;
 
 interface UsedGoodsListFilter {
@@ -93,7 +93,7 @@ export async function getUsedGoodsItem(postId: number) {
 
   const { data } = await supabase
     .from("used_goods")
-    .select(`*, posts (*, users!posts_user_id_fkey (id, name, avatar_url, auth_id, created_at))`)
+    .select(`*, posts (*, public_profiles!posts_user_id_fkey (id, name, avatar_url, auth_id, created_at))`)
     .eq("post_id", postId)
     .single();
 
