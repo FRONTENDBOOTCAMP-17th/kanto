@@ -382,7 +382,7 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
           } ${uiVisible ? "opacity-100" : "opacity-0"}`}
           style={{ transition: "left 280ms cubic-bezier(.4,0,.2,1), opacity 500ms" }}
         >
-          <div className="pointer-events-auto relative flex min-w-0 items-start px-5 pr-18.5 md:pr-47.5">
+          <div className="pointer-events-auto relative flex min-w-0 items-start px-5">
             <div className="min-w-0 w-full max-w-full">
               <TopicFilterChips
                 value={topicFilter}
@@ -390,42 +390,33 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
                 activeTopics={activeTopics}
               />
             </div>
-            <button
-              onClick={() =>
-                currentUserId ? setShowCreate(true) : setShowLoginModal(true)
-              }
-              className="absolute right-5 top-0 flex shrink-0 cursor-pointer items-center gap-2 rounded-[14px] bg-slate-900 px-4 py-2.5 text-[14px] font-bold text-white shadow-[0_6px_20px_rgba(15,23,42,.35)] transition-all hover:bg-slate-800 active:scale-95"
-            >
-              <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />
-              <span className="max-md:hidden">{t("map.createMeetup")}</span>
-            </button>
           </div>
         </div>
 
         <div
           className={`absolute left-5 z-10 flex flex-col gap-2 md:top-18 ${
-            mobileSheetOpen ? "top-[calc(15vh+4px)]" : "top-20"
+            mobileSheetOpen ? "top-[calc(15vh+4px)]" : "top-[56px]"
           } ${shiftButtons ? "md:left-80 lg:left-90" : ""} ${uiVisible ? "opacity-100" : "opacity-0"}`}
           style={{ transition: "left 280ms cubic-bezier(.4,0,.2,1), top 500ms, opacity 500ms" }}
         >
           <button
             onClick={toggleList}
-            className={`flex cursor-pointer items-center gap-1.5 rounded-full px-3.5 py-1.75 backdrop-blur-md transition-colors hover:bg-slate-900/90 ${
+            className={`flex cursor-pointer items-center gap-1.5 rounded-full px-3.5 py-1.75 max-md:px-3 max-md:py-1.25 backdrop-blur-md transition-colors hover:bg-slate-900/90 ${
               listMode === "all" ? "bg-slate-900" : "bg-slate-900/78"
             }`}
           >
-            <Zap className="h-3 w-3 text-emerald-400" strokeWidth={2.5} />
-            <span className="text-[13px] font-semibold text-white">
+            <Zap className="h-3 w-3 max-md:h-2.5 max-md:w-2.5 text-emerald-400" strokeWidth={2.5} />
+            <span className="text-[13px] max-md:text-[11.5px] font-semibold text-white">
               {t("map.inProgress", { count: meetups.length })}
             </span>
           </button>
           <button
             onClick={toggleMyMeetups}
-            className={`flex cursor-pointer items-center gap-1.5 self-start rounded-full px-3.5 py-1.75 backdrop-blur-md transition-colors hover:bg-slate-700/90 ${
+            className={`flex cursor-pointer items-center gap-1.5 self-start rounded-full px-3.5 py-1.75 max-md:px-3 max-md:py-1.25 backdrop-blur-md transition-colors hover:bg-slate-700/90 ${
               listMode === "mine" ? "bg-teal-600" : "bg-slate-900/78"
             }`}
           >
-            <span className="text-[13px] font-semibold text-white">
+            <span className="text-[13px] max-md:text-[11.5px] font-semibold text-white">
               {t("map.myMeetups")}
             </span>
           </button>
@@ -440,6 +431,14 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
           <RecenterButton />
         </div>
 
+        <button
+          onClick={() => currentUserId ? setShowCreate(true) : setShowLoginModal(true)}
+          className={`md:hidden absolute -bottom-3 left-1/2 -translate-x-1/2 z-10 flex cursor-pointer items-center justify-center pb-2 w-24 h-14 rounded-t-lg bg-slate-900/78 backdrop-blur-md hover:bg-slate-900/90 ${uiVisible ? "opacity-100" : "opacity-0"}`}
+          style={{ transition: "opacity 500ms" }}
+        >
+          <Plus className="h-5 w-5 text-white" strokeWidth={4} />
+        </button>
+
         {renderListMode !== null && (
           <MeetupListPanel
             meetups={meetups}
@@ -449,6 +448,7 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
             selectedId={selectedMeetupId}
             onSelect={renderListMode === "all" ? handleSelectFromList : handleSelectFromMyList}
             onClose={() => setListMode(null)}
+            onCreateClick={() => currentUserId ? setShowCreate(true) : setShowLoginModal(true)}
             enterAnim={listEnterAnim}
             isClosing={listClosing}
           />

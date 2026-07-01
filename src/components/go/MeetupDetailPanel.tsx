@@ -325,7 +325,7 @@ function MeetupDetailPanelContent({
         }}
       >
         <div
-          className="flex justify-center pt-2 pb-1 touch-none cursor-grab active:cursor-grabbing select-none"
+          className="flex justify-center pt-2 pb-1 md:hidden touch-none cursor-grab active:cursor-grabbing select-none"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -347,7 +347,7 @@ function MeetupDetailPanelContent({
               >
                 <ChevronLeft className="h-5 w-5" strokeWidth={2.2} />
               </button>
-              <h2 className="min-w-0 flex-1 truncate text-[19px] font-extrabold leading-snug tracking-tight text-slate-900">
+              <h2 className="min-w-0 flex-1 truncate text-[19px] max-md:text-[16px] font-extrabold leading-snug tracking-tight text-slate-900">
                 {meetup.title}
               </h2>
             </div>
@@ -387,7 +387,7 @@ function MeetupDetailPanelContent({
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] bg-slate-50">
                 <Calendar className="h-4 w-4 text-slate-400" strokeWidth={2} />
               </div>
-              <span className="text-[14px] font-semibold text-slate-700">
+              <span className="text-[14px] max-md:text-[12.5px] font-semibold text-slate-700">
                 {dateLabel} · {timeRange}
               </span>
             </div>
@@ -396,11 +396,11 @@ function MeetupDetailPanelContent({
                 <MapPin className="h-4 w-4 text-slate-400" strokeWidth={2} />
               </div>
               <div>
-                <div className="text-[14px] font-semibold text-slate-700">
+                <div className="text-[14px] max-md:text-[12.5px] font-semibold text-slate-700">
                   {meetup.location_address}
                 </div>
                 {meetup.location_detail && (
-                  <div className="mt-0.5 text-[13px] text-slate-400">
+                  <div className="mt-0.5 text-[13px] max-md:text-[12px] text-slate-400">
                     {meetup.location_detail}
                   </div>
                 )}
@@ -419,7 +419,7 @@ function MeetupDetailPanelContent({
                   <MeetupAvatar name={meetup.host_name} size={38} />
                 </div>
                 <div>
-                  <div className="text-[14px] font-bold text-slate-900">
+                  <div className="text-[14px] max-md:text-[13px] font-bold text-slate-900">
                     {meetup.host_name}
                   </div>
                   <div className="text-[11.5px] text-slate-400">
@@ -427,7 +427,7 @@ function MeetupDetailPanelContent({
                   </div>
                 </div>
               </div>
-              <span className="text-[13px] text-slate-500">
+              <span className="text-[13px] max-md:text-[12px] text-slate-500">
                 {t.rich("detail.capacity", {
                   current: totalCount,
                   max: meetup.max_participants,
@@ -466,7 +466,7 @@ function MeetupDetailPanelContent({
             <div className="mb-2 text-[11.5px] font-bold uppercase tracking-widest text-slate-400">
               {t("detail.intro")}
             </div>
-            <p className="text-[14px] leading-relaxed text-slate-600">
+            <p className="text-[14px] max-md:text-[13px] leading-relaxed text-slate-600">
               {meetup.description}
             </p>
           </div>
@@ -485,7 +485,7 @@ function MeetupDetailPanelContent({
                   });
                 onClose(); 
               }}
-              className="flex w-full items-center justify-center gap-2 rounded-[12px] border border-teal-200 bg-teal-50 py-3 text-[14px] font-bold text-teal-700 hover:bg-teal-100 transition-colors"
+              className="flex w-full items-center justify-center gap-2 rounded-[12px] border border-teal-200 bg-teal-50 py-3 text-[14px] max-md:text-[13px] font-bold text-teal-700 hover:bg-teal-100 transition-colors"
             >
               <MessageCircle className="h-4 w-4" strokeWidth={2.2} />
               {t("detail.joinChat")}
@@ -493,7 +493,7 @@ function MeetupDetailPanelContent({
           )}
           {isHost ? (
             meetup.status === "inactive" ? (
-              <div className="flex items-center justify-center gap-2 rounded-[11px] bg-slate-50 py-3 text-[13.5px] font-semibold text-slate-500">
+              <div className="flex items-center justify-center gap-2 rounded-[11px] bg-slate-50 py-3 text-[13.5px] max-md:text-[12.5px] font-semibold text-slate-500">
                 {t("detail.ended")}
               </div>
             ) : confirmEnd ? (
@@ -511,7 +511,7 @@ function MeetupDetailPanelContent({
             ) : (
               <button
                 onClick={() => setConfirmEnd(true)}
-                className="flex w-full items-center justify-center gap-2 rounded-[12px] border border-slate-200 bg-slate-50 py-3.5 text-[15px] font-bold text-slate-700 hover:bg-slate-100"
+                className="flex w-full items-center justify-center gap-2 rounded-[12px] border border-slate-200 bg-slate-50 py-3.5 text-[15px] max-md:text-[13px] font-bold text-slate-700 hover:bg-slate-100"
               >
                 {t("detail.endMeetup")}
               </button>
@@ -519,7 +519,7 @@ function MeetupDetailPanelContent({
           ) : statusLoading ? (
             <button
               disabled
-              className="flex w-full cursor-not-allowed items-center justify-center rounded-[12px] bg-slate-100 py-3.5 text-[15px] font-bold text-slate-400"
+              className="flex w-full cursor-not-allowed items-center justify-center rounded-[12px] bg-slate-100 py-3.5 text-[15px] max-md:text-[13px] font-bold text-slate-400"
             >
               {t("detail.processing")}
             </button>
@@ -538,7 +538,7 @@ function MeetupDetailPanelContent({
             <button
               onClick={joined ? () => setConfirmCancel(true) : handleJoin}
               disabled={isFull || joining}
-              className="flex w-full items-center justify-center gap-2 rounded-[12px] py-3.5 text-[15px] font-bold transition-all disabled:cursor-not-allowed"
+              className="flex w-full items-center justify-center gap-2 rounded-[12px] py-3.5 text-[15px] max-md:text-[13px] font-bold transition-all disabled:cursor-not-allowed"
               style={{
                 background: isFull ? "#f1f5f9" : joined ? "#fff" : "#14b8a6",
                 color: isFull ? "#94a3b8" : joined ? "#475569" : "#fff",
