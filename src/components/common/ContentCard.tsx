@@ -3,10 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
-import { MapPin, Clock, Heart, ImageIcon } from "lucide-react";
+import { MapPin, Clock, Heart, ImageIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import { LikeButton } from "@/components/common/LikeButton";
+import { useCarousel } from "@/hooks/useCarousel";
 import { formatTimeAgo } from "@/utils/format";
 import type { Locale } from "@/i18n/config";
 
@@ -49,7 +50,8 @@ export function ContentCard({
 }: ContentCardProps) {
   const t = useTranslations("Common");
   const locale = useLocale() as Locale;
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { currentIndex, prevIndex, direction, isAnimating, navigate, dragHandlers } =
+    useCarousel(images.length);
   const [count, setCount] = useState(likeCount);
   const hasImages = images.length > 0;
   const hasCarousel = images.length > 1;
@@ -66,49 +68,96 @@ export function ContentCard({
         >
           
           <div
-            className={`relative overflow-hidden bg-gray-100 shrink-0 ${
+            className={`relative overflow-hidden bg-gray-100 shrink-0 select-none ${
               listOnMobile
                 ? "w-24 h-24 self-center rounded-lg md:w-full md:h-auto md:self-stretch md:aspect-square md:rounded-none"
                 : "aspect-square"
             }`}
+            {...(hasCarousel ? dragHandlers : {})}
           >
             {hasImages ? (
               <>
-                {images.map((src, idx) => (
+                {prevIndex !== null && (
                   <div
-                    key={idx}
-                    className={`absolute inset-0 transition-opacity duration-300 ${
-                      idx === currentImageIndex ? "opacity-100" : "opacity-0"
+                    className={`absolute inset-0 ${
+                      direction === "right" ? "animate-slide-out-left" : "animate-slide-out-right"
                     }`}
                   >
                     <ImageWithFallback
-                      src={src}
-                      alt={`${title} ${idx + 1}`}
+                      key={prevIndex}
+                      src={images[prevIndex]}
+                      alt={`${title} ${prevIndex + 1}`}
                       fill
                       sizes="(max-width: 768px) 100vw, 25vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="object-cover"
+                      draggable={false}
                     />
                   </div>
-                ))}
+                )}
+                <div
+                  className={`absolute inset-0 ${
+                    isAnimating
+                      ? direction === "right"
+                        ? "animate-slide-in-right"
+                        : "animate-slide-in-left"
+                      : ""
+                  }`}
+                >
+                  <ImageWithFallback
+                    key={currentIndex}
+                    src={images[currentIndex]}
+                    alt={`${title} ${currentIndex + 1}`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 25vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    draggable={false}
+                  />
+                </div>
                 {hasCarousel && (
-                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10">
-                    {images.map((_, idx) => (
-                      <button
-                        key={idx}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setCurrentImageIndex(idx);
-                        }}
-                        className={`h-1.5 rounded-full transition-all ${
-                          idx === currentImageIndex
-                            ? "bg-white w-4"
-                            : "bg-white/60 hover:bg-white/80 w-1.5"
-                        }`}
-                        aria-label={t("imageUpload.goToImage", { index: idx + 1 })}
-                      />
-                    ))}
-                  </div>
+                  <>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        navigate("left");
+                      }}
+                      aria-label={t("carousel.prevImage")}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 z-10 hidden md:flex items-center justify-center rounded-full bg-white/80 hover:bg-white p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        navigate("right");
+                      }}
+                      aria-label={t("carousel.nextImage")}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 z-10 hidden md:flex items-center justify-center rounded-full bg-white/80 hover:bg-white p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10">
+                      {images.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            navigate(idx > currentIndex ? "right" : "left", idx);
+                          }}
+                          className={`h-1.5 rounded-full transition-all ${
+                            idx === currentIndex
+                              ? "bg-white w-4"
+                              : "bg-white/60 hover:bg-white/80 w-1.5"
+                          }`}
+                          aria-label={t("imageUpload.goToImage", { index: idx + 1 })}
+                        />
+                      ))}
+                    </div>
+                  </>
                 )}
               </>
             ) : (

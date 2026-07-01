@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { useImageUpload } from "@/hooks/useImageUpload";
+import { buildImageOrder } from "@/utils/reorderImages";
 import { cityToTradeLocation, type TradeLocation } from "@/type/location";
 import type { EmployeeType, SalaryType, JobInitialData } from "@/type/job/jobCreate";
 import type { PickedLocation } from "@/type/go";
@@ -181,8 +182,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
         uploadedUrls.push(urlData.publicUrl);
       }
 
-      const existingUrls = imageUpload.imagePreviews.filter(url => !url.startsWith("blob:"));
-      const finalImages = [...existingUrls, ...uploadedUrls];
+      const finalImages = buildImageOrder(imageUpload.imagePreviews, uploadedUrls);
 
       await supabase.from("posts").update({ title }).eq("id", initialData.post_id);
       const { error } = await supabase.from("jobs")

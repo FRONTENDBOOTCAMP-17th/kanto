@@ -10,7 +10,7 @@ export type MainCardItem = {
   likeCount: number;
   createdAt: string;
   popular: boolean;
-  imageSrc?: string;
+  images?: string[];
   initialIsLiked: boolean;
   currentUserId: number | null;
 };
@@ -19,7 +19,7 @@ export default function MainCard({ item }: { item: MainCardItem }) {
   return (
     <ContentCard
       href={item.href}
-      images={item.imageSrc ? [item.imageSrc] : []}
+      images={item.images ?? []}
       title={item.title}
       price={item.price}
       location={item.location}
