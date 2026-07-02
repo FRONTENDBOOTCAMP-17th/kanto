@@ -13,14 +13,16 @@ export const metadata: Metadata = {
 import MainSearchBar from "./_components/MainSearchBar";
 import Hero from "./_components/Hero";
 import Popular from "./_components/popular/Popular";
+import GoPreview from "./_components/GoPreview";
+import { getActiveMeetups } from "@/services/go/go";
 
 export default async function MainPage() {
   const t = await getTranslations("Main");
+  const meetups = await getActiveMeetups().catch(() => []);
   return (
     <div className="min-h-screen bg-gray-50">
       <Hero />
 
-      
       <section className="bg-gray-50 py-8">
         <div className="page-container">
           <p className="text-center text-gray-500 text-sm mb-4">
@@ -29,6 +31,7 @@ export default async function MainPage() {
           <MainSearchBar />
         </div>
       </section>
+      <GoPreview meetups={meetups} />
       <section className="page-container border-t border-gray-200 pb-12">
         <Popular />
       </section>

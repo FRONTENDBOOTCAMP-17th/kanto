@@ -396,6 +396,16 @@
         "description": "필리핀에서 다양한 모임을 가져보세요",
         "button": "Kanto GO! 바로가기"
       }
+    },
+    "goPreview": {
+      "title": "지금 열린 번개모임",
+      "emptyTitle": "아직 열린 번개모임이 없어요",
+      "emptyDescription": "가장 먼저 번개모임을 만들어보세요"
+    },
+    "goStats": {
+      "participants": "{count}명이 함께하고 있어요",
+      "inProgressShort": "{count}개 모임",
+      "participantsShort": "{count}명 참가중"
     }
   },
   "Time": {

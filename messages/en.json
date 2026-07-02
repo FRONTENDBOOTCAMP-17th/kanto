@@ -390,6 +390,16 @@
         "description": "Enjoy all kinds of meetups in the Philippines",
         "button": "Go to Kanto GO!"
       }
+    },
+    "goPreview": {
+      "title": "Open meetups right now",
+      "emptyTitle": "No meetups yet",
+      "emptyDescription": "Be the first to start one"
+    },
+    "goStats": {
+      "participants": "{count} people joining in",
+      "inProgressShort": "{count} meetups",
+      "participantsShort": "{count} joining"
     }
   },
   "Time": {
