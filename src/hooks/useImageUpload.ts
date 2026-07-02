@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { moderateImage } from "@/lib/moderateImage";
+import { swapImages } from "@/utils/reorderImages";
 
 export function useImageUpload(initialUrls: string[] = [], maxCount = 10) {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -69,6 +70,12 @@ export function useImageUpload(initialUrls: string[] = [], maxCount = 10) {
     setImagePreviews([]);
   };
 
+  const reorderImages = (from: number, to: number) => {
+    const { previews, files } = swapImages(imagePreviews, imageFiles, from, to);
+    setImagePreviews(previews);
+    setImageFiles(files);
+  };
+
   return {
     imageFiles,
     imagePreviews,
@@ -78,5 +85,6 @@ export function useImageUpload(initialUrls: string[] = [], maxCount = 10) {
     handleImageSelect,
     removeImage,
     resetImages,
+    reorderImages,
   };
 }

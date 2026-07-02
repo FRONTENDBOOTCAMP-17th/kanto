@@ -18,6 +18,36 @@
   from { transform: translateY(100%); }
   to   { transform: translateY(0); }
 }
+@keyframes slideOutLeft {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+@keyframes slideOutRight {
+  from { transform: translateX(0); }
+  to   { transform: translateX(100%); }
+}
+@keyframes slideOutDown {
+  from { transform: translateY(0); }
+  to   { transform: translateY(100%); }
+}
+/* 중앙 정렬 모달용 — Tailwind v4의 -translate-x/y-1/2는 별도의 translate 속성이므로
+   keyframe에 translate를 넣으면 이동이 이중 적용됨. scale/opacity만 애니메이션한다 */
+@keyframes modalPopIn {
+  from { opacity: 0; transform: scale(.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes modalPopOut {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(.95); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
 @keyframes pullDown {
   0%   { transform: translateY(0); }
   40%  { transform: translateY(6px); }
@@ -27,6 +57,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  --header-height: 48px;
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
   --accent: oklch(0.97 0 0);
@@ -183,6 +214,12 @@
    layout.tsx의 인라인 스크립트가 html[data-chat-boot]를 설정하고,
    위젯이 마운트되면 GlobalLayout이 이 속성을 제거한다.
    오버레이가 전체화면이 되는 모바일(md 미만)에서만 필요하다. */
+@media (min-width: 768px) {
+  .go-map-container {
+    height: calc(100dvh - var(--header-height, 109px));
+  }
+}
+
 @media (max-width: 767px) {
   html[data-chat-boot] body::before {
     content: "";

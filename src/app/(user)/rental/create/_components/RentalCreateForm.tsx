@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUploadField } from "@/components/common/ImageUploadField";
 import { moderateImage } from "@/lib/moderateImage";
+import { swapImages, buildImageOrder } from "@/utils/reorderImages";
 import Toast from "@/components/common/Toast";
 import {
   Select,
@@ -237,6 +238,12 @@ export default function RentalCreateForm({
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const reorderImages = (from: number, to: number) => {
+    const { previews, files } = swapImages(imagePreviews, imageFiles, from, to);
+    setImagePreviews(previews);
+    setImageFiles(files);
+  };
+
   const handleSubmit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
     if (!rentType || !roomType) return;
@@ -279,8 +286,7 @@ export default function RentalCreateForm({
         }
       }
 
-      const existingUrls = imagePreviews.filter((url) => !url.startsWith("blob:"));
-      const finalImages = [...existingUrls, ...uploadedUrls];
+      const finalImages = buildImageOrder(imagePreviews, uploadedUrls);
 
       await supabase.from("posts").update({ title }).eq("id", postId);
 
@@ -392,6 +398,7 @@ export default function RentalCreateForm({
               onSelect={handleImageSelect}
               onRemove={removeImage}
               onFilesDropped={handleFilesDropped}
+              onReorder={reorderImages}
             />
 
             <div className="space-y-2">

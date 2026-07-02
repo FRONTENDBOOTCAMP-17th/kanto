@@ -106,6 +106,13 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
   }, [isOpen]);
 
   useEffect(() => {
+    if (isOpen && window.innerWidth < 768) {
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = ""; };
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
@@ -190,9 +197,9 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
       {isOpen && (
         <div
           className="
-            absolute -bottom-14 right-full mr-3
+            fixed bottom-6 right-21 z-50
             w-80 h-120 flex flex-col bg-white rounded-2xl shadow-2xl shadow-black/40 border border-gray-100 overflow-hidden
-            max-md:fixed max-md:inset-0 max-md:mr-0 max-md:w-full max-md:h-full max-md:rounded-none max-md:shadow-none max-md:border-0 max-md:z-55
+            max-md:inset-0 max-md:w-full max-md:h-full max-md:rounded-none max-md:shadow-none max-md:border-0 max-md:z-55
           "
         >
           
