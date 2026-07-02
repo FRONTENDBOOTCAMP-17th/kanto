@@ -78,8 +78,8 @@ export default function PopularTabs({ usedGoodsItems, jobItems, rentalItems }: P
           aria-labelledby={`tab-${activeTab}`}
           className="grid grid-cols-4 gap-4"
         >
-          {activeItems.map((item) => (
-            <MainCard key={item.id} item={item} />
+          {activeItems.map((item, index) => (
+            <MainCard key={item.id} item={item} priority={index === 0} />
           ))}
         </div>
       </div>

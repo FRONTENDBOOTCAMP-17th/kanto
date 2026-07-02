@@ -21,8 +21,8 @@ export default function PopularList({ title, items, link }: PopularListProps) {
         </Link>
       </div>
       <div className="mt-3 flex flex-col gap-2 md:grid md:grid-cols-4 md:gap-4">
-        {items.map((item) => (
-          <MainCard key={item.id} item={item} />
+        {items.map((item, index) => (
+          <MainCard key={item.id} item={item} priority={index === 0} />
         ))}
       </div>
     </section>
