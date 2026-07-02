@@ -23,7 +23,7 @@ export default async function Popular() {
       likeCount: p.like_count,
       createdAt: p.created_at,
       popular: p.is_popular ?? false,
-      imageSrc: (p.used_goods[0].images as string[] | null)?.[0],
+      images: (p.used_goods[0].images as string[] | null) ?? [],
       initialIsLiked: likedIds.includes(p.id),
       currentUserId,
     }));
@@ -40,7 +40,7 @@ export default async function Popular() {
       likeCount: p.like_count,
       createdAt: p.created_at,
       popular: p.is_popular ?? false,
-      imageSrc: (p.rentals[0].images as string[] | null)?.[0],
+      images: (p.rentals[0].images as string[] | null) ?? [],
       initialIsLiked: likedIds.includes(p.id),
       currentUserId,
     }));
@@ -57,7 +57,7 @@ export default async function Popular() {
       likeCount: p.like_count,
       createdAt: p.created_at,
       popular: p.like_count >= 20,
-      imageSrc: (p.jobs[0].images as string[] | null)?.[0],
+      images: (p.jobs[0].images as string[] | null) ?? [],
       initialIsLiked: likedIds.includes(p.id),
       currentUserId,
     }));

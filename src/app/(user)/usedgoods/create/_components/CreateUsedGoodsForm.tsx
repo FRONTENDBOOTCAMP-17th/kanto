@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUploadField } from "@/components/common/ImageUploadField";
 import { moderateImage } from "@/lib/moderateImage";
+import { swapImages, buildImageOrder } from "@/utils/reorderImages";
 import Toast from "@/components/common/Toast";
 import {
   Select,
@@ -196,8 +197,7 @@ export function CreateUsedGoodsForm({
         }
       }
 
-      const existingUrls = imagePreviews.filter((url) => !url.startsWith("blob:"));
-      const finalImages = [...existingUrls, ...uploadedUrls];
+      const finalImages = buildImageOrder(imagePreviews, uploadedUrls);
 
       await supabase.from("posts").update({ title }).eq("id", postId);
 
@@ -362,6 +362,12 @@ export function CreateUsedGoodsForm({
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const reorderImages = (from: number, to: number) => {
+    const { previews, files } = swapImages(imagePreviews, imageFiles, from, to);
+    setImagePreviews(previews);
+    setImageFiles(files);
+  };
+
   return (
     <main className="flex-1 bg-gray-50 py-8 px-4 pb-32">
       <div className="max-w-7xl mx-auto">
@@ -383,6 +389,7 @@ export function CreateUsedGoodsForm({
               onSelect={handleImageSelect}
               onRemove={removeImage}
               onFilesDropped={handleFilesDropped}
+              onReorder={reorderImages}
             />
             {imagePreviews.length === 0 && (
               <p className="text-sm text-red-500">{t("form.errorNoImage")}</p>

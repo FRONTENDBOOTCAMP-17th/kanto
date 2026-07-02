@@ -207,6 +207,7 @@ export function CreateJobFormPageTwo({
           onUploadClick={imageUpload.handleImageUpload}
           onSelect={handleImageSelectWithToast}
           onRemove={imageUpload.removeImage}
+          onReorder={imageUpload.reorderImages}
         />
       </div>
 
