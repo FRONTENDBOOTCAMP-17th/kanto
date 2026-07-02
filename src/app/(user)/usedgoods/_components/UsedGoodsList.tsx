@@ -24,7 +24,7 @@ export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId, cu
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-      {initialPosts.map((post) => {
+      {initialPosts.map((post, index) => {
         const goods = post.used_goods?.[0];
         const images = Array.isArray(goods?.images)
           ? goods.images.filter((img): img is string => typeof img === "string")
@@ -60,6 +60,7 @@ export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId, cu
             subtitle={post.users?.name || undefined}
             badge={badge}
             soldOverlay={post.is_sold}
+            priority={index < 4}
           />
         );
       })}
