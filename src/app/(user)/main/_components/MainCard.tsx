@@ -28,7 +28,7 @@ export default function MainCard({ item }: { item: MainCardItem }) {
       postId={item.id}
       initialIsLiked={item.initialIsLiked}
       currentUserId={item.currentUserId}
-      badge={item.popular ? <PopularBadge /> : undefined}
+      badge={item.popular ? <PopularBadge compact /> : undefined}
       listOnMobile
     />
   );

@@ -67,11 +67,11 @@ type AdminMeetupRow = Omit<MeetupRow, "meetup_participants"> & {
   }> | null;
 };
 
-export async function getActiveMeetups(): Promise<Meetup[]> {
+export async function getActiveMeetups(range?: { offset: number; limit: number }): Promise<Meetup[]> {
   const supabase = await createClient();
   const now = new Date().toISOString();
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("meetups")
     .select(
       `
@@ -83,6 +83,12 @@ export async function getActiveMeetups(): Promise<Meetup[]> {
     .gt("end_at", now)
     .eq("posts.status", "active")
     .order("start_at", { ascending: true });
+
+  if (range) {
+    query = query.range(range.offset, range.offset + range.limit - 1);
+  }
+
+  const { data, error } = await query;
 
   if (error) throw error;
 

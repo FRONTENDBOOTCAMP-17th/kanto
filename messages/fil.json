@@ -396,6 +396,16 @@
         "description": "Mag-enjoy ng iba't ibang meetup sa Pilipinas",
         "button": "Pumunta sa Kanto GO!"
       }
+    },
+    "goPreview": {
+      "title": "Mga bukas na meetup ngayon",
+      "emptyTitle": "Wala pang bukas na meetup",
+      "emptyDescription": "Ikaw na ang unang gumawa ng meetup"
+    },
+    "goStats": {
+      "participants": "{count} katao ang sumasali",
+      "inProgressShort": "{count} meetup",
+      "participantsShort": "{count} sumasali"
     }
   },
   "Time": {
