@@ -1,6 +1,7 @@
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type { JobDetail } from "@/type/job/jobsDetail";
-import CompanyLocationMap from "./CompanyLocationMap";
+import CompanyLocationMap from "./CompanyLocationMapLazy";
 
 const LOGO_COLORS = [
   "bg-teal-500", "bg-blue-500", "bg-violet-500",
@@ -10,9 +11,11 @@ const LOGO_COLORS = [
 function CompanyLogo({ name, logoUrl }: { name: string; logoUrl?: string | null }) {
   if (logoUrl) {
     return (
-      <img
+      <Image
         src={logoUrl}
         alt={name}
+        width={56}
+        height={56}
         className="w-14 h-14 rounded-xl object-contain border border-gray-100 bg-white shrink-0"
       />
     );
