@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useCallback } from "react";
 import { AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
 import { useTranslations } from "next-intl";
 import { TOPIC_META } from "@/constants/meetupTopics";
@@ -10,21 +11,26 @@ const MAP_ID = "kanto-go-map";
 interface MeetupPinProps {
   meetup: Meetup;
   isSelected: boolean;
-  onClick: () => void;
+  onClick: (meetup: Meetup) => void;
 }
 
-export function MeetupPin({ meetup, isSelected, onClick }: MeetupPinProps) {
+export const MeetupPin = memo(function MeetupPin({
+  meetup,
+  isSelected,
+  onClick,
+}: MeetupPinProps) {
   const t = useTranslations("Go.pin");
   const meta = TOPIC_META[meetup.topic] ?? TOPIC_META.other;
-  const totalCount = meetup.participant_count + 1; 
+  const totalCount = meetup.participant_count + 1;
   const isFull = totalCount >= meetup.max_participants;
   const isAlmostFull =
     !isFull && totalCount / meetup.max_participants >= 0.88;
+  const handleClick = useCallback(() => onClick(meetup), [onClick, meetup]);
 
   return (
     <AdvancedMarker
       position={{ lat: meetup.location_lat, lng: meetup.location_lng }}
-      onClick={onClick}
+      onClick={handleClick}
       zIndex={isSelected ? 10 : 1}
       title={meetup.title}
     >
@@ -59,9 +65,9 @@ export function MeetupPin({ meetup, isSelected, onClick }: MeetupPinProps) {
       </div>
     </AdvancedMarker>
   );
-}
+});
 
-export function ClusterPin({ meetups }: { meetups: Meetup[] }) {
+export const ClusterPin = memo(function ClusterPin({ meetups }: { meetups: Meetup[] }) {
   const t = useTranslations("Go.map");
   const map = useMap(MAP_ID);
 
@@ -86,4 +92,4 @@ export function ClusterPin({ meetups }: { meetups: Meetup[] }) {
       </div>
     </AdvancedMarker>
   );
-}
+});

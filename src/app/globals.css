@@ -30,6 +30,24 @@
   from { transform: translateY(0); }
   to   { transform: translateY(100%); }
 }
+/* 중앙 정렬 모달용 — Tailwind v4의 -translate-x/y-1/2는 별도의 translate 속성이므로
+   keyframe에 translate를 넣으면 이동이 이중 적용됨. scale/opacity만 애니메이션한다 */
+@keyframes modalPopIn {
+  from { opacity: 0; transform: scale(.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes modalPopOut {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(.95); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
 @keyframes pullDown {
   0%   { transform: translateY(0); }
   40%  { transform: translateY(6px); }
