@@ -50,6 +50,7 @@ export function ContentCard({
   const t = useTranslations("Common");
   const locale = useLocale() as Locale;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [visitedIndices, setVisitedIndices] = useState<Set<number>>(() => new Set([0]));
   const [count, setCount] = useState(likeCount);
   const hasImages = images.length > 0;
   const hasCarousel = images.length > 1;
@@ -81,13 +82,15 @@ export function ContentCard({
                       idx === currentImageIndex ? "opacity-100" : "opacity-0"
                     }`}
                   >
-                    <ImageWithFallback
-                      src={src}
-                      alt={`${title} ${idx + 1}`}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 25vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+                    {visitedIndices.has(idx) && (
+                      <ImageWithFallback
+                        src={src}
+                        alt={`${title} ${idx + 1}`}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    )}
                   </div>
                 ))}
                 {hasCarousel && (
@@ -99,6 +102,9 @@ export function ContentCard({
                           e.preventDefault();
                           e.stopPropagation();
                           setCurrentImageIndex(idx);
+                          setVisitedIndices((prev) =>
+                            prev.has(idx) ? prev : new Set(prev).add(idx)
+                          );
                         }}
                         className={`h-1.5 rounded-full transition-all ${
                           idx === currentImageIndex
