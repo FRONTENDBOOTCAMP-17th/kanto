@@ -27,7 +27,7 @@ export default async function GoStats({ meetups }: { meetups: Meetup[] }) {
   return (
     <Link
       href="/go"
-      className="group flex items-center gap-4 rounded-2xl bg-white border border-gray-200 px-5 py-5 mb-3 min-h-24 hover:shadow-md transition-shadow"
+      className="cursor-pointer group flex items-center gap-4 rounded-2xl bg-white border border-gray-200 px-5 py-5 mb-3 min-h-24 hover:shadow-md transition-shadow"
     >
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-500 text-white">
         <Zap className="w-5 h-5" />

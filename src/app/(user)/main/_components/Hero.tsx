@@ -60,7 +60,7 @@ export default function Hero() {
                     </p>
                     <Link
                       href={slide.link}
-                      className="inline-flex items-center gap-2 px-6 py-2.5 bg-white text-gray-900 font-semibold rounded-full hover:bg-gray-50 transition-all shadow-md hover:shadow-lg hover:scale-[1.02] w-fit text-sm"
+                      className="cursor-pointer inline-flex items-center gap-2 px-6 py-2.5 bg-white text-gray-900 font-semibold rounded-full hover:bg-gray-50 transition-all shadow-md hover:shadow-lg hover:scale-[1.02] w-fit text-sm"
                     >
                       {t(`hero.${slide.key}.button`)}
                       <ChevronRight className="w-4 h-4" />
@@ -95,7 +95,7 @@ export default function Hero() {
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
+                className={`cursor-pointer h-1.5 rounded-full transition-all duration-300 ${
                   index === currentSlide ? "bg-white w-6" : "bg-white/50 hover:bg-white/75 w-1.5"
                 }`}
                 aria-label={t("slideIndicator", { index: index + 1 })}

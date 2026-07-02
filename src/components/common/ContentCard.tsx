@@ -123,7 +123,7 @@ export function ContentCard({
                         navigate("left");
                       }}
                       aria-label={t("carousel.prevImage")}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 z-10 hidden md:flex items-center justify-center rounded-full bg-white/80 hover:bg-white p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="cursor-pointer absolute left-2 top-1/2 -translate-y-1/2 z-10 hidden md:flex items-center justify-center rounded-full bg-white/80 hover:bg-white p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </button>
@@ -135,7 +135,7 @@ export function ContentCard({
                         navigate("right");
                       }}
                       aria-label={t("carousel.nextImage")}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 z-10 hidden md:flex items-center justify-center rounded-full bg-white/80 hover:bg-white p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="cursor-pointer absolute right-2 top-1/2 -translate-y-1/2 z-10 hidden md:flex items-center justify-center rounded-full bg-white/80 hover:bg-white p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <ChevronRight className="w-4 h-4" />
                     </button>
@@ -148,7 +148,7 @@ export function ContentCard({
                             e.stopPropagation();
                             navigate(idx > currentIndex ? "right" : "left", idx);
                           }}
-                          className={`h-1.5 rounded-full transition-all ${
+                          className={`cursor-pointer h-1.5 rounded-full transition-all ${
                             idx === currentIndex
                               ? "bg-white w-4"
                               : "bg-white/60 hover:bg-white/80 w-1.5"

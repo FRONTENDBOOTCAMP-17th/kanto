@@ -20,7 +20,7 @@ export default async function GoPreview({ meetups }: { meetups: Meetup[] }) {
       {preview.length === 0 ? (
         <Link
           href="/go"
-          className="flex items-center justify-between gap-3 rounded-2xl bg-teal-50 px-5 py-4 hover:bg-teal-100 transition-colors"
+          className="cursor-pointer flex items-center justify-between gap-3 rounded-2xl bg-teal-50 px-5 py-4 hover:bg-teal-100 transition-colors"
         >
           <div className="flex items-center gap-3">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-500 text-white">

@@ -68,7 +68,7 @@ export default function MeetupCarousel({ meetups }: { meetups: Meetup[] }) {
             <Link
               key={meetup.post_id}
               href="/go"
-              className="shrink-0 w-64 rounded-2xl bg-white border border-gray-200 p-4 hover:shadow-md transition-shadow"
+              className="cursor-pointer shrink-0 w-64 rounded-2xl bg-white border border-gray-200 p-4 hover:shadow-md transition-shadow"
             >
               <TopicBadge
                 topic={meetup.topic}
@@ -97,7 +97,7 @@ export default function MeetupCarousel({ meetups }: { meetups: Meetup[] }) {
           <button
             type="button"
             onClick={prev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 w-7 h-7 bg-white hover:bg-gray-50 border border-gray-200 shadow rounded-full flex items-center justify-center text-gray-700 transition-colors"
+            className="cursor-pointer absolute left-0 top-1/2 -translate-y-1/2 w-7 h-7 bg-white hover:bg-gray-50 border border-gray-200 shadow rounded-full flex items-center justify-center text-gray-700 transition-colors"
             aria-label={t("prevSlide")}
           >
             <ChevronLeft className="w-4 h-4" />
@@ -105,7 +105,7 @@ export default function MeetupCarousel({ meetups }: { meetups: Meetup[] }) {
           <button
             type="button"
             onClick={next}
-            className="absolute right-0 top-1/2 -translate-y-1/2 w-7 h-7 bg-white hover:bg-gray-50 border border-gray-200 shadow rounded-full flex items-center justify-center text-gray-700 transition-colors"
+            className="cursor-pointer absolute right-0 top-1/2 -translate-y-1/2 w-7 h-7 bg-white hover:bg-gray-50 border border-gray-200 shadow rounded-full flex items-center justify-center text-gray-700 transition-colors"
             aria-label={t("nextSlide")}
           >
             <ChevronRight className="w-4 h-4" />
