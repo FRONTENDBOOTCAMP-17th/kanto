@@ -22,11 +22,12 @@ export function RentalList({ initialPosts, initialLikedIds, currentUserId, curre
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-      {initialPosts.map((post) => {
+      {initialPosts.map((post, index) => {
         const rental = post.rentals?.[0];
         return (
           <RentalCard
             key={post.id}
+            priority={index < 4}
             id={post.id}
             fromPage={currentPage > 1 ? currentPage : undefined}
             title={post.title}

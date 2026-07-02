@@ -37,7 +37,7 @@ export default function PopularTabs({ usedGoodsItems, jobItems, rentalItems }: P
   return (
     <>
       <div className="md:hidden">
-        <PopularList title={t("category.usedgoods")} items={usedGoodsItems} link="/usedgoods" />
+        <PopularList title={t("category.usedgoods")} items={usedGoodsItems} link="/usedgoods" priority />
         <PopularList title={t("category.jobs")} items={jobItems} link="/job" />
         <PopularList title={t("category.rental")} items={rentalItems} link="/rental" />
       </div>
@@ -78,8 +78,8 @@ export default function PopularTabs({ usedGoodsItems, jobItems, rentalItems }: P
           aria-labelledby={`tab-${activeTab}`}
           className="grid grid-cols-4 gap-4"
         >
-          {activeItems.map((item) => (
-            <MainCard key={item.id} item={item} />
+          {activeItems.map((item, index) => (
+            <MainCard key={item.id} item={item} priority={index < 4} />
           ))}
         </div>
       </div>

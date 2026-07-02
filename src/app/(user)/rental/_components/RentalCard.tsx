@@ -27,6 +27,7 @@ interface RentalCardProps {
   fromPage?: number;
   isPopular?: boolean;
   isSold?: boolean;
+  priority?: boolean;
 }
 
 export function RentalCard({
@@ -46,6 +47,7 @@ export function RentalCard({
   fromPage,
   isPopular,
   isSold,
+  priority,
 }: RentalCardProps) {
   const displayLocation =
     barangay || city
@@ -88,6 +90,7 @@ export function RentalCard({
       badge={isPopular ? <PopularBadge /> : undefined}
       soldOverlay={isSold}
       soldLabelKey="dealClosed"
+      priority={priority}
     />
   );
 }

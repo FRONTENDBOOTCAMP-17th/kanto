@@ -27,6 +27,7 @@ export interface ContentCardProps {
   subtitle?: string;
   tags?: React.ReactNode;
   listOnMobile?: boolean;
+  priority?: boolean;
 }
 
 export function ContentCard({
@@ -46,6 +47,7 @@ export function ContentCard({
   subtitle,
   tags,
   listOnMobile = false,
+  priority = false,
 }: ContentCardProps) {
   const t = useTranslations("Common");
   const locale = useLocale() as Locale;
@@ -88,6 +90,7 @@ export function ContentCard({
                         alt={`${title} ${idx + 1}`}
                         fill
                         sizes="(max-width: 768px) 50vw, 25vw"
+                        priority={priority && idx === 0}
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     )}
