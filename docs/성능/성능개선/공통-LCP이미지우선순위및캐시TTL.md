@@ -40,18 +40,6 @@
 | LCP (main)       |  📱 모바일  |   4.7s 🔴  |  (배포 후 재측정) | — |
 | Improve image delivery (usedgoods) | 모바일/데스크탑 | 2,567 KiB | (배포 후 재측정) | — |
 
-### 3-2. 로컬 검증 지표 (실측, 이번 작업에서 직접 확인)
-
-PSI는 배포 URL만 인정하므로 위 표는 못 채우지만, **원인이 실제로 고쳐졌는지**는 로컬 프로덕션 빌드(`next build && next start`)로 직접 확인함. 팀 공용 dev 서버(3000번 포트)를 건드리지 않기 위해 `git worktree`로 별도 작업 트리를 만들어 빌드/구동함.
-
-| 항목 | 개선 전 | 개선 후 |
-| --- | --- | --- |
-| `/usedgoods` 첫 4개 카드 이미지 `loading` 속성 | `lazy` (전체 동일) | `auto` (첫 4개만, 5번째부터는 여전히 `lazy`) |
-| 첫 카드 이미지의 네트워크 요청 순서 | 전체 리소스 중 약 43~50번째 (헤더 로고보다 늦음) | 약 7~10번째 (헤더 로고보다 먼저) |
-| `/_next/image` 응답 `Cache-Control` | `public, max-age=14400, must-revalidate` (4시간) | `public, max-age=2592000, must-revalidate` (30일, 약 180배) |
-
-> `loading`/`Cache-Control` 값은 `curl`과 Playwright(`browser_evaluate`, `browser_network_request`)로 직접 응답 헤더/DOM 속성을 확인한 값이며, 브라우저 캐시로 오염되지 않도록 매번 새 서버 인스턴스에 대해 재확인함.
-
 ## 4. 개선 작업 내용
 
 **변경 파일**
