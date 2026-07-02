@@ -35,8 +35,8 @@ export default function MainCard({
       initialIsLiked={item.initialIsLiked}
       currentUserId={item.currentUserId}
       badge={item.popular ? <PopularBadge /> : undefined}
-      priority={priority}
       listOnMobile
+      priority={priority}
     />
   );
 }

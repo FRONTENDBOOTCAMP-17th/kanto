@@ -60,7 +60,7 @@ export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId, cu
             subtitle={post.users?.name || undefined}
             badge={badge}
             soldOverlay={post.is_sold}
-            priority={index === 0}
+            priority={index < 4}
           />
         );
       })}

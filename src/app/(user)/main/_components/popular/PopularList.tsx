@@ -7,9 +7,10 @@ interface PopularListProps {
   title: string;
   items: MainCardItem[];
   link: string;
+  priority?: boolean;
 }
 
-export default function PopularList({ title, items, link }: PopularListProps) {
+export default function PopularList({ title, items, link, priority = false }: PopularListProps) {
   const t = useTranslations("Common");
   return (
     <section className="mb-10">
@@ -22,7 +23,7 @@ export default function PopularList({ title, items, link }: PopularListProps) {
       </div>
       <div className="mt-3 flex flex-col gap-2 md:grid md:grid-cols-4 md:gap-4">
         {items.map((item, index) => (
-          <MainCard key={item.id} item={item} priority={index === 0} />
+          <MainCard key={item.id} item={item} priority={priority && index === 0} />
         ))}
       </div>
     </section>
