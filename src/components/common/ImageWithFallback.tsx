@@ -17,7 +17,6 @@ export function ImageWithFallback({
       {...rest}
       src={imgSrc}
       alt={alt}
-      loading="eager"
       onError={(e) => {
         setImgSrc("/fallback-image.svg");
         onError?.(e);
