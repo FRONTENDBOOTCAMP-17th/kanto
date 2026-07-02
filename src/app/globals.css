@@ -30,6 +30,23 @@
   from { transform: translateY(0); }
   to   { transform: translateY(100%); }
 }
+/* 중앙 정렬(-translate-1/2) 모달용 — translate를 포함해야 애니메이션 중 위치가 유지됨 */
+@keyframes modalPopIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(.95); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes modalPopOut {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  to   { opacity: 0; transform: translate(-50%, -50%) scale(.95); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
 @keyframes pullDown {
   0%   { transform: translateY(0); }
   40%  { transform: translateY(6px); }

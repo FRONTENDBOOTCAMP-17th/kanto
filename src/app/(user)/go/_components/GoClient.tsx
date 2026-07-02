@@ -96,6 +96,8 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
   const [topicFilter, setTopicFilter] = useState<MeetupTopicKey | "all">("all");
   const [selectedMeetupId, setSelectedMeetupId] = useState<number | null>(null);
   const [showCreate, setShowCreate] = useState(false);
+  // 생성 모달 닫힘 애니메이션 중에도 모달을 유지하기 위한 상태
+  const [createClosing, setCreateClosing] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   // "all" = 모임 진행중, "mine" = 내 모임, null = 닫힘
   const [listMode, setListMode] = useState<"all" | "mine" | null>(null);
@@ -157,24 +159,25 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
   }, []);
 
   // listMode가 바뀔 때: 전환이면 즉시 교체, 닫힘이면 애니메이션 후 언마운트
+  if (listMode !== null && listMode !== renderListMode) {
+    // 열기 or 전환 — 애니메이션 없이 즉시 내용 교체
+    setRenderListMode(listMode);
+    setListClosing(false);
+    setShiftButtons(true);
+  } else if (listMode === null && renderListMode !== null && !listClosing) {
+    // 닫기 시작 — 닫힘 애니메이션 트리거
+    setListClosing(true);
+    setShiftButtons(false);
+  }
+
   useEffect(() => {
-    let id: ReturnType<typeof setTimeout>;
-    if (listMode !== null) {
-      // 열기 or 전환 — 애니메이션 없이 즉시 내용 교체
-      setRenderListMode(listMode);
+    if (!listClosing) return;
+    const id = setTimeout(() => {
+      setRenderListMode(null);
       setListClosing(false);
-      setShiftButtons(true);
-    } else if (renderListMode !== null) {
-      // 닫기 — 닫힘 애니메이션 후 언마운트
-      setListClosing(true);
-      setShiftButtons(false);
-      id = setTimeout(() => {
-        setRenderListMode(null);
-        setListClosing(false);
-      }, 280);
-    }
+    }, 280);
     return () => clearTimeout(id);
-  }, [listMode]);
+  }, [listClosing]);
 
   useEffect(() => {
     setDetailOpen(selectedMeetupId !== null);
@@ -308,8 +311,18 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
     setJoinedMeetupIds(ids);
   };
 
+  // 닫힘 애니메이션이 끝난 뒤 언마운트
+  const closeCreate = () => {
+    if (createClosing) return;
+    setCreateClosing(true);
+    setTimeout(() => {
+      setShowCreate(false);
+      setCreateClosing(false);
+    }, 300);
+  };
+
   const handleCreated = () => {
-    setShowCreate(false);
+    closeCreate();
   };
 
   return (
@@ -464,8 +477,9 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
 
         {showCreate && (
           <MeetupCreateModal
-            onClose={() => setShowCreate(false)}
+            onClose={closeCreate}
             onCreated={handleCreated}
+            isClosing={createClosing}
           />
         )}
 
