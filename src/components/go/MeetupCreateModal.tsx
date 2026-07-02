@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { X, Zap, Loader2 } from "lucide-react";
-import { APIProvider } from "@vis.gl/react-google-maps";
 import { TOPIC_OPTIONS } from "@/constants/meetupTopics";
 import { PlaceAutocomplete } from "@/components/go/PlaceAutocomplete";
 import { ResponsiveSelect } from "@/components/ui/responsive-select";
@@ -261,14 +260,10 @@ export function MeetupCreateModal({
                     {t("create.locationHint")}
                   </span>
                 </label>
-                <APIProvider
-                  apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
-                >
-                  <PlaceAutocomplete
-                    selected={location}
-                    onSelect={setLocation}
-                  />
-                </APIProvider>
+                <PlaceAutocomplete
+                  selected={location}
+                  onSelect={setLocation}
+                />
               </div>
 
               

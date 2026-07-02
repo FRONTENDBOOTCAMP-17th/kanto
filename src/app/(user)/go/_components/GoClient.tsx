@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
   APIProvider,
@@ -255,12 +255,12 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
     meetups.find((m) => m.post_id === selectedMeetupId) ?? null;
   const mobileSheetOpen = renderListMode !== null || selectedMeetupId !== null;
 
-  const handlePinClick = (meetup: Meetup) => {
+  const handlePinClick = useCallback((meetup: Meetup) => {
     setDetailFromList(false);
     setSelectedMeetupId((prev) =>
       prev === meetup.post_id ? null : meetup.post_id,
     );
-  };
+  }, []);
 
   const handleSelectFromList = (meetup: Meetup) => {
     setDetailFromList(true);
@@ -353,7 +353,7 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
                   key={m.post_id}
                   meetup={m}
                   isSelected={selectedMeetup?.post_id === m.post_id}
-                  onClick={() => handlePinClick(m)}
+                  onClick={handlePinClick}
                 />
               );
             }
@@ -376,7 +376,7 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
                       location_lng: cLng + (R * Math.cos(angle)) / cosLat,
                     }}
                     isSelected={selectedMeetup?.post_id === m.post_id}
-                    onClick={() => handlePinClick(m)}
+                    onClick={handlePinClick}
                   />
                 );
               });
