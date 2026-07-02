@@ -8,6 +8,18 @@
 - **우선순위**: P0 (두 검사 문서 모두 이미지 관련 항목을 P0로 지정)
 - **상태**: 진행 (코드 반영 완료 · 배포 후 PSI 재측정 필요)
 
+## 0. 배경 — `priority`가 뭔가
+
+`priority`는 next/image의 `<Image>`가 제공하는 prop. next/image는 기본적으로 화면에 없는 이미지가 초기 로딩을 방해하지 않도록 `loading="lazy"`를 적용함(뷰포트 근처에 오면 그때 로딩 시작). `priority={true}`를 주면:
+
+1. `loading="lazy"`가 빠지고 즉시 로딩됨
+2. `fetchPriority="high"`가 붙어 브라우저가 다른 리소스보다 먼저 받아오려고 함
+3. `<head>`에 `<link rel="preload" as="image">`가 자동으로 추가돼 HTML 파싱 초기부터 다운로드가 시작됨
+
+즉 "이 이미지가 이 페이지에서 제일 먼저·크게 보여야 하는 이미지"라고 브라우저에 알려주는 신호. Next.js 공식 문서도 **LCP(Largest Contentful Paint) 요소가 되는 이미지에는 반드시 `priority`를 달라**고 권장함 — 안 주면 lazy 로딩 때문에 그 이미지가 늦게 뜨고, 그게 그대로 LCP 시간을 늘림.
+
+다만 모든 이미지에 다 주면 의미가 없어짐(다 "먼저"면 우선순위가 아님) — 그래서 이번 작업에서도 실제로 처음 화면에 보이는 개수만큼만 `priority`를 켜고 나머지는 lazy를 유지함 (§4 참고).
+
 ## 1. 문제 정의
 
 검사 문서에서 공통으로 지적된 것: LCP가 느리고(usedgoods 모바일 4.4s / 데스크탑 6.1s, main 모바일 4.7s), "Improve image delivery" 항목에서 큰 절감 여지(usedgoods 2,567 KiB, main 233~782 KiB)가 있다는 것이었음. 코드를 추적한 결과 원인 두 가지를 특정함.
