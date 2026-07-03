@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUploadField } from "@/components/common/ImageUploadField";
 import { moderateImage } from "@/lib/moderateImage";
+import { optimizeImage } from "@/utils/optimizeImage";
+import { swapImages, buildImageOrder } from "@/utils/reorderImages";
 import Toast from "@/components/common/Toast";
 import {
   Select,
@@ -168,7 +170,7 @@ export default function RentalCreateForm({
       for (const file of candidates) {
         const outcome = await moderateImage(file);
         if (outcome.allowed) {
-          allowedFiles.push(file);
+          allowedFiles.push(await optimizeImage(file));
         } else {
           blockedReason = outcome.reason;
         }
@@ -204,7 +206,7 @@ export default function RentalCreateForm({
       for (const file of candidates) {
         const outcome = await moderateImage(file);
         if (outcome.allowed) {
-          allowedFiles.push(file);
+          allowedFiles.push(await optimizeImage(file));
         } else {
           blockedReason = outcome.reason;
         }
@@ -235,6 +237,12 @@ export default function RentalCreateForm({
     }
     setImageFiles((prev) => prev.filter((_, i) => i !== index));
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const reorderImages = (from: number, to: number) => {
+    const { previews, files } = swapImages(imagePreviews, imageFiles, from, to);
+    setImagePreviews(previews);
+    setImageFiles(files);
   };
 
   const handleSubmit = async (e: { preventDefault(): void }) => {
@@ -269,7 +277,7 @@ export default function RentalCreateForm({
         const filePath = `${userId}/${postId}/${safeFileName}`;
         const { error: uploadError } = await supabase.storage
           .from("images")
-          .upload(filePath, file, { upsert: true });
+          .upload(filePath, file, { upsert: true, cacheControl: "31536000" });
 
         if (!uploadError) {
           const { data: urlData } = supabase.storage
@@ -279,8 +287,7 @@ export default function RentalCreateForm({
         }
       }
 
-      const existingUrls = imagePreviews.filter((url) => !url.startsWith("blob:"));
-      const finalImages = [...existingUrls, ...uploadedUrls];
+      const finalImages = buildImageOrder(imagePreviews, uploadedUrls);
 
       await supabase.from("posts").update({ title }).eq("id", postId);
 
@@ -326,7 +333,7 @@ export default function RentalCreateForm({
         const filePath = `${userId}/${post.id}/${Date.now()}.${ext}`;
         const { error: uploadError } = await supabase.storage
           .from("images")
-          .upload(filePath, file);
+          .upload(filePath, file, { cacheControl: "31536000" });
 
         if (uploadError) {
           await supabase.from("posts").delete().eq("id", post.id);
@@ -392,6 +399,7 @@ export default function RentalCreateForm({
               onSelect={handleImageSelect}
               onRemove={removeImage}
               onFilesDropped={handleFilesDropped}
+              onReorder={reorderImages}
             />
 
             <div className="space-y-2">

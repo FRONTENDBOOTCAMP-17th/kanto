@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { X, Search, MapPin, Users, Clock } from "lucide-react";
+import { X, Search, MapPin, Users, Clock, Plus } from "lucide-react";
 import { TOPIC_META } from "@/constants/meetupTopics";
 import { TopicBadge } from "@/components/go/TopicBadge";
 import { formatManilaTimeRange } from "@/utils/goTime";
@@ -13,10 +13,12 @@ interface MeetupListPanelProps {
   selectedId: number | null;
   onSelect: (meetup: Meetup) => void;
   onClose: () => void;
+  onCreateClick?: () => void;
   enterAnim?: "up" | "left";
   mode?: "all" | "mine";
   hostedMeetups?: Meetup[];
   joinedMeetups?: Meetup[];
+  isClosing?: boolean;
 }
 
 export function MeetupListPanel({
@@ -24,14 +26,73 @@ export function MeetupListPanel({
   selectedId,
   onSelect,
   onClose,
+  onCreateClick,
   enterAnim = "up",
   mode = "all",
   hostedMeetups = [],
   joinedMeetups = [],
+  isClosing = false,
 }: MeetupListPanelProps) {
   const t = useTranslations("Go");
   const [query, setQuery] = useState("");
   const [mineTab, setMineTab] = useState<"hosted" | "joined">("hosted");
+  const [dragOffset, setDragOffset] = useState(0);
+  const [snapClosing, setSnapClosing] = useState(false);
+  const touchStartY = useRef<number | null>(null);
+  const dragOffsetRef = useRef(0);
+
+  useEffect(() => {
+    setQuery("");
+    setMineTab("hosted");
+  }, [mode]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+    setSnapClosing(false);
+  };
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartY.current === null) return;
+    const delta = e.touches[0].clientY - touchStartY.current;
+    if (delta > 0) setDragOffset(delta);
+  };
+  const handleTouchEnd = () => {
+    touchStartY.current = null;
+    if (dragOffset > 80) {
+      setSnapClosing(true);
+      setDragOffset(window.innerHeight);
+      onClose();
+    } else {
+      setDragOffset(0);
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    const startY = e.clientY;
+    setSnapClosing(false);
+    dragOffsetRef.current = 0;
+
+    const onMouseMove = (ev: MouseEvent) => {
+      const delta = ev.clientY - startY;
+      if (delta > 0) {
+        dragOffsetRef.current = delta;
+        setDragOffset(delta);
+      }
+    };
+    const onMouseUp = () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+      if (dragOffsetRef.current > 80) {
+        setSnapClosing(true);
+        setDragOffset(window.innerHeight);
+        onClose();
+      } else {
+        setDragOffset(0);
+      }
+      dragOffsetRef.current = 0;
+    };
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+  };
 
   const activeMeetups = mode === "mine"
     ? (mineTab === "hosted" ? hostedMeetups : joinedMeetups)
@@ -43,43 +104,67 @@ export function MeetupListPanel({
 
   return (
     <div
-      className={`fixed bottom-0 left-0 top-15 md:top-27.25 flex w-75 max-w-full flex-col bg-white shadow-[8px_0_36px_rgba(0,0,0,0.12)] md:animate-[slideInLeft_.28s_cubic-bezier(.4,0,.2,1)] lg:w-85 max-md:top-auto max-md:right-0 max-md:h-[85vh] max-md:w-full max-md:rounded-t-2xl ${
-        enterAnim === "left"
-          ? "max-md:animate-[slideInLeft_.28s_cubic-bezier(.4,0,.2,1)]"
-          : "max-md:animate-[slideInUp_.28s_cubic-bezier(.4,0,.2,1)]"
+      className={`fixed bottom-0 left-0 top-15 md:top-27.25 flex w-75 max-w-full flex-col bg-white shadow-[8px_0_36px_rgba(0,0,0,0.12)] lg:w-85 max-md:top-auto max-md:right-0 max-md:h-[85vh] max-md:w-full max-md:rounded-t-2xl ${
+        snapClosing
+          ? ""
+          : isClosing
+            ? `md:animate-[slideOutLeft_.28s_cubic-bezier(.4,0,.2,1)_forwards] ${
+                enterAnim === "left"
+                  ? "max-md:animate-[slideOutLeft_.28s_cubic-bezier(.4,0,.2,1)_forwards]"
+                  : "max-md:animate-[slideOutDown_.28s_cubic-bezier(.4,0,.2,1)_forwards]"
+              }`
+            : `md:animate-[slideInLeft_.28s_cubic-bezier(.4,0,.2,1)] ${
+                enterAnim === "left"
+                  ? "max-md:animate-[slideInLeft_.28s_cubic-bezier(.4,0,.2,1)]"
+                  : "max-md:animate-[slideInUp_.28s_cubic-bezier(.4,0,.2,1)]"
+              }`
       }`}
-      style={{ zIndex: 41 }}
+      style={{
+        zIndex: 41,
+        ...(dragOffset > 0 && {
+          transform: `translateY(${dragOffset}px)`,
+          transition: snapClosing ? "transform 0.28s ease" : "none",
+        }),
+      }}
     >
-
-      <div className="mx-auto mt-2 mb-1 h-1 w-10 shrink-0 rounded-full bg-slate-300 md:hidden" />
+      <div
+        className="flex justify-center pt-2 pb-2 md:hidden touch-none cursor-grab active:cursor-grabbing select-none"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+      >
+        <div className="h-1 w-10 rounded-full bg-slate-300" />
+      </div>
 
 
       <div className="shrink-0 border-b border-slate-100 px-6 py-5 max-md:pt-3">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <h2 className="text-[18px] font-extrabold tracking-tight text-slate-900">
+            <h2 className="text-[18px] max-md:text-[15px] font-extrabold tracking-tight text-slate-900">
               {mode === "mine" ? t("myList.title") : t("list.title")}
             </h2>
             {mode === "all" && (
-              <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[12px] font-bold text-emerald-600">
+              <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[12px] max-md:text-[11px] font-bold text-emerald-600">
                 {t("list.inProgress", { count: meetups.length })}
               </span>
             )}
           </div>
-          <button
-            onClick={onClose}
-            aria-label={t("list.close")}
-            className="flex h-8 w-8 items-center justify-center rounded-[9px] border border-slate-200 text-slate-500 hover:bg-slate-100"
-          >
-            <X className="h-4.5 w-4.5" strokeWidth={2.2} />
-          </button>
+          {onCreateClick && (
+            <button
+              onClick={onCreateClick}
+              className="max-md:hidden flex cursor-pointer items-center justify-center rounded-[10px] bg-slate-900 p-2 text-white transition-colors hover:bg-slate-700"
+            >
+              <Plus className="h-4 w-4" strokeWidth={2.5} />
+            </button>
+          )}
         </div>
 
         {mode === "mine" && (
           <div className="mt-3.5 flex gap-2">
             <button
               onClick={() => { setMineTab("hosted"); setQuery(""); }}
-              className={`flex-1 rounded-[10px] py-2 text-[13px] font-bold transition-colors ${
+              className={`flex-1 rounded-[10px] py-2 text-[13px] max-md:text-[12px] font-bold transition-colors ${
                 mineTab === "hosted"
                   ? "bg-slate-900 text-white"
                   : "bg-slate-100 text-slate-500 hover:bg-slate-200"
@@ -89,7 +174,7 @@ export function MeetupListPanel({
             </button>
             <button
               onClick={() => { setMineTab("joined"); setQuery(""); }}
-              className={`flex-1 rounded-[10px] py-2 text-[13px] font-bold transition-colors ${
+              className={`flex-1 rounded-[10px] py-2 text-[13px] max-md:text-[12px] font-bold transition-colors ${
                 mineTab === "joined"
                   ? "bg-slate-900 text-white"
                   : "bg-slate-100 text-slate-500 hover:bg-slate-200"
@@ -111,7 +196,7 @@ export function MeetupListPanel({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("list.searchPlaceholder")}
-            className="w-full bg-transparent text-[14px] text-slate-700 placeholder:text-slate-400 focus:outline-none"
+            className="w-full bg-transparent text-[14px] max-md:text-[13px] text-slate-700 placeholder:text-slate-400 focus:outline-none"
           />
           {query && (
             <button
@@ -129,7 +214,7 @@ export function MeetupListPanel({
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-2 py-16 text-slate-400">
             <MapPin className="h-8 w-8 opacity-40" strokeWidth={1.5} />
-            <p className="text-[14px]">
+            <p className="text-[14px] max-md:text-[12.5px]">
               {query
                 ? t("list.noResults")
                 : mode === "mine"
@@ -170,11 +255,11 @@ export function MeetupListPanel({
                         </span>
                       )}
                     </div>
-                    <p className="mb-1.5 text-[14.5px] font-bold leading-snug text-slate-900 line-clamp-1">
+                    <p className="mb-1.5 text-[14.5px] max-md:text-[13px] font-bold leading-snug text-slate-900 line-clamp-1">
                       {meetup.title}
                     </p>
                     <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-1.5 text-[12.5px] text-slate-500">
+                      <div className="flex items-center gap-1.5 text-[12.5px] max-md:text-[11.5px] text-slate-500">
                         <MapPin
                           className="h-3.5 w-3.5 shrink-0 text-slate-400"
                           strokeWidth={2}
@@ -184,7 +269,7 @@ export function MeetupListPanel({
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5 text-[12.5px] text-slate-500">
+                        <div className="flex items-center gap-1.5 text-[12.5px] max-md:text-[11.5px] text-slate-500">
                           <Clock
                             className="h-3.5 w-3.5 shrink-0 text-slate-400"
                             strokeWidth={2}
@@ -192,7 +277,7 @@ export function MeetupListPanel({
                           <span>{timeRange}</span>
                         </div>
                         <div
-                          className="flex items-center gap-1 text-[12.5px] font-semibold"
+                          className="flex items-center gap-1 text-[12.5px] max-md:text-[11.5px] font-semibold"
                           style={{ color: isFull ? "#ef4444" : "#14b8a6" }}
                         >
                           <Users className="h-3.5 w-3.5" strokeWidth={2} />

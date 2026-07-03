@@ -63,7 +63,7 @@ export function useCreateUsedGoodsForm(userId: number) {
       const filePath = `${userId}/${post.id}/${Date.now()}_${file.name}`;
       const { error: uploadError } = await supabase.storage
         .from("images")
-        .upload(filePath, file);
+        .upload(filePath, file, { cacheControl: "31536000" });
 
       if (uploadError) {
         await supabase.from("posts").delete().eq("id", post.id);
