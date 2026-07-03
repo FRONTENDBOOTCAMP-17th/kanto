@@ -326,7 +326,11 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
   };
 
   return (
-    <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
+    <APIProvider
+      apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
+      libraries={["places"]}
+      version="weekly"
+    >
       <div className="relative h-[calc(100vh-48px)] overflow-hidden md:h-[calc(100vh-109px)]">
         <Map
           id={MAP_ID}
