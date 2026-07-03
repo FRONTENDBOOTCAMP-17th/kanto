@@ -2,12 +2,26 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { KeyRound, Mail, Timer, X } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 const INITIAL_SECONDS = 180;
 
 type Stage = "request" | "verify" | "reset";
+
+// 서버(reset-password API)가 내려주는 에러 코드 → FindPassword.errors.* 키
+const API_ERROR_CODES = new Set([
+  "missing_fields",
+  "account_not_found",
+  "email_send_failed",
+  "email_not_configured",
+  "code_expired",
+  "code_mismatch",
+  "code_invalid_or_expired",
+  "invalid_password",
+  "update_failed",
+]);
 
 interface FindPasswordModalProps {
   isOpen: boolean;
@@ -21,6 +35,8 @@ function formatTime(seconds: number) {
 }
 
 export function FindPasswordModal({ isOpen, onClose }: FindPasswordModalProps) {
+  const t = useTranslations("FindPassword");
+  const locale = useLocale();
   const [stage, setStage] = useState<Stage>("request");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -53,8 +69,14 @@ export function FindPasswordModal({ isOpen, onClose }: FindPasswordModalProps) {
   if (!isOpen) return null;
 
   const passwordValid = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/.test(newPassword);
-  const confirmValid = confirmPassword === newPassword && confirmPassword !== "";
+  const confirmValid =
+    confirmPassword === newPassword && confirmPassword !== "";
   const isExpired = stage === "verify" && secondsLeft <= 0;
+
+  const toErrorText = (error: unknown, fallbackKey: string) => {
+    const code = error instanceof Error ? error.message : "";
+    return t(`errors.${API_ERROR_CODES.has(code) ? code : fallbackKey}`);
+  };
 
   const handleSendCode = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -66,7 +88,7 @@ export function FindPasswordModal({ isOpen, onClose }: FindPasswordModalProps) {
       const response = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email }),
+        body: JSON.stringify({ name, email, locale }),
       });
       const result = (await response.json()) as {
         error?: string;
@@ -75,19 +97,15 @@ export function FindPasswordModal({ isOpen, onClose }: FindPasswordModalProps) {
         devCode?: string;
       };
 
-      if (!response.ok) throw new Error(result.error ?? "인증번호 발송에 실패했습니다.");
+      if (!response.ok) throw new Error(result.error ?? "");
 
       setStage("verify");
       setCode("");
       setSecondsLeft(result.expiresIn ?? INITIAL_SECONDS);
       setDevCode(result.devCode ?? "");
-      setMessage(
-        result.isEmailSent
-          ? "입력한 이메일로 인증번호를 보냈습니다."
-          : "메일 발송 키가 없어 개발용 인증번호를 표시합니다.",
-      );
+      setMessage(result.isEmailSent ? t("codeSent") : t("devCodeShown"));
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "인증번호 발송에 실패했습니다.");
+      setErrorMessage(toErrorText(error, "sendFailed"));
     } finally {
       setIsLoading(false);
     }
@@ -107,12 +125,12 @@ export function FindPasswordModal({ isOpen, onClose }: FindPasswordModalProps) {
       });
       const result = (await response.json()) as { error?: string };
 
-      if (!response.ok) throw new Error(result.error ?? "인증번호 확인에 실패했습니다.");
+      if (!response.ok) throw new Error(result.error ?? "");
 
       setStage("reset");
-      setMessage("인증되었습니다. 새 비밀번호를 입력해주세요.");
+      setMessage(t("verified"));
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "인증번호 확인에 실패했습니다.");
+      setErrorMessage(toErrorText(error, "verifyFailed"));
     } finally {
       setIsLoading(false);
     }
@@ -133,19 +151,19 @@ export function FindPasswordModal({ isOpen, onClose }: FindPasswordModalProps) {
       });
       const result = (await response.json()) as { error?: string };
 
-      if (!response.ok) throw new Error(result.error ?? "비밀번호 변경에 실패했습니다.");
+      if (!response.ok) throw new Error(result.error ?? "");
 
-      setMessage("비밀번호가 변경되었습니다. 새 비밀번호로 로그인해주세요.");
+      setMessage(t("passwordChanged"));
       window.setTimeout(onClose, 1200);
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "비밀번호 변경에 실패했습니다.");
+      setErrorMessage(toErrorText(error, "changeFailed"));
       setIsLoading(false);
     }
   };
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 px-4"
+      className="fixed inset-0 z-100 flex items-center justify-center bg-black/45 px-4"
       onClick={onClose}
     >
       <div
@@ -158,13 +176,16 @@ export function FindPasswordModal({ isOpen, onClose }: FindPasswordModalProps) {
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-2">
             <KeyRound className="h-5 w-5 text-teal-500" />
-            <h2 id="find-password-title" className="text-base font-semibold text-gray-900">
-              비밀번호 찾기
+            <h2
+              id="find-password-title"
+              className="text-base font-semibold text-gray-900"
+            >
+              {t("title")}
             </h2>
           </div>
           <button
             type="button"
-            aria-label="비밀번호 찾기 모달 닫기"
+            aria-label={t("closeModal")}
             onClick={onClose}
             className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
           >
@@ -172,25 +193,24 @@ export function FindPasswordModal({ isOpen, onClose }: FindPasswordModalProps) {
           </button>
         </div>
 
-        
         {stage === "request" && (
           <form className="mt-5 flex flex-col gap-4" onSubmit={handleSendCode}>
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-              이름
+              {t("name")}
               <Input
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                placeholder="가입 시 입력한 이름"
+                placeholder={t("namePlaceholder")}
                 required
               />
             </label>
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-              이메일
+              {t("email")}
               <Input
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                placeholder="가입 시 사용한 이메일"
+                placeholder={t("emailPlaceholder")}
                 required
               />
             </label>
@@ -201,36 +221,49 @@ export function FindPasswordModal({ isOpen, onClose }: FindPasswordModalProps) {
               disabled={isLoading || !name.trim() || !email.trim()}
             >
               <Mail className="h-4 w-4" />
-              인증번호 보내기
+              {t("sendCode")}
             </Button>
           </form>
         )}
 
-        
         {stage === "verify" && (
-          <form className="mt-5 flex flex-col gap-4" onSubmit={handleVerifyCode}>
+          <form
+            className="mt-5 flex flex-col gap-4"
+            onSubmit={handleVerifyCode}
+          >
             {devCode && (
               <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-                개발용 인증번호: <span className="font-semibold tracking-[0.2em]">{devCode}</span>
+                {t("devCode")}{" "}
+                <span className="font-semibold tracking-[0.2em]">
+                  {devCode}
+                </span>
               </div>
             )}
             <div className="flex items-center justify-between rounded-lg bg-teal-50 px-3 py-2 text-sm">
               <span className="flex items-center gap-1.5 font-medium text-teal-700">
                 <Timer className="h-4 w-4" />
-                남은 인증 시간
+                {t("timeLeft")}
               </span>
-              <span className={isExpired ? "font-semibold text-red-500" : "font-semibold text-teal-700"}>
+              <span
+                className={
+                  isExpired
+                    ? "font-semibold text-red-500"
+                    : "font-semibold text-teal-700"
+                }
+              >
                 {formatTime(secondsLeft)}
               </span>
             </div>
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-              인증번호
+              {t("codeLabel")}
               <Input
                 inputMode="numeric"
                 maxLength={6}
                 value={code}
-                onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))}
-                placeholder="6자리 인증번호"
+                onChange={(event) =>
+                  setCode(event.target.value.replace(/\D/g, ""))
+                }
+                placeholder={t("codePlaceholder")}
                 required
               />
             </label>
@@ -240,38 +273,44 @@ export function FindPasswordModal({ isOpen, onClose }: FindPasswordModalProps) {
               className="h-10 w-full"
               disabled={isLoading || isExpired || code.length !== 6}
             >
-              인증번호 확인
+              {t("verifyCode")}
             </Button>
           </form>
         )}
 
-        
         {stage === "reset" && (
-          <form className="mt-5 flex flex-col gap-4" onSubmit={handleResetPassword}>
+          <form
+            className="mt-5 flex flex-col gap-4"
+            onSubmit={handleResetPassword}
+          >
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-              새 비밀번호
+              {t("newPassword")}
               <Input
                 type="password"
                 value={newPassword}
                 onChange={(event) => setNewPassword(event.target.value)}
-                placeholder="영문 + 숫자 포함 8자 이상"
+                placeholder={t("newPasswordPlaceholder")}
                 required
               />
               {newPassword && !passwordValid && (
-                <span className="text-xs text-red-500">영문과 숫자를 포함하여 8자 이상 입력해주세요.</span>
+                <span className="text-xs text-red-500">
+                  {t("passwordRule")}
+                </span>
               )}
             </label>
             <label className="flex flex-col gap-1.5 text-sm font-medium text-gray-700">
-              새 비밀번호 확인
+              {t("confirmPassword")}
               <Input
                 type="password"
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
-                placeholder="비밀번호를 다시 입력하세요"
+                placeholder={t("confirmPasswordPlaceholder")}
                 required
               />
               {confirmPassword && !confirmValid && (
-                <span className="text-xs text-red-500">비밀번호가 일치하지 않습니다.</span>
+                <span className="text-xs text-red-500">
+                  {t("passwordMismatch")}
+                </span>
               )}
             </label>
             <Button
@@ -280,13 +319,15 @@ export function FindPasswordModal({ isOpen, onClose }: FindPasswordModalProps) {
               className="h-10 w-full"
               disabled={isLoading || !passwordValid || !confirmValid}
             >
-              비밀번호 변경하기
+              {t("changePassword")}
             </Button>
           </form>
         )}
 
         {(message || errorMessage) && (
-          <p className={`mt-4 text-sm ${errorMessage ? "text-red-500" : "text-teal-600"}`}>
+          <p
+            className={`mt-4 text-sm ${errorMessage ? "text-red-500" : "text-teal-600"}`}
+          >
             {errorMessage || message}
           </p>
         )}
