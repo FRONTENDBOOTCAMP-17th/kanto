@@ -490,7 +490,9 @@
       "errorImage": "Nabigo ang pag-upload ng mga larawan.",
       "errorGoods": "Nabigo ang pagrehistro ng impormasyon ng produkto.",
       "errorNoImage": "Mangyaring mag-upload ng hindi bababa sa isang larawan."
-    }
+    },
+    "views": "View",
+    "likes": "Like"
   },
   "Job": {
     "title": "Trabaho",
@@ -841,7 +843,8 @@
       "confirmPassword": "Kumpirmahin ang Password",
       "confirmPlaceholder": "Muling ilagay ang iyong password",
       "confirmError": "Hindi magkatugma ang mga password.",
-      "confirmSuccess": "Magkatugma ang mga password!",      "showPassword": "Ipakita ang password",
+      "confirmSuccess": "Magkatugma ang mga password!",
+      "showPassword": "Ipakita ang password",
       "hidePassword": "Itago ang password",
       "success": "Tapos na ang pag-sign up!\nMaligayang pagdating sa Kanto!",
       "processing": "Pinoproseso...",
@@ -885,7 +888,8 @@
       "cancel": "Kanselahin",
       "agree": "Sumasang-ayon ako",
       "readToEnd": "Pakibasa hanggang dulo",
-      "scrollDown": "Mag-scroll pababa"    }
+      "scrollDown": "Mag-scroll pababa"
+    }
   },
   "Terms": {
     "items": {

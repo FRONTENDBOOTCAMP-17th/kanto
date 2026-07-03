@@ -490,7 +490,9 @@
       "errorImage": "Failed to upload images.",
       "errorGoods": "Failed to register product info.",
       "errorNoImage": "Please upload at least one image."
-    }
+    },
+    "views": "Views",
+    "likes": "Likes"
   },
   "Job": {
     "title": "Jobs",
@@ -841,7 +843,8 @@
       "confirmPassword": "Confirm Password",
       "confirmPlaceholder": "Re-enter your password",
       "confirmError": "Passwords do not match.",
-      "confirmSuccess": "Passwords match!",      "showPassword": "Show password",
+      "confirmSuccess": "Passwords match!",
+      "showPassword": "Show password",
       "hidePassword": "Hide password",
       "success": "Sign-up complete!\nWelcome to Kanto!",
       "processing": "Processing...",
@@ -885,7 +888,8 @@
       "cancel": "Cancel",
       "agree": "I agree",
       "readToEnd": "Please read to the end",
-      "scrollDown": "Scroll down"    }
+      "scrollDown": "Scroll down"
+    }
   },
   "Terms": {
     "items": {

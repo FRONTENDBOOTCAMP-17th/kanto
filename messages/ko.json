@@ -490,7 +490,9 @@
       "errorImage": "이미지 업로드에 실패했습니다.",
       "errorGoods": "상품 정보 등록에 실패했습니다.",
       "errorNoImage": "이미지를 최소 1장 이상 등록해주세요."
-    }
+    },
+    "views": "조회수",
+    "likes": "좋아요"
   },
   "Job": {
     "title": "구인구직",
@@ -841,7 +843,8 @@
       "confirmPassword": "비밀번호 확인",
       "confirmPlaceholder": "비밀번호를 다시 입력하세요",
       "confirmError": "비밀번호가 일치하지 않습니다.",
-      "confirmSuccess": "비밀번호가 일치합니다!",      "showPassword": "비밀번호 표시",
+      "confirmSuccess": "비밀번호가 일치합니다!",
+      "showPassword": "비밀번호 표시",
       "hidePassword": "비밀번호 숨기기",
       "success": "가입이 완료되었습니다!\n칸토에 오신 것을 환영합니다.",
       "processing": "처리 중...",
@@ -885,7 +888,8 @@
       "cancel": "취소",
       "agree": "동의합니다",
       "readToEnd": "끝까지 읽어주세요",
-      "scrollDown": "아래로 스크롤하기"    }
+      "scrollDown": "아래로 스크롤하기"
+    }
   },
   "Terms": {
     "items": {
