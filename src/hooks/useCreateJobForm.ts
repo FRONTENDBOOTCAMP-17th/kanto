@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { useImageUpload } from "@/hooks/useImageUpload";
+import { optimizeImage } from "@/utils/optimizeImage";
 import { buildImageOrder } from "@/utils/reorderImages";
 import { cityToTradeLocation, type TradeLocation } from "@/type/location";
 import type { EmployeeType, SalaryType, JobInitialData } from "@/type/job/jobCreate";
@@ -128,9 +129,10 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
 
     const uploadLogo = async (postId: number): Promise<string | null> => {
       if (!companyLogoFile) return companyLogoUrl || null;
-      const ext = companyLogoFile.name.split(".").pop()?.toLowerCase() ?? "jpg";
+      const optimized = await optimizeImage(companyLogoFile, 512);
+      const ext = optimized.name.split(".").pop()?.toLowerCase() ?? "jpg";
       const logoPath = `logos/${userId}/${postId}.${ext}`;
-      const { error } = await supabase.storage.from("images").upload(logoPath, companyLogoFile, { upsert: true });
+      const { error } = await supabase.storage.from("images").upload(logoPath, optimized, { upsert: true });
       if (error) { alert(t("errorImage")); return null; }
       const { data } = supabase.storage.from("images").getPublicUrl(logoPath);
       return data.publicUrl;
@@ -172,7 +174,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       for (const file of imageUpload.imageFiles) {
         const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
         const filePath = `${userId}/${initialData.post_id}/${Date.now()}.${ext}`;
-        const { error: uploadError } = await supabase.storage.from("images").upload(filePath, file);
+        const { error: uploadError } = await supabase.storage.from("images").upload(filePath, file, { cacheControl: "31536000" });
         if (uploadError) {
           alert(t("errorImage"));
           setIsSubmitting(false);
@@ -222,7 +224,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     for (const file of imageUpload.imageFiles) {
       const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
       const filePath = `${userId}/${post.id}/${Date.now()}.${ext}`;
-      const { error: uploadError } = await supabase.storage.from("images").upload(filePath, file);
+      const { error: uploadError } = await supabase.storage.from("images").upload(filePath, file, { cacheControl: "31536000" });
       if (uploadError) {
         await supabase.from("posts").delete().eq("id", post.id);
         alert(t("errorImage"));
