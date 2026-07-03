@@ -10,7 +10,7 @@ export type MainCardItem = {
   likeCount: number;
   createdAt: string;
   popular: boolean;
-  imageSrc?: string;
+  images?: string[];
   initialIsLiked: boolean;
   currentUserId: number | null;
 };
@@ -25,7 +25,7 @@ export default function MainCard({
   return (
     <ContentCard
       href={item.href}
-      images={item.imageSrc ? [item.imageSrc] : []}
+      images={item.images ?? []}
       title={item.title}
       price={item.price}
       location={item.location}
@@ -34,7 +34,7 @@ export default function MainCard({
       postId={item.id}
       initialIsLiked={item.initialIsLiked}
       currentUserId={item.currentUserId}
-      badge={item.popular ? <PopularBadge /> : undefined}
+      badge={item.popular ? <PopularBadge compact /> : undefined}
       listOnMobile
       priority={priority}
     />

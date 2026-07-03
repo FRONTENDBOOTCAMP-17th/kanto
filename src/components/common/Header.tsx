@@ -33,6 +33,7 @@ import type { User as AppUser } from "@/type/user";
 import { useTranslations } from "next-intl";
 import { useSuspended } from "@/hooks/useSuspended";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
+import { GoNoticeIcon } from "@/components/go/GoNoticeIcon";
 
 const HEADER_HEIGHT = 48; 
 
@@ -153,6 +154,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
           
           <div className="flex items-center shrink-0">
             
+            {pathname.startsWith("/go") && <GoNoticeIcon />}
             <LanguageSwitcher />
 
             {user && (
@@ -187,7 +189,6 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
                       width={36}
                       height={36}
                       priority
-                      unoptimized
                       className="w-9 h-9 rounded-full object-cover"
                     />
                   ) : (

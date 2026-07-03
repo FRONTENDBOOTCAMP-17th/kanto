@@ -9,6 +9,7 @@ export function useCarousel(length: number) {
   const [direction, setDirection] = useState<Direction>("right");
   const [isAnimating, setIsAnimating] = useState(false);
   const dragStartX = useRef<number | null>(null);
+  const justDragged = useRef(false);
 
   const navigate = (dir: Direction, targetIndex?: number) => {
     if (isAnimating) return;
@@ -32,12 +33,16 @@ export function useCarousel(length: number) {
 
   const onDragStart = (clientX: number) => {
     dragStartX.current = clientX;
+    justDragged.current = false;
   };
 
   const onDragEnd = (clientX: number) => {
     if (dragStartX.current === null) return;
     const diff = dragStartX.current - clientX;
-    if (Math.abs(diff) > 50) navigate(diff > 0 ? "right" : "left");
+    if (Math.abs(diff) > 50) {
+      justDragged.current = true;
+      navigate(diff > 0 ? "right" : "left");
+    }
     dragStartX.current = null;
   };
 
@@ -52,6 +57,13 @@ export function useCarousel(length: number) {
       onMouseUp: (e: React.MouseEvent) => onDragEnd(e.clientX),
       onTouchStart: (e: React.TouchEvent) => onDragStart(e.touches[0].clientX),
       onTouchEnd: (e: React.TouchEvent) => onDragEnd(e.changedTouches[0].clientX),
+      onClick: (e: React.MouseEvent) => {
+        if (justDragged.current) {
+          e.preventDefault();
+          e.stopPropagation();
+          justDragged.current = false;
+        }
+      },
     },
   };
 }

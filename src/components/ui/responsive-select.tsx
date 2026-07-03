@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { ChevronDown, X } from "lucide-react";
 import {
@@ -14,6 +14,24 @@ import {
 interface Option {
   value: string;
   label: string;
+}
+
+const MOBILE_QUERY = "(max-width: 767px)";
+
+function subscribeMobile(callback: () => void) {
+  const mq = window.matchMedia(MOBILE_QUERY);
+  mq.addEventListener("change", callback);
+  return () => mq.removeEventListener("change", callback);
+}
+
+// 모바일/데스크탑 중 한쪽만 마운트하기 위한 훅 — 양쪽을 모두 마운트하고
+// CSS로 숨기면 모바일에서도 Radix Select 마운트 비용을 지불하게 됨
+function useIsMobile() {
+  return useSyncExternalStore(
+    subscribeMobile,
+    () => window.matchMedia(MOBILE_QUERY).matches,
+    () => false,
+  );
 }
 
 interface Props {
@@ -40,6 +58,7 @@ export function ResponsiveSelect({
   label,
 }: Props) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
@@ -53,30 +72,32 @@ export function ResponsiveSelect({
   return (
     <div className={`relative ${className ?? "w-full"}`}>
 
-      <button
-        type="button"
-        disabled={disabled}
-        onClick={() => setMobileOpen(true)}
-        className="flex h-full w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:hidden"
-      >
-        <span className={`truncate ${selectedLabel ? "" : "text-muted-foreground"}`}>
-          {selectedLabel ?? placeholder}
-        </span>
-        <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
-      </button>
-
-      <Select value={value} onValueChange={onValueChange} disabled={disabled}>
-        <SelectTrigger className="hidden h-full w-full md:flex">
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent className="max-h-60">
-          {options.map((o) => (
-            <SelectItem key={o.value} value={o.value}>
-              {o.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      {isMobile ? (
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => setMobileOpen(true)}
+          className="flex h-full w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <span className={`truncate ${selectedLabel ? "" : "text-muted-foreground"}`}>
+            {selectedLabel ?? placeholder}
+          </span>
+          <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
+        </button>
+      ) : (
+        <Select value={value} onValueChange={onValueChange} disabled={disabled}>
+          <SelectTrigger className="flex h-full w-full">
+            <SelectValue placeholder={placeholder} />
+          </SelectTrigger>
+          <SelectContent className="max-h-60">
+            {options.map((o) => (
+              <SelectItem key={o.value} value={o.value}>
+                {o.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
 
       
       {required && (

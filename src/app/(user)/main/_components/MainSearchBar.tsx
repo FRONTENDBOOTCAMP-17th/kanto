@@ -55,7 +55,7 @@ export default function MainSearchBar() {
             onClick={() => setBottomSheetOpen(true)}
             aria-expanded={bottomSheetOpen}
             aria-haspopup="dialog"
-            className="md:hidden flex items-center gap-1 px-3 h-8 rounded-full font-semibold text-sm whitespace-nowrap transition-colors select-none hover:bg-gray-100"
+            className="cursor-pointer md:hidden flex items-center gap-1 px-3 h-8 rounded-full font-semibold text-sm whitespace-nowrap transition-colors select-none hover:bg-gray-100"
           >
             <span>{t(`category.${selectedCategory.catKey}`)}</span>
             <ChevronDown className="w-3.5 h-3.5 text-gray-500" />
@@ -68,7 +68,7 @@ export default function MainSearchBar() {
               onClick={() => setDropdownOpen((v) => !v)}
               aria-expanded={dropdownOpen}
               aria-haspopup="listbox"
-              className="flex items-center gap-1 px-3 h-8 rounded-full font-semibold text-sm whitespace-nowrap transition-colors select-none hover:bg-gray-100"
+              className="cursor-pointer flex items-center gap-1 px-3 h-8 rounded-full font-semibold text-sm whitespace-nowrap transition-colors select-none hover:bg-gray-100"
             >
               <span>{t(`category.${selectedCategory.catKey}`)}</span>
               <ChevronDown className={`w-3.5 h-3.5 text-gray-500 transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`} />
@@ -81,7 +81,7 @@ export default function MainSearchBar() {
                     key={cat.id}
                     type="button"
                     onClick={() => { setSelectedCategory(cat); setDropdownOpen(false); }}
-                    className={`dropdown-item ${
+                    className={`cursor-pointer dropdown-item ${
                       selectedCategory.id === cat.id ? "bg-teal-50 text-teal-600 font-semibold" : "text-gray-700"
                     }`}
                   >
@@ -114,7 +114,7 @@ export default function MainSearchBar() {
       
       {bottomSheetOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex flex-col justify-end">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setBottomSheetOpen(false)} />
+          <div className="absolute inset-0 bg-black/40 cursor-pointer" onClick={() => setBottomSheetOpen(false)} />
           <div className="relative bg-white rounded-t-3xl w-full pb-8">
             <div className="flex justify-center pt-3 pb-1">
               <div className="w-10 h-1 rounded-full bg-gray-300" />
@@ -125,7 +125,7 @@ export default function MainSearchBar() {
                 type="button"
                 onClick={() => setBottomSheetOpen(false)}
                 aria-label={t("categorySelectClose")}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+                className="cursor-pointer w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
               >
                 <X className="w-5 h-5 text-gray-500" />
               </button>
@@ -136,7 +136,7 @@ export default function MainSearchBar() {
                   key={cat.id}
                   type="button"
                   onClick={() => { setSelectedCategory(cat); setBottomSheetOpen(false); }}
-                  className={`w-full flex items-center justify-between px-5 py-4 rounded-xl mb-2 transition-colors ${
+                  className={`cursor-pointer w-full flex items-center justify-between px-5 py-4 rounded-xl mb-2 transition-colors ${
                     selectedCategory.id === cat.id ? "bg-teal-50 text-teal-600" : "text-gray-700 hover:bg-gray-50"
                   }`}
                 >

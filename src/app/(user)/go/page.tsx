@@ -1,4 +1,5 @@
-"use client";
+import { getActiveMeetups } from "@/services/go/go";
+import GoClient from "./_components/GoClient";
 
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
