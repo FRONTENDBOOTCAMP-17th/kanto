@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { SignupForm } from "./_components/SignupForm";
@@ -54,20 +55,28 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-teal-50 to-teal-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-97.5 bg-white rounded-2xl shadow-md p-8 my-8">
-        <Link href="/" className="text-sm text-teal-600 font-semibold">
+    <div className="min-h-screen bg-linear-to-br from-teal-50 via-cyan-50 to-emerald-100 flex items-center justify-center px-3 py-5 sm:px-6 sm:py-10">
+      <div className="w-full max-w-[460px] bg-white rounded-[22px] border border-white/80 shadow-[0_18px_50px_rgba(15,118,110,0.16)] px-5 py-6 sm:px-8 sm:py-8">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-teal-700 transition-colors hover:text-teal-800"
+        >
+          <ArrowLeft className="h-4 w-4" strokeWidth={2.2} aria-hidden />
           {t("home")}
         </Link>
-        <div className="flex justify-center mb-8 mt-4">
+        <div className="flex justify-center mt-5">
           <Image
             src="/kantoLogo.png"
-            width={200}
-            height={94}
+            width={152}
+            height={72}
             priority
             alt="Kanto"
             className="select-none"
           />
+        </div>
+        <div className="mb-7 mt-5 text-center">
+          <h1 className="text-[24px] font-bold text-gray-950 sm:text-[26px]">{t("title")}</h1>
+          <p className="mt-2 text-sm leading-5 text-gray-500">{t("description")}</p>
         </div>
 
         <SignupForm
@@ -84,7 +93,7 @@ export default function SignupPage() {
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             {t("haveAccount")}{" "}
-            <Link href="/login" className="text-teal-500 hover:text-teal-600 font-semibold">
+            <Link href="/login" className="font-semibold text-teal-600 underline-offset-4 hover:text-teal-700 hover:underline">
               {t("login")}
             </Link>
           </p>

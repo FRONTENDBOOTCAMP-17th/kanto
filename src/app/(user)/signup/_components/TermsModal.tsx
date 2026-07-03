@@ -19,6 +19,8 @@ export function TermsModal({ modalType, onClose, onAgree }: TermsModalProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [scrolledToBottom, setScrolledToBottom] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const canAgreeWithoutScroll = modalType === "age";
+  const canAgree = canAgreeWithoutScroll || scrolledToBottom;
 
   useEffect(() => {
     fetch(`/api/terms?type=${modalType}`)
@@ -37,6 +39,18 @@ export function TermsModal({ modalType, onClose, onAgree }: TermsModalProps) {
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const el = e.currentTarget;
     setScrolledToBottom(el.scrollHeight - el.scrollTop <= el.clientHeight + 10);
+  };
+
+  const handlePrimaryClick = () => {
+    if (canAgree) {
+      onAgree();
+      return;
+    }
+
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+    setScrolledToBottom(true);
   };
 
   return (
@@ -67,11 +81,11 @@ export function TermsModal({ modalType, onClose, onAgree }: TermsModalProps) {
             {t("cancel")}
           </button>
           <button
-            onClick={onAgree}
-            disabled={!scrolledToBottom || isLoading}
+            onClick={handlePrimaryClick}
+            disabled={isLoading}
             className="flex-1 btn-primary disabled:bg-gray-300 disabled:cursor-not-allowed font-medium py-2.5 rounded-md transition-colors"
           >
-            {scrolledToBottom ? t("agree") : t("readToEnd")}
+            {canAgree ? t("agree") : t("scrollDown")}
           </button>
         </div>
       </div>
