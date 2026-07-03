@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUploadField } from "@/components/common/ImageUploadField";
 import { moderateImage } from "@/lib/moderateImage";
+import { optimizeImage } from "@/utils/optimizeImage";
 import { swapImages, buildImageOrder } from "@/utils/reorderImages";
 import Toast from "@/components/common/Toast";
 import {
@@ -169,7 +170,7 @@ export default function RentalCreateForm({
       for (const file of candidates) {
         const outcome = await moderateImage(file);
         if (outcome.allowed) {
-          allowedFiles.push(file);
+          allowedFiles.push(await optimizeImage(file));
         } else {
           blockedReason = outcome.reason;
         }
@@ -205,7 +206,7 @@ export default function RentalCreateForm({
       for (const file of candidates) {
         const outcome = await moderateImage(file);
         if (outcome.allowed) {
-          allowedFiles.push(file);
+          allowedFiles.push(await optimizeImage(file));
         } else {
           blockedReason = outcome.reason;
         }
@@ -276,7 +277,7 @@ export default function RentalCreateForm({
         const filePath = `${userId}/${postId}/${safeFileName}`;
         const { error: uploadError } = await supabase.storage
           .from("images")
-          .upload(filePath, file, { upsert: true });
+          .upload(filePath, file, { upsert: true, cacheControl: "31536000" });
 
         if (!uploadError) {
           const { data: urlData } = supabase.storage
@@ -332,7 +333,7 @@ export default function RentalCreateForm({
         const filePath = `${userId}/${post.id}/${Date.now()}.${ext}`;
         const { error: uploadError } = await supabase.storage
           .from("images")
-          .upload(filePath, file);
+          .upload(filePath, file, { cacheControl: "31536000" });
 
         if (uploadError) {
           await supabase.from("posts").delete().eq("id", post.id);

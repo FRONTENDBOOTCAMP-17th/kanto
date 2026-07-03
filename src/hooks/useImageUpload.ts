@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { moderateImage } from "@/lib/moderateImage";
+import { optimizeImage } from "@/utils/optimizeImage";
 import { swapImages } from "@/utils/reorderImages";
 
 export function useImageUpload(initialUrls: string[] = [], maxCount = 10) {
@@ -41,7 +42,7 @@ export function useImageUpload(initialUrls: string[] = [], maxCount = 10) {
       for (const file of candidates) {
         const outcome = await moderateImage(file);
         if (outcome.allowed) {
-          passed.push(file);
+          passed.push(await optimizeImage(file));
         } else {
           reason = outcome.reason;
         }
