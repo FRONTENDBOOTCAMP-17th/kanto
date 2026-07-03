@@ -5,7 +5,12 @@ const notion = new Client({ auth: process.env.NOTION_API_KEY });
 const n2m = new NotionToMarkdown({ notionClient: notion });
 
 const devCache = new Map<string, string>();
-const devPageCache = new Map<string, { title: string; content: string }>();
+
+const PAGE_CACHE_TTL_MS = 60 * 60 * 1000;
+const pageCache = new Map<
+  string,
+  { expiresAt: number; data: { title: string; content: string } }
+>();
 
 export async function getNotionContent(pageId: string | undefined) {
   if (!pageId) return "현재 내용을 불러올 수 없습니다. 잠시 후 다시 시도해주세요.";
@@ -29,10 +34,11 @@ export async function getNotionContent(pageId: string | undefined) {
 }
 
 export async function getNotionPage(pageId: string | undefined) {
-  if (!pageId) return { title: "", content: "현재 내용을 불러올 수 없습니다. 잠시 후 다시 시도해주세요." };
+  if (!pageId) return null;
 
-  if (process.env.NODE_ENV === "development" && devPageCache.has(pageId)) {
-    return devPageCache.get(pageId)!;
+  const cached = pageCache.get(pageId);
+  if (cached && cached.expiresAt > Date.now()) {
+    return cached.data;
   }
 
   try {
@@ -52,12 +58,10 @@ export async function getNotionPage(pageId: string | undefined) {
     const content = n2m.toMarkdownString(mdBlocks).parent;
     const result = { title, content };
 
-    if (process.env.NODE_ENV === "development") {
-      devPageCache.set(pageId, result);
-    }
+    pageCache.set(pageId, { expiresAt: Date.now() + PAGE_CACHE_TTL_MS, data: result });
 
     return result;
   } catch {
-    return { title: "", content: "현재 내용을 불러올 수 없습니다. 잠시 후 다시 시도해주세요." };
+    return null;
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import TermsContent from "./TermsContent";
 
 const CACHE_DURATION = 36000 * 1000;
@@ -32,6 +33,7 @@ function setCache(type: string, locale: string, title: string, content: string) 
 }
 
 export default function TermsClientContent({ type, locale }: { type: string; locale: string }) {
+  const t = useTranslations("Terms");
   const [data, setData] = useState<{ title: string; content: string } | null>(
     () => getCached(type, locale)
   );
@@ -54,7 +56,7 @@ export default function TermsClientContent({ type, locale }: { type: string; loc
 
   if (error) return (
     <main className="min-h-screen bg-gray-900 text-gray-400 flex items-center justify-center">
-      현재 내용을 불러올 수 없습니다. 잠시 후 다시 시도해주세요.
+      {t("loadError")}
     </main>
   );
 
