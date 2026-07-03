@@ -28,7 +28,7 @@ function PopularJobCard({ post, initialIsLiked, currentUserId }: CardProps) {
   return (
     <Link
       href={`/job/${post.id_token ?? post.id}`}
-      className="shrink-0 flex flex-col justify-between gap-2 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl p-4 hover:shadow-sm transition-all w-[calc(50%-6px)] sm:w-[calc(33.33%-8px)] lg:w-[calc(20%-10px)]"
+      className="shrink-0 flex flex-col justify-between gap-2 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl p-4 hover:shadow-sm transition-all w-[calc(50%-6px)] sm:w-[calc(33.33%-8px)] lg:w-[calc(20%-10px)] active:scale-100"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-col gap-1 min-w-0">
@@ -104,7 +104,7 @@ export function PopularJobs({ posts, likedIds, currentUserId }: Props) {
           <button
             type="button"
             onClick={() => scroll("left")}
-            className="hidden cursor-pointer md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-colors"
+            className="hidden cursor-pointer md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-colors active:scale-100"
             aria-label={t("prev")}
           >
             <ChevronLeft className="w-4 h-4 text-gray-600" />
@@ -131,7 +131,7 @@ export function PopularJobs({ posts, likedIds, currentUserId }: Props) {
           <button
             type="button"
             onClick={() => scroll("right")}
-            className="hidden cursor-pointer md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-colors"
+            className="hidden cursor-pointer md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-8 h-8 bg-white border border-gray-200 rounded-full shadow-md items-center justify-center hover:bg-gray-50 transition-colors active:scale-100"
             aria-label={t("next")}
           >
             <ChevronRight className="w-4 h-4 text-gray-600" />

@@ -90,7 +90,7 @@ export default function InteractionButtons({
     <>
       <div className={`flex gap-2 ${className}`}>
         <Button
-          size={size}
+          size={size === "sm" ? "icon-sm" : "icon-lg"}
           aria-label={isLiked ? t("unlike") : t("like")}
           aria-pressed={isLiked}
           onClick={handleLike}
@@ -99,7 +99,7 @@ export default function InteractionButtons({
           <Heart className={isLiked ? "fill-red-400 text-red-400" : "text-black"} />
         </Button>
         <Button
-          size={size}
+          size={size === "sm" ? "icon-sm" : "icon-lg"}
           aria-label={t("share")}
           onClick={handleShare}
           className="cursor-pointer border rounded-lg bg-white hover:bg-black/10 border-gray-200"
@@ -107,7 +107,7 @@ export default function InteractionButtons({
           <Share2 className="text-black" />
         </Button>
         <Button
-          size={size}
+          size={size === "sm" ? "icon-sm" : "icon-lg"}
           aria-label={t("report")}
           onClick={() => {
             if (!userId) { setShowLoginModal(true); return; }
