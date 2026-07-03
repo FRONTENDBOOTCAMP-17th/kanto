@@ -331,6 +331,8 @@ export async function getRoomMembers(meetupPostId: number): Promise<MeetupPartic
 
   return [
     host,
-    ...participants.map((p) => ({ ...p, id_token: encryptUserId(p.user_id), is_host: false })),
+    ...participants
+      .filter((p) => p.user_id !== meetup.host_id)
+      .map((p) => ({ ...p, id_token: encryptUserId(p.user_id), is_host: false })),
   ];
 }
