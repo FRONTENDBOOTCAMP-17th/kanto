@@ -29,6 +29,7 @@ export function RentalList({ initialPosts, initialLikedIds, currentUserId, curre
             key={post.id}
             priority={index < 4}
             id={post.id}
+            idToken={post.id_token}
             fromPage={currentPage > 1 ? currentPage : undefined}
             title={post.title}
             price={rental?.price ?? null}

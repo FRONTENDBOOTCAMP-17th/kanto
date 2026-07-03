@@ -3,6 +3,7 @@ import { getPopularList } from "@/services/main/main";
 import { getLikeList } from "@/services/likes";
 import PopularTabs from "./PopularTabs";
 import PopularRefreshButton from "./PopularRefreshButton";
+import { encryptPostId } from "@/utils/postIdCipher";
 
 export default async function Popular() {
   const t = await getTranslations("Main");
@@ -16,7 +17,7 @@ export default async function Popular() {
     .slice(0, 4)
     .map((p) => ({
       id: p.id,
-      href: `/usedgoods/${p.id}`,
+      href: `/usedgoods/${encryptPostId(p.id)}`,
       title: p.title,
       price: p.used_goods[0].price,
       location: p.used_goods[0].location_type,
@@ -33,7 +34,7 @@ export default async function Popular() {
     .slice(0, 4)
     .map((p) => ({
       id: p.id,
-      href: `/rental/${p.id}`,
+      href: `/rental/${encryptPostId(p.id)}`,
       title: p.title,
       price: p.rentals[0].price ?? 0,
       location: p.rentals[0].location ?? "",
@@ -50,7 +51,7 @@ export default async function Popular() {
     .slice(0, 4)
     .map((p) => ({
       id: p.id,
-      href: `/job/${p.id}`,
+      href: `/job/${encryptPostId(p.id)}`,
       title: p.title,
       price: p.jobs[0].salary,
       location: p.jobs[0].location_custom ?? p.jobs[0].location_type,

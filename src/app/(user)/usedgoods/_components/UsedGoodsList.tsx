@@ -47,7 +47,7 @@ export function UsedGoodsList({ initialPosts, initialLikedIds, currentUserId, cu
         return (
           <ContentCard
             key={post.id}
-            href={`/usedgoods/${post.id}${currentPage > 1 ? `?fromPage=${currentPage}` : ""}`}
+            href={`/usedgoods/${post.id_token ?? post.id}${currentPage > 1 ? `?fromPage=${currentPage}` : ""}`}
             images={images}
             title={post.title}
             price={goods?.price ?? 0}

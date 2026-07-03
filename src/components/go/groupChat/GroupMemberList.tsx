@@ -32,7 +32,7 @@ export default function GroupMemberList({
   const goToProfile = (m: MeetupParticipant) => {
     if (m.user_id === currentUserId || m.is_deleted) return;
     useChatStore.getState().closeWidget();
-    router.push(`/user/${m.user_id}`);
+    router.push(`/user/${m.id_token ?? m.user_id}`);
   };
 
   return (

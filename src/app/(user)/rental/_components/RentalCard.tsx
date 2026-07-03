@@ -12,6 +12,7 @@ const AMENITY_ICONS: Record<string, React.ComponentType<{ className?: string }>>
 
 interface RentalCardProps {
   id: number;
+  idToken?: string;
   title: string;
   price: number | null;
   location: string | null;
@@ -32,6 +33,7 @@ interface RentalCardProps {
 
 export function RentalCard({
   id,
+  idToken,
   title,
   price,
   location,
@@ -76,7 +78,7 @@ export function RentalCard({
 
   return (
     <ContentCard
-      href={`/rental/${id}${fromPage ? `?fromPage=${fromPage}` : ""}`}
+      href={`/rental/${idToken ?? id}${fromPage ? `?fromPage=${fromPage}` : ""}`}
       images={images}
       title={title}
       price={price}
