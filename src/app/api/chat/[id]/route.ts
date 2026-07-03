@@ -1,6 +1,8 @@
 import { getMessageList } from "@/services/chat/message";
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
+import { encryptUserId } from "@/utils/userIdCipher";
+import { resolveChatId, encryptChatId } from "@/utils/chatIdCipher";
 
 export async function GET(
   req: Request,
@@ -24,7 +26,10 @@ export async function GET(
   if (!currentUser)
     return NextResponse.json({ error: "not found" }, { status: 404 });
 
-  const chatId = Number(id);
+  const chatId = resolveChatId(id);
+  if (chatId === null)
+    return NextResponse.json({ error: "not found" }, { status: 404 });
+
   const [{ data: chat, error }, messages] = await Promise.all([
     supabase
       .from("chats")
@@ -42,8 +47,11 @@ export async function GET(
   if (error || !chat)
     return NextResponse.json({ error: "not found" }, { status: 404 });
 
-  const partner =
+  const rawPartner =
     chat.user_id_1 === currentUser.id ? chat.user2 : chat.user1;
+  const partner = rawPartner
+    ? { ...rawPartner, id_token: encryptUserId(rawPartner.id) }
+    : rawPartner;
 
   const posts = chat.posts as {
     title: string;
@@ -66,6 +74,7 @@ export async function GET(
     messages,
     currentUser,
     chatId,
+    chatIdToken: encryptChatId(chatId),
     postId: chat.post_id,
     partner,
     postTitle: posts?.title ?? "",

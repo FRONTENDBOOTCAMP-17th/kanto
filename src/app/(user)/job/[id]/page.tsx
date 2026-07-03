@@ -15,6 +15,8 @@ import CompanyInfo from "./_components/CompanyInfo";
 import { viewCountUp } from "@/services/view";
 import { createClient } from "@/utils/supabase/server";
 import RelatedItemsCarousel, { type RelatedItem } from "@/components/common/RelatedItemsCarousel";
+import { resolvePostId, encryptPostId } from "@/utils/postIdCipher";
+import { encryptUserId } from "@/utils/userIdCipher";
 export { generateMetadata } from "./metadata";
 
 export default async function JobDetailPage({
@@ -23,18 +25,31 @@ export default async function JobDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const postId = resolvePostId(id);
+  if (postId === null) notFound();
 
-  let job;
+  let rawJob;
   try {
-    job = await getJobDetail(Number(id));
+    rawJob = await getJobDetail(postId);
   } catch {
     notFound();
   }
 
+  const job = {
+    ...rawJob,
+    id_token: encryptPostId(rawJob.post_id),
+    posts: {
+      ...rawJob.posts,
+      users: rawJob.posts.users
+        ? { ...rawJob.posts.users, id_token: encryptUserId(rawJob.posts.users.id) }
+        : rawJob.posts.users,
+    },
+  };
+
   const images = (job.images as string[]) ?? [];
-  
+
   after(() => viewCountUp(job.post_id));
-  
+
   const [{ userId, initialLiked, initialReported }, t, tCommon] = await Promise.all([
     getUserLikeReportStatus(job.post_id),
     getTranslations("Job"),
@@ -51,7 +66,7 @@ export default async function JobDetailPage({
     .limit(8);
   const relatedItems: RelatedItem[] = (relatedData ?? []).map((item) => ({
     id: item.id,
-    href: `/job/${item.post_id}`,
+    href: `/job/${encryptPostId(item.post_id)}`,
     imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
     title: (item.posts as { title: string | null } | null)?.title ?? "",
     priceText: formatPrice(item.salary),
@@ -90,7 +105,7 @@ export default async function JobDetailPage({
         <BackButton />
         <VerifyAuthor
           authorAuthId={job.posts.users?.auth_id}
-          editPath={`/job/${job.post_id}/edit`}
+          editPath={`/job/${job.id_token}/edit`}
           postId={job.post_id}
           redirectPath="/job"
         />

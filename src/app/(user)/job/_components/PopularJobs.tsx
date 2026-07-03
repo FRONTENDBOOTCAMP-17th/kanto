@@ -27,7 +27,7 @@ function PopularJobCard({ post, initialIsLiked, currentUserId }: CardProps) {
 
   return (
     <Link
-      href={`/job/${post.id}`}
+      href={`/job/${post.id_token ?? post.id}`}
       className="shrink-0 flex flex-col justify-between gap-2 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl p-4 hover:shadow-sm transition-all w-[calc(50%-6px)] sm:w-[calc(33.33%-8px)] lg:w-[calc(20%-10px)]"
     >
       <div className="flex items-start justify-between gap-2">

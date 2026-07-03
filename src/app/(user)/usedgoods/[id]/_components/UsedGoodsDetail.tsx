@@ -24,12 +24,17 @@ import { ApproxAreaMapWithProvider } from "@/components/common/ApproxAreaMap";
 import { formatBarangayLabel } from "@/type/location";
 
 type UsedGoods = Tables<"used_goods"> & {
+  id_token?: string;
   posts: Tables<"posts"> & {
-    users: Pick<Tables<"users">, "id" | "avatar_url" | "auth_id" | "created_at"> & { name: string | null };
+    users: Pick<Tables<"users">, "id" | "avatar_url" | "auth_id" | "created_at"> & {
+      name: string | null;
+      id_token?: string;
+    };
   };
 };
 
 type RelatedUsedGoods = Tables<"used_goods"> & {
+  id_token?: string;
   posts: Pick<Tables<"posts">, "title" | "is_sold"> | null;
 };
 
@@ -64,7 +69,7 @@ export default function UsedGoodsDetail({
 
   const relatedItems: RelatedItem[] = (relatedData ?? []).map((item) => ({
     id: item.id,
-    href: `/usedgoods/${item.post_id}`,
+    href: `/usedgoods/${item.id_token ?? item.post_id}`,
     imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
     title: item.posts?.title ?? "",
     priceText: formatPrice(item.price),
@@ -85,7 +90,7 @@ export default function UsedGoodsDetail({
   const hasCoords = data.location_lat != null && data.location_lng != null;
 
   const handleOpenProfile = () => {
-    if (data.posts.users?.id) router.push(`/user/${data.posts.users.id}`);
+    if (data.posts.users?.id) router.push(`/user/${data.posts.users.id_token ?? data.posts.users.id}`);
   };
 
   const handleChat = async () => {
@@ -110,6 +115,7 @@ export default function UsedGoodsDetail({
         postPrice: data.price,
         partner: {
           id: data.posts.users.id,
+          id_token: data.posts.users.id_token,
           name: data.posts.users.name ?? "",
           avatar_url: data.posts.users.avatar_url,
           created_at: data.posts.users.created_at,
@@ -137,7 +143,7 @@ export default function UsedGoodsDetail({
         </button>
         <VerifyAuthor
           authorAuthId={data.posts.users?.auth_id}
-          editPath={`/usedgoods/${data.post_id}/edit`}
+          editPath={`/usedgoods/${data.id_token ?? data.post_id}/edit`}
           postId={data.post_id}
           redirectPath="/usedgoods"
         />

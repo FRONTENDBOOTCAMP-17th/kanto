@@ -1,5 +1,7 @@
+import { notFound } from "next/navigation";
 import { getJobDetail } from "@/services/job/jobDetail";
 import { CreateJobForm } from "@/app/(user)/job/create/_components/CreateJobForm";
+import { resolvePostId } from "@/utils/postIdCipher";
 
 export default async function EditJobPage({
   params,
@@ -7,7 +9,9 @@ export default async function EditJobPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const job = await getJobDetail(Number(id));
+  const postId = resolvePostId(id);
+  if (postId === null) notFound();
+  const job = await getJobDetail(postId);
 
   return (
     <div className="page-wrapper">

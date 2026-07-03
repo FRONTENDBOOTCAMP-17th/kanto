@@ -58,7 +58,7 @@ export default function ChatHeader({
   useClickOutside(menuRef, () => setMenuOpen(false));
 
   const handleOpenProfile = () => {
-    router.push(`/user/${partner.id}`);
+    router.push(`/user/${partner.id_token ?? partner.id}`);
   };
 
   const handleLeave = async () => {

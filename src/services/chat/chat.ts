@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { ChatWithUsers } from "@/type/chat/chat";
+import { encryptChatId } from "@/utils/chatIdCipher";
 
 const CHAT_SELECT = `*,
       user1:public_profiles!chats_user_id_1_fkey(id, name, avatar_url, created_at),
@@ -21,10 +22,12 @@ export async function getChatList(
     throw new Error(error.message);
   }
 
-  return (data ?? []).filter((chat) => {
-    if (chat.user_id_1 === currentUserId) return !chat.user_id_1_left;
-    return !chat.user_id_2_left;
-  }) as ChatWithUsers[];
+  return (data ?? [])
+    .filter((chat) => {
+      if (chat.user_id_1 === currentUserId) return !chat.user_id_1_left;
+      return !chat.user_id_2_left;
+    })
+    .map((chat) => ({ ...chat, id_token: encryptChatId(chat.id) })) as ChatWithUsers[];
 }
 
 export async function getChatDetail(

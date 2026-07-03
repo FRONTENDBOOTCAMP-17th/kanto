@@ -9,6 +9,7 @@ import { formatTimeAgo, getDeadlineDiff } from "@/utils/format";
 
 interface JobCardProps {
   id: number;
+  idToken?: string;
   title: string;
   companyName: string;
   salary: number;
@@ -25,6 +26,7 @@ interface JobCardProps {
 
 export function JobCard({
   id,
+  idToken,
   title,
   companyName,
   salary,
@@ -71,7 +73,7 @@ export function JobCard({
   return (
     <div
       className="bg-white px-5 py-4 flex justify-between gap-3 md:gap-4 hover:bg-gray-50 transition-colors cursor-pointer group"
-      onClick={() => router.push(`/job/${id}${fromPage ? `?fromPage=${fromPage}` : ""}`)}
+      onClick={() => router.push(`/job/${idToken ?? id}${fromPage ? `?fromPage=${fromPage}` : ""}`)}
     >
       
       <div className="flex flex-col gap-2 flex-1 min-w-0 md:hidden">
