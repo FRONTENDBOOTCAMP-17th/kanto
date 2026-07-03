@@ -49,7 +49,7 @@ export default async function RentalDetail({
 
 
   after(() => viewCountUp(postId));
-  const { userId, initialLiked, initialReported } = await getUserLikeReportStatus(postId);
+  const likeStatusPromise = getUserLikeReportStatus(postId);
 
   let relatedItems: RelatedItem[] = [];
   if (rental.location) {
@@ -75,6 +75,8 @@ export default async function RentalDetail({
         : undefined,
     }));
   }
+
+  const { userId, initialLiked, initialReported } = await likeStatusPromise;
 
   const jsonLd = {
     "@context": "https://schema.org",

@@ -49,21 +49,26 @@ export default async function JobDetailPage({
   const images = (job.images as string[]) ?? [];
 
   after(() => viewCountUp(job.post_id));
+  
+  const fetchRelated = async () => {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("jobs")
+      .select("id, post_id, images, salary, deadline, posts!inner(title)")
+      .eq("location_type", job.location_type)
+      .eq("posts.status", "active")
+      .neq("id", job.id)
+      .limit(8);
+    return data;
+  };
 
-  const [{ userId, initialLiked, initialReported }, t, tCommon] = await Promise.all([
+  const [{ userId, initialLiked, initialReported }, t, tCommon, relatedData] = await Promise.all([
     getUserLikeReportStatus(job.post_id),
     getTranslations("Job"),
     getTranslations("Common"),
+    fetchRelated(),
   ]);
 
-  const supabase = await createClient();
-  const { data: relatedData } = await supabase
-    .from("jobs")
-    .select("id, post_id, images, salary, deadline, posts!inner(title)")
-    .eq("location_type", job.location_type)
-    .eq("posts.status", "active")
-    .neq("id", job.id)
-    .limit(8);
   const relatedItems: RelatedItem[] = (relatedData ?? []).map((item) => ({
     id: item.id,
     href: `/job/${encryptPostId(item.post_id)}`,

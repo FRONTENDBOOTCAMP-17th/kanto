@@ -1,11 +1,6 @@
-import type { Metadata } from "next";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import LoginForm from "./_components/LoginForm";
-
-export const metadata: Metadata = {
-  robots: { index: false },
-};
 
 export default function LoginPage() {
   return (
