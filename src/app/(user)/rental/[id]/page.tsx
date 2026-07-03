@@ -76,7 +76,7 @@ export default async function RentalDetail({
   };
 
   return (
-    <div className="page-container pb-12">
+    <div className="page-container pb-28 md:pb-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -91,27 +91,27 @@ export default async function RentalDetail({
         />
       </div>
       {images.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 items-stretch gap-2 md:gap-4 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 items-stretch gap-4 md:gap-8 mt-4">
           <ImageCarousel images={images} />
-          <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-112.5">
-            <AccommondationInfo rental={rental} />
-            <hr className="border-gray-200" />
-            <RentSellerInfo rental={rental} userId={userId} />
+          <div className="flex flex-col gap-6 pt-4 md:pt-0">
+            <AccommondationInfo rental={rental}>
+              <RentSellerInfo rental={rental} userId={userId} />
+            </AccommondationInfo>
           </div>
         </div>
       ) : (
-        
-        <div className="border border-gray-200 rounded-2xl overflow-hidden mt-4">
+        <div className="mt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
-            <div className="p-6 flex flex-col gap-4">
+            <div className="py-6 md:pr-8 flex flex-col gap-4">
               <AccommondationInfo rental={rental} />
             </div>
-            <div className="p-6 flex flex-col gap-4">
+            <div className="py-6 md:pl-8 flex flex-col gap-4">
               <RentSellerInfo rental={rental} userId={userId} />
             </div>
           </div>
         </div>
       )}
+      <hr className="border-gray-300 mt-10" />
       <PostInfo
         rental={rental}
         userId={userId}

@@ -129,7 +129,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
           
           <Link
             href={ROUTES.home}
-            className="flex items-center hover:opacity-80 transition-opacity shrink-0"
+            className="flex items-center hover:opacity-80 transition-opacity shrink-0 active:scale-100"
             onClick={() => setIsMobileOpen(false)}
           >
             <Image
@@ -272,7 +272,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
             <Link
               key={href}
               href={href}
-              className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 hover:text-teal-500 hover:bg-teal-50 rounded-lg transition-colors font-medium"
+              className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 hover:text-teal-500 hover:bg-teal-50 rounded-lg transition-colors font-medium active:scale-100"
             >
               <Icon className="w-4 h-4" />
               {t(`nav.${key}`)}
@@ -286,7 +286,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
                 if (isSuspended) { openModal(); return; }
                 router.push(ROUTES.create);
               }}
-              className="absolute right-0 flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition-colors"
+              className="absolute right-0 flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition-colors active:scale-100"
             >
               <SquarePen className="w-4 h-4" />
               {t("write")}
@@ -303,7 +303,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
                   key={href}
                   href={href}
                   onClick={() => setIsMobileOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-500 rounded-lg transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-500 rounded-lg transition-colors active:scale-100"
                 >
                   <Icon className="w-5 h-5" />
                   <span className="font-medium text-sm">{t(`nav.${key}`)}</span>
@@ -335,7 +335,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
                       key={href}
                       href={href}
                       onClick={() => setIsMobileOpen(false)}
-                      className="flex flex-col items-center gap-1 p-2 text-gray-600 hover:text-teal-500 transition-colors"
+                      className="flex flex-col items-center gap-1 p-2 text-gray-600 hover:text-teal-500 transition-colors active:scale-100"
                     >
                       <Icon className="w-6 h-6" />
                       <span className="text-xs">{label}</span>
@@ -343,7 +343,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
                   ))}
                   <button
                     onClick={handleLogoutClick}
-                    className="flex flex-col items-center gap-1 p-2 text-red-500 hover:text-red-600 transition-colors"
+                    className="flex flex-col items-center gap-1 p-2 text-red-500 hover:text-red-600 transition-colors active:scale-100"
                   >
                     <LogOut className="w-6 h-6" />
                     <span className="text-xs">{t("logout")}</span>

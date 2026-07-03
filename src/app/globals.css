@@ -7,21 +7,39 @@
 @import "../styles/carousel.css";
 
 @keyframes slideInRight {
-  from { transform: translateX(100%); }
-  to   { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 @keyframes slideInLeft {
-  from { transform: translateX(-100%); }
-  to   { transform: translateX(0); }
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 @keyframes slideInUp {
-  from { transform: translateY(100%); }
-  to   { transform: translateY(0); }
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 @keyframes pullDown {
-  0%   { transform: translateY(0); }
-  40%  { transform: translateY(6px); }
-  100% { transform: translateY(0); }
+  0% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(6px);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -159,7 +177,7 @@
     @apply absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center transition-colors;
   }
   .dropdown-item {
-    @apply w-full text-left px-5 py-2.5 text-sm transition-colors hover:bg-teal-50 hover:text-teal-600;
+    @apply w-full text-left px-5 py-2.5 text-sm transition-colors hover:bg-teal-50 hover:text-teal-600 active:scale-100;
   }
   .btn-primary {
     @apply bg-teal-500 hover:bg-teal-600 text-white;
@@ -176,13 +194,12 @@
   html {
     @apply font-sans;
   }
+  button:not(:disabled),
+  a {
+    @apply transition-transform duration-100 active:scale-[1.15];
+  }
 }
 
-/* 새로고침으로 채팅 오버레이를 복원할 때, 하이드레이션 전에 SSR된 밑 페이지가
-   잠깐 보이는 깜빡임을 막는 부팅 커버.
-   layout.tsx의 인라인 스크립트가 html[data-chat-boot]를 설정하고,
-   위젯이 마운트되면 GlobalLayout이 이 속성을 제거한다.
-   오버레이가 전체화면이 되는 모바일(md 미만)에서만 필요하다. */
 @media (max-width: 767px) {
   html[data-chat-boot] body::before {
     content: "";

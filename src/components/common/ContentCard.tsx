@@ -56,7 +56,7 @@ export function ContentCard({
 
   return (
     <div className="relative h-full">
-      <Link href={href} className="h-full block">
+      <Link href={href} className="h-full block active:scale-100">
         <Card
           className={`overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group h-full ${
             listOnMobile
