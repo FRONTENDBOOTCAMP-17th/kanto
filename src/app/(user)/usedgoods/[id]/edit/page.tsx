@@ -1,5 +1,7 @@
+import { notFound } from "next/navigation";
 import { getUsedGoodsDetail } from "@/services/usedGoods/usedGoods";
 import { CreateUsedGoodsForm } from "@/app/(user)/usedgoods/create/_components/CreateUsedGoodsForm";
+import { resolvePostId } from "@/utils/postIdCipher";
 
 export default async function EditPage({
   params,
@@ -7,7 +9,9 @@ export default async function EditPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const data = await getUsedGoodsDetail(Number(id));
+  const postId = resolvePostId(id);
+  if (postId === null) notFound();
+  const data = await getUsedGoodsDetail(postId);
 
   return (
     <CreateUsedGoodsForm

@@ -28,6 +28,7 @@ export interface ContentCardProps {
   subtitle?: string;
   tags?: React.ReactNode;
   listOnMobile?: boolean;
+  priority?: boolean;
 }
 
 export function ContentCard({
@@ -47,6 +48,7 @@ export function ContentCard({
   subtitle,
   tags,
   listOnMobile = false,
+  priority = false,
 }: ContentCardProps) {
   const t = useTranslations("Common");
   const locale = useLocale() as Locale;

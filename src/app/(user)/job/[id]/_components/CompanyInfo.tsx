@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type { JobDetail } from "@/type/job/jobsDetail";
-import CompanyLocationMap from "./CompanyLocationMap";
+import CompanyLocationMap from "./CompanyLocationMapLazy";
 
 const LOGO_COLORS = [
   "bg-teal-500", "bg-blue-500", "bg-violet-500",

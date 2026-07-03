@@ -6,6 +6,7 @@ import { Users, MapPin, Clock, CalendarDays, ChevronLeft, ChevronRight } from "l
 
 export type MeetupSummary = {
   post_id: number;
+  id_token: string;
   title: string;
   topic: string;
   start_at: string;
@@ -102,7 +103,7 @@ function MeetupCard({ meetup, showHost }: { meetup: MeetupSummary; showHost?: bo
     );
   }
   return (
-    <Link href={`/go/${meetup.post_id}`} className="flex flex-col gap-2 rounded-xl border border-gray-100 p-4 hover:bg-gray-50 transition-colors">
+    <Link href={`/go?m=${meetup.id_token}`} className="flex flex-col gap-2 rounded-xl border border-gray-100 p-4 hover:bg-gray-50 transition-colors">
       <MeetupCardInner meetup={meetup} showHost={showHost} statusKey={statusKey} />
     </Link>
   );
