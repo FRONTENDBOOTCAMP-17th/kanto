@@ -86,6 +86,45 @@
       "generic": "Nabigo ang pag-log in. Pakisubukan muli."
     }
   },
+  "FindPassword": {
+    "title": "Hanapin ang password",
+    "closeModal": "Isara ang modal ng paghahanap ng password",
+    "name": "Pangalan",
+    "namePlaceholder": "Pangalang ginamit sa pag-sign up",
+    "email": "Email",
+    "emailPlaceholder": "Email na ginamit sa pag-sign up",
+    "sendCode": "Ipadala ang verification code",
+    "devCode": "Dev verification code:",
+    "timeLeft": "Natitirang oras",
+    "codeLabel": "Verification code",
+    "codePlaceholder": "6-digit na code",
+    "verifyCode": "I-verify ang code",
+    "newPassword": "Bagong password",
+    "newPasswordPlaceholder": "8+ character na may letra at numero",
+    "passwordRule": "Maglagay ng hindi bababa sa 8 character na may letra at numero.",
+    "confirmPassword": "Kumpirmahin ang bagong password",
+    "confirmPasswordPlaceholder": "Ilagay muli ang password",
+    "passwordMismatch": "Hindi magkatugma ang mga password.",
+    "changePassword": "Palitan ang password",
+    "codeSent": "Nagpadala kami ng verification code sa iyong email.",
+    "devCodeShown": "Walang naka-configure na email key kaya ipinapakita ang dev verification code.",
+    "verified": "Na-verify. Maglagay ng bagong password.",
+    "passwordChanged": "Napalitan na ang iyong password. Mag-log in gamit ang bagong password.",
+    "errors": {
+      "missing_fields": "Kulang ang kinakailangang impormasyon.",
+      "account_not_found": "Walang account na tumutugma sa pangalan at email na inilagay mo.",
+      "email_send_failed": "Nabigong maipadala ang verification email.",
+      "email_not_configured": "Hindi naka-configure ang pagpapadala ng email. Makipag-ugnayan sa administrator.",
+      "code_expired": "Nag-expire na ang oras ng verification.",
+      "code_mismatch": "Hindi tugma ang verification code.",
+      "code_invalid_or_expired": "Nag-expire o hindi wasto ang verification.",
+      "invalid_password": "Ang password ay dapat hindi bababa sa 8 character na may letra at numero.",
+      "update_failed": "Nabigong palitan ang password.",
+      "sendFailed": "Nabigong maipadala ang verification code.",
+      "verifyFailed": "Nabigong ma-verify ang code.",
+      "changeFailed": "Nabigong palitan ang password."
+    }
+  },
   "LanguageSwitcher": {
     "label": "Wika",
     "ko": "한국어",
@@ -170,6 +209,15 @@
       "until": "Ang serbisyo ay nirestriktahan hanggang {date}.",
       "bannerTitle": "Ang iyong account ay nasuspinde.",
       "bannerPermanent": "Ang iyong account ay permanenteng nasuspinde. Hindi magagamit ang serbisyo."
+    },
+    "select": "Pumili",
+    "closeItem": "Isara ang {label}",
+    "prevPage": "Nakaraang pahina",
+    "nextPage": "Susunod na pahina",
+    "verifyRequired": {
+      "title": "Kailangan ng identity verification",
+      "message": "Kailangan mong i-verify ang iyong pagkakakilanlan para makapag-post.",
+      "question": "Gusto mo bang mag-verify ngayon?"
     }
   },
   "Report": {
@@ -326,20 +374,57 @@
       "otherAreas": "Iba pang lugar"
     },
     "workDay": {
-      "월": "Lun", "화": "Mar", "수": "Miy", "목": "Huw", "금": "Biy", "토": "Sab", "일": "Lin"
+      "월": "Lun",
+      "화": "Mar",
+      "수": "Miy",
+      "목": "Huw",
+      "금": "Biy",
+      "토": "Sab",
+      "일": "Lin"
     },
     "dayPreset": {
-      "평일": "Araw ng trabaho", "주말": "Weekend", "매일": "Araw-araw"
+      "평일": "Araw ng trabaho",
+      "주말": "Weekend",
+      "매일": "Araw-araw"
     },
     "preferredGroup": {
-      "어학": "Wika", "체류": "Tirahan", "경력": "Karanasan", "직군": "Trabaho", "기타": "Iba pa"
+      "어학": "Wika",
+      "체류": "Tirahan",
+      "경력": "Karanasan",
+      "직군": "Trabaho",
+      "기타": "Iba pa"
     },
     "preferredItem": {
-      "korean": "Korean", "english": "Ingles", "tagalog": "Tagalog", "chinese": "Tsino", "japanese": "Hapon", "interpretation": "Interpretasyon",
-      "local_resident": "Lokal na residente", "nine_g_visa": "9G Visa", "ph_permanent_resident": "Permanenteng Residente ng PH", "spouse_visa": "Spouse Visa", "immediate_start": "Agad magsimula", "long_term": "Pangmatagalan",
-      "entry_level": "Baguhan / Kahit sino", "one_to_three": "1–3 taon", "three_to_five": "3–5 taon", "five_plus": "5+ taon",
-      "office_admin": "Opisina/Admin", "sales_marketing": "Benta/Marketing", "it_dev": "IT/Development", "design": "Disenyo", "translation": "Pagsasalin", "customer_service_cs": "Serbisyo sa Customer/CS", "casino_gaming": "Casino/Gaming", "logistics_trade": "Logistics/Kalakalan", "food_service": "Pagkain/Serbisyo", "job_other": "Iba pa",
-      "drivers_license": "Driver's license", "remote_hybrid": "Remote/Hybrid na posible", "local_family": "Lokal na pamilya", "referral": "Rekomendasyon"
+      "korean": "Korean",
+      "english": "Ingles",
+      "tagalog": "Tagalog",
+      "chinese": "Tsino",
+      "japanese": "Hapon",
+      "interpretation": "Interpretasyon",
+      "local_resident": "Lokal na residente",
+      "nine_g_visa": "9G Visa",
+      "ph_permanent_resident": "Permanenteng Residente ng PH",
+      "spouse_visa": "Spouse Visa",
+      "immediate_start": "Agad magsimula",
+      "long_term": "Pangmatagalan",
+      "entry_level": "Baguhan / Kahit sino",
+      "one_to_three": "1–3 taon",
+      "three_to_five": "3–5 taon",
+      "five_plus": "5+ taon",
+      "office_admin": "Opisina/Admin",
+      "sales_marketing": "Benta/Marketing",
+      "it_dev": "IT/Development",
+      "design": "Disenyo",
+      "translation": "Pagsasalin",
+      "customer_service_cs": "Serbisyo sa Customer/CS",
+      "casino_gaming": "Casino/Gaming",
+      "logistics_trade": "Logistics/Kalakalan",
+      "food_service": "Pagkain/Serbisyo",
+      "job_other": "Iba pa",
+      "drivers_license": "Driver's license",
+      "remote_hybrid": "Remote/Hybrid na posible",
+      "local_family": "Lokal na pamilya",
+      "referral": "Rekomendasyon"
     }
   },
   "Create": {
@@ -801,6 +886,7 @@
     "haveAccount": "May account ka na?",
     "login": "Mag-log in",
     "emailExists": "Nakarehistro na ang email na ito.",
+    "signupFailed": "Nabigo ang pag-sign up. Pakisuri ang iyong impormasyon at subukang muli.",
     "form": {
       "name": "Pangalan",
       "namePlaceholder": "2+ letrang Korean o English (hal. Juan)",
@@ -811,11 +897,11 @@
       "password": "Password",
       "passwordPlaceholder": "8+ karakter na may letra at numero",
       "passwordError": "Maglagay ng hindi bababa sa 8 karakter kasama ang letra at numero.",
-        "confirmPassword": "Kumpirmahin ang Password",
-        "confirmPlaceholder": "Muling ilagay ang iyong password",
-        "confirmError": "Hindi magkatugma ang mga password.",
-        "confirmSuccess": "Magkatugma ang mga password!",
-        "showPassword": "Ipakita ang password",
+      "confirmPassword": "Kumpirmahin ang Password",
+      "confirmPlaceholder": "Muling ilagay ang iyong password",
+      "confirmError": "Hindi magkatugma ang mga password.",
+      "confirmSuccess": "Magkatugma ang mga password!",
+      "showPassword": "Ipakita ang password",
       "hidePassword": "Itago ang password",
       "success": "Tapos na ang pag-sign up!\nMaligayang pagdating sa Kanto!",
       "processing": "Pinoproseso...",
@@ -855,14 +941,16 @@
         "age": "Kumpirmasyon na 18+ taong gulang"
       },
       "loading": "Naglo-load...",
-        "loadError": "Hindi ma-load ang nilalaman. Pakisubukan muli mamaya.",
-        "cancel": "Kanselahin",
-        "agree": "Sumasang-ayon ako",
-        "readToEnd": "Pakibasa hanggang dulo",
-        "scrollDown": "Mag-scroll pababa"
-      }
+      "loadError": "Hindi ma-load ang nilalaman. Pakisubukan muli mamaya.",
+      "cancel": "Kanselahin",
+      "agree": "Sumang-ayon",
+      "readToEnd": "Pakibasa hanggang dulo",
+      "scrollDown": "Mag-scroll pababa",
+      "unavailable": "Hindi magagamit"
+    }
   },
   "Terms": {
+    "loadError": "Hindi ma-load ang nilalaman. Pakisubukan muli mamaya.",
     "items": {
       "policy": "Patakaran sa Operasyon",
       "service": "Mga Tuntunin ng Serbisyo",
@@ -1054,7 +1142,8 @@
     "place": {
       "placeholder": "Maglagay ng pangalan ng lugar o address (hal. SM Aura)",
       "loading": "Nilo-load ang mapa…",
-      "empty": "Wala pang napiling lokasyon"
+      "empty": "Wala pang napiling lokasyon",
+      "currentArea": "Kasalukuyang lugar ng kalakalan: {label}"
     }
   },
   "Notice": {

@@ -86,6 +86,45 @@
       "generic": "로그인에 실패했어요. 다시 시도해주세요."
     }
   },
+  "FindPassword": {
+    "title": "비밀번호 찾기",
+    "closeModal": "비밀번호 찾기 모달 닫기",
+    "name": "이름",
+    "namePlaceholder": "가입 시 입력한 이름",
+    "email": "이메일",
+    "emailPlaceholder": "가입 시 사용한 이메일",
+    "sendCode": "인증번호 보내기",
+    "devCode": "개발용 인증번호:",
+    "timeLeft": "남은 인증 시간",
+    "codeLabel": "인증번호",
+    "codePlaceholder": "6자리 인증번호",
+    "verifyCode": "인증번호 확인",
+    "newPassword": "새 비밀번호",
+    "newPasswordPlaceholder": "영문 + 숫자 포함 8자 이상",
+    "passwordRule": "영문과 숫자를 포함하여 8자 이상 입력해주세요.",
+    "confirmPassword": "새 비밀번호 확인",
+    "confirmPasswordPlaceholder": "비밀번호를 다시 입력하세요",
+    "passwordMismatch": "비밀번호가 일치하지 않습니다.",
+    "changePassword": "비밀번호 변경하기",
+    "codeSent": "입력한 이메일로 인증번호를 보냈습니다.",
+    "devCodeShown": "메일 발송 키가 없어 개발용 인증번호를 표시합니다.",
+    "verified": "인증되었습니다. 새 비밀번호를 입력해주세요.",
+    "passwordChanged": "비밀번호가 변경되었습니다. 새 비밀번호로 로그인해주세요.",
+    "errors": {
+      "missing_fields": "필수 정보가 누락되었습니다.",
+      "account_not_found": "입력하신 이름과 이메일에 일치하는 계정이 없습니다.",
+      "email_send_failed": "인증번호 이메일 발송에 실패했습니다.",
+      "email_not_configured": "인증번호 메일 발송이 구성되지 않았습니다. 관리자에게 문의해주세요.",
+      "code_expired": "인증 시간이 만료되었습니다.",
+      "code_mismatch": "인증번호가 일치하지 않습니다.",
+      "code_invalid_or_expired": "인증이 만료되었거나 올바르지 않습니다.",
+      "invalid_password": "비밀번호는 영문과 숫자를 포함하여 8자 이상이어야 합니다.",
+      "update_failed": "비밀번호 변경에 실패했습니다.",
+      "sendFailed": "인증번호 발송에 실패했습니다.",
+      "verifyFailed": "인증번호 확인에 실패했습니다.",
+      "changeFailed": "비밀번호 변경에 실패했습니다."
+    }
+  },
   "LanguageSwitcher": {
     "label": "언어",
     "ko": "한국어",
@@ -170,6 +209,15 @@
       "until": "{date}까지 서비스 이용이 제한됩니다.",
       "bannerTitle": "계정이 정지되었습니다.",
       "bannerPermanent": "영구 정지 처리된 계정입니다. 서비스 이용이 불가합니다."
+    },
+    "select": "선택",
+    "closeItem": "{label} 닫기",
+    "prevPage": "이전 페이지",
+    "nextPage": "다음 페이지",
+    "verifyRequired": {
+      "title": "본인인증 필요",
+      "message": "본인인증을 해야 글 작성이 가능합니다.",
+      "question": "본인인증 하시겠습니까?"
     }
   },
   "Report": {
@@ -326,20 +374,57 @@
       "otherAreas": "그 외 지역"
     },
     "workDay": {
-      "월": "월", "화": "화", "수": "수", "목": "목", "금": "금", "토": "토", "일": "일"
+      "월": "월",
+      "화": "화",
+      "수": "수",
+      "목": "목",
+      "금": "금",
+      "토": "토",
+      "일": "일"
     },
     "dayPreset": {
-      "평일": "평일", "주말": "주말", "매일": "매일"
+      "평일": "평일",
+      "주말": "주말",
+      "매일": "매일"
     },
     "preferredGroup": {
-      "어학": "어학", "체류": "체류", "경력": "경력", "직군": "직군", "기타": "기타"
+      "어학": "어학",
+      "체류": "체류",
+      "경력": "경력",
+      "직군": "직군",
+      "기타": "기타"
     },
     "preferredItem": {
-      "korean": "한국어", "english": "영어", "tagalog": "따갈로그어", "chinese": "중국어", "japanese": "일본어", "interpretation": "통역 가능",
-      "local_resident": "현지 거주", "nine_g_visa": "9G비자", "ph_permanent_resident": "필리핀 영주권", "spouse_visa": "배우자 비자", "immediate_start": "즉시 출근", "long_term": "장기 근무",
-      "entry_level": "신입/경력무관", "one_to_three": "1~3년", "three_to_five": "3~5년", "five_plus": "5년 이상",
-      "office_admin": "사무/총무", "sales_marketing": "영업/마케팅", "it_dev": "IT/개발", "design": "디자인", "translation": "통번역", "customer_service_cs": "고객서비스/CS", "casino_gaming": "카지노/게이밍", "logistics_trade": "물류/무역", "food_service": "요식업/서비스직", "job_other": "기타",
-      "drivers_license": "운전면허", "remote_hybrid": "재택/하이브리드 가능", "local_family": "현지 가족", "referral": "지인 추천"
+      "korean": "한국어",
+      "english": "영어",
+      "tagalog": "따갈로그어",
+      "chinese": "중국어",
+      "japanese": "일본어",
+      "interpretation": "통역 가능",
+      "local_resident": "현지 거주",
+      "nine_g_visa": "9G비자",
+      "ph_permanent_resident": "필리핀 영주권",
+      "spouse_visa": "배우자 비자",
+      "immediate_start": "즉시 출근",
+      "long_term": "장기 근무",
+      "entry_level": "신입/경력무관",
+      "one_to_three": "1~3년",
+      "three_to_five": "3~5년",
+      "five_plus": "5년 이상",
+      "office_admin": "사무/총무",
+      "sales_marketing": "영업/마케팅",
+      "it_dev": "IT/개발",
+      "design": "디자인",
+      "translation": "통번역",
+      "customer_service_cs": "고객서비스/CS",
+      "casino_gaming": "카지노/게이밍",
+      "logistics_trade": "물류/무역",
+      "food_service": "요식업/서비스직",
+      "job_other": "기타",
+      "drivers_license": "운전면허",
+      "remote_hybrid": "재택/하이브리드 가능",
+      "local_family": "현지 가족",
+      "referral": "지인 추천"
     }
   },
   "Create": {
@@ -529,13 +614,11 @@
       "locationDetailPlaceholder": "상세 지역을 입력하세요",
       "deadlineLabel": "마감일 *",
       "workHoursLabel": "근무 시간 *",
-
       "timeNegotiable": "시간 협의",
       "workDaysLabel": "근무 요일",
       "selectedCount": "개 선택됨",
       "preferredSelect": "우대 사항 선택",
       "preferredDone": "완료 ({count})",
-
       "hour": "시",
       "minute": "분",
       "hourValue": "{value}시",
@@ -803,6 +886,7 @@
     "haveAccount": "이미 계정이 있으신가요?",
     "login": "로그인",
     "emailExists": "이미 가입된 이메일입니다.",
+    "signupFailed": "회원가입에 실패했습니다. 입력 정보를 확인한 뒤 다시 시도해주세요.",
     "form": {
       "name": "이름",
       "namePlaceholder": "한글 또는 영어 2자 이상 (예: 홍길동)",
@@ -813,11 +897,11 @@
       "password": "비밀번호",
       "passwordPlaceholder": "영문 + 숫자 포함 8자 이상",
       "passwordError": "영문과 숫자를 포함하여 8자 이상 입력해주세요.",
-        "confirmPassword": "비밀번호 확인",
-        "confirmPlaceholder": "비밀번호를 다시 입력하세요",
-        "confirmError": "비밀번호가 일치하지 않습니다.",
-        "confirmSuccess": "비밀번호가 일치합니다!",
-        "showPassword": "비밀번호 표시",
+      "confirmPassword": "비밀번호 확인",
+      "confirmPlaceholder": "비밀번호를 다시 입력하세요",
+      "confirmError": "비밀번호가 일치하지 않습니다.",
+      "confirmSuccess": "비밀번호가 일치합니다!",
+      "showPassword": "비밀번호 표시",
       "hidePassword": "비밀번호 숨기기",
       "success": "가입이 완료되었습니다!\n칸토에 오신 것을 환영합니다.",
       "processing": "처리 중...",
@@ -857,14 +941,16 @@
         "age": "만 18세 이상 확인"
       },
       "loading": "불러오는 중...",
-        "loadError": "내용을 불러올 수 없습니다. 잠시 후 다시 시도해주세요.",
-        "cancel": "취소",
-        "agree": "동의합니다",
-        "readToEnd": "끝까지 읽어주세요",
-        "scrollDown": "아래로 스크롤하기"
-      }
+      "loadError": "내용을 불러올 수 없습니다. 잠시 후 다시 시도해주세요.",
+      "cancel": "취소",
+      "agree": "동의합니다",
+      "readToEnd": "끝까지 읽어주세요",
+      "scrollDown": "아래로 스크롤하기",
+      "unavailable": "동의할 수 없음"
+    }
   },
   "Terms": {
+    "loadError": "현재 내용을 불러올 수 없습니다. 잠시 후 다시 시도해주세요.",
     "items": {
       "policy": "운영정책",
       "service": "서비스 이용약관",
@@ -1056,7 +1142,8 @@
     "place": {
       "placeholder": "장소명 또는 주소를 입력하세요 (예: SM Aura)",
       "loading": "지도 로딩 중…",
-      "empty": "아직 위치가 선택되지 않았습니다"
+      "empty": "아직 위치가 선택되지 않았습니다",
+      "currentArea": "현재 설정된 거래지역: {label}"
     }
   },
   "Notice": {

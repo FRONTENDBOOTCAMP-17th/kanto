@@ -14,6 +14,8 @@ type AgreedState = {
   push: boolean;
 };
 
+export type SignupAgreements = AgreedState;
+
 const AGREES = [
   { id: "terms", required: true },
   { id: "privacy", required: true },
@@ -24,9 +26,10 @@ const AGREES = [
 
 interface AgreeSectionProps {
   onRequiredChange: (required: boolean) => void;
+  onAgreedChange?: (agreed: SignupAgreements) => void;
 }
 
-export function AgreeSection({ onRequiredChange }: AgreeSectionProps) {
+export function AgreeSection({ onRequiredChange, onAgreedChange }: AgreeSectionProps) {
   const t = useTranslations("Signup.agree");
   const [agreed, setAgreed] = useState<AgreedState>({
     terms: false,
@@ -49,7 +52,8 @@ export function AgreeSection({ onRequiredChange }: AgreeSectionProps) {
 
   useEffect(() => {
     onRequiredChange(agreed.terms && agreed.privacy && agreed.age);
-  }, [agreed.terms, agreed.privacy, agreed.age, onRequiredChange]);
+    onAgreedChange?.(agreed);
+  }, [agreed, onAgreedChange, onRequiredChange]);
 
   const handleItemClick = (id: string) => {
     if (id === "marketing" || id === "push") {
