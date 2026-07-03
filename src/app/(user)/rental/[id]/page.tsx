@@ -13,26 +13,41 @@ import VerifyAuthor from "@/components/common/VerifyAuthor";
 import { viewCountUp } from "@/services/view";
 import { createClient } from "@/utils/supabase/server";
 import RelatedItemsCarousel, { type RelatedItem } from "@/components/common/RelatedItemsCarousel";
+import { resolvePostId, encryptPostId } from "@/utils/postIdCipher";
+import { encryptUserId } from "@/utils/userIdCipher";
 export { generateMetadata } from "./metadata";
 
 export default async function RentalDetail({
   params,
 }: {
-  params: Promise<{ id: number }>;
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const resolvedId = resolvePostId(id);
+  if (resolvedId === null) notFound();
 
-  let rental;
+  let rawRental;
   try {
-    rental = await getRentalDetail(id);
+    rawRental = await getRentalDetail(resolvedId);
   } catch {
     notFound();
   }
 
+  const rental = {
+    ...rawRental,
+    id_token: encryptPostId(rawRental.post_id ?? resolvedId),
+    posts: {
+      ...rawRental.posts,
+      users: rawRental.posts.users
+        ? { ...rawRental.posts.users, id_token: encryptUserId(rawRental.posts.users.id) }
+        : rawRental.posts.users,
+    },
+  };
+
   const images = (rental.images as string[]) ?? [];
   const postId = rental.post_id ?? 0;
 
-  
+
   after(() => viewCountUp(postId));
   const { userId, initialLiked, initialReported } = await getUserLikeReportStatus(postId);
 
@@ -51,7 +66,7 @@ export default async function RentalDetail({
     ]);
     relatedItems = (data ?? []).map((item) => ({
       id: item.id,
-      href: `/rental/${item.post_id}`,
+      href: `/rental/${encryptPostId(item.post_id ?? 0)}`,
       imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
       title: (item.posts as { title: string | null; is_sold: boolean } | null)?.title ?? "",
       priceText: formatPrice(item.price),
@@ -85,7 +100,7 @@ export default async function RentalDetail({
         <BackButton />
         <VerifyAuthor
           authorAuthId={rental.posts.users?.auth_id}
-          editPath={`/rental/${id}/edit`}
+          editPath={`/rental/${rental.id_token}/edit`}
           postId={postId}
           redirectPath="/rental"
         />

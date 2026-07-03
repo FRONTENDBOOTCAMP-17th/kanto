@@ -6,6 +6,7 @@ import { getSessionUser } from "@/services/user/user";
 import { getMeetupDetail } from "@/services/go/go";
 import type { GroupChatRoom, GroupMessageWithSender, MyGroupRoom } from "@/type/groupChat";
 import type { MeetupParticipant } from "@/type/go";
+import { encryptUserId } from "@/utils/userIdCipher";
 
 const GRACE_PERIOD_MS = 24 * 60 * 60 * 1000;
 
@@ -319,6 +320,7 @@ export async function getRoomMembers(meetupPostId: number): Promise<MeetupPartic
     id: 0,
     meetup_post_id: meetupPostId,
     user_id: meetup.host_id,
+    id_token: encryptUserId(meetup.host_id),
     joined_at: "",
     status: "joined",
     display_name: meetup.host_name,
@@ -327,5 +329,8 @@ export async function getRoomMembers(meetupPostId: number): Promise<MeetupPartic
     is_deleted: false,
   };
 
-  return [host, ...participants.map((p) => ({ ...p, is_host: false }))];
+  return [
+    host,
+    ...participants.map((p) => ({ ...p, id_token: encryptUserId(p.user_id), is_host: false })),
+  ];
 }

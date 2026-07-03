@@ -28,6 +28,7 @@ export function RentalList({ initialPosts, initialLikedIds, currentUserId, curre
           <RentalCard
             key={post.id}
             id={post.id}
+            idToken={post.id_token}
             fromPage={currentPage > 1 ? currentPage : undefined}
             title={post.title}
             price={rental?.price ?? null}

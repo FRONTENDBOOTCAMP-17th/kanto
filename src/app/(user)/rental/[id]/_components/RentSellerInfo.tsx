@@ -28,7 +28,7 @@ export default function RentSellorInfo({
   const [showBlockToast, setShowBlockToast] = useState(false);
 
   const handleOpenProfile = () => {
-    if (rental.posts.users?.id) router.push(`/user/${rental.posts.users.id}`);
+    if (rental.posts.users?.id) router.push(`/user/${rental.posts.users.id_token ?? rental.posts.users.id}`);
   };
 
   const handleChat = async () => {
@@ -53,6 +53,7 @@ export default function RentSellorInfo({
         postPrice: null,
         partner: {
           id: rental.posts.users.id,
+          id_token: rental.posts.users.id_token,
           name: rental.posts.users.name,
           avatar_url: rental.posts.users.avatar_url,
           created_at: rental.posts.users.created_at,
