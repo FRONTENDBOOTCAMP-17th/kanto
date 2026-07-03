@@ -140,6 +140,7 @@ export function UnifiedBanner() {
   }
 
   if (items.length === 0) return null;
+  if (isGo) return null;
 
   
   const safeDesktopIndex = Math.min(desktopIndex, items.length - 1);

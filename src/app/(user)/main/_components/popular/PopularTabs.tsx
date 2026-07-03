@@ -65,7 +65,7 @@ export default function PopularTabs({ usedGoodsItems, jobItems, rentalItems }: P
           </div>
           <Link
             href={activeLink}
-            className="flex gap-1 items-center text-teal-500 font-medium text-sm"
+            className="cursor-pointer flex gap-1 items-center text-teal-500 font-medium text-sm"
           >
             {tc("viewAll")}
             <ChevronRight className="w-4 h-4" />

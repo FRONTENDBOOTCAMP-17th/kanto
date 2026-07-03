@@ -7,13 +7,13 @@ import type { Meetup } from "@/type/go";
 import type { MeetupTopicKey } from "@/constants/meetupTopics";
 
 interface UseLiveMeetupsOptions {
-  
   topicFilter?: MeetupTopicKey | "all";
+  initialData?: Meetup[];
 }
 
-export function useLiveMeetups({ topicFilter }: UseLiveMeetupsOptions = {}) {
-  const [meetups, setMeetups] = useState<Meetup[]>([]);
-  const [loading, setLoading] = useState(true);
+export function useLiveMeetups({ topicFilter, initialData }: UseLiveMeetupsOptions = {}) {
+  const [meetups, setMeetups] = useState<Meetup[]>(initialData ?? []);
+  const [loading, setLoading] = useState(initialData === undefined);
   const [error, setError] = useState<Error | null>(null);
   const inFlightRef = useRef(false);
   const queuedRef = useRef(false);
