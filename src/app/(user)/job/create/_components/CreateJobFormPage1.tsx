@@ -55,11 +55,6 @@ interface CreateJobFormPageOneProps {
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
 const MINUTES = ["00", "30"];
 
-const EMPLOYEE_OPTIONS = EMPLOYEE_TYPES.map((t) => ({
-  value: t.id,
-  label: t.label,
-}));
-const SALARY_OPTIONS = SALARY_TYPES.map((t) => ({ value: t, label: t }));
 
 export function CreateJobFormPageOne({
   title,
@@ -96,6 +91,15 @@ export function CreateJobFormPageOne({
   const t = useTranslations("Job");
   const te = useTranslations("Enums");
   const tc = useTranslations("Common");
+
+  const EMPLOYEE_OPTIONS = EMPLOYEE_TYPES.map((type) => ({
+    value: type.id,
+    label: te(`employeeType.${type.id}`),
+  }));
+  const SALARY_OPTIONS = SALARY_TYPES.map((type) => ({
+    value: type,
+    label: te(`salaryType.${type}`),
+  }));
 
   const HOUR_OPTIONS = HOURS.map((h) => ({
     value: h,
@@ -208,7 +212,11 @@ export function CreateJobFormPageOne({
 
       <div className="space-y-2">
         <Label>{t("form.locationLabel")}</Label>
-        <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
+        <APIProvider
+          apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
+          libraries={["places"]}
+          version="weekly"
+        >
           <PlaceAutocomplete
             selected={workLocation}
             onSelect={onWorkLocationSelect}
