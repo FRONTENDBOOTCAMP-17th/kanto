@@ -169,7 +169,8 @@
       "until": "Ang serbisyo ay nirestriktahan hanggang {date}.",
       "bannerTitle": "Ang iyong account ay nasuspinde.",
       "bannerPermanent": "Ang iyong account ay permanenteng nasuspinde. Hindi magagamit ang serbisyo."
-    }
+    },
+    "likes": "Like"
   },
   "Report": {
     "title": "Mag-ulat",
@@ -325,20 +326,57 @@
       "otherAreas": "Iba pang lugar"
     },
     "workDay": {
-      "월": "Lun", "화": "Mar", "수": "Miy", "목": "Huw", "금": "Biy", "토": "Sab", "일": "Lin"
+      "월": "Lun",
+      "화": "Mar",
+      "수": "Miy",
+      "목": "Huw",
+      "금": "Biy",
+      "토": "Sab",
+      "일": "Lin"
     },
     "dayPreset": {
-      "평일": "Araw ng trabaho", "주말": "Weekend", "매일": "Araw-araw"
+      "평일": "Araw ng trabaho",
+      "주말": "Weekend",
+      "매일": "Araw-araw"
     },
     "preferredGroup": {
-      "어학": "Wika", "체류": "Tirahan", "경력": "Karanasan", "직군": "Trabaho", "기타": "Iba pa"
+      "어학": "Wika",
+      "체류": "Tirahan",
+      "경력": "Karanasan",
+      "직군": "Trabaho",
+      "기타": "Iba pa"
     },
     "preferredItem": {
-      "korean": "Korean", "english": "Ingles", "tagalog": "Tagalog", "chinese": "Tsino", "japanese": "Hapon", "interpretation": "Interpretasyon",
-      "local_resident": "Lokal na residente", "nine_g_visa": "9G Visa", "ph_permanent_resident": "Permanenteng Residente ng PH", "spouse_visa": "Spouse Visa", "immediate_start": "Agad magsimula", "long_term": "Pangmatagalan",
-      "entry_level": "Baguhan / Kahit sino", "one_to_three": "1–3 taon", "three_to_five": "3–5 taon", "five_plus": "5+ taon",
-      "office_admin": "Opisina/Admin", "sales_marketing": "Benta/Marketing", "it_dev": "IT/Development", "design": "Disenyo", "translation": "Pagsasalin", "customer_service_cs": "Serbisyo sa Customer/CS", "casino_gaming": "Casino/Gaming", "logistics_trade": "Logistics/Kalakalan", "food_service": "Pagkain/Serbisyo", "job_other": "Iba pa",
-      "drivers_license": "Driver's license", "remote_hybrid": "Remote/Hybrid na posible", "local_family": "Lokal na pamilya", "referral": "Rekomendasyon"
+      "korean": "Korean",
+      "english": "Ingles",
+      "tagalog": "Tagalog",
+      "chinese": "Tsino",
+      "japanese": "Hapon",
+      "interpretation": "Interpretasyon",
+      "local_resident": "Lokal na residente",
+      "nine_g_visa": "9G Visa",
+      "ph_permanent_resident": "Permanenteng Residente ng PH",
+      "spouse_visa": "Spouse Visa",
+      "immediate_start": "Agad magsimula",
+      "long_term": "Pangmatagalan",
+      "entry_level": "Baguhan / Kahit sino",
+      "one_to_three": "1–3 taon",
+      "three_to_five": "3–5 taon",
+      "five_plus": "5+ taon",
+      "office_admin": "Opisina/Admin",
+      "sales_marketing": "Benta/Marketing",
+      "it_dev": "IT/Development",
+      "design": "Disenyo",
+      "translation": "Pagsasalin",
+      "customer_service_cs": "Serbisyo sa Customer/CS",
+      "casino_gaming": "Casino/Gaming",
+      "logistics_trade": "Logistics/Kalakalan",
+      "food_service": "Pagkain/Serbisyo",
+      "job_other": "Iba pa",
+      "drivers_license": "Driver's license",
+      "remote_hybrid": "Remote/Hybrid na posible",
+      "local_family": "Lokal na pamilya",
+      "referral": "Rekomendasyon"
     }
   },
   "Create": {
@@ -625,7 +663,9 @@
       "errorPost": "Nabigo ang paggawa ng post.",
       "errorImage": "Nabigo ang pag-upload ng mga larawan.",
       "errorRental": "Nabigo ang pagrehistro ng impormasyon ng tuluyan."
-    }
+    },
+    "views": "View",
+    "likes": "Like"
   },
   "Profile": {
     "menu": {
@@ -801,7 +841,7 @@
       "confirmPassword": "Kumpirmahin ang Password",
       "confirmPlaceholder": "Muling ilagay ang iyong password",
       "confirmError": "Hindi magkatugma ang mga password.",
-      "showPassword": "Ipakita ang password",
+      "confirmSuccess": "Magkatugma ang mga password!",      "showPassword": "Ipakita ang password",
       "hidePassword": "Itago ang password",
       "success": "Tapos na ang pag-sign up!\nMaligayang pagdating sa Kanto!",
       "processing": "Pinoproseso...",
@@ -844,8 +884,8 @@
       "loadError": "Hindi ma-load ang nilalaman. Pakisubukan muli mamaya.",
       "cancel": "Kanselahin",
       "agree": "Sumasang-ayon ako",
-      "readToEnd": "Pakibasa hanggang dulo"
-    }
+      "readToEnd": "Pakibasa hanggang dulo",
+      "scrollDown": "Mag-scroll pababa"    }
   },
   "Terms": {
     "items": {

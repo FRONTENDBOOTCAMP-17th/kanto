@@ -79,7 +79,7 @@ export default function RentSellorInfo({
 
   return (
     <>
-      <div className="bg-white shadow-lg p-7 flex flex-col gap-7">
+      <div className="flex flex-col gap-7">
         <button
           type="button"
           onClick={handleOpenProfile}
@@ -114,7 +114,7 @@ export default function RentSellorInfo({
         {!isOwner && (
           <button
             onClick={handleChat}
-            className="hidden md:flex w-full items-center justify-center gap-2 border border-gray-900 py-3 text-xs font-semibold tracking-widest text-gray-900 transition-all hover:bg-gray-900 hover:text-white active:scale-[1.02] cursor-pointer"
+            className="hidden md:flex w-full items-center justify-center gap-2 border border-gray-200 rounded-lg py-3 text-xs font-semibold tracking-widest text-gray-700 bg-white transition-all hover:bg-black/10 active:scale-[1.02] cursor-pointer"
           >
             <MessageCircle className="w-3.5 h-3.5" />
             {t("chat")}
@@ -134,7 +134,7 @@ export default function RentSellorInfo({
           </div>
           <button
             onClick={handleChat}
-            className="flex items-center gap-2 border border-gray-900 px-4 py-2 text-xs font-semibold tracking-wide text-gray-900 transition-all hover:bg-gray-900 hover:text-white active:scale-[1.02] cursor-pointer"
+            className="flex items-center gap-2 border border-gray-200 rounded-lg px-4 py-2 text-xs font-semibold tracking-wide text-gray-700 bg-white transition-all hover:bg-black/10 active:scale-[1.02] cursor-pointer"
           >
             <MessageCircle className="w-4 h-4" />
             {t("chat")}

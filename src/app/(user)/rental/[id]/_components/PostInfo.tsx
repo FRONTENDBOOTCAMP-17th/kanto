@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { formatTimeAgo } from "@/utils/format";
-import { Clock, Eye, Heart } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { RentalWithPost } from "@/type/rental/rentalDetail";
 import InteractionButtons from "@/components/common/InteractionButtons";
@@ -55,17 +54,12 @@ export default function PostInfo({
       </p>
 
       <div className="text-gray-400 text-xs flex items-center gap-5 mt-3">
-        <span className="flex items-center leading-none gap-1">
-          <Clock className="w-4 h-4" />
-          <time dateTime={rental.created_at}>{formatTimeAgo(rental.created_at, locale)}</time>
+        <time dateTime={rental.created_at}>{formatTimeAgo(rental.created_at, locale)}</time>
+        <span className="flex items-center gap-1">
+          {t("views")} {t("viewCount", { count: rental.posts.view_count })}
         </span>
         <span className="flex items-center gap-1">
-          <Eye className="w-4 h-4" />
-          {t("viewCount", { count: rental.posts.view_count })}
-        </span>
-        <span className="flex items-center gap-1">
-          <Heart className="w-4 h-4" />
-          {likeCount}
+          {t("likes")} {likeCount}
         </span>
         <InteractionButtons
           postId={postId}

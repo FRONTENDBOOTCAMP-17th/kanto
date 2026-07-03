@@ -45,6 +45,7 @@ export default function ImageCarousel({ images }: { images: string[] }) {
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-contain"
               draggable={false}
+              onContextMenu={(e) => e.preventDefault()}
             />
           </div>
         )}
@@ -66,10 +67,11 @@ export default function ImageCarousel({ images }: { images: string[] }) {
             priority={currentIndex === 0}
             className="object-contain"
             draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
           />
         </div>
 
-        <p className="absolute right-3 top-3 bg-black/70 text-white text-xs px-2.5 py-1 z-10 tracking-widest">
+        <p className="absolute right-3 top-3 bg-black/70 text-white text-xs px-2.5 py-1 z-10 tracking-widest rounded-sm">
           {currentIndex + 1} / {images.length}
         </p>
         <button
