@@ -75,7 +75,7 @@ export function SearchBar({
                 onClick={() => setMobileLocationOpen(true)}
                 aria-expanded={mobileLocationOpen}
                 aria-haspopup="dialog"
-                className={`flex items-center gap-1.5 h-11 px-4 rounded-full border-2 transition-colors font-semibold text-sm whitespace-nowrap ${
+                className={`flex items-center gap-1.5 h-11 px-4 rounded-full border-2 transition-colors font-semibold text-sm whitespace-nowrap active:scale-100 ${
                   locationFilter !== "all"
                     ? "border-teal-400 bg-teal-50 text-teal-700"
                     : "border-gray-200 bg-white text-gray-800"
@@ -106,7 +106,7 @@ export function SearchBar({
             <button
               type="submit"
               aria-label={t("search")}
-              className="cursor-pointer shrink-0 w-7 h-7 bg-gray-800 hover:bg-teal-500 rounded-full flex items-center justify-center transition-colors mr-0.5"
+              className="cursor-pointer shrink-0 w-7 h-7 bg-gray-800 hover:bg-teal-500 rounded-full flex items-center justify-center transition-colors mr-0.5 active:scale-100"
             >
               <ArrowRight className="w-3.5 h-3.5 text-white" />
             </button>
@@ -121,7 +121,7 @@ export function SearchBar({
                 onClick={() => setLocationDropdownOpen((v) => !v)}
                 aria-expanded={locationDropdownOpen}
                 aria-haspopup="listbox"
-                className={`flex items-center gap-1 px-3 h-8 rounded-full font-semibold text-sm whitespace-nowrap transition-colors select-none ${
+                className={`flex items-center gap-1 px-3 h-8 rounded-full font-semibold text-sm whitespace-nowrap transition-colors select-none active:scale-100 ${
                   locationFilter !== "all"
                     ? "text-teal-700"
                     : "text-gray-800 hover:bg-gray-100"
@@ -176,7 +176,7 @@ export function SearchBar({
           <button
             type="submit"
             aria-label={t("search")}
-            className="cursor-pointer shrink-0 w-8 h-8 bg-gray-800 hover:bg-teal-500 rounded-full flex items-center justify-center transition-colors mr-0.5"
+            className="cursor-pointer shrink-0 w-8 h-8 bg-gray-800 hover:bg-teal-500 rounded-full flex items-center justify-center transition-colors mr-0.5 active:scale-100"
           >
             <ArrowRight className="w-4 h-4 text-white" />
           </button>
@@ -199,7 +199,7 @@ export function SearchBar({
                 type="button"
                 onClick={() => setMobileLocationOpen(false)}
                 aria-label={t("closeRegionSelect")}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 active:scale-100"
               >
                 <X className="w-5 h-5 text-gray-500" />
               </button>
@@ -213,7 +213,7 @@ export function SearchBar({
                     setLocationFilter(id);
                     setMobileLocationOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-5 py-4 rounded-xl mb-2 transition-colors ${
+                  className={`w-full flex items-center justify-between px-5 py-4 rounded-xl mb-2 transition-colors active:scale-100 ${
                     locationFilter === id
                       ? "bg-teal-50 text-teal-600"
                       : "text-gray-700 hover:bg-gray-50"

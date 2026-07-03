@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRef } from "react";
 import { useTranslations } from "next-intl";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -10,10 +11,15 @@ export default function ImageCarousel({ images }: { images: string[] }) {
   const t = useTranslations("Common");
   const { currentIndex, prevIndex, direction, isAnimating, navigate, dragHandlers } =
     useCarousel(images.length);
+  const thumbRef = useRef<HTMLDivElement>(null);
+
+  const scrollThumbs = (dir: "left" | "right") => {
+    thumbRef.current?.scrollBy({ left: dir === "right" ? 120 : -120, behavior: "smooth" });
+  };
 
   if (images.length === 0)
     return (
-      <div className="relative aspect-square md:aspect-auto md:h-full border-2 border-gray-200 rounded-2xl overflow-hidden">
+      <div className="relative aspect-square md:aspect-auto md:h-full overflow-hidden bg-gray-100">
         <ImageWithFallback
           src="/fallback-image.svg"
           alt={t("carousel.noImage")}
@@ -24,7 +30,7 @@ export default function ImageCarousel({ images }: { images: string[] }) {
     );
 
   return (
-    <div className="border-2 border-gray-200 rounded-2xl overflow-hidden aspect-square md:aspect-auto md:h-full flex flex-col">
+    <div className="overflow-hidden aspect-square md:aspect-auto md:h-full flex flex-col bg-gray-100">
       <div className="relative w-full flex-1 overflow-hidden" {...dragHandlers}>
         {prevIndex !== null && (
           <div
@@ -63,48 +69,70 @@ export default function ImageCarousel({ images }: { images: string[] }) {
           />
         </div>
 
-        <p className="absolute right-4 top-4 bg-gray-800 text-white text-xs px-3 py-1.5 rounded-xl z-10">
+        <p className="absolute right-3 top-3 bg-black/70 text-white text-xs px-2.5 py-1 z-10 tracking-widest">
           {currentIndex + 1} / {images.length}
         </p>
         <button
           onClick={() => navigate("left")}
           aria-label={t("carousel.prevImage")}
-          className="absolute cursor-pointer left-2 top-1/2 -translate-y-1/2 rounded-full bg-white p-1.5 z-10"
+          className="absolute cursor-pointer left-3 top-1/2 -translate-y-1/2 bg-white/90 p-2 z-10 active:scale-100"
         >
-          <ChevronLeft />
+          <ChevronLeft className="w-4 h-4" />
         </button>
         <button
           onClick={() => navigate("right")}
           aria-label={t("carousel.nextImage")}
-          className="absolute cursor-pointer right-2 top-1/2 -translate-y-1/2 rounded-full bg-white p-1.5 z-10"
+          className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 bg-white/90 p-2 z-10 active:scale-100"
         >
-          <ChevronRight />
+          <ChevronRight className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="flex gap-2 border-t-2 border-gray-200 p-2">
-        {images.map((image, index) => (
-          <button
-            key={image}
-            type="button"
-            onClick={() => navigate(index > currentIndex ? "right" : "left", index)}
-            aria-label={t("carousel.goToImage", { index: index + 1 })}
-            aria-pressed={currentIndex === index}
-            className="focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 rounded-xl"
-          >
-            <Image
-              src={image}
-              alt={t("carousel.thumbnail", { index: index + 1 })}
-              width={64}
-              height={64}
-              className={
-                currentIndex === index
-                  ? "border-3 border-teal-400 rounded-xl overflow-hidden object-contain"
-                  : "border-3 rounded-xl overflow-hidden object-contain"
-              }
-            />
-          </button>
-        ))}
+      <div className="relative border-t border-gray-200 bg-white">
+        <button
+          type="button"
+          onClick={() => scrollThumbs("left")}
+          className="hidden md:flex absolute left-0 top-0 bottom-0 z-10 items-center px-1 bg-gradient-to-r from-white to-transparent active:scale-100"
+          aria-label={t("carousel.prevImage")}
+        >
+          <ChevronLeft className="w-4 h-4 text-gray-500" />
+        </button>
+
+        <div
+          ref={thumbRef}
+          className="flex gap-2 p-2 overflow-x-auto scrollbar-hide [&::-webkit-scrollbar]:hidden"
+          style={{ scrollbarWidth: "none" }}
+        >
+          {images.map((image, index) => (
+            <button
+              key={image}
+              type="button"
+              onClick={() => navigate(index > currentIndex ? "right" : "left", index)}
+              aria-label={t("carousel.goToImage", { index: index + 1 })}
+              aria-pressed={currentIndex === index}
+              className={`relative shrink-0 w-14 h-14 overflow-hidden focus:outline-none active:scale-100 transition-opacity ${
+                currentIndex === index ? "ring-2 ring-gray-900" : "opacity-50 hover:opacity-100"
+              }`}
+            >
+              <Image
+                src={image}
+                alt={t("carousel.thumbnail", { index: index + 1 })}
+                fill
+                sizes="56px"
+                className="object-cover"
+              />
+            </button>
+          ))}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => scrollThumbs("right")}
+          className="hidden md:flex absolute right-0 top-0 bottom-0 z-10 items-center px-1 bg-gradient-to-l from-white to-transparent active:scale-100"
+          aria-label={t("carousel.nextImage")}
+        >
+          <ChevronRight className="w-4 h-4 text-gray-500" />
+        </button>
       </div>
     </div>
   );

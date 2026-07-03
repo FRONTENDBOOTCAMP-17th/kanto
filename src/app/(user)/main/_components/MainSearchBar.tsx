@@ -104,7 +104,7 @@ export default function MainSearchBar() {
           <button
             type="submit"
             aria-label={tc("search")}
-            className="cursor-pointer shrink-0 w-7 h-7 md:w-8 md:h-8 bg-gray-800 hover:bg-teal-500 rounded-full flex items-center justify-center transition-colors mr-0.5"
+            className="cursor-pointer shrink-0 w-7 h-7 md:w-8 md:h-8 bg-gray-800 hover:bg-teal-500 rounded-full flex items-center justify-center transition-colors mr-0.5 active:scale-100"
           >
             <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" />
           </button>
