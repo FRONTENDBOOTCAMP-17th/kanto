@@ -612,7 +612,9 @@
       "errorEdit": "수정에 실패했습니다.",
       "errorPost": "게시글 등록에 실패했습니다.",
       "errorJob": "공고 등록에 실패했습니다."
-    }
+    },
+    "views": "조회수",
+    "likes": "좋아요"
   },
   "Rental": {
     "title": "부동산",

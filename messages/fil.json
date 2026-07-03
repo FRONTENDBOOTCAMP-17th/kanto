@@ -524,7 +524,7 @@
     "preferred": "Mga gustong kwalipikasyon",
     "backToList": "Bumalik sa listahan",
     "viewCount": "{count}",
-    "applicantCount": "Mga aplikante: {count}",
+    "applicantCount": "Aplikante: {count}",
     "managerInfo": "Taong makokontak",
     "apply": "Mag-apply",
     "chat": "Mag-chat",
@@ -612,7 +612,9 @@
       "errorEdit": "Nabigong i-update.",
       "errorPost": "Nabigong gumawa ng post.",
       "errorJob": "Nabigong i-post ang trabaho."
-    }
+    },
+    "views": "Views",
+    "likes": "Likes"
   },
   "Rental": {
     "title": "Paupahan",

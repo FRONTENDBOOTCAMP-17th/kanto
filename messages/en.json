@@ -612,7 +612,9 @@
       "errorEdit": "Failed to update.",
       "errorPost": "Failed to create post.",
       "errorJob": "Failed to post job listing."
-    }
+    },
+    "views": "Views",
+    "likes": "Likes"
   },
   "Rental": {
     "title": "Rentals",
