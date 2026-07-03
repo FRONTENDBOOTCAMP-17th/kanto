@@ -780,6 +780,8 @@
   },
   "Signup": {
     "home": "Go home",
+    "title": "Create your account",
+    "description": "Find what you need on Kanto and trade with more confidence.",
     "haveAccount": "Already have an account?",
     "login": "Log in",
     "emailExists": "This email is already registered.",
@@ -793,10 +795,11 @@
       "password": "Password",
       "passwordPlaceholder": "8+ characters with letters and numbers",
       "passwordError": "Enter at least 8 characters including letters and numbers.",
-      "confirmPassword": "Confirm Password",
-      "confirmPlaceholder": "Re-enter your password",
-      "confirmError": "Passwords do not match.",
-      "showPassword": "Show password",
+        "confirmPassword": "Confirm Password",
+        "confirmPlaceholder": "Re-enter your password",
+        "confirmError": "Passwords do not match.",
+        "confirmSuccess": "Passwords match!",
+        "showPassword": "Show password",
       "hidePassword": "Hide password",
       "success": "Sign-up complete!\nWelcome to Kanto!",
       "processing": "Processing...",
@@ -836,11 +839,12 @@
         "age": "Age 18+ confirmation"
       },
       "loading": "Loading...",
-      "loadError": "Unable to load content. Please try again later.",
-      "cancel": "Cancel",
-      "agree": "I agree",
-      "readToEnd": "Please read to the end"
-    }
+        "loadError": "Unable to load content. Please try again later.",
+        "cancel": "Cancel",
+        "agree": "I agree",
+        "readToEnd": "Please read to the end",
+        "scrollDown": "Scroll down"
+      }
   },
   "Terms": {
     "items": {

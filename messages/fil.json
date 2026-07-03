@@ -786,6 +786,8 @@
   },
   "Signup": {
     "home": "Pumunta sa home",
+    "title": "Gumawa ng account",
+    "description": "Hanapin ang kailangan mo sa Kanto at makipag-trade nang mas panatag.",
     "haveAccount": "May account ka na?",
     "login": "Mag-log in",
     "emailExists": "Nakarehistro na ang email na ito.",
@@ -799,10 +801,11 @@
       "password": "Password",
       "passwordPlaceholder": "8+ karakter na may letra at numero",
       "passwordError": "Maglagay ng hindi bababa sa 8 karakter kasama ang letra at numero.",
-      "confirmPassword": "Kumpirmahin ang Password",
-      "confirmPlaceholder": "Muling ilagay ang iyong password",
-      "confirmError": "Hindi magkatugma ang mga password.",
-      "showPassword": "Ipakita ang password",
+        "confirmPassword": "Kumpirmahin ang Password",
+        "confirmPlaceholder": "Muling ilagay ang iyong password",
+        "confirmError": "Hindi magkatugma ang mga password.",
+        "confirmSuccess": "Magkatugma ang mga password!",
+        "showPassword": "Ipakita ang password",
       "hidePassword": "Itago ang password",
       "success": "Tapos na ang pag-sign up!\nMaligayang pagdating sa Kanto!",
       "processing": "Pinoproseso...",
@@ -842,11 +845,12 @@
         "age": "Kumpirmasyon na 18+ taong gulang"
       },
       "loading": "Naglo-load...",
-      "loadError": "Hindi ma-load ang nilalaman. Pakisubukan muli mamaya.",
-      "cancel": "Kanselahin",
-      "agree": "Sumasang-ayon ako",
-      "readToEnd": "Pakibasa hanggang dulo"
-    }
+        "loadError": "Hindi ma-load ang nilalaman. Pakisubukan muli mamaya.",
+        "cancel": "Kanselahin",
+        "agree": "Sumasang-ayon ako",
+        "readToEnd": "Pakibasa hanggang dulo",
+        "scrollDown": "Mag-scroll pababa"
+      }
   },
   "Terms": {
     "items": {
