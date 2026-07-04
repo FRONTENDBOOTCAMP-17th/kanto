@@ -15,7 +15,7 @@ export default function CompanyLocationMap({ lat, lng, address }: Props) {
   const center = { lat, lng };
 
   return (
-    <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
+    <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!} libraries={["places"]}>
       <Map
         id={MAP_ID}
         mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID}

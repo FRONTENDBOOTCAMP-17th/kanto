@@ -64,7 +64,7 @@ export function ApproxAreaMap({ lat, lng, radius = 400, className }: Props) {
 
 export function ApproxAreaMapWithProvider(props: Props) {
   return (
-    <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
+    <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!} libraries={["places"]}>
       <ApproxAreaMap {...props} />
     </APIProvider>
   );
