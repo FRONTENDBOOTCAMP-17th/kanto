@@ -20,7 +20,7 @@ import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarresel";
 import { useGoUiStore } from "@/store/goUiStore";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import RelatedItemsCarousel, { type RelatedItem } from "@/components/common/RelatedItemsCarousel";
-import { ApproxAreaMapWithProvider } from "@/components/common/ApproxAreaMap";
+import { ApproxAreaMap } from "@/components/common/ApproxAreaMap";
 import { formatBarangayLabel } from "@/type/location";
 
 type UsedGoods = Tables<"used_goods"> & {
@@ -133,7 +133,7 @@ export default function UsedGoodsDetail({
 
   const approxMap = hasCoords && (
     <div className="mt-4">
-      <ApproxAreaMapWithProvider
+      <ApproxAreaMap
         lat={data.location_lat as number}
         lng={data.location_lng as number}
       />
