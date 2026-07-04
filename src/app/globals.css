@@ -228,6 +228,7 @@
   }
   html {
     @apply font-sans;
+    scrollbar-gutter: stable;
   }
   button:not(:disabled),
   a {

@@ -3,7 +3,6 @@
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface LoginRequiredModalProps {
@@ -28,24 +27,15 @@ export function LoginRequiredModal({ isOpen, onClose }: LoginRequiredModalProps)
       onClick={onClose}
     >
       <div
-        className="relative w-80 rounded-2xl bg-white px-8 py-10 shadow-xl"
+        className="w-80 rounded-sm bg-white px-8 py-10 shadow-sm"
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          onClick={onClose}
-          className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors"
-          aria-label={t("close")}
-        >
-          <X className="w-5 h-5" />
-        </button>
-
-        <p className="text-center text-base font-medium text-gray-700">
+        <p className="text-center text-lg font-bold tracking-tight text-gray-900">
           {t("loginRequired")}
         </p>
 
         <Button
-          variant="teal"
-          className="mt-6 w-full"
+          className="mt-6 w-full rounded-sm bg-teal-100 hover:bg-teal-200 text-teal-800 text-xs tracking-widest cursor-pointer hover:scale-105 active:scale-100 transition-all"
           onClick={handleLogin}
         >
           {t("goToLogin")}

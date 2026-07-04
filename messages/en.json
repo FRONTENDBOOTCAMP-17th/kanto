@@ -171,7 +171,9 @@
       "until": "Service is restricted until {date}.",
       "bannerTitle": "Your account has been suspended.",
       "bannerPermanent": "Your account has been permanently suspended. Service is unavailable."
-    }
+    },
+    "likes": "Likes",
+    "loginRequiredTitle": "Login Required"
   },
   "Report": {
     "title": "Report",
@@ -327,20 +329,57 @@
       "otherAreas": "Other areas"
     },
     "workDay": {
-      "월": "Mon", "화": "Tue", "수": "Wed", "목": "Thu", "금": "Fri", "토": "Sat", "일": "Sun"
+      "월": "Mon",
+      "화": "Tue",
+      "수": "Wed",
+      "목": "Thu",
+      "금": "Fri",
+      "토": "Sat",
+      "일": "Sun"
     },
     "dayPreset": {
-      "평일": "Weekdays", "주말": "Weekend", "매일": "Every day"
+      "평일": "Weekdays",
+      "주말": "Weekend",
+      "매일": "Every day"
     },
     "preferredGroup": {
-      "어학": "Language", "체류": "Residence", "경력": "Experience", "직군": "Role", "기타": "Other"
+      "어학": "Language",
+      "체류": "Residence",
+      "경력": "Experience",
+      "직군": "Role",
+      "기타": "Other"
     },
     "preferredItem": {
-      "korean": "Korean", "english": "English", "tagalog": "Tagalog", "chinese": "Chinese", "japanese": "Japanese", "interpretation": "Interpretation",
-      "local_resident": "Local resident", "nine_g_visa": "9G Visa", "ph_permanent_resident": "PH Permanent Resident", "spouse_visa": "Spouse Visa", "immediate_start": "Immediate start", "long_term": "Long-term",
-      "entry_level": "Entry / Any level", "one_to_three": "1–3 years", "three_to_five": "3–5 years", "five_plus": "5+ years",
-      "office_admin": "Office/Admin", "sales_marketing": "Sales/Marketing", "it_dev": "IT/Development", "design": "Design", "translation": "Translation", "customer_service_cs": "Customer Service/CS", "casino_gaming": "Casino/Gaming", "logistics_trade": "Logistics/Trade", "food_service": "Food/Service", "job_other": "Other",
-      "drivers_license": "Driver's license", "remote_hybrid": "Remote/Hybrid available", "local_family": "Local family", "referral": "Referral"
+      "korean": "Korean",
+      "english": "English",
+      "tagalog": "Tagalog",
+      "chinese": "Chinese",
+      "japanese": "Japanese",
+      "interpretation": "Interpretation",
+      "local_resident": "Local resident",
+      "nine_g_visa": "9G Visa",
+      "ph_permanent_resident": "PH Permanent Resident",
+      "spouse_visa": "Spouse Visa",
+      "immediate_start": "Immediate start",
+      "long_term": "Long-term",
+      "entry_level": "Entry / Any level",
+      "one_to_three": "1–3 years",
+      "three_to_five": "3–5 years",
+      "five_plus": "5+ years",
+      "office_admin": "Office/Admin",
+      "sales_marketing": "Sales/Marketing",
+      "it_dev": "IT/Development",
+      "design": "Design",
+      "translation": "Translation",
+      "customer_service_cs": "Customer Service/CS",
+      "casino_gaming": "Casino/Gaming",
+      "logistics_trade": "Logistics/Trade",
+      "food_service": "Food/Service",
+      "job_other": "Other",
+      "drivers_license": "Driver's license",
+      "remote_hybrid": "Remote/Hybrid available",
+      "local_family": "Local family",
+      "referral": "Referral"
     }
   },
   "Create": {
@@ -351,8 +390,14 @@
         "name": "Marketplace",
         "description": "Buy and sell used items"
       },
-      "jobs": { "name": "Jobs", "description": "Find a job or hire staff" },
-      "rental": { "name": "Rentals", "description": "Find or list a room" }
+      "jobs": {
+        "name": "Jobs",
+        "description": "Find a job or hire staff"
+      },
+      "rental": {
+        "name": "Rentals",
+        "description": "Find or list a room"
+      }
     }
   },
   "Main": {
@@ -458,7 +503,9 @@
       "errorImage": "Failed to upload images.",
       "errorGoods": "Failed to register product info.",
       "errorNoImage": "Please upload at least one image."
-    }
+    },
+    "views": "Views",
+    "likes": "Likes"
   },
   "Job": {
     "title": "Jobs",
@@ -578,7 +625,9 @@
       "errorEdit": "Failed to update.",
       "errorPost": "Failed to create post.",
       "errorJob": "Failed to post job listing."
-    }
+    },
+    "views": "Views",
+    "likes": "Likes"
   },
   "Rental": {
     "title": "Rentals",
@@ -631,7 +680,9 @@
       "errorPost": "Failed to create the post.",
       "errorImage": "Failed to upload images.",
       "errorRental": "Failed to register accommodation info."
-    }
+    },
+    "views": "Views",
+    "likes": "Likes"
   },
   "Profile": {
     "menu": {
@@ -806,11 +857,11 @@
       "password": "Password",
       "passwordPlaceholder": "8+ characters with letters and numbers",
       "passwordError": "Enter at least 8 characters including letters and numbers.",
-        "confirmPassword": "Confirm Password",
-        "confirmPlaceholder": "Re-enter your password",
-        "confirmError": "Passwords do not match.",
-        "confirmSuccess": "Passwords match!",
-        "showPassword": "Show password",
+      "confirmPassword": "Confirm Password",
+      "confirmPlaceholder": "Re-enter your password",
+      "confirmError": "Passwords do not match.",
+      "confirmSuccess": "Passwords match!",
+      "showPassword": "Show password",
       "hidePassword": "Hide password",
       "success": "Sign-up complete!\nWelcome to Kanto!",
       "processing": "Processing...",
@@ -850,12 +901,12 @@
         "age": "Age 18+ confirmation"
       },
       "loading": "Loading...",
-        "loadError": "Unable to load content. Please try again later.",
-        "cancel": "Cancel",
-        "agree": "I agree",
-        "readToEnd": "Please read to the end",
-        "scrollDown": "Scroll down"
-      }
+      "loadError": "Unable to load content. Please try again later.",
+      "cancel": "Cancel",
+      "agree": "I agree",
+      "readToEnd": "Please read to the end",
+      "scrollDown": "Scroll down"
+    }
   },
   "Terms": {
     "items": {
