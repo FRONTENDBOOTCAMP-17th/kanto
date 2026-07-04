@@ -23,6 +23,7 @@
     "login": "Log in",
     "logout": "Log out",
     "logoutConfirm": "Are you sure you want to log out?",
+    "kickedOut": "You've been logged out because your account signed in on another device.",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "write": "Write",
@@ -231,7 +232,9 @@
       "title": "Identity verification required",
       "message": "You need to verify your identity to create a post.",
       "question": "Would you like to verify now?"
-    }
+    },
+    "likes": "Likes",
+    "loginRequiredTitle": "Login Required"
   },
   "Report": {
     "title": "Report",
@@ -561,7 +564,9 @@
       "errorImage": "Failed to upload images.",
       "errorGoods": "Failed to register product info.",
       "errorNoImage": "Please upload at least one image."
-    }
+    },
+    "views": "Views",
+    "likes": "Likes"
   },
   "Job": {
     "title": "Jobs",
@@ -681,7 +686,9 @@
       "errorEdit": "Failed to update.",
       "errorPost": "Failed to create post.",
       "errorJob": "Failed to post job listing."
-    }
+    },
+    "views": "Views",
+    "likes": "Likes"
   },
   "Rental": {
     "title": "Rentals",
@@ -734,7 +741,9 @@
       "errorPost": "Failed to create the post.",
       "errorImage": "Failed to upload images.",
       "errorRental": "Failed to register accommodation info."
-    }
+    },
+    "views": "Views",
+    "likes": "Likes"
   },
   "Profile": {
     "menu": {

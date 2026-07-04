@@ -1,8 +1,8 @@
 "use client";
 
-import { BadgeCheck, Heart, Clock, Eye, ChevronLeft, User } from "lucide-react";
+import { BadgeCheck, ChevronLeft, User, MessageCircle } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Tables } from "@/type/supabase";
 import { formatTimeAgo, formatPrice } from "@/utils/format";
@@ -17,19 +17,24 @@ import { useChatStore } from "@/store/chatStore";
 import { useSuspended } from "@/hooks/useSuspended";
 import InteractionButtons from "@/components/common/InteractionButtons";
 import ImageCarousel from "@/app/(user)/rental/[id]/_components/ImageCarresel";
-import { Button } from "@/components/ui/button";
+import { useGoUiStore } from "@/store/goUiStore";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import RelatedItemsCarousel, { type RelatedItem } from "@/components/common/RelatedItemsCarousel";
 import { ApproxAreaMapWithProvider } from "@/components/common/ApproxAreaMap";
 import { formatBarangayLabel } from "@/type/location";
 
 type UsedGoods = Tables<"used_goods"> & {
+  id_token?: string;
   posts: Tables<"posts"> & {
-    users: Pick<Tables<"users">, "id" | "avatar_url" | "auth_id" | "created_at"> & { name: string | null };
+    users: Pick<Tables<"users">, "id" | "avatar_url" | "auth_id" | "created_at"> & {
+      name: string | null;
+      id_token?: string;
+    };
   };
 };
 
 type RelatedUsedGoods = Tables<"used_goods"> & {
+  id_token?: string;
   posts: Pick<Tables<"posts">, "title" | "is_sold"> | null;
 };
 
@@ -61,10 +66,17 @@ export default function UsedGoodsDetail({
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showBlockToast, setShowBlockToast] = useState(false);
   const { isSuspended, openModal } = useSuspended();
+  const setHasStickyBar = useGoUiStore((s) => s.setHasStickyBar);
+  useEffect(() => {
+    if (!isOwner) {
+      setHasStickyBar(true);
+      return () => setHasStickyBar(false);
+    }
+  }, [isOwner, setHasStickyBar]);
 
   const relatedItems: RelatedItem[] = (relatedData ?? []).map((item) => ({
     id: item.id,
-    href: `/usedgoods/${item.post_id}`,
+    href: `/usedgoods/${item.id_token ?? item.post_id}`,
     imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
     title: item.posts?.title ?? "",
     priceText: formatPrice(item.price),
@@ -85,7 +97,7 @@ export default function UsedGoodsDetail({
   const hasCoords = data.location_lat != null && data.location_lng != null;
 
   const handleOpenProfile = () => {
-    if (data.posts.users?.id) router.push(`/user/${data.posts.users.id}`);
+    if (data.posts.users?.id) router.push(`/user/${data.posts.users.id_token ?? data.posts.users.id}`);
   };
 
   const handleChat = async () => {
@@ -110,6 +122,7 @@ export default function UsedGoodsDetail({
         postPrice: data.price,
         partner: {
           id: data.posts.users.id,
+          id_token: data.posts.users.id_token,
           name: data.posts.users.name ?? "",
           avatar_url: data.posts.users.avatar_url,
           created_at: data.posts.users.created_at,
@@ -128,16 +141,15 @@ export default function UsedGoodsDetail({
   );
 
   return (
-    <div className="page-container pb-12">
+    <div className="page-container pb-28 md:pb-12">
       
       <div className="flex items-center justify-between mt-4">
-        <button onClick={() => router.push(fromPage ? `/usedgoods?page=${fromPage}` : "/usedgoods")} className="flex gap-2 cursor-pointer">
-          <ChevronLeft />
-          {t("backToList")}
+        <button onClick={() => router.push(fromPage ? `/usedgoods?page=${fromPage}` : "/usedgoods")} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900 transition-colors cursor-pointer active:scale-100">
+          <ChevronLeft className="w-4 h-4" />
         </button>
         <VerifyAuthor
           authorAuthId={data.posts.users?.auth_id}
-          editPath={`/usedgoods/${data.post_id}/edit`}
+          editPath={`/usedgoods/${data.id_token ?? data.post_id}/edit`}
           postId={data.post_id}
           redirectPath="/usedgoods"
         />
@@ -145,7 +157,7 @@ export default function UsedGoodsDetail({
 
       
       {images.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 items-stretch gap-2 md:gap-4 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 items-stretch gap-4 md:gap-8 mt-4">
           <div className="relative">
             <ImageCarousel images={images} />
             {data.posts.is_sold ? (
@@ -160,121 +172,118 @@ export default function UsedGoodsDetail({
               </div>
             ) : null}
           </div>
-          <div className="border border-gray-200 rounded-2xl p-6 flex flex-col justify-between gap-4 min-h-112.5">
-            
-            <div>
-              <h2 className="text-xl font-semibold mb-3">{t("productInfo")}</h2>
-              <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
-                <dt className="text-gray-500 font-medium">{t("category")}</dt>
-                <dd className="text-gray-700">· {data.category ? te(`productCategory.${data.category}`) : ""}</dd>
-                <dt className="text-gray-500 font-medium">{t("condition")}</dt>
-                <dd className="text-gray-700">· {data.condition ? te(`productCondition.${data.condition}`) : ""}</dd>
-                <dt className="text-gray-500 font-medium">{t("price")}</dt>
-                <dd className="text-orange-500">· {formatPrice(data.price)}</dd>
-                <dt className="text-gray-500 font-medium">{t("tradeLocation")}</dt>
-                <dd className="text-gray-700">· {locationLabel}</dd>
+
+          <div className="flex flex-col gap-6 pt-4 md:pt-0">
+            <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-gray-400">{t("productInfo")}</h2>
+            <div className="flex flex-col md:flex-row gap-6 items-start">
+              <dl className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 text-sm flex-1">
+                <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("category")}</dt>
+                <dd className="text-gray-900">{data.category ? te(`productCategory.${data.category}`) : ""}</dd>
+                <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("condition")}</dt>
+                <dd className="text-gray-900">{data.condition ? te(`productCondition.${data.condition}`) : ""}</dd>
+                <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("price")}</dt>
+                <dd className="text-gray-900 font-medium">{formatPrice(data.price)}</dd>
+                <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("tradeLocation")}</dt>
+                <dd className="text-gray-900">{locationLabel}</dd>
                 {data.safe_payment !== null && (
                   <>
-                    <dt className="text-gray-500 font-medium">{t("safePayment")}</dt>
+                    <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("safePayment")}</dt>
                     <dd className={data.safe_payment ? "text-teal-600" : "text-red-500"}>
-                      · {data.safe_payment ? t("confirmed") : t("unconfirmed")}
+                      {data.safe_payment ? t("confirmed") : t("unconfirmed")}
                     </dd>
                   </>
                 )}
               </dl>
-              {approxMap}
-            </div>
-            <hr className="border-gray-200" />
-
-            <div className="flex flex-col gap-4">
-              <h2 className="text-xl font-semibold">{t("sellerInfo")}</h2>
-              <button
-                type="button"
-                onClick={handleOpenProfile}
-                className="flex items-center gap-3 text-left rounded-lg -mx-1 px-1 py-0.5 hover:bg-gray-50 transition-colors cursor-pointer"
-              >
-                {data.posts.users?.avatar_url ? (
-                  <ImageWithFallback
-                    src={data.posts.users.avatar_url}
-                    alt={t("profileAlt")}
-                    width={48}
-                    height={48}
-                    className="rounded-full object-cover w-12 h-12 shrink-0"
-                  />
-                ) : (
-                  <div className="w-12 h-12 rounded-full bg-purple-400 flex items-center justify-center shrink-0">
-                    <User className="w-6 h-6 text-white" />
+              <div className="w-full md:w-48 shrink-0 flex flex-col gap-7">
+                <button
+                  type="button"
+                  onClick={handleOpenProfile}
+                  className="flex items-center gap-4 text-left cursor-pointer active:scale-100 group"
+                >
+                  {data.posts.users?.avatar_url ? (
+                    <ImageWithFallback
+                      src={data.posts.users.avatar_url}
+                      alt={t("profileAlt")}
+                      width={56}
+                      height={56}
+                      className="rounded-full object-cover w-14 h-14 ring-2 ring-gray-100 group-hover:ring-gray-300 transition-all shrink-0"
+                    />
+                  ) : (
+                    <div className="w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center shrink-0">
+                      <User className="w-7 h-7 text-white" />
+                    </div>
+                  )}
+                  <div className="flex flex-col gap-1.5">
+                    <p className="font-semibold text-gray-900 text-base tracking-wide">{data.posts.users?.name}</p>
+                    <p className="text-xs text-gray-400 tracking-wide">
+                      {accession
+                        ? tt("joinedYearMonth", {
+                            year: accession.getFullYear(),
+                            month: accession.getMonth() + 1,
+                          })
+                        : tt("joinDateUnknown")}
+                    </p>
                   </div>
+                </button>
+                {!isOwner && (
+                  <button
+                    onClick={handleChat}
+                    className="hidden md:flex w-full items-center justify-center gap-2 border border-gray-200 rounded-lg py-3 text-xs font-semibold tracking-widest text-gray-700 bg-white transition-all hover:bg-black/10 active:scale-[1.02] cursor-pointer"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5" />
+                    {t("chat")}
+                  </button>
                 )}
-                <div>
-                  <p className="font-medium">{data.posts.users?.name}</p>
-                  <p className="text-sm text-gray-500">
-                    {accession
-                      ? tt("joinedYearMonth", {
-                          year: accession.getFullYear(),
-                          month: accession.getMonth() + 1,
-                        })
-                      : tt("joinDateUnknown")}
-                  </p>
-                </div>
-              </button>
-              {!isOwner && (
-                <Button variant="teal" className="cursor-pointer self-start min-w-72" onClick={handleChat}>
-                  {t("chat")}
-                </Button>
-              )}
+              </div>
             </div>
+            {approxMap}
           </div>
         </div>
       ) : (
-        
-        <div className="border border-gray-200 rounded-2xl overflow-hidden mt-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-3">{t("productInfo")}</h2>
-              <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
-                <dt className="text-gray-500 font-medium">{t("category")}</dt>
-                <dd className="text-gray-700">· {data.category ? te(`productCategory.${data.category}`) : ""}</dd>
-                <dt className="text-gray-500 font-medium">{t("condition")}</dt>
-                <dd className="text-gray-700">· {data.condition ? te(`productCondition.${data.condition}`) : ""}</dd>
-                <dt className="text-gray-500 font-medium">{t("price")}</dt>
-                <dd className="text-orange-500">· {formatPrice(data.price)}</dd>
-                <dt className="text-gray-500 font-medium">{t("tradeLocation")}</dt>
-                <dd className="text-gray-700">· {locationLabel}</dd>
-                {data.safe_payment !== null && (
-                  <>
-                    <dt className="text-gray-500 font-medium">{t("safePayment")}</dt>
-                    <dd className={data.safe_payment ? "text-teal-600" : "text-red-500"}>
-                      · {data.safe_payment ? t("confirmed") : t("unconfirmed")}
-                    </dd>
-                  </>
-                )}
-              </dl>
-              {approxMap}
-            </div>
-            <div className="p-6 flex flex-col gap-4">
-              <h2 className="text-xl font-semibold">{t("sellerInfo")}</h2>
+
+        <div className="flex flex-col gap-6 mt-4">
+          <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-gray-400">{t("productInfo")}</h2>
+          <div className="flex flex-col md:flex-row gap-6 items-start">
+            <dl className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 text-sm flex-1">
+              <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("category")}</dt>
+              <dd className="text-gray-900">{data.category ? te(`productCategory.${data.category}`) : ""}</dd>
+              <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("condition")}</dt>
+              <dd className="text-gray-900">{data.condition ? te(`productCondition.${data.condition}`) : ""}</dd>
+              <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("price")}</dt>
+              <dd className="text-gray-900 font-medium">{formatPrice(data.price)}</dd>
+              <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("tradeLocation")}</dt>
+              <dd className="text-gray-900">{locationLabel}</dd>
+              {data.safe_payment !== null && (
+                <>
+                  <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("safePayment")}</dt>
+                  <dd className={data.safe_payment ? "text-teal-600" : "text-red-500"}>
+                    {data.safe_payment ? t("confirmed") : t("unconfirmed")}
+                  </dd>
+                </>
+              )}
+            </dl>
+            <div className="w-full md:w-48 shrink-0 flex flex-col gap-7">
               <button
                 type="button"
                 onClick={handleOpenProfile}
-                className="flex items-center gap-3 text-left rounded-lg -mx-1 px-1 py-0.5 hover:bg-gray-50 transition-colors cursor-pointer"
+                className="flex items-center gap-4 text-left cursor-pointer active:scale-100 group"
               >
                 {data.posts.users?.avatar_url ? (
                   <ImageWithFallback
                     src={data.posts.users.avatar_url}
                     alt={t("profileAlt")}
-                    width={48}
-                    height={48}
-                    className="rounded-full object-cover w-12 h-12 shrink-0"
+                    width={56}
+                    height={56}
+                    className="rounded-full object-cover w-14 h-14 ring-2 ring-gray-100 group-hover:ring-gray-300 transition-all shrink-0"
                   />
                 ) : (
-                  <div className="w-12 h-12 rounded-full bg-purple-400 flex items-center justify-center shrink-0">
-                    <User className="w-6 h-6 text-white" />
+                  <div className="w-14 h-14 rounded-full bg-gray-800 flex items-center justify-center shrink-0">
+                    <User className="w-7 h-7 text-white" />
                   </div>
                 )}
-                <div>
-                  <p className="font-medium">{data.posts.users?.name}</p>
-                  <p className="text-sm text-gray-500">
+                <div className="flex flex-col gap-1.5">
+                  <p className="font-semibold text-gray-900 text-base tracking-wide">{data.posts.users?.name}</p>
+                  <p className="text-xs text-gray-400 tracking-wide">
                     {accession
                       ? tt("joinedYearMonth", {
                           year: accession.getFullYear(),
@@ -285,20 +294,25 @@ export default function UsedGoodsDetail({
                 </div>
               </button>
               {!isOwner && (
-                <Button variant="teal" className="cursor-pointer self-start min-w-72" onClick={handleChat}>
+                <button
+                  onClick={handleChat}
+                  className="hidden md:flex w-full items-center justify-center gap-2 border border-gray-200 rounded-lg py-3 text-xs font-semibold tracking-widest text-gray-700 bg-white transition-all hover:bg-black/10 active:scale-[1.02] cursor-pointer"
+                >
+                  <MessageCircle className="w-3.5 h-3.5" />
                   {t("chat")}
-                </Button>
+                </button>
               )}
             </div>
           </div>
+          {approxMap}
         </div>
       )}
 
       
-      <div className="mt-2 md:mt-4 border border-gray-200 rounded-2xl p-6">
+      <div className="mt-6 md:mt-8">
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold">{data.posts.title}</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900">{data.posts.title}</h1>
             {data.safe_payment && <BadgeCheck className="text-teal-400 shrink-0" />}
           </div>
           <InteractionButtons
@@ -312,18 +326,13 @@ export default function UsedGoodsDetail({
           />
         </div>
 
-        <div className="text-gray-400 text-sm flex items-center gap-4 mt-3">
+        <div className="text-gray-400 text-xs flex items-center gap-5 mt-3">
+          <time dateTime={data.posts.created_at}>{formatTimeAgo(data.posts.created_at, locale)}</time>
           <span className="flex items-center gap-1">
-            <Clock className="w-4 h-4" />
-            <time dateTime={data.posts.created_at}>{formatTimeAgo(data.posts.created_at, locale)}</time>
+            {t("views")} {data.posts.view_count}
           </span>
           <span className="flex items-center gap-1">
-            <Eye className="w-4 h-4" />
-            {data.posts.view_count}
-          </span>
-          <span className="flex items-center gap-1">
-            <Heart className="w-4 h-4" />
-            {likeCount}
+            {t("likes")} {likeCount}
           </span>
           <InteractionButtons
             postId={data.post_id}
@@ -336,15 +345,28 @@ export default function UsedGoodsDetail({
           />
         </div>
 
-        <hr className="border-gray-200 my-4" />
+        <hr className="border-gray-200 my-8" />
 
-        <h2 className="text-xl font-semibold mb-3">{t("description")}</h2>
-        <p className="text-gray-700 whitespace-pre-line">{data.content}</p>
+        <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-gray-400 mb-4">{t("description")}</h2>
+        <p className="text-gray-700 whitespace-pre-line leading-relaxed text-sm">{data.content}</p>
       </div>
 
       
       <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <Toast message={tChat("blockedCannotChat")} showMessage={showBlockToast} type="error" icon="x" />
+
+      {!isOwner && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between gap-4 border-t border-gray-200 bg-white/95 backdrop-blur-sm px-5 py-3 md:hidden">
+          <p className="text-lg font-bold tracking-tight text-gray-900">{formatPrice(data.price)}</p>
+          <button
+            onClick={handleChat}
+            className="flex items-center gap-2 border border-gray-200 rounded-lg px-4 py-2 text-xs font-semibold tracking-wide text-gray-700 bg-white transition-all hover:bg-black/10 active:scale-[1.02] cursor-pointer"
+          >
+            <MessageCircle className="w-4 h-4" />
+            {t("chat")}
+          </button>
+        </div>
+      )}
 
       <RelatedItemsCarousel title={t("related")} items={relatedItems} />
     </div>

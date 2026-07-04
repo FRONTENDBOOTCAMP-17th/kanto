@@ -31,4 +31,5 @@ export type UsedGoods = Tables<"used_goods">;
 export interface UsedGoodsWithPost extends Post {
   used_goods: UsedGoods[];
   users: SellerInfo;
+  id_token?: string;
 }

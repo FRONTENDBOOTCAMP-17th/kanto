@@ -18,39 +18,26 @@ export default function JobInfo({ job }: { job: JobDetail }) {
   });
 
   return (
-    <div className="p-6">
-      <h2 className="font-semibold text-base md:text-lg mb-4">{t("jobInfo")}</h2>
-      <dl className="space-y-3 text-sm md:text-base">
-        <div className="flex gap-2">
-          <dt className="w-24 text-gray-500 shrink-0">{t("employeeType")}</dt>
-          <dd>- {te(`employeeType.${job.employee_type}`)}</dd>
-        </div>
-        <div className="flex gap-2">
-          <dt className="w-24 text-gray-500 shrink-0">{t("salary")}</dt>
-          <dd className="text-teal-600 font-medium">
-            - ₱{job.salary.toLocaleString()}
-            {job.salary_type && ` (${te(`salaryType.${job.salary_type}`)})`}
-          </dd>
-        </div>
-        <div className="flex gap-2">
-          <dt className="w-24 text-gray-500 shrink-0">{t("workLocation")}</dt>
-          <dd>- {location}</dd>
-        </div>
-        <div className="flex gap-2">
-          <dt className="w-24 text-gray-500 shrink-0">{t("deadline")}</dt>
-          <dd>- {deadline}</dd>
-        </div>
-        <div className="flex gap-2">
-          <dt className="w-24 text-gray-500 shrink-0">{t("workHours")}</dt>
-          <dd>- {job.is_time_negotiable ? t("form.timeNegotiable") : job.work_hours}</dd>
-        </div>
-        {!job.is_time_negotiable && job.work_days && job.work_days.length > 0 && (
-          <div className="flex gap-2">
-            <dt className="w-24 text-gray-500 shrink-0">{t("workDays")}</dt>
-            <dd>- {(job.work_days as string[]).map((d) => te(`workDay.${d}`)).join(", ")}</dd>
-          </div>
-        )}
-      </dl>
-    </div>
+    <dl className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 text-sm flex-1">
+      <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("employeeType")}</dt>
+      <dd className="text-gray-900">{te(`employeeType.${job.employee_type}`)}</dd>
+      <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("salary")}</dt>
+      <dd className="text-teal-600 font-medium">
+        ₱{job.salary.toLocaleString()}
+        {job.salary_type && ` (${te(`salaryType.${job.salary_type}`)})`}
+      </dd>
+      <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("workLocation")}</dt>
+      <dd className="text-gray-900">{location}</dd>
+      <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("deadline")}</dt>
+      <dd className="text-gray-900">{deadline}</dd>
+      <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("workHours")}</dt>
+      <dd className="text-gray-900">{job.is_time_negotiable ? t("form.timeNegotiable") : job.work_hours}</dd>
+      {!job.is_time_negotiable && job.work_days && job.work_days.length > 0 && (
+        <>
+          <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("workDays")}</dt>
+          <dd className="text-gray-900">{(job.work_days as string[]).map((d) => te(`workDay.${d}`)).join(", ")}</dd>
+        </>
+      )}
+    </dl>
   );
 }

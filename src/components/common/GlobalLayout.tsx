@@ -34,6 +34,7 @@ export function GlobalLayout({ children, initialUser }: Props) {
   
   const goDetailOpen = useGoUiStore((s) => s.detailOpen);
   const goListOpen = useGoUiStore((s) => s.listOpen);
+  const hasStickyBar = useGoUiStore((s) => s.hasStickyBar);
 
   
   useEffect(() => {
@@ -70,7 +71,7 @@ export function GlobalLayout({ children, initialUser }: Props) {
       {!hideGlobalUI && <DeletionPendingBanner />}
       {!hideGlobalUI && (
         <div
-          className={`fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2 ${
+          className={`fixed z-50 flex flex-col items-end gap-2 ${hasStickyBar ? "bottom-20 right-4 md:bottom-6 md:right-6" : "bottom-6 right-6"} ${
             goDetailOpen ? "hidden" : goListOpen ? "max-md:hidden" : ""
           }`}
         >

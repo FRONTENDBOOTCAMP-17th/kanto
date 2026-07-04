@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
-import { MapPin, Clock, Heart, ImageIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { MapPin, ImageIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import { LikeButton } from "@/components/common/LikeButton";
@@ -28,6 +28,7 @@ export interface ContentCardProps {
   subtitle?: string;
   tags?: React.ReactNode;
   listOnMobile?: boolean;
+  priority?: boolean;
 }
 
 export function ContentCard({
@@ -47,6 +48,7 @@ export function ContentCard({
   subtitle,
   tags,
   listOnMobile = false,
+  priority = false,
 }: ContentCardProps) {
   const t = useTranslations("Common");
   const locale = useLocale() as Locale;
@@ -58,7 +60,7 @@ export function ContentCard({
 
   return (
     <div className="relative h-full">
-      <Link href={href} className="h-full block">
+      <Link href={href} className="h-full block active:scale-100">
         <Card
           className={`overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group h-full ${
             listOnMobile
@@ -197,12 +199,10 @@ export function ContentCard({
             )}
             <div className="flex items-center justify-between text-xs text-gray-500 mt-auto pt-1">
               <div className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
                 <time dateTime={createdAt}>{formatTimeAgo(createdAt, locale)}</time>
               </div>
               <div className="flex items-center gap-1">
-                <Heart className="w-3 h-3" />
-                <span>{count}</span>
+                <span>{t("likes")} {count}</span>
               </div>
             </div>
           </div>

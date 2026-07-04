@@ -12,6 +12,8 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const nextConfig: NextConfig = {
   reactCompiler: true,
   images: {
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30일 캐시 (기본 60초)
     remotePatterns: [
       {
         protocol: "https",

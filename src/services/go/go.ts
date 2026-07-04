@@ -5,6 +5,7 @@ import { createAdminClient } from "@/utils/supabase/admin";
 import { getSessionUser, requireAdmin } from "@/services/user/user";
 import { createRoomForMeetup, endRoom, postSystemMessageForMeetup } from "@/services/go/groupChat";
 import { manilaWallTimeToISO } from "@/utils/goTime";
+import { encryptPostId, decryptPostId } from "@/utils/postIdCipher";
 import type {
   Meetup,
   MeetupParticipant,
@@ -108,6 +109,7 @@ export async function getActiveMeetups(range?: { offset: number; limit: number }
     host_name: row.posts.users?.name ?? "알 수 없음",
     status: row.posts.status,
     participant_count: (row.meetup_participants ?? []).filter((p) => p.status === "joined").length,
+    id_token: encryptPostId(row.post_id),
   }));
 }
 
@@ -165,6 +167,7 @@ export async function getMeetupDetail(postId: number): Promise<{
       host_name: row.posts.users?.name ?? "알 수 없음",
       status: row.posts.status,
       participant_count: participantsRes.data?.length ?? 0,
+      id_token: encryptPostId(row.post_id),
     },
     participants: ((participantsRes.data ?? []) as unknown as MeetupParticipantRow[]).map((p) => ({
       id: p.id,
@@ -177,6 +180,18 @@ export async function getMeetupDetail(postId: number): Promise<{
       is_deleted: !!p.users?.deleted_at,
     })),
   };
+}
+
+export async function getMeetupByToken(token: string): Promise<Meetup | null> {
+  const postId = decryptPostId(token);
+  if (postId === null) return null;
+
+  try {
+    const { meetup } = await getMeetupDetail(postId);
+    return meetup;
+  } catch {
+    return null;
+  }
 }
 
 export async function createMeetup(input: CreateMeetupInput): Promise<number> {

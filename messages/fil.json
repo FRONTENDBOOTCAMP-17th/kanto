@@ -23,6 +23,7 @@
     "login": "Mag-log in",
     "logout": "Mag-log out",
     "logoutConfirm": "Sigurado ka bang gusto mong mag-log out?",
+    "kickedOut": "Na-log out ka dahil nag-sign in ang account mo sa ibang device.",
     "openMenu": "Buksan ang menu",
     "closeMenu": "Isara ang menu",
     "write": "Mag-post",
@@ -231,7 +232,9 @@
       "title": "Kailangan ng identity verification",
       "message": "Kailangan mong i-verify ang iyong pagkakakilanlan para makapag-post.",
       "question": "Gusto mo bang mag-verify ngayon?"
-    }
+    },
+    "likes": "Like",
+    "loginRequiredTitle": "Kailangan mag-login"
   },
   "Report": {
     "title": "Mag-ulat",
@@ -561,7 +564,9 @@
       "errorImage": "Nabigo ang pag-upload ng mga larawan.",
       "errorGoods": "Nabigo ang pagrehistro ng impormasyon ng produkto.",
       "errorNoImage": "Mangyaring mag-upload ng hindi bababa sa isang larawan."
-    }
+    },
+    "views": "View",
+    "likes": "Like"
   },
   "Job": {
     "title": "Trabaho",
@@ -593,7 +598,7 @@
     "preferred": "Mga gustong kwalipikasyon",
     "backToList": "Bumalik sa listahan",
     "viewCount": "{count}",
-    "applicantCount": "Mga aplikante: {count}",
+    "applicantCount": "Aplikante: {count}",
     "managerInfo": "Taong makokontak",
     "apply": "Mag-apply",
     "chat": "Mag-chat",
@@ -681,7 +686,9 @@
       "errorEdit": "Nabigong i-update.",
       "errorPost": "Nabigong gumawa ng post.",
       "errorJob": "Nabigong i-post ang trabaho."
-    }
+    },
+    "views": "Views",
+    "likes": "Likes"
   },
   "Rental": {
     "title": "Paupahan",
@@ -734,7 +741,9 @@
       "errorPost": "Nabigo ang paggawa ng post.",
       "errorImage": "Nabigo ang pag-upload ng mga larawan.",
       "errorRental": "Nabigo ang pagrehistro ng impormasyon ng tuluyan."
-    }
+    },
+    "views": "View",
+    "likes": "Like"
   },
   "Profile": {
     "menu": {

@@ -23,6 +23,7 @@
     "login": "로그인",
     "logout": "로그아웃",
     "logoutConfirm": "로그아웃 하시겠습니까?",
+    "kickedOut": "다른 기기에서 로그인되어 로그아웃되었습니다.",
     "openMenu": "메뉴 열기",
     "closeMenu": "메뉴 닫기",
     "write": "글쓰기",
@@ -231,7 +232,9 @@
       "title": "본인인증 필요",
       "message": "본인인증을 해야 글 작성이 가능합니다.",
       "question": "본인인증 하시겠습니까?"
-    }
+    },
+    "likes": "좋아요",
+    "loginRequiredTitle": "로그인이 필요해요"
   },
   "Report": {
     "title": "신고하기",
@@ -561,7 +564,9 @@
       "errorImage": "이미지 업로드에 실패했습니다.",
       "errorGoods": "상품 정보 등록에 실패했습니다.",
       "errorNoImage": "이미지를 최소 1장 이상 등록해주세요."
-    }
+    },
+    "views": "조회수",
+    "likes": "좋아요"
   },
   "Job": {
     "title": "구인구직",
@@ -681,7 +686,9 @@
       "errorEdit": "수정에 실패했습니다.",
       "errorPost": "게시글 등록에 실패했습니다.",
       "errorJob": "공고 등록에 실패했습니다."
-    }
+    },
+    "views": "조회수",
+    "likes": "좋아요"
   },
   "Rental": {
     "title": "부동산",
@@ -734,7 +741,9 @@
       "errorPost": "게시글 등록에 실패했습니다.",
       "errorImage": "이미지 업로드에 실패했습니다.",
       "errorRental": "방 정보 등록에 실패했습니다."
-    }
+    },
+    "views": "조회수",
+    "likes": "좋아요"
   },
   "Profile": {
     "menu": {
