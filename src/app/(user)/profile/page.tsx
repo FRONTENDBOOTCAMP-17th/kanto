@@ -128,7 +128,7 @@ export default async function ProfilePage({
     : [[] as MeetupSummary[], [] as MeetupSummary[]];
 
   return (
-    <div className="bg-white md:bg-teal-50">
+    <div className="bg-white">
       <div className="max-w-lg md:max-w-5xl mx-auto py-8">
         <ProfileCard
           alertSettings={alertSettings}

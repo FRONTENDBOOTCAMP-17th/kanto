@@ -8,7 +8,7 @@ export async function createReview(input: {
   rating: number;
   content: string;
   transactionId: number;
-  postId: number;
+  postId: number | null;
   postTitle: string | null;
   postPrice: number | null;
 }): Promise<Review> {
