@@ -7,7 +7,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
-import { useAuthInit } from "@/hooks/useAuthInit";
+import { useAuthInit, MANUAL_SIGNOUT_KEY } from "@/hooks/useAuthInit";
 import {
   Menu,
   User,
@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
+import Toast from "@/components/common/Toast";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { UnifiedBanner } from "@/components/common/UnifiedBanner";
 import { NotificationBell } from "./header/NotificationBell";
@@ -49,7 +50,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
   const router = useRouter();
   const user = useAuthStore((s) => s.user) ?? initialUser;
   const clearUser = useAuthStore((s) => s.clearUser);
-  useAuthInit();
+  const { kickedOut } = useAuthInit();
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -96,6 +97,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
 
   const handleLogoutConfirm = async () => {
     setIsLogoutModalOpen(false);
+    localStorage.setItem(MANUAL_SIGNOUT_KEY, "1");
     await supabase.auth.signOut();
     clearUser();
     router.push(ROUTES.home);
@@ -375,6 +377,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
         onConfirm={handleLogoutConfirm}
         onCancel={() => setIsLogoutModalOpen(false)}
       />
+      <Toast message={t("kickedOut")} showMessage={kickedOut} type="error" />
     </header>
     </>
   );

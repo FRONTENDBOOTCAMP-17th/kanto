@@ -23,6 +23,7 @@
     "login": "로그인",
     "logout": "로그아웃",
     "logoutConfirm": "로그아웃 하시겠습니까?",
+    "kickedOut": "다른 기기에서 로그인되어 로그아웃되었습니다.",
     "openMenu": "메뉴 열기",
     "closeMenu": "메뉴 닫기",
     "write": "글쓰기",
