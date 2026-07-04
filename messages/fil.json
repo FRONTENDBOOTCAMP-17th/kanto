@@ -64,6 +64,9 @@
   },
   "Auth": {
     "home": "Pumunta sa home",
+    "homeShort": "Home",
+    "welcome": "Maligayang pagdating sa Kanto.",
+    "or": "o",
     "email": "Email",
     "password": "Password",
     "emailPlaceholder": "example@email.com",
@@ -78,8 +81,7 @@
     "social": {
       "kakao": "Magpatuloy gamit ang Kakao",
       "google": "Magpatuloy gamit ang Google",
-      "facebook": "Magpatuloy gamit ang Facebook",
-      "email": "Mag-log in gamit ang email"
+      "facebook": "Magpatuloy gamit ang Facebook"
     },
     "errors": {
       "tooManyAttempts": "Masyadong maraming pagtatangka sa pag-log in. Pakisubukan muli mamaya.",
@@ -902,7 +904,7 @@
     }
   },
   "Signup": {
-    "home": "Pumunta sa home",
+    "home": "Home",
     "title": "Gumawa ng account",
     "description": "Hanapin ang kailangan mo sa Kanto at makipag-trade nang mas panatag.",
     "haveAccount": "May account ka na?",

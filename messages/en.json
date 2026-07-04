@@ -64,6 +64,9 @@
   },
   "Auth": {
     "home": "Go home",
+    "homeShort": "Home",
+    "welcome": "Welcome to Kanto.",
+    "or": "or",
     "email": "Email",
     "password": "Password",
     "emailPlaceholder": "example@email.com",
@@ -78,8 +81,7 @@
     "social": {
       "kakao": "Continue with Kakao",
       "google": "Continue with Google",
-      "facebook": "Continue with Facebook",
-      "email": "Log in with email"
+      "facebook": "Continue with Facebook"
     },
     "errors": {
       "tooManyAttempts": "Too many login attempts. Please try again later.",
@@ -902,7 +904,7 @@
     }
   },
   "Signup": {
-    "home": "Go home",
+    "home": "Home",
     "title": "Create your account",
     "description": "Find what you need on Kanto and trade with more confidence.",
     "haveAccount": "Already have an account?",
