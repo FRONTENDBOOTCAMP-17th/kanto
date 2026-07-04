@@ -43,7 +43,17 @@ export default async function TermsPage({
   const lang = PAGE_IDS[locale] ? locale : "ko";
   const pageId = PAGE_IDS[lang][type];
 
-  const { title, content } = await getNotionPage(pageId);
+  const data = await getNotionPage(pageId);
+
+  if (!data) {
+    return (
+      <main className="min-h-screen bg-gray-900 text-gray-400 flex items-center justify-center">
+        현재 내용을 불러올 수 없습니다. 잠시 후 다시 시도해주세요.
+      </main>
+    );
+  }
+
+  const { title, content } = data;
 
   if (!title && content.includes("불러올 수 없습니다")) {
     return (
