@@ -232,7 +232,7 @@
   }
   button:not(:disabled),
   a {
-    @apply transition-transform duration-100 active:scale-[1.15];
+    @apply transition-transform duration-100 active:scale-[1.05];
   }
 }
 
