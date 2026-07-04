@@ -23,6 +23,7 @@
     "login": "Mag-log in",
     "logout": "Mag-log out",
     "logoutConfirm": "Sigurado ka bang gusto mong mag-log out?",
+    "kickedOut": "Na-log out ka dahil nag-sign in ang account mo sa ibang device.",
     "openMenu": "Buksan ang menu",
     "closeMenu": "Isara ang menu",
     "write": "Mag-post",
