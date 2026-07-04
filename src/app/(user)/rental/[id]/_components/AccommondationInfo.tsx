@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { ApproxAreaMapWithProvider } from "@/components/common/ApproxAreaMap";
+import { ApproxAreaMap } from "@/components/common/ApproxAreaMap";
 import { formatBarangayLabel } from "@/type/location";
 import { formatPrice } from "@/utils/format";
 
@@ -94,7 +94,7 @@ export default function AccommondationInfo({ rental, children }: { rental: Renta
       </div>
 
       {rental.location_lat != null && rental.location_lng != null && (
-        <ApproxAreaMapWithProvider
+        <ApproxAreaMap
           lat={rental.location_lat}
           lng={rental.location_lng}
         />

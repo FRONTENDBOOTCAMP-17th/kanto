@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
-  APIProvider,
   Map,
   useMap,
   type MapCameraChangedEvent,
@@ -378,12 +377,7 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
   };
 
   return (
-    <APIProvider
-      apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
-      libraries={["places"]}
-      version="weekly"
-    >
-      <div className="relative h-[calc(100vh-48px)] overflow-hidden md:h-[calc(100vh-109px)]">
+    <div className="relative h-[calc(100vh-48px)] overflow-hidden md:h-[calc(100vh-109px)]">
         <Map
           id={MAP_ID}
           mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID}
@@ -543,7 +537,6 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
           isOpen={showLoginModal}
           onClose={() => setShowLoginModal(false)}
         />
-      </div>
-    </APIProvider>
+    </div>
   );
 }

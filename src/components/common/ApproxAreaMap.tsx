@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { APIProvider, Map, useMap } from "@vis.gl/react-google-maps";
+import { Map, useMap } from "@vis.gl/react-google-maps";
 import { useTranslations } from "next-intl";
 
 const MAP_ID = "kanto-approx-area-map";
@@ -62,10 +62,3 @@ export function ApproxAreaMap({ lat, lng, radius = 400, className }: Props) {
   );
 }
 
-export function ApproxAreaMapWithProvider(props: Props) {
-  return (
-    <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
-      <ApproxAreaMap {...props} />
-    </APIProvider>
-  );
-}
