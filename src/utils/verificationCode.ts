@@ -77,6 +77,29 @@ interface SendVerificationEmailOptions {
   validityNote?: string;
 }
 
+let cachedTransporter: ReturnType<typeof nodemailer.createTransport> | null = null;
+let cachedTransporterKey = "";
+
+export function isVerificationEmailConfigured() {
+  return Boolean(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD);
+}
+
+function getVerificationEmailTransporter(user: string, pass: string) {
+  const key = `${user}:${pass}`;
+
+  if (cachedTransporter && cachedTransporterKey === key) {
+    return cachedTransporter;
+  }
+
+  cachedTransporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: { user, pass },
+  });
+  cachedTransporterKey = key;
+
+  return cachedTransporter;
+}
+
 export async function sendVerificationEmail(
   email: string,
   name: string,
@@ -94,11 +117,7 @@ export async function sendVerificationEmail(
   const intro = options.intro ?? `${name}님, Kanto 본인인증을 위한 인증번호입니다.`;
   const validityNote = options.validityNote ?? "인증번호는 발송 시점부터 3분 동안 유효합니다.";
 
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: { user, pass },
-  });
-
+  const transporter = getVerificationEmailTransporter(user, pass);
   await transporter.sendMail({
     from: `Kanto <${user}>`,
     to: email,

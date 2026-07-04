@@ -1,5 +1,5 @@
 
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Database } from "@/type/supabase";
 import {
@@ -9,6 +9,7 @@ import {
   getSavedVerificationCode,
   deleteVerificationCode,
   sendVerificationEmail,
+  isVerificationEmailConfigured,
 } from "@/utils/verificationCode";
 
 const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
@@ -45,19 +46,26 @@ function admin() {
 
 async function findMatchingUser(name: string, email: string) {
   const supabase = admin();
+  const trimmedName = name.trim();
+  const normalizedEmail = email.trim().toLowerCase();
   const { data } = await supabase
     .from("users")
-    .select("auth_id, name")
-    .eq("email", email.toLowerCase())
-    .maybeSingle();
+    .select("auth_id, email")
+    .eq("name", trimmedName);
 
-  if (!data || !data.auth_id) return null;
-  if (data.name.trim() !== name.trim()) return null;
+  if (!data || data.length === 0) return { error: "name_not_found" as const };
 
-  return { authId: data.auth_id };
+  const matched = data.find(
+    (user) => user.email?.toLowerCase() === normalizedEmail && user.auth_id,
+  );
+
+  if (!matched?.auth_id) return { error: "email_not_found" as const };
+
+  return { authId: matched.auth_id };
 }
 
 export async function POST(req: NextRequest) {
+  const startedAt = performance.now();
   const { name, email, locale } = (await req.json()) as {
     name?: string;
     email?: string;
@@ -69,41 +77,58 @@ export async function POST(req: NextRequest) {
   }
 
   const matched = await findMatchingUser(name, email);
+  const matchedAt = performance.now();
 
-  if (!matched) {
-    return NextResponse.json({ error: "account_not_found" }, { status: 404 });
+  if ("error" in matched) {
+    return NextResponse.json({ error: matched.error }, { status: 404 });
+  }
+
+  const isProduction = process.env.NODE_ENV === "production";
+  const isEmailConfigured = isVerificationEmailConfigured();
+
+  if (!isEmailConfigured && isProduction) {
+    return NextResponse.json({ error: "email_not_configured" }, { status: 500 });
   }
 
   const code = createVerificationCode();
   const key = getResetKey(email);
   await saveVerificationCode(key, code);
+  const savedAt = performance.now();
 
   const emailTexts = EMAIL_TEXTS[locale ?? "ko"] ?? EMAIL_TEXTS.ko;
+  const normalizedEmail = email.trim().toLowerCase();
+  const trimmedName = name.trim();
 
-  let emailResult: { isEmailSent: boolean; isConfigured: boolean };
-  try {
-    emailResult = await sendVerificationEmail(email.trim().toLowerCase(), name.trim(), code, {
-      subject: emailTexts.subject,
-      intro: emailTexts.intro(name.trim()),
-      validityNote: emailTexts.validityNote,
+  if (isEmailConfigured) {
+    after(async () => {
+      try {
+        await sendVerificationEmail(normalizedEmail, trimmedName, code, {
+          subject: emailTexts.subject,
+          intro: emailTexts.intro(trimmedName),
+          validityNote: emailTexts.validityNote,
+        });
+      } catch {
+        await deleteVerificationCode(key);
+      }
     });
-  } catch {
-    await deleteVerificationCode(key);
-    return NextResponse.json({ error: "email_send_failed" }, { status: 502 });
   }
 
-  const isProduction = process.env.NODE_ENV === "production";
-
-  if (!emailResult.isConfigured && isProduction) {
-    await deleteVerificationCode(key);
-    return NextResponse.json({ error: "email_not_configured" }, { status: 500 });
-  }
-
-  return NextResponse.json({
+  const response = NextResponse.json({
     expiresIn: VERIFICATION_TTL_SECONDS,
-    isEmailSent: emailResult.isEmailSent,
-    devCode: !emailResult.isConfigured && !isProduction ? code : undefined,
+    isEmailSent: isEmailConfigured,
+    devCode: !isEmailConfigured && !isProduction ? code : undefined,
   });
+
+  response.headers.set(
+    "Server-Timing",
+    [
+      `match;dur=${(matchedAt - startedAt).toFixed(1)}`,
+      `save;dur=${(savedAt - matchedAt).toFixed(1)}`,
+      `total;dur=${(performance.now() - startedAt).toFixed(1)}`,
+    ].join(", "),
+  );
+
+  return response;
 }
 
 export async function PATCH(req: NextRequest) {
@@ -151,8 +176,8 @@ export async function PUT(req: NextRequest) {
 
   const matched = await findMatchingUser(name, email);
 
-  if (!matched) {
-    return NextResponse.json({ error: "account_not_found" }, { status: 404 });
+  if ("error" in matched) {
+    return NextResponse.json({ error: matched.error }, { status: 404 });
   }
 
   const supabase = admin();
