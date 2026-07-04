@@ -170,7 +170,8 @@
       "bannerTitle": "Your account has been suspended.",
       "bannerPermanent": "Your account has been permanently suspended. Service is unavailable."
     },
-    "likes": "Likes"
+    "likes": "Likes",
+    "loginRequiredTitle": "Login Required"
   },
   "Report": {
     "title": "Report",

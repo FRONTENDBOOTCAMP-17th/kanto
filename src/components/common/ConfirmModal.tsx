@@ -46,26 +46,19 @@ export function ConfirmModal({
       onClick={onCancel}
     >
       <div
-        className="w-full max-w-sm mx-4 bg-white rounded-2xl shadow-xl p-6 flex flex-col gap-4"
+        className="w-80 rounded-sm bg-white px-8 py-10 shadow-sm"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex flex-col gap-1">
-          <p className="text-base font-semibold text-gray-800">{title}</p>
-          {description && (
-            <p className="text-sm text-gray-500">{description}</p>
-          )}
-        </div>
-        <div className="flex gap-2 justify-end">
-          <Button variant="ghost" onClick={onCancel}>
-            {cancelLabel ?? t("cancel")}
-          </Button>
-          <Button
-            className="bg-red-500 hover:bg-red-600 text-white"
-            onClick={onConfirm}
-          >
-            {confirmLabel ?? t("confirm")}
-          </Button>
-        </div>
+        <p className="text-center text-lg font-bold tracking-tight text-gray-900">{title}</p>
+        {description && (
+          <p className="mt-2 text-center text-sm text-gray-500">{description}</p>
+        )}
+        <Button
+          className="mt-6 w-full rounded-sm bg-rose-300 hover:bg-rose-400 text-white text-xs tracking-widest cursor-pointer hover:scale-105 active:scale-100 transition-all"
+          onClick={onConfirm}
+        >
+          {confirmLabel ?? t("confirm")}
+        </Button>
       </div>
     </div>,
     document.body,

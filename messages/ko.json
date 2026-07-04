@@ -170,7 +170,8 @@
       "bannerTitle": "계정이 정지되었습니다.",
       "bannerPermanent": "영구 정지 처리된 계정입니다. 서비스 이용이 불가합니다."
     },
-    "likes": "좋아요"
+    "likes": "좋아요",
+    "loginRequiredTitle": "로그인이 필요해요"
   },
   "Report": {
     "title": "신고하기",

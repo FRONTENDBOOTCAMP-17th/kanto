@@ -170,7 +170,8 @@
       "bannerTitle": "Ang iyong account ay nasuspinde.",
       "bannerPermanent": "Ang iyong account ay permanenteng nasuspinde. Hindi magagamit ang serbisyo."
     },
-    "likes": "Like"
+    "likes": "Like",
+    "loginRequiredTitle": "Kailangan mag-login"
   },
   "Report": {
     "title": "Mag-ulat",
