@@ -1,9 +1,11 @@
 import { supabase } from "@/lib/supabase";
+import { optimizeImage } from "@/utils/optimizeImage";
 import type { User } from "@/type/user";
 
 export async function uploadAvatar(userId: number, avatarFile: File): Promise<string> {
+  const optimized = await optimizeImage(avatarFile, 512);
   const filePath = `avatars/${userId}/profile`;
-  const { error } = await supabase.storage.from("images").upload(filePath, avatarFile, { upsert: true });
+  const { error } = await supabase.storage.from("images").upload(filePath, optimized, { upsert: true });
   if (error) throw new Error("프로필 사진 업로드에 실패했습니다.");
   const { data } = supabase.storage.from("images").getPublicUrl(filePath);
   return data.publicUrl + `?v=${Date.now()}`;

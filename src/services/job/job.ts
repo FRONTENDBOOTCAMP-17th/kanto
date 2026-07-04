@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import type { JobWithPost } from "@/type/job/jobList";
 import type { Pagination, PagedResult } from "@/services/usedGoods/usedGoods";
 import type { TradeLocation } from "@/type/location";
+import { encryptPostId } from "@/utils/postIdCipher";
 
 interface JobListFilter {
   search?: string;
@@ -45,7 +46,12 @@ export async function getJobList(
   const { data, count, error } = await query;
   if (error) throw new Error(error.message);
 
-  return { posts: (data as unknown as JobWithPost[]) ?? [], total: count ?? 0 };
+  const posts = ((data as unknown as JobWithPost[]) ?? []).map((p) => ({
+    ...p,
+    id_token: encryptPostId(p.id),
+  }));
+
+  return { posts, total: count ?? 0 };
 }
 
 export async function getPopularJobs(): Promise<JobWithPost[]> {
@@ -65,11 +71,12 @@ export async function getPopularJobs(): Promise<JobWithPost[]> {
     jobs: (JobWithPost["jobs"][number] & { popular_count: number | null })[];
   };
 
-  
+
   return (data as unknown as JobWithPopular[])
     .sort(
       (a, b) =>
         (a.jobs[0].popular_count ?? 99) - (b.jobs[0].popular_count ?? 99),
     )
-    .slice(0, 5) as unknown as JobWithPost[];
+    .slice(0, 5)
+    .map((p) => ({ ...p, id_token: encryptPostId(p.id) })) as unknown as JobWithPost[];
 }

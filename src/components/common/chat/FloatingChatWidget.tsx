@@ -113,12 +113,8 @@ export default function FloatingChatWidget({
   useEffect(() => {
     if (isOpen && window.innerWidth < 768) {
       document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
+      return () => { document.body.style.overflow = ""; };
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
   }, [isOpen]);
 
   useEffect(() => {
@@ -232,7 +228,7 @@ export default function FloatingChatWidget({
     
     const chatParam = new URLSearchParams(window.location.search).get("chat");
 
-    
+
     if (chatParam === "list") {
       setView("list");
       setSelectedChatId(null);
@@ -241,17 +237,31 @@ export default function FloatingChatWidget({
       return;
     }
 
-    const id = Number(chatParam);
-    if (chatParam && Number.isInteger(id) && id > 0) {
+    const openChat = (chatId: number) => {
       const until = useAuthStore.getState().user?.suspended_until;
       if (until && new Date(until) > new Date()) {
         useSuspendedModalStore.getState().open();
         return;
       }
-      setSelectedChatId(id);
+      setSelectedChatId(chatId);
       setPendingNewChatMeta(null);
       setView("room");
       setWidgetOpen(true);
+    };
+
+    if (chatParam) {
+      const numericId = Number(chatParam);
+      if (Number.isInteger(numericId) && numericId > 0) {
+        openChat(numericId);
+      } else {
+
+        fetch(`/api/chat/${chatParam}`)
+          .then((r) => r.json())
+          .then((json) => {
+            if (!json.error && typeof json.chatId === "number") openChat(json.chatId);
+          })
+          .catch(() => {});
+      }
       return;
     }
 
@@ -277,11 +287,19 @@ export default function FloatingChatWidget({
       return;
     }
     const params = new URLSearchParams(window.location.search);
-    
-    
+
+
     const inRoom = isOpen && view === "room" && selectedChatId !== null;
     const inList = isOpen && view === "list";
-    const desired = inRoom ? String(selectedChatId) : inList ? "list" : null;
+    const selectedChatToken =
+      selectedChatId !== null
+        ? chats.find((c) => c.id === selectedChatId)?.id_token
+        : undefined;
+    const desired = inRoom
+      ? (selectedChatToken ?? String(selectedChatId))
+      : inList
+        ? "list"
+        : null;
     if (desired !== null) {
       if (params.get("chat") === desired) return;
       params.set("chat", desired);
@@ -295,7 +313,7 @@ export default function FloatingChatWidget({
       "",
       `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`,
     );
-  }, [isOpen, view, selectedChatId]);
+  }, [isOpen, view, selectedChatId, chats]);
 
   
   

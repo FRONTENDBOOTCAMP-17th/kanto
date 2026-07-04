@@ -4,6 +4,7 @@ import { getPublicProfile } from "@/services/user/publicProfile";
 import { getReviewsForUser } from "@/services/review/review";
 import { hasBlockedUser } from "@/services/chat/block";
 import { PublicProfileView } from "./_components/PublicProfileView";
+import { resolveUserId } from "@/utils/userIdCipher";
 export { generateMetadata } from "./metadata";
 
 export default async function UserProfilePage({
@@ -12,8 +13,8 @@ export default async function UserProfilePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const targetId = Number(id);
-  if (!Number.isInteger(targetId) || targetId <= 0) notFound();
+  const targetId = resolveUserId(id);
+  if (targetId === null) notFound();
 
   const currentUserId = await getCurrentUserId();
   if (currentUserId === targetId) redirect("/profile");

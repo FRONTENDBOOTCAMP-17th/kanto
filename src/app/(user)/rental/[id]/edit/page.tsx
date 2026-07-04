@@ -2,6 +2,7 @@ import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { getRentalDetail } from "@/services/rental/rental";
 import RentalCreateForm from "@/app/(user)/rental/create/_components/RentalCreateForm";
+import { resolvePostId } from "@/utils/postIdCipher";
 
 export default async function RentalEditPage({
   params,
@@ -9,6 +10,8 @@ export default async function RentalEditPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const postId = resolvePostId(id);
+  if (postId === null) notFound();
 
   const supabase = await createClient();
   const {
@@ -27,7 +30,7 @@ export default async function RentalEditPage({
 
   let rental;
   try {
-    rental = await getRentalDetail(Number(id));
+    rental = await getRentalDetail(postId);
   } catch {
     notFound();
   }

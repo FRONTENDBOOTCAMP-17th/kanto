@@ -12,6 +12,7 @@ const AMENITY_ICONS: Record<string, React.ComponentType<{ className?: string }>>
 
 interface RentalCardProps {
   id: number;
+  idToken?: string;
   title: string;
   price: number | null;
   location: string | null;
@@ -27,10 +28,12 @@ interface RentalCardProps {
   fromPage?: number;
   isPopular?: boolean;
   isSold?: boolean;
+  priority?: boolean;
 }
 
 export function RentalCard({
   id,
+  idToken,
   title,
   price,
   location,
@@ -46,6 +49,7 @@ export function RentalCard({
   fromPage,
   isPopular,
   isSold,
+  priority,
 }: RentalCardProps) {
   const displayLocation =
     barangay || city
@@ -74,7 +78,7 @@ export function RentalCard({
 
   return (
     <ContentCard
-      href={`/rental/${id}${fromPage ? `?fromPage=${fromPage}` : ""}`}
+      href={`/rental/${idToken ?? id}${fromPage ? `?fromPage=${fromPage}` : ""}`}
       images={images}
       title={title}
       price={price}
@@ -88,6 +92,7 @@ export function RentalCard({
       badge={isPopular ? <PopularBadge /> : undefined}
       soldOverlay={isSold}
       soldLabelKey="dealClosed"
+      priority={priority}
     />
   );
 }

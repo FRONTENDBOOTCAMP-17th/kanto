@@ -138,6 +138,7 @@
       "drop": "Ihulog dito",
       "removeImage": "Alisin ang larawan {index}",
       "goToImage": "Pumunta sa larawan {index}",
+      "representative": "Pangunahin",
       "checking": "Kinakapatas ang larawan...",
       "blocked": "May mga larawan na hindi pinayagan kaya hindi idinagdag.",
       "unavailable": "Hindi namin masuri ngayon ang larawan. Pakisubukan ulit mamaya."
@@ -434,6 +435,16 @@
         "description": "Mag-enjoy ng iba't ibang meetup sa Pilipinas",
         "button": "Pumunta sa Kanto GO!"
       }
+    },
+    "goPreview": {
+      "title": "Mga bukas na meetup ngayon",
+      "emptyTitle": "Wala pang bukas na meetup",
+      "emptyDescription": "Ikaw na ang unang gumawa ng meetup"
+    },
+    "goStats": {
+      "participants": "{count} katao ang sumasali",
+      "inProgressShort": "{count} meetup",
+      "participantsShort": "{count} sumasali"
     }
   },
   "Time": {
@@ -830,6 +841,8 @@
   },
   "Signup": {
     "home": "Pumunta sa home",
+    "title": "Gumawa ng account",
+    "description": "Hanapin ang kailangan mo sa Kanto at makipag-trade nang mas panatag.",
     "haveAccount": "May account ka na?",
     "login": "Mag-log in",
     "emailExists": "Nakarehistro na ang email na ito.",

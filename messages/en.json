@@ -138,6 +138,7 @@
       "drop": "Drop here",
       "removeImage": "Remove image {index}",
       "goToImage": "Go to image {index}",
+      "representative": "Main",
       "checking": "Checking image...",
       "blocked": "Some images were not allowed and were not added.",
       "unavailable": "We couldn't check this image right now. Please try again shortly."
@@ -434,6 +435,16 @@
         "description": "Enjoy all kinds of meetups in the Philippines",
         "button": "Go to Kanto GO!"
       }
+    },
+    "goPreview": {
+      "title": "Open meetups right now",
+      "emptyTitle": "No meetups yet",
+      "emptyDescription": "Be the first to start one"
+    },
+    "goStats": {
+      "participants": "{count} people joining in",
+      "inProgressShort": "{count} meetups",
+      "participantsShort": "{count} joining"
     }
   },
   "Time": {
@@ -830,6 +841,8 @@
   },
   "Signup": {
     "home": "Go home",
+    "title": "Create your account",
+    "description": "Find what you need on Kanto and trade with more confidence.",
     "haveAccount": "Already have an account?",
     "login": "Log in",
     "emailExists": "This email is already registered.",

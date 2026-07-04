@@ -7,4 +7,5 @@ export type Job = Tables<"jobs">;
 export interface JobWithPost extends Post {
   jobs: Job[];
   users: SellerInfo;
+  id_token?: string;
 }

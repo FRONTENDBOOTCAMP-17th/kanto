@@ -6,6 +6,7 @@ import type { Message } from "./message";
 export type Chat = Tables<"chats">;
 
 export interface ChatWithUsers extends Chat {
+  id_token?: string;
   user1: SellerInfo;
   user2: SellerInfo;
   posts: Pick<Post, "title" | "post_type"> | null;

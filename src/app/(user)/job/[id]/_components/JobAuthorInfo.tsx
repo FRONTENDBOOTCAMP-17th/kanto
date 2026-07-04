@@ -40,7 +40,7 @@ export default function JobAuthorInfo({
   }, [isOwner, setHasStickyBar]);
 
   const handleOpenProfile = () => {
-    if (job.posts.users?.id) router.push(`/user/${job.posts.users.id}`);
+    if (job.posts.users?.id) router.push(`/user/${job.posts.users.id_token ?? job.posts.users.id}`);
   };
 
   const handleChat = async () => {
@@ -65,6 +65,7 @@ export default function JobAuthorInfo({
         postPrice: null,
         partner: {
           id: job.posts.users.id,
+          id_token: job.posts.users.id_token,
           name: job.posts.users.name,
           avatar_url: job.posts.users.avatar_url,
           created_at: job.posts.users.created_at,
