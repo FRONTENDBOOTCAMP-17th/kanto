@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { SignupForm } from "./_components/SignupForm";
@@ -79,14 +79,14 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-teal-50 via-cyan-50 to-emerald-100 flex items-center justify-center px-3 py-5 sm:px-6 sm:py-10">
+    <div className="min-h-screen bg-linear-to-br from-teal-50 via-cyan-50 to-emerald-100 flex items-center justify-center p-3 sm:px-6">
       <div className="w-full max-w-115 px-5 py-6 sm:px-8 sm:py-8">
         <div className="flex items-center justify-between">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-teal-700 transition-colors hover:text-teal-800"
+            className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-teal-700 transition-colors hover:text-teal-800 active:scale-100"
           >
-            <ArrowLeft className="h-4 w-4" strokeWidth={2.2} aria-hidden />
+            <ChevronLeft className="h-4 w-4" strokeWidth={2.2} aria-hidden />
             {t("home")}
           </Link>
           <LanguageSwitcher />
