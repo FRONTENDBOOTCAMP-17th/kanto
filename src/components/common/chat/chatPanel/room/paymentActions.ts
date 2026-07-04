@@ -52,7 +52,7 @@ export async function createPaymentRequestAction(params: {
 
   const { data: post } = await supabase
     .from("posts")
-    .select("user_id")
+    .select("user_id, title")
     .eq("id", params.postId)
     .single();
   if (!post || post.user_id !== me.id) {
@@ -84,6 +84,7 @@ export async function createPaymentRequestAction(params: {
   const externalId = `txn_${crypto.randomUUID()}`;
   const transaction = await createTransaction({
     postId: params.postId,
+    postTitle: post.title,
     chatId: params.chatId,
     buyerId,
     sellerId: me.id,
@@ -191,10 +192,12 @@ export async function confirmReceiptAction(
 
   
   
-  await supabase
-    .from("posts")
-    .update({ is_sold: true, is_reserved: false })
-    .eq("id", transaction.post_id);
+  if (transaction.post_id !== null) {
+    await supabase
+      .from("posts")
+      .update({ is_sold: true, is_reserved: false })
+      .eq("id", transaction.post_id);
+  }
 
   try {
     await postSystemMessage(
@@ -278,12 +281,6 @@ export async function createReviewAction(input: {
   const revieweeId = isBuyer ? transaction.seller_id : transaction.buyer_id;
   const role = isBuyer ? "buyer" : "seller";
 
-  const { data: post } = await supabase
-    .from("posts")
-    .select("title")
-    .eq("id", transaction.post_id)
-    .single();
-
   await createReview({
     reviewerId: me.id,
     revieweeId,
@@ -292,7 +289,7 @@ export async function createReviewAction(input: {
     content,
     transactionId: transaction.id,
     postId: transaction.post_id,
-    postTitle: post?.title ?? null,
+    postTitle: transaction.post_title,
     postPrice: transaction.amount,
   });
 }

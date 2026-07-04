@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getMyTransactions, type TransactionWithPost } from "@/app/(user)/profile/_lib/actions";
 
 const PAGE_SIZE = 8;
-const HIDDEN_STATUSES = new Set(["cancelled", "expired"]);
+const HIDDEN_STATUSES = new Set(["cancelled", "expired", "pending"]);
 
 function Pagination({ page, total, onChange }: { page: number; total: number; onChange: (p: number) => void }) {
   if (total <= 1) return null;
@@ -39,7 +39,6 @@ export function ProfileTransactionsSection() {
   }, []);
 
   const statusLabel: Record<string, { text: string; className: string }> = {
-    pending:  { text: t("statusPending"),  className: "bg-yellow-50 text-yellow-600" },
     paid:     { text: t("statusPaid"),     className: "bg-blue-50 text-blue-600" },
     released: { text: t("statusReleased"), className: "bg-teal-50 text-teal-600" },
   };
@@ -94,7 +93,7 @@ export function ProfileTransactionsSection() {
                   >
                     <div className="flex flex-col gap-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900 truncate">
-                        {tx.posts?.title ?? t("deletedPost")}
+                        {tx.post_title ?? t("deletedPost")}
                       </p>
                       <div className="flex items-center gap-1.5 text-xs text-gray-400">
                         <span>{date}</span>

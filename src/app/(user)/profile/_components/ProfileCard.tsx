@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { ChevronLeft, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -109,12 +109,12 @@ function ProfileForm({
           aria-label={t("back")}
           className="cursor-pointer p-1 -ml-1"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-800" />
+          <ChevronLeft className="w-5 h-5 text-gray-800" />
         </button>
         <h1 className="text-base font-semibold text-gray-900">{t("title")}</h1>
       </div>
 
-      <div className="md:flex md:p-8 p-0 bg-white md:rounded-b-xl md:border md:border-gray-100">
+      <div className="md:flex md:p-8 p-0 bg-white md:rounded-b-xl">
         <ProfileAside activeTab={activeTab} onTabChange={setActiveTab} />
 
 
