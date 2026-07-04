@@ -63,6 +63,7 @@
     "copyright": "© 2026 Kanto. All rights reserved."
   },
   "Auth": {
+    "home": "Go home",
     "email": "Email",
     "password": "Password",
     "emailPlaceholder": "example@email.com",
@@ -82,9 +83,60 @@
     },
     "errors": {
       "tooManyAttempts": "Too many login attempts. Please try again later.",
+      "failedAttempts": "Login failed {count} time(s). After 5 failed attempts, you can try again in 15 minutes.",
+      "failedAttemptsCount": "Login failed {count} time(s).",
+      "failedAttemptsLimit": "After 5 failed attempts, you can try again in 15 minutes.",
+      "emailInvalid": "Please enter a valid email address.",
+      "passwordInvalid": "The password is incorrect.",
       "invalidCredentials": "Your email or password is incorrect.",
       "emailNotConfirmed": "Your email hasn't been verified. Please check your inbox.",
       "generic": "Login failed. Please try again."
+    }
+  },
+  "FindPassword": {
+    "title": "Find password",
+    "closeModal": "Close find password modal",
+    "name": "Name",
+    "namePlaceholder": "Name used at sign-up",
+    "nameRequired": "Please enter your name.",
+    "nameInvalid": "Please enter a valid name.",
+    "email": "Email",
+    "emailPlaceholder": "Email used at sign-up",
+    "emailInvalid": "Please enter a valid email address.",
+    "sendCode": "Send verification code",
+    "devCode": "Dev verification code:",
+    "timeLeft": "Time remaining",
+    "codeLabel": "Verification code",
+    "codePlaceholder": "6-digit code",
+    "codeInvalid": "Please enter the 6-digit verification code.",
+    "verifyCode": "Verify code",
+    "newPassword": "New password",
+    "newPasswordPlaceholder": "8+ characters with letters and numbers",
+    "passwordRule": "Enter at least 8 characters including letters and numbers.",
+    "confirmPassword": "Confirm new password",
+    "confirmPasswordPlaceholder": "Re-enter your password",
+    "passwordMismatch": "Passwords do not match.",
+    "passwordMatch": "Passwords match!",
+    "changePassword": "Change password",
+    "codeSent": "We sent a verification code to your email.",
+    "devCodeShown": "No email key is configured, so a dev verification code is shown.",
+    "verified": "Verified. Please enter a new password.",
+    "passwordChanged": "Your password has been changed. Please log in with your new password.",
+    "errors": {
+      "missing_fields": "Required information is missing.",
+      "account_not_found": "No account matches the name and email you entered.",
+      "name_not_found": "Please enter a valid name.",
+      "email_not_found": "Please enter a valid email address.",
+      "email_send_failed": "Failed to send the verification email.",
+      "email_not_configured": "Verification email is not configured. Please contact the administrator.",
+      "code_expired": "The verification time has expired.",
+      "code_mismatch": "The verification code does not match.",
+      "code_invalid_or_expired": "Verification has expired or is invalid.",
+      "invalid_password": "Password must be at least 8 characters including letters and numbers.",
+      "update_failed": "Failed to change the password.",
+      "sendFailed": "Failed to send the verification code.",
+      "verifyFailed": "Failed to verify the code.",
+      "changeFailed": "Failed to change the password."
     }
   },
   "LanguageSwitcher": {
@@ -171,6 +223,15 @@
       "until": "Service is restricted until {date}.",
       "bannerTitle": "Your account has been suspended.",
       "bannerPermanent": "Your account has been permanently suspended. Service is unavailable."
+    },
+    "select": "Select",
+    "closeItem": "Close {label}",
+    "prevPage": "Previous page",
+    "nextPage": "Next page",
+    "verifyRequired": {
+      "title": "Identity verification required",
+      "message": "You need to verify your identity to create a post.",
+      "question": "Would you like to verify now?"
     },
     "likes": "Likes",
     "loginRequiredTitle": "Login Required"
@@ -847,6 +908,7 @@
     "haveAccount": "Already have an account?",
     "login": "Log in",
     "emailExists": "This email is already registered.",
+    "signupFailed": "Sign-up failed. Please check your information and try again.",
     "form": {
       "name": "Name",
       "namePlaceholder": "2+ Korean or English letters (e.g. John)",
@@ -903,12 +965,14 @@
       "loading": "Loading...",
       "loadError": "Unable to load content. Please try again later.",
       "cancel": "Cancel",
-      "agree": "I agree",
+      "agree": "Agree",
       "readToEnd": "Please read to the end",
-      "scrollDown": "Scroll down"
+      "scrollDown": "Scroll down",
+      "unavailable": "Unavailable"
     }
   },
   "Terms": {
+    "loadError": "Unable to load content. Please try again later.",
     "items": {
       "policy": "Operating Policy",
       "service": "Terms of Service",
@@ -1100,7 +1164,8 @@
     "place": {
       "placeholder": "Enter a place name or address (e.g. SM Aura)",
       "loading": "Loading map…",
-      "empty": "No location selected yet"
+      "empty": "No location selected yet",
+      "currentArea": "Current trade area: {label}"
     }
   },
   "Notice": {

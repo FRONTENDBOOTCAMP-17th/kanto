@@ -63,6 +63,7 @@
     "copyright": "© 2026 Kanto. All rights reserved."
   },
   "Auth": {
+    "home": "Pumunta sa home",
     "email": "Email",
     "password": "Password",
     "emailPlaceholder": "example@email.com",
@@ -82,9 +83,60 @@
     },
     "errors": {
       "tooManyAttempts": "Masyadong maraming pagtatangka sa pag-log in. Pakisubukan muli mamaya.",
+      "failedAttempts": "Nabigo ang pag-log in nang {count} beses. Pagkatapos ng 5 pagkabigo, maaari kang sumubok muli pagkalipas ng 15 minuto.",
+      "failedAttemptsCount": "Nabigo ang pag-log in nang {count} beses.",
+      "failedAttemptsLimit": "Pagkatapos ng 5 pagkabigo, maaari kang sumubok muli pagkalipas ng 15 minuto.",
+      "emailInvalid": "Hindi wasto ang email address.",
+      "passwordInvalid": "Hindi tama ang password.",
       "invalidCredentials": "Mali ang iyong email o password.",
       "emailNotConfirmed": "Hindi pa na-verify ang iyong email. Pakitingnan ang iyong inbox.",
       "generic": "Nabigo ang pag-log in. Pakisubukan muli."
+    }
+  },
+  "FindPassword": {
+    "title": "Hanapin ang password",
+    "closeModal": "Isara ang modal ng paghahanap ng password",
+    "name": "Pangalan",
+    "namePlaceholder": "Pangalang ginamit sa pag-sign up",
+    "nameRequired": "Ilagay ang iyong pangalan.",
+    "nameInvalid": "Hindi wasto ang pangalan.",
+    "email": "Email",
+    "emailPlaceholder": "Email na ginamit sa pag-sign up",
+    "emailInvalid": "Hindi wasto ang email address.",
+    "sendCode": "Ipadala ang verification code",
+    "devCode": "Dev verification code:",
+    "timeLeft": "Natitirang oras",
+    "codeLabel": "Verification code",
+    "codePlaceholder": "6-digit na code",
+    "codeInvalid": "Ilagay ang 6-digit na verification code.",
+    "verifyCode": "I-verify ang code",
+    "newPassword": "Bagong password",
+    "newPasswordPlaceholder": "8+ character na may letra at numero",
+    "passwordRule": "Maglagay ng hindi bababa sa 8 character na may letra at numero.",
+    "confirmPassword": "Kumpirmahin ang bagong password",
+    "confirmPasswordPlaceholder": "Ilagay muli ang password",
+    "passwordMismatch": "Hindi magkatugma ang mga password.",
+    "passwordMatch": "Magkatugma ang mga password!",
+    "changePassword": "Palitan ang password",
+    "codeSent": "Nagpadala kami ng verification code sa iyong email.",
+    "devCodeShown": "Walang naka-configure na email key kaya ipinapakita ang dev verification code.",
+    "verified": "Na-verify. Maglagay ng bagong password.",
+    "passwordChanged": "Napalitan na ang iyong password. Mag-log in gamit ang bagong password.",
+    "errors": {
+      "missing_fields": "Kulang ang kinakailangang impormasyon.",
+      "account_not_found": "Walang account na tumutugma sa pangalan at email na inilagay mo.",
+      "name_not_found": "Hindi wasto ang pangalan.",
+      "email_not_found": "Hindi wasto ang email address.",
+      "email_send_failed": "Nabigong maipadala ang verification email.",
+      "email_not_configured": "Hindi naka-configure ang pagpapadala ng email. Makipag-ugnayan sa administrator.",
+      "code_expired": "Nag-expire na ang oras ng verification.",
+      "code_mismatch": "Hindi tugma ang verification code.",
+      "code_invalid_or_expired": "Nag-expire o hindi wasto ang verification.",
+      "invalid_password": "Ang password ay dapat hindi bababa sa 8 character na may letra at numero.",
+      "update_failed": "Nabigong palitan ang password.",
+      "sendFailed": "Nabigong maipadala ang verification code.",
+      "verifyFailed": "Nabigong ma-verify ang code.",
+      "changeFailed": "Nabigong palitan ang password."
     }
   },
   "LanguageSwitcher": {
@@ -171,6 +223,15 @@
       "until": "Ang serbisyo ay nirestriktahan hanggang {date}.",
       "bannerTitle": "Ang iyong account ay nasuspinde.",
       "bannerPermanent": "Ang iyong account ay permanenteng nasuspinde. Hindi magagamit ang serbisyo."
+    },
+    "select": "Pumili",
+    "closeItem": "Isara ang {label}",
+    "prevPage": "Nakaraang pahina",
+    "nextPage": "Susunod na pahina",
+    "verifyRequired": {
+      "title": "Kailangan ng identity verification",
+      "message": "Kailangan mong i-verify ang iyong pagkakakilanlan para makapag-post.",
+      "question": "Gusto mo bang mag-verify ngayon?"
     },
     "likes": "Like",
     "loginRequiredTitle": "Kailangan mag-login"
@@ -847,6 +908,7 @@
     "haveAccount": "May account ka na?",
     "login": "Mag-log in",
     "emailExists": "Nakarehistro na ang email na ito.",
+    "signupFailed": "Nabigo ang pag-sign up. Pakisuri ang iyong impormasyon at subukang muli.",
     "form": {
       "name": "Pangalan",
       "namePlaceholder": "2+ letrang Korean o English (hal. Juan)",
@@ -903,12 +965,14 @@
       "loading": "Naglo-load...",
       "loadError": "Hindi ma-load ang nilalaman. Pakisubukan muli mamaya.",
       "cancel": "Kanselahin",
-      "agree": "Sumasang-ayon ako",
+      "agree": "Sumang-ayon",
       "readToEnd": "Pakibasa hanggang dulo",
-      "scrollDown": "Mag-scroll pababa"
+      "scrollDown": "Mag-scroll pababa",
+      "unavailable": "Hindi magagamit"
     }
   },
   "Terms": {
+    "loadError": "Hindi ma-load ang nilalaman. Pakisubukan muli mamaya.",
     "items": {
       "policy": "Patakaran sa Operasyon",
       "service": "Mga Tuntunin ng Serbisyo",
@@ -1100,7 +1164,8 @@
     "place": {
       "placeholder": "Maglagay ng pangalan ng lugar o address (hal. SM Aura)",
       "loading": "Nilo-load ang mapa…",
-      "empty": "Wala pang napiling lokasyon"
+      "empty": "Wala pang napiling lokasyon",
+      "currentArea": "Kasalukuyang lugar ng kalakalan: {label}"
     }
   },
   "Notice": {

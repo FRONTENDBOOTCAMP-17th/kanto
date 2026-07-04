@@ -24,7 +24,11 @@ export function LocationPicker({ value, onChange, fallbackLabel }: Props) {
 
   return (
     <div className="space-y-2">
-      <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
+      <APIProvider
+        apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
+        libraries={["places"]}
+        version="weekly"
+      >
         <PlaceAutocomplete
           selected={value}
           onSelect={onChange}

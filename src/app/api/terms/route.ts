@@ -34,13 +34,20 @@ const AGE_CONTENT: Record<string, string> = {
   fil: `Kinukumpirma ko na ako ay 18 taong gulang o mas matanda at ang impormasyong inilagay ko ay totoo.\n\n**Ako ay 18 taong gulang o mas matanda.** (Ang pagpaparehistro ay mapipigilan kung hindi ito makukumpirma)`,
 };
 
+const CACHE_HEADERS = {
+  "Cache-Control": "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
+};
+
 export async function GET(req: NextRequest) {
   const type = req.nextUrl.searchParams.get("type");
   const locale = req.nextUrl.searchParams.get("locale") ?? "ko";
   const lang = PAGE_IDS[locale] ? locale : "ko";
 
   if (type === "age") {
-    return NextResponse.json({ title: "", content: AGE_CONTENT[lang] ?? AGE_CONTENT.ko });
+    return NextResponse.json(
+      { title: "", content: AGE_CONTENT[lang] ?? AGE_CONTENT.ko },
+      { headers: CACHE_HEADERS },
+    );
   }
 
   const pageIds = PAGE_IDS[lang];
@@ -48,6 +55,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "invalid type" }, { status: 400 });
   }
 
-  const { title, content } = await getNotionPage(pageIds[type]!);
-  return NextResponse.json({ title, content });
+  const page = await getNotionPage(pageIds[type]!);
+  if (!page) {
+    return NextResponse.json({ error: "failed to load content" }, { status: 502 });
+  }
+  return NextResponse.json(page, { headers: CACHE_HEADERS });
 }

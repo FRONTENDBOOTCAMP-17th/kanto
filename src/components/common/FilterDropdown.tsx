@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { ChevronDown, X } from "lucide-react";
 
 interface FilterOption {
@@ -21,8 +22,10 @@ export function FilterDropdown({
   value,
   onChange,
   align = "left",
-  label = "선택",
+  label,
 }: FilterDropdownProps) {
+  const tc = useTranslations("Common");
+  const effectiveLabel = label ?? tc("select");
   const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const btnRef = useRef<HTMLDivElement>(null);
@@ -110,11 +113,11 @@ export function FilterDropdown({
               <div className="w-10 h-1 rounded-full bg-gray-300" />
             </div>
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <span className="font-bold text-gray-900 text-lg">{label}</span>
+              <span className="font-bold text-gray-900 text-lg">{effectiveLabel}</span>
               <button
                 type="button"
                 onClick={() => setMobileOpen(false)}
-                aria-label={`${label} 닫기`}
+                aria-label={tc("closeItem", { label: effectiveLabel })}
                 className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 active:scale-100"
               >
                 <X className="w-5 h-5 text-gray-500" />

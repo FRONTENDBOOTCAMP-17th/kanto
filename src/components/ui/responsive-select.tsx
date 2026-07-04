@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
+import { useTranslations } from "next-intl";
 import { ChevronDown, X } from "lucide-react";
 import {
   Select,
@@ -57,6 +58,7 @@ export function ResponsiveSelect({
   className,
   label,
 }: Props) {
+  const tc = useTranslations("Common");
   const [mobileOpen, setMobileOpen] = useState(false);
   const isMobile = useIsMobile();
 
@@ -131,12 +133,12 @@ export function ResponsiveSelect({
               </div>
               <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
                 <span className="text-lg font-bold text-gray-900">
-                  {label ?? placeholder ?? "선택"}
+                  {label ?? placeholder ?? tc("select")}
                 </span>
                 <button
                   type="button"
                   onClick={() => setMobileOpen(false)}
-                  aria-label="닫기"
+                  aria-label={tc("close")}
                   className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-100"
                 >
                   <X className="h-5 w-5 text-gray-500" />

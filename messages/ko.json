@@ -63,6 +63,7 @@
     "copyright": "© 2026 Kanto. All rights reserved."
   },
   "Auth": {
+    "home": "홈으로 가기",
     "email": "이메일",
     "password": "비밀번호",
     "emailPlaceholder": "example@email.com",
@@ -82,9 +83,60 @@
     },
     "errors": {
       "tooManyAttempts": "로그인 시도가 너무 많습니다. 잠시 후 다시 시도해주세요.",
+      "failedAttempts": "로그인에 {count}회 실패했어요. 5회 실패하면 15분 뒤에 가능합니다.",
+      "failedAttemptsCount": "로그인에 {count}회 실패했어요.",
+      "failedAttemptsLimit": "5회 실패하면 15분 뒤에 가능합니다.",
+      "emailInvalid": "이메일이 올바르지 않습니다.",
+      "passwordInvalid": "비밀번호가 올바르지 않습니다.",
       "invalidCredentials": "이메일 또는 비밀번호가 올바르지 않습니다.",
       "emailNotConfirmed": "이메일 인증이 완료되지 않았습니다. 메일함을 확인해주세요.",
       "generic": "로그인에 실패했어요. 다시 시도해주세요."
+    }
+  },
+  "FindPassword": {
+    "title": "비밀번호 찾기",
+    "closeModal": "비밀번호 찾기 모달 닫기",
+    "name": "이름",
+    "namePlaceholder": "가입 시 입력한 이름",
+    "nameRequired": "이름을 입력해주세요.",
+    "nameInvalid": "이름이 올바르지 않습니다.",
+    "email": "이메일",
+    "emailPlaceholder": "가입 시 사용한 이메일",
+    "emailInvalid": "이메일이 올바르지 않습니다.",
+    "sendCode": "인증번호 보내기",
+    "devCode": "개발용 인증번호:",
+    "timeLeft": "남은 인증 시간",
+    "codeLabel": "인증번호",
+    "codePlaceholder": "6자리 인증번호",
+    "codeInvalid": "6자리 인증번호를 입력해주세요.",
+    "verifyCode": "인증번호 확인",
+    "newPassword": "새 비밀번호",
+    "newPasswordPlaceholder": "영문 + 숫자 포함 8자 이상",
+    "passwordRule": "영문과 숫자를 포함하여 8자 이상 입력해주세요.",
+    "confirmPassword": "새 비밀번호 확인",
+    "confirmPasswordPlaceholder": "비밀번호를 다시 입력하세요",
+    "passwordMismatch": "비밀번호가 일치하지 않습니다.",
+    "passwordMatch": "비밀번호가 일치합니다!",
+    "changePassword": "비밀번호 변경하기",
+    "codeSent": "입력한 이메일로 인증번호를 보냈습니다.",
+    "devCodeShown": "메일 발송 키가 없어 개발용 인증번호를 표시합니다.",
+    "verified": "인증되었습니다. 새 비밀번호를 입력해주세요.",
+    "passwordChanged": "비밀번호가 변경되었습니다. 새 비밀번호로 로그인해주세요.",
+    "errors": {
+      "missing_fields": "필수 정보가 누락되었습니다.",
+      "account_not_found": "입력하신 이름과 이메일에 일치하는 계정이 없습니다.",
+      "name_not_found": "이름이 올바르지 않습니다.",
+      "email_not_found": "이메일이 올바르지 않습니다.",
+      "email_send_failed": "인증번호 이메일 발송에 실패했습니다.",
+      "email_not_configured": "인증번호 메일 발송이 구성되지 않았습니다. 관리자에게 문의해주세요.",
+      "code_expired": "인증 시간이 만료되었습니다.",
+      "code_mismatch": "인증번호가 일치하지 않습니다.",
+      "code_invalid_or_expired": "인증이 만료되었거나 올바르지 않습니다.",
+      "invalid_password": "비밀번호는 영문과 숫자를 포함하여 8자 이상이어야 합니다.",
+      "update_failed": "비밀번호 변경에 실패했습니다.",
+      "sendFailed": "인증번호 발송에 실패했습니다.",
+      "verifyFailed": "인증번호 확인에 실패했습니다.",
+      "changeFailed": "비밀번호 변경에 실패했습니다."
     }
   },
   "LanguageSwitcher": {
@@ -171,6 +223,15 @@
       "until": "{date}까지 서비스 이용이 제한됩니다.",
       "bannerTitle": "계정이 정지되었습니다.",
       "bannerPermanent": "영구 정지 처리된 계정입니다. 서비스 이용이 불가합니다."
+    },
+    "select": "선택",
+    "closeItem": "{label} 닫기",
+    "prevPage": "이전 페이지",
+    "nextPage": "다음 페이지",
+    "verifyRequired": {
+      "title": "본인인증 필요",
+      "message": "본인인증을 해야 글 작성이 가능합니다.",
+      "question": "본인인증 하시겠습니까?"
     },
     "likes": "좋아요",
     "loginRequiredTitle": "로그인이 필요해요"
@@ -847,6 +908,7 @@
     "haveAccount": "이미 계정이 있으신가요?",
     "login": "로그인",
     "emailExists": "이미 가입된 이메일입니다.",
+    "signupFailed": "회원가입에 실패했습니다. 입력 정보를 확인한 뒤 다시 시도해주세요.",
     "form": {
       "name": "이름",
       "namePlaceholder": "한글 또는 영어 2자 이상 (예: 홍길동)",
@@ -905,10 +967,12 @@
       "cancel": "취소",
       "agree": "동의합니다",
       "readToEnd": "끝까지 읽어주세요",
-      "scrollDown": "아래로 스크롤하기"
+      "scrollDown": "아래로 스크롤하기",
+      "unavailable": "동의할 수 없음"
     }
   },
   "Terms": {
+    "loadError": "현재 내용을 불러올 수 없습니다. 잠시 후 다시 시도해주세요.",
     "items": {
       "policy": "운영정책",
       "service": "서비스 이용약관",
@@ -1100,7 +1164,8 @@
     "place": {
       "placeholder": "장소명 또는 주소를 입력하세요 (예: SM Aura)",
       "loading": "지도 로딩 중…",
-      "empty": "아직 위치가 선택되지 않았습니다"
+      "empty": "아직 위치가 선택되지 않았습니다",
+      "currentArea": "현재 설정된 거래지역: {label}"
     }
   },
   "Notice": {

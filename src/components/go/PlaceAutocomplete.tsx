@@ -13,11 +13,15 @@ const BIAS_RADIUS_M = 30000;
 interface Props {
   selected: PickedLocation | null;
   onSelect: (loc: PickedLocation) => void;
-  
+
   fallbackLabel?: string | null;
 }
 
-export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) {
+export function PlaceAutocomplete({
+  selected,
+  onSelect,
+  fallbackLabel,
+}: Props) {
   const t = useTranslations("Go.place");
   const placesLib = useMapsLibrary("places");
 
@@ -28,11 +32,9 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
-  
   const sessionTokenRef =
     useRef<google.maps.places.AutocompleteSessionToken | null>(null);
 
-  
   useEffect(() => {
     if (!placesLib) return;
 
@@ -48,15 +50,22 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
       }
       if (!cancelled) setLoading(true);
       try {
+        const fetchSuggestions =
+          placesLib.AutocompleteSuggestion?.fetchAutocompleteSuggestions;
+        if (!fetchSuggestions) {
+          if (!cancelled) setSuggestions([]);
+          return;
+        }
+
         if (!sessionTokenRef.current) {
           sessionTokenRef.current = new placesLib.AutocompleteSessionToken();
         }
-        const { suggestions } = await placesLib.AutocompleteSuggestion.fetchAutocompleteSuggestions({
+        const { suggestions } = await fetchSuggestions({
           input: query,
           sessionToken: sessionTokenRef.current,
           language: "en",
           region: "ph",
-          
+
           includedRegionCodes: ["ph"],
           locationBias: {
             center: MANILA_CENTER,
@@ -86,21 +95,24 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
     setOpen(false);
     setLoading(true);
     try {
-      
-      const place = new placesLib.Place({
-        id: prediction.placeId,
-        requestedLanguage: "en",
-        requestedRegion: "ph",
-      });
+      const place = prediction.toPlace();
       await place.fetchFields({
-        fields: ["location", "formattedAddress", "displayName", "id", "addressComponents"],
+        fields: [
+          "location",
+          "formattedAddress",
+          "displayName",
+          "id",
+          "addressComponents",
+        ],
       });
 
       const lat = place.location?.lat();
       const lng = place.location?.lng();
       if (lat === undefined || lng === undefined) return;
 
-      const { barangay, city, province } = extractBarangayCity(place.addressComponents ?? []);
+      const { barangay, city, province } = extractBarangayCity(
+        place.addressComponents ?? [],
+      );
 
       onSelect({
         lat,
@@ -116,7 +128,6 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
       setInput("");
       setSuggestions([]);
     } finally {
-      
       sessionTokenRef.current = null;
       setLoading(false);
     }
@@ -145,7 +156,6 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
         )}
       </div>
 
-      
       {open && suggestions.length > 0 && (
         <ul className="absolute z-10 mt-1.5 max-h-60 w-full overflow-y-auto rounded-[12px] border border-slate-200 bg-white py-1.5 shadow-lg">
           {suggestions.map((s, i) => {
@@ -180,7 +190,6 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
         </ul>
       )}
 
-      
       {selected ? (
         <div className="mt-2 flex items-center gap-2 rounded-[10px] bg-teal-50 px-3 py-2.5">
           <MapPin className="h-4 w-4 shrink-0 text-teal-600" strokeWidth={2} />
@@ -190,9 +199,9 @@ export function PlaceAutocomplete({ selected, onSelect, fallbackLabel }: Props) 
         </div>
       ) : fallbackLabel ? (
         <div className="mt-2 flex items-center gap-2 rounded-[10px] bg-teal-50 px-3 py-2.5">
-          <MapPin className="h-4 w-4 flex-shrink-0 text-teal-600" strokeWidth={2} />
+          <MapPin className="h-4 w-4 shrink-0 text-teal-600" strokeWidth={2} />
           <span className="text-[13px] font-semibold text-teal-800">
-            현재 설정된 거래지역: {fallbackLabel}
+            {t("currentArea", { label: fallbackLabel })}
           </span>
         </div>
       ) : (
