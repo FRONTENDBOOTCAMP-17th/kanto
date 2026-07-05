@@ -36,26 +36,45 @@ export async function getRentalDetail(postId: number): Promise<RentalDetail> {
 interface RentalListFilter {
   search?: string;
   roomType?: string;
+  rentType?: string;
   location?: string;
   barangay?: string;
   targetIds?: number[];
   userId?: number;
+  sort?: string;
 }
 
 export async function getRentalList(
   filter?: RentalListFilter,
   pagination?: Pagination,
 ): Promise<PagedResult<RentalWithPost>> {
+  // 가격순: price 는 자식(rentals) 컬럼이라 부모(posts) 기준 정렬이 불가능해
+  // rentals 기준으로 뒤집어 조회한다. 거래유형(rent_type) 필터와 함께 써야
+  // 매매/월세가 섞이지 않고 의미 있는 정렬이 된다.
+  if (filter?.sort === "price_asc" || filter?.sort === "price_desc") {
+    return getRentalListByPrice(filter, pagination, filter.sort === "price_asc");
+  }
+
   const supabase = await createClient();
 
   let query = supabase
     .from("posts")
     .select(RENTAL_LIST_SELECT, { count: "exact" })
     .eq("post_type", "rental")
-    .eq("status", "active")
-    .order("is_popular", { ascending: false })
-    .order("created_at", { ascending: false })
-    .order("id", { ascending: false });
+    .eq("status", "active");
+
+  if (filter?.sort === "latest") {
+    query = query.order("created_at", { ascending: false });
+  } else if (filter?.sort === "popular") {
+    query = query
+      .order("kpps_score", { ascending: false, nullsFirst: false })
+      .order("created_at", { ascending: false });
+  } else {
+    query = query
+      .order("is_popular", { ascending: false })
+      .order("created_at", { ascending: false });
+  }
+  query = query.order("id", { ascending: false });
 
   if (filter?.targetIds !== undefined) {
     if (filter.targetIds.length === 0) return { posts: [], total: 0 };
@@ -65,6 +84,7 @@ export async function getRentalList(
   if (filter?.search) query = query.ilike("title", `%${filter.search}%`);
   
   if (filter?.roomType) query = query.eq("rentals.room_type", filter.roomType);
+  if (filter?.rentType) query = query.eq("rentals.rent_type", filter.rentType);
   if (filter?.location) query = query.eq("rentals.location", filter.location as TradeLocation);
   if (filter?.barangay) query = query.eq("rentals.location_barangay", filter.barangay);
 
@@ -82,6 +102,55 @@ export async function getRentalList(
   }));
 
   return { posts, total: count ?? 0 };
+}
+
+async function getRentalListByPrice(
+  filter: RentalListFilter,
+  pagination: Pagination | undefined,
+  ascending: boolean,
+): Promise<PagedResult<RentalWithPost>> {
+  const supabase = await createClient();
+
+  let query = supabase
+    .from("rentals")
+    .select(
+      `*, posts!inner(*, users:public_profiles!posts_user_id_fkey(id, name, avatar_url, created_at))`,
+      { count: "exact" },
+    )
+    .eq("posts.post_type", "rental")
+    .eq("posts.status", "active");
+
+  query = query
+    .order("price", { ascending, nullsFirst: false })
+    .order("post_id", { ascending: false });
+
+  if (filter.targetIds !== undefined) {
+    if (filter.targetIds.length === 0) return { posts: [], total: 0 };
+    query = query.in("posts.id", filter.targetIds);
+  }
+  if (filter.userId) query = query.eq("posts.user_id", filter.userId);
+  if (filter.search) query = query.ilike("posts.title", `%${filter.search}%`);
+
+  if (filter.roomType) query = query.eq("room_type", filter.roomType);
+  if (filter.rentType) query = query.eq("rent_type", filter.rentType);
+  if (filter.location) query = query.eq("location", filter.location as TradeLocation);
+  if (filter.barangay) query = query.eq("location_barangay", filter.barangay);
+
+  if (pagination) {
+    const from = (pagination.page - 1) * pagination.pageSize;
+    query = query.range(from, from + pagination.pageSize - 1);
+  }
+
+  const { data, count, error } = await query;
+  if (error) throw new Error(error.message);
+
+  type Row = Record<string, unknown> & { posts: Record<string, unknown> };
+  const posts = ((data ?? []) as unknown as Row[]).map((row) => {
+    const { posts: post, ...rental } = row;
+    return { ...post, rentals: [rental] };
+  });
+
+  return { posts: posts as unknown as RentalWithPost[], total: count ?? 0 };
 }
 
 export async function getRentalBarangays(): Promise<Record<string, string[]>> {
