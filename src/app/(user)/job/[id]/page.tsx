@@ -15,6 +15,8 @@ import CompanyInfo from "./_components/CompanyInfo";
 import { viewCountUp } from "@/services/view";
 import { createClient } from "@/utils/supabase/server";
 import RelatedItemsCarousel, { type RelatedItem } from "@/components/common/RelatedItemsCarousel";
+import { resolvePostId, encryptPostId } from "@/utils/postIdCipher";
+import { encryptUserId } from "@/utils/userIdCipher";
 export { generateMetadata } from "./metadata";
 
 export default async function JobDetailPage({
@@ -23,35 +25,53 @@ export default async function JobDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const postId = resolvePostId(id);
+  if (postId === null) notFound();
 
-  let job;
+  let rawJob;
   try {
-    job = await getJobDetail(Number(id));
+    rawJob = await getJobDetail(postId);
   } catch {
     notFound();
   }
 
+  const job = {
+    ...rawJob,
+    id_token: encryptPostId(rawJob.post_id),
+    posts: {
+      ...rawJob.posts,
+      users: rawJob.posts.users
+        ? { ...rawJob.posts.users, id_token: encryptUserId(rawJob.posts.users.id) }
+        : rawJob.posts.users,
+    },
+  };
+
   const images = (job.images as string[]) ?? [];
-  
+
   after(() => viewCountUp(job.post_id));
   
-  const [{ userId, initialLiked, initialReported }, t, tCommon] = await Promise.all([
+  const fetchRelated = async () => {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("jobs")
+      .select("id, post_id, images, salary, deadline, posts!inner(title)")
+      .eq("location_type", job.location_type)
+      .eq("posts.status", "active")
+      .neq("id", job.id)
+      .limit(8);
+    return data;
+  };
+
+  const [{ userId, initialLiked, initialReported }, t, tCommon, relatedData] = await Promise.all([
     getUserLikeReportStatus(job.post_id),
     getTranslations("Job"),
     getTranslations("Common"),
+    fetchRelated(),
   ]);
 
-  const supabase = await createClient();
-  const { data: relatedData } = await supabase
-    .from("jobs")
-    .select("id, post_id, images, salary, deadline, posts!inner(title)")
-    .eq("location_type", job.location_type)
-    .eq("posts.status", "active")
-    .neq("id", job.id)
-    .limit(8);
   const relatedItems: RelatedItem[] = (relatedData ?? []).map((item) => ({
     id: item.id,
-    href: `/job/${item.post_id}`,
+    href: `/job/${encryptPostId(item.post_id)}`,
     imageSrc: ((item.images as string[]) ?? [])[0] ?? null,
     title: (item.posts as { title: string | null } | null)?.title ?? "",
     priceText: formatPrice(item.salary),
@@ -81,7 +101,7 @@ export default async function JobDetailPage({
   };
 
   return (
-    <div className="page-container pb-12">
+    <div className="page-container pb-28 md:pb-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -90,28 +110,51 @@ export default async function JobDetailPage({
         <BackButton />
         <VerifyAuthor
           authorAuthId={job.posts.users?.auth_id}
-          editPath={`/job/${job.post_id}/edit`}
+          editPath={`/job/${job.id_token}/edit`}
           postId={job.post_id}
           redirectPath="/job"
         />
       </div>
-      <div className="border border-gray-200 rounded-2xl overflow-hidden divide-y divide-gray-200 mt-4">
-        <JobTitle job={job} userId={userId} initialLiked={initialLiked} initialReported={initialReported} />
-        <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
-          <JobInfo job={job} />
-          <JobAuthorInfo job={job} userId={userId} />
-        </div>
-        {images.length > 0 && (
-          <div className="p-6 space-y-2">
-            <h2 className="font-semibold text-base md:text-lg">{t("photos")}</h2>
-            <div className="aspect-4/3 w-full md:w-1/2 mx-auto">
-              <ImageCarousel images={images} />
+
+      {images.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-4 md:gap-8 mt-4">
+          <div className="aspect-4/3 w-full">
+            <ImageCarousel images={images} />
+          </div>
+          <div className="flex flex-col gap-6 pt-4 md:pt-0">
+            <JobTitle job={job} userId={userId} initialLiked={initialLiked} initialReported={initialReported} />
+            <hr className="border-gray-200" />
+            <div className="flex flex-col md:flex-row gap-6 items-start">
+              <div className="flex-1 flex flex-col gap-4">
+                <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-gray-600">{t("jobInfo")}</h2>
+                <JobInfo job={job} />
+              </div>
+              <JobAuthorInfo job={job} userId={userId} />
             </div>
           </div>
-        )}
-        <JobContent job={job} />
-        <CompanyInfo job={job} />
-      </div>
+        </div>
+      ) : (
+        <div className="mt-6">
+          <JobTitle job={job} userId={userId} initialLiked={initialLiked} initialReported={initialReported} />
+          <hr className="border-gray-200 my-8" />
+          <div className="flex flex-col md:flex-row gap-6 items-start">
+            <div className="flex-1 flex flex-col gap-4">
+              <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-gray-600">{t("jobInfo")}</h2>
+              <JobInfo job={job} />
+            </div>
+            <JobAuthorInfo job={job} userId={userId} />
+          </div>
+        </div>
+      )}
+
+      <hr className="border-gray-200 my-8" />
+
+      <JobContent job={job} />
+
+      <hr className="border-gray-200 my-8" />
+
+      <CompanyInfo job={job} />
+
       <RelatedItemsCarousel title="관련 공고" items={relatedItems} />
     </div>
   );

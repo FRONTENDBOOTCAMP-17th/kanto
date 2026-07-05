@@ -74,6 +74,30 @@ export async function deleteVerificationCode(key: string) {
 interface SendVerificationEmailOptions {
   subject?: string;
   intro?: string;
+  validityNote?: string;
+}
+
+let cachedTransporter: ReturnType<typeof nodemailer.createTransport> | null = null;
+let cachedTransporterKey = "";
+
+export function isVerificationEmailConfigured() {
+  return Boolean(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD);
+}
+
+function getVerificationEmailTransporter(user: string, pass: string) {
+  const key = `${user}:${pass}`;
+
+  if (cachedTransporter && cachedTransporterKey === key) {
+    return cachedTransporter;
+  }
+
+  cachedTransporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: { user, pass },
+  });
+  cachedTransporterKey = key;
+
+  return cachedTransporter;
 }
 
 export async function sendVerificationEmail(
@@ -91,12 +115,9 @@ export async function sendVerificationEmail(
 
   const subject = options.subject ?? "[Kanto] 본인인증 인증번호";
   const intro = options.intro ?? `${name}님, Kanto 본인인증을 위한 인증번호입니다.`;
+  const validityNote = options.validityNote ?? "인증번호는 발송 시점부터 3분 동안 유효합니다.";
 
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: { user, pass },
-  });
-
+  const transporter = getVerificationEmailTransporter(user, pass);
   await transporter.sendMail({
     from: `Kanto <${user}>`,
     to: email,
@@ -105,7 +126,7 @@ export async function sendVerificationEmail(
       <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111827">
         <p>${intro}</p>
         <p style="font-size:28px;font-weight:700;letter-spacing:4px">${code}</p>
-        <p>인증번호는 발송 시점부터 3분 동안 유효합니다.</p>
+        <p>${validityNote}</p>
       </div>
     `,
   });

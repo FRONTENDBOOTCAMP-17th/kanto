@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { APIProvider } from "@vis.gl/react-google-maps";
 import { PlaceAutocomplete } from "@/components/go/PlaceAutocomplete";
 import { formatBarangayLabel } from "@/type/location";
 import type { PickedLocation } from "@/type/go";
@@ -24,13 +23,11 @@ export function LocationPicker({ value, onChange, fallbackLabel }: Props) {
 
   return (
     <div className="space-y-2">
-      <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
-        <PlaceAutocomplete
+      <PlaceAutocomplete
           selected={value}
           onSelect={onChange}
           fallbackLabel={fallbackLabel}
         />
-      </APIProvider>
       {hasLocation && (
         <p className="text-xs text-gray-500">
           {freshLabel && (

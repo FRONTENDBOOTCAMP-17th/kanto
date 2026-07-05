@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import type { JobWithPost } from "@/type/job/jobList";
 import type { Pagination, PagedResult } from "@/services/usedGoods/usedGoods";
 import type { TradeLocation } from "@/type/location";
+import { encryptPostId } from "@/utils/postIdCipher";
 
 interface JobListFilter {
   search?: string;
@@ -48,7 +49,7 @@ export async function getJobList(
   }
   if (filter?.userId) query = query.eq("user_id", filter.userId);
   if (filter?.search) query = query.ilike("title", `%${filter.search}%`);
-  
+
   if (filter?.employeeType) query = query.eq("jobs.employee_type", filter.employeeType);
   if (filter?.salaryType) query = query.eq("jobs.salary_type", filter.salaryType);
   if (filter?.location) query = query.eq("jobs.location_type", filter.location as TradeLocation);
@@ -61,7 +62,12 @@ export async function getJobList(
   const { data, count, error } = await query;
   if (error) throw new Error(error.message);
 
-  return { posts: (data as unknown as JobWithPost[]) ?? [], total: count ?? 0 };
+  const posts = ((data as unknown as JobWithPost[]) ?? []).map((p) => ({
+    ...p,
+    id_token: encryptPostId(p.id),
+  }));
+
+  return { posts, total: count ?? 0 };
 }
 
 async function getJobListByPopular(
@@ -109,7 +115,13 @@ async function getJobListByPopular(
     return { ...post, jobs: [job] };
   });
 
-  return { posts: posts as unknown as JobWithPost[], total: count ?? 0 };
+  return {
+    posts: (posts as unknown as JobWithPost[]).map((p) => ({
+      ...p,
+      id_token: encryptPostId(p.id),
+    })),
+    total: count ?? 0,
+  };
 }
 
 async function getJobListByDeadline(
@@ -159,5 +171,38 @@ async function getJobListByDeadline(
     return { ...post, jobs: [job] };
   });
 
-  return { posts: posts as unknown as JobWithPost[], total: count ?? 0 };
+  return {
+    posts: (posts as unknown as JobWithPost[]).map((p) => ({
+      ...p,
+      id_token: encryptPostId(p.id),
+    })),
+    total: count ?? 0,
+  };
+}
+
+export async function getPopularJobs(): Promise<JobWithPost[]> {
+  const supabase = await createClient();
+
+
+  const { data, error } = await supabase
+    .from("posts")
+    .select("*, jobs!inner(*), users:public_profiles!posts_user_id_fkey(id, name, avatar_url, created_at)")
+    .eq("post_type", "jobs")
+    .eq("status", "active")
+    .not("jobs.popular_count", "is", null);
+
+  if (error) throw new Error(error.message);
+
+  type JobWithPopular = JobWithPost & {
+    jobs: (JobWithPost["jobs"][number] & { popular_count: number | null })[];
+  };
+
+
+  return (data as unknown as JobWithPopular[])
+    .sort(
+      (a, b) =>
+        (a.jobs[0].popular_count ?? 99) - (b.jobs[0].popular_count ?? 99),
+    )
+    .slice(0, 5)
+    .map((p) => ({ ...p, id_token: encryptPostId(p.id) })) as unknown as JobWithPost[];
 }

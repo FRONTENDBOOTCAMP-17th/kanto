@@ -5,6 +5,7 @@ import { ProfileCard } from "@/app/(user)/profile/_components/ProfileCard";
 import { getReviewsForUser } from "@/services/review/review";
 import type { AlertSettings } from "@/hooks/profile/useAlertSettings";
 import type { MeetupSummary } from "@/app/(user)/profile/_components/sections/ProfileMeetingsSection";
+import { encryptPostId } from "@/utils/postIdCipher";
 
 export const metadata: Metadata = {
   robots: { index: false },
@@ -86,6 +87,7 @@ export default async function ProfilePage({
           .then(({ data }) =>
             ((data ?? []) as unknown as MeetupRow[]).map((r): MeetupSummary => ({
               post_id: r.post_id,
+              id_token: encryptPostId(r.post_id),
               title: r.posts.title,
               topic: r.topic,
               start_at: r.start_at,
@@ -110,6 +112,7 @@ export default async function ProfilePage({
               .sort((a, b) => new Date(b.meetups.start_at).getTime() - new Date(a.meetups.start_at).getTime())
               .map((r): MeetupSummary => ({
                 post_id: r.meetups.post_id,
+                id_token: encryptPostId(r.meetups.post_id),
                 title: r.meetups.posts.title,
                 topic: r.meetups.topic,
                 start_at: r.meetups.start_at,
@@ -125,7 +128,7 @@ export default async function ProfilePage({
     : [[] as MeetupSummary[], [] as MeetupSummary[]];
 
   return (
-    <div className="bg-white md:bg-teal-50">
+    <div className="bg-white">
       <div className="max-w-lg md:max-w-5xl mx-auto py-8">
         <ProfileCard
           alertSettings={alertSettings}

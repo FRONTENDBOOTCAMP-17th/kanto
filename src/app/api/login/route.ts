@@ -18,7 +18,10 @@ export async function POST(req: NextRequest) {
   const key = `login_fail:${ip}`;
   const fails = (await redis.get<number>(key)) ?? 0;
   if (fails >= 5) {
-    return NextResponse.json({ code: "too_many_requests" }, { status: 429 });
+    return NextResponse.json(
+      { code: "too_many_requests", failedAttempts: 5 },
+      { status: 429 },
+    );
   }
 
   const supabase = createClient<Database>(
@@ -33,10 +36,10 @@ export async function POST(req: NextRequest) {
   });
 
   if (error) {
-    await redis.incr(key);
+    const failedAttempts = await redis.incr(key);
     await redis.expire(key, 60 * 15);
     return NextResponse.json(
-      { code: error.code },
+      { code: error.code, failedAttempts },
       { status: error.status ?? 400 },
     );
   }

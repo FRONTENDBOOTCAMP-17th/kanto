@@ -1,5 +1,5 @@
 
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { Database } from "@/type/supabase";
 import {
@@ -9,9 +9,29 @@ import {
   getSavedVerificationCode,
   deleteVerificationCode,
   sendVerificationEmail,
+  isVerificationEmailConfigured,
 } from "@/utils/verificationCode";
 
 const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
+
+// error 필드는 클라이언트(FindPasswordModal)가 FindPassword.errors.* 메시지 키로 번역하는 코드
+const EMAIL_TEXTS: Record<string, { subject: string; intro: (name: string) => string; validityNote: string }> = {
+  ko: {
+    subject: "[Kanto] 비밀번호 재설정 인증번호",
+    intro: (name) => `${name}님, Kanto 비밀번호 재설정을 위한 인증번호입니다.`,
+    validityNote: "인증번호는 발송 시점부터 3분 동안 유효합니다.",
+  },
+  en: {
+    subject: "[Kanto] Password reset verification code",
+    intro: (name) => `${name}, here is your verification code to reset your Kanto password.`,
+    validityNote: "This code is valid for 3 minutes after it is sent.",
+  },
+  fil: {
+    subject: "[Kanto] Verification code para sa pag-reset ng password",
+    intro: (name) => `${name}, narito ang iyong verification code para i-reset ang iyong Kanto password.`,
+    validityNote: "Balido ang code na ito sa loob ng 3 minuto mula nang maipadala.",
+  },
+};
 
 function getResetKey(email: string) {
   return `password_reset:${email.toLowerCase()}`;
@@ -26,85 +46,106 @@ function admin() {
 
 async function findMatchingUser(name: string, email: string) {
   const supabase = admin();
+  const trimmedName = name.trim();
+  const normalizedEmail = email.trim().toLowerCase();
   const { data } = await supabase
     .from("users")
-    .select("auth_id, name")
-    .eq("email", email.toLowerCase())
-    .maybeSingle();
+    .select("auth_id, email")
+    .eq("name", trimmedName);
 
-  if (!data || !data.auth_id) return null;
-  if (data.name.trim() !== name.trim()) return null;
+  if (!data || data.length === 0) return { error: "name_not_found" as const };
 
-  return { authId: data.auth_id };
+  const matched = data.find(
+    (user) => user.email?.toLowerCase() === normalizedEmail && user.auth_id,
+  );
+
+  if (!matched?.auth_id) return { error: "email_not_found" as const };
+
+  return { authId: matched.auth_id };
 }
 
 export async function POST(req: NextRequest) {
-  const { name, email } = (await req.json()) as { name?: string; email?: string };
+  const startedAt = performance.now();
+  const { name, email, locale } = (await req.json()) as {
+    name?: string;
+    email?: string;
+    locale?: string;
+  };
 
   if (!name?.trim() || !email?.trim()) {
-    return NextResponse.json({ error: "이름과 이메일을 입력해주세요." }, { status: 400 });
+    return NextResponse.json({ error: "missing_fields" }, { status: 400 });
   }
 
   const matched = await findMatchingUser(name, email);
+  const matchedAt = performance.now();
 
-  if (!matched) {
-    return NextResponse.json(
-      { error: "입력하신 이름과 이메일에 일치하는 계정이 없습니다." },
-      { status: 404 },
-    );
+  if ("error" in matched) {
+    return NextResponse.json({ error: matched.error }, { status: 404 });
+  }
+
+  const isProduction = process.env.NODE_ENV === "production";
+  const isEmailConfigured = isVerificationEmailConfigured();
+
+  if (!isEmailConfigured && isProduction) {
+    return NextResponse.json({ error: "email_not_configured" }, { status: 500 });
   }
 
   const code = createVerificationCode();
   const key = getResetKey(email);
   await saveVerificationCode(key, code);
+  const savedAt = performance.now();
 
-  let emailResult: { isEmailSent: boolean; isConfigured: boolean };
-  try {
-    emailResult = await sendVerificationEmail(email.trim().toLowerCase(), name.trim(), code, {
-      subject: "[Kanto] 비밀번호 재설정 인증번호",
-      intro: `${name.trim()}님, Kanto 비밀번호 재설정을 위한 인증번호입니다.`,
+  const emailTexts = EMAIL_TEXTS[locale ?? "ko"] ?? EMAIL_TEXTS.ko;
+  const normalizedEmail = email.trim().toLowerCase();
+  const trimmedName = name.trim();
+
+  if (isEmailConfigured) {
+    after(async () => {
+      try {
+        await sendVerificationEmail(normalizedEmail, trimmedName, code, {
+          subject: emailTexts.subject,
+          intro: emailTexts.intro(trimmedName),
+          validityNote: emailTexts.validityNote,
+        });
+      } catch {
+        await deleteVerificationCode(key);
+      }
     });
-  } catch (error) {
-    await deleteVerificationCode(key);
-    const message = error instanceof Error ? error.message : "인증번호 이메일 발송에 실패했습니다.";
-    return NextResponse.json(
-      { error: `인증번호 이메일 발송에 실패했습니다. ${message}` },
-      { status: 502 },
-    );
   }
 
-  const isProduction = process.env.NODE_ENV === "production";
-
-  if (!emailResult.isConfigured && isProduction) {
-    await deleteVerificationCode(key);
-    return NextResponse.json(
-      { error: "인증번호 메일 발송이 구성되지 않았습니다. 관리자에게 문의해주세요." },
-      { status: 500 },
-    );
-  }
-
-  return NextResponse.json({
+  const response = NextResponse.json({
     expiresIn: VERIFICATION_TTL_SECONDS,
-    isEmailSent: emailResult.isEmailSent,
-    devCode: !emailResult.isConfigured && !isProduction ? code : undefined,
+    isEmailSent: isEmailConfigured,
+    devCode: !isEmailConfigured && !isProduction ? code : undefined,
   });
+
+  response.headers.set(
+    "Server-Timing",
+    [
+      `match;dur=${(matchedAt - startedAt).toFixed(1)}`,
+      `save;dur=${(savedAt - matchedAt).toFixed(1)}`,
+      `total;dur=${(performance.now() - startedAt).toFixed(1)}`,
+    ].join(", "),
+  );
+
+  return response;
 }
 
 export async function PATCH(req: NextRequest) {
   const { email, code } = (await req.json()) as { email?: string; code?: string };
 
   if (!email?.trim() || !code?.trim()) {
-    return NextResponse.json({ error: "이메일과 인증번호를 입력해주세요." }, { status: 400 });
+    return NextResponse.json({ error: "missing_fields" }, { status: 400 });
   }
 
   const savedCode = await getSavedVerificationCode(getResetKey(email));
 
   if (!savedCode) {
-    return NextResponse.json({ error: "인증 시간이 만료되었습니다." }, { status: 400 });
+    return NextResponse.json({ error: "code_expired" }, { status: 400 });
   }
 
   if (String(savedCode) !== code.trim()) {
-    return NextResponse.json({ error: "인증번호가 일치하지 않습니다." }, { status: 400 });
+    return NextResponse.json({ error: "code_mismatch" }, { status: 400 });
   }
 
   return NextResponse.json({ verified: true });
@@ -119,30 +160,24 @@ export async function PUT(req: NextRequest) {
   };
 
   if (!name?.trim() || !email?.trim() || !code?.trim() || !newPassword) {
-    return NextResponse.json({ error: "필수 정보가 누락되었습니다." }, { status: 400 });
+    return NextResponse.json({ error: "missing_fields" }, { status: 400 });
   }
 
   if (!PASSWORD_REGEX.test(newPassword)) {
-    return NextResponse.json(
-      { error: "비밀번호는 영문과 숫자를 포함하여 8자 이상이어야 합니다." },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "invalid_password" }, { status: 400 });
   }
 
   const key = getResetKey(email);
   const savedCode = await getSavedVerificationCode(key);
 
   if (!savedCode || String(savedCode) !== code.trim()) {
-    return NextResponse.json({ error: "인증이 만료되었거나 올바르지 않습니다." }, { status: 400 });
+    return NextResponse.json({ error: "code_invalid_or_expired" }, { status: 400 });
   }
 
   const matched = await findMatchingUser(name, email);
 
-  if (!matched) {
-    return NextResponse.json(
-      { error: "입력하신 이름과 이메일에 일치하는 계정이 없습니다." },
-      { status: 404 },
-    );
+  if ("error" in matched) {
+    return NextResponse.json({ error: matched.error }, { status: 404 });
   }
 
   const supabase = admin();
@@ -151,7 +186,7 @@ export async function PUT(req: NextRequest) {
   });
 
   if (error) {
-    return NextResponse.json({ error: "비밀번호 변경에 실패했습니다." }, { status: 500 });
+    return NextResponse.json({ error: "update_failed" }, { status: 500 });
   }
 
   await deleteVerificationCode(key);

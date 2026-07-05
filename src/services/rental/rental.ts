@@ -3,6 +3,7 @@ import type { RentalWithPost } from "@/type/rental/rentalList";
 import type { RentalWithPost as RentalDetail } from "@/type/rental/rentalDetail";
 import type { Pagination, PagedResult } from "@/services/usedGoods/usedGoods";
 import type { TradeLocation } from "@/type/location";
+import { encryptPostId } from "@/utils/postIdCipher";
 
 const RENTAL_DETAIL_SELECT =
   `*, posts(*, users:public_profiles!posts_user_id_fkey(id, name, avatar_url, auth_id, created_at))` as const;
@@ -95,7 +96,12 @@ export async function getRentalList(
   const { data, count, error } = await query;
   if (error) throw new Error(error.message);
 
-  return { posts: (data as unknown as RentalWithPost[]) ?? [], total: count ?? 0 };
+  const posts = ((data as unknown as RentalWithPost[]) ?? []).map((p) => ({
+    ...p,
+    id_token: encryptPostId(p.id),
+  }));
+
+  return { posts, total: count ?? 0 };
 }
 
 async function getRentalListByPrice(

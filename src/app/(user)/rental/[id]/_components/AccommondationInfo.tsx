@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { ApproxAreaMapWithProvider } from "@/components/common/ApproxAreaMap";
+import { ApproxAreaMap } from "@/components/common/ApproxAreaMap";
 import { formatBarangayLabel } from "@/type/location";
 import { formatPrice } from "@/utils/format";
 
@@ -35,7 +35,7 @@ const AMENITY_ICONS: Record<string, ReactNode> = {
   보안요원: <ShieldUser className="w-4 h-4" />,
 };
 
-export default function AccommondationInfo({ rental }: { rental: Rental }) {
+export default function AccommondationInfo({ rental, children }: { rental: Rental; children?: React.ReactNode }) {
   const t = useTranslations("Rental");
   const te = useTranslations("Enums");
   const amenities = (rental.amenities as string[]) ?? [];
@@ -49,17 +49,17 @@ export default function AccommondationInfo({ rental }: { rental: Rental }) {
 
   return (
     <>
-      <h2 className="text-xl font-medium">{t("accommodationInfo")}</h2>
+      <h2 className="text-xs font-semibold tracking-[0.15em] text-gray-400 uppercase">{t("accommodationInfo")}</h2>
 
       {amenities.length > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {amenities.map((amenity) => (
             <span
               key={amenity}
-              className="flex items-center gap-1 bg-teal-50 text-teal-500 rounded-full px-3 py-1 text-sm"
+              className="flex items-center gap-1.5 bg-gray-100 text-gray-600 rounded-sm px-2.5 py-1 text-xs"
             >
               {AMENITY_ICONS[amenity]}
-              <span className="text-gray-700">{amenityLabel(amenity)}</span>
+              <span>{amenityLabel(amenity)}</span>
             </span>
           ))}
         </div>
@@ -67,32 +67,34 @@ export default function AccommondationInfo({ rental }: { rental: Rental }) {
 
       <hr className="border-gray-200" />
 
-      <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
-        <dt className="text-gray-500 font-medium">{t("deposit")}</dt>
-        <dd className="text-gray-700">
-          · {formatPrice(rental.deposit)}
-        </dd>
-        <dt className="text-gray-500 font-medium">{enumLabel("rentType", rental.rent_type)}</dt>
-        <dd className="text-orange-500">
-          · {formatPrice(rental.price)}
-        </dd>
-        <dt className="text-gray-500 font-medium">{t("roomType")}</dt>
-        <dd>· {enumLabel("roomType", rental.room_type)}</dd>
-        <dt className="text-gray-500 font-medium">{t("maxOccupants")}</dt>
-        <dd>· {t("occupantsValue", { count: rental.max_occupants ?? 0 })}</dd>
-        <dt className="text-gray-500 font-medium">{t("location")}</dt>
-        <dd>
-          ·{" "}
-          {rental.location_barangay || rental.location_city
-            ? formatBarangayLabel(rental.location_barangay, rental.location_city)
-            : rental.location === "그 외 지역"
-              ? te("tradeLocation.otherAreas")
-              : rental.location}
-        </dd>
-      </dl>
+      <div className="flex flex-col md:flex-row gap-6 items-start">
+        <dl className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 text-sm flex-1">
+          <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("deposit")}</dt>
+          <dd className="text-gray-900 font-medium">
+            {formatPrice(rental.deposit)}
+          </dd>
+          <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{enumLabel("rentType", rental.rent_type)}</dt>
+          <dd className="text-gray-900 font-semibold">
+            {formatPrice(rental.price)}
+          </dd>
+          <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("roomType")}</dt>
+          <dd className="text-gray-900">{enumLabel("roomType", rental.room_type)}</dd>
+          <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("maxOccupants")}</dt>
+          <dd className="text-gray-900">{t("occupantsValue", { count: rental.max_occupants ?? 0 })}</dd>
+          <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("location")}</dt>
+          <dd className="text-gray-900">
+            {rental.location_barangay || rental.location_city
+              ? formatBarangayLabel(rental.location_barangay, rental.location_city)
+              : rental.location === "그 외 지역"
+                ? te("tradeLocation.otherAreas")
+                : rental.location}
+          </dd>
+        </dl>
+        {children && <div className="w-full md:w-56 shrink-0">{children}</div>}
+      </div>
 
       {rental.location_lat != null && rental.location_lng != null && (
-        <ApproxAreaMapWithProvider
+        <ApproxAreaMap
           lat={rental.location_lat}
           lng={rental.location_lng}
         />

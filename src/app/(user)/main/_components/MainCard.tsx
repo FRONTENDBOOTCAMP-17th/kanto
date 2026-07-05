@@ -15,7 +15,13 @@ export type MainCardItem = {
   currentUserId: number | null;
 };
 
-export default function MainCard({ item }: { item: MainCardItem }) {
+export default function MainCard({
+  item,
+  priority = false,
+}: {
+  item: MainCardItem;
+  priority?: boolean;
+}) {
   return (
     <ContentCard
       href={item.href}
@@ -28,8 +34,9 @@ export default function MainCard({ item }: { item: MainCardItem }) {
       postId={item.id}
       initialIsLiked={item.initialIsLiked}
       currentUserId={item.currentUserId}
-      badge={item.popular ? <PopularBadge /> : undefined}
+      badge={item.popular ? <PopularBadge compact /> : undefined}
       listOnMobile
+      priority={priority}
     />
   );
 }

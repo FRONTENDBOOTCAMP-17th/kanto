@@ -1,16 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
-  APIProvider,
   Map,
   useMap,
   type MapCameraChangedEvent,
 } from "@vis.gl/react-google-maps";
 import { Plus, Crosshair, Zap } from "lucide-react";
 import { useLiveMeetups } from "@/hooks/go/useLiveMeetups";
-import { getMyJoinedMeetupIds } from "@/services/go/go";
+import { getMyJoinedMeetupIds, getMeetupByToken } from "@/services/go/go";
 import { MeetupPin, ClusterPin } from "@/components/go/MeetupPin";
 import { MeetupDetailPanel } from "@/components/go/MeetupDetailPanel";
 import { MeetupListPanel } from "@/components/go/MeetupListPanel";
@@ -95,6 +94,8 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
   const t = useTranslations("Go");
   const [topicFilter, setTopicFilter] = useState<MeetupTopicKey | "all">("all");
   const [selectedMeetupId, setSelectedMeetupId] = useState<number | null>(null);
+  const [externalMeetup, setExternalMeetup] = useState<Meetup | null>(null);
+  const initializedFromUrlRef = useRef(false);
   const [showCreate, setShowCreate] = useState(false);
   // 생성 모달 닫힘 애니메이션 중에도 모달을 유지하기 위한 상태
   const [createClosing, setCreateClosing] = useState(false);
@@ -252,8 +253,58 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
   };
 
   const selectedMeetup =
-    meetups.find((m) => m.post_id === selectedMeetupId) ?? null;
+    meetups.find((m) => m.post_id === selectedMeetupId) ??
+    (externalMeetup?.post_id === selectedMeetupId ? externalMeetup : null);
   const mobileSheetOpen = renderListMode !== null || selectedMeetupId !== null;
+
+  // 공유된 링크(?m=토큰)로 진입 시 최초 1회 상세 패널을 복원
+  useEffect(() => {
+    if (initializedFromUrlRef.current) return;
+    initializedFromUrlRef.current = true;
+
+    const token = new URLSearchParams(window.location.search).get("m");
+    if (!token) return;
+
+    const matched = allMeetups.find((m) => m.id_token === token);
+    if (matched) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- 최초 마운트 시 외부 브라우저 URL로부터 1회 동기화
+      setDetailFromList(true);
+      setSelectedMeetupId(matched.post_id);
+      return;
+    }
+
+    getMeetupByToken(token).then((meetup) => {
+      if (!meetup) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete("m");
+        window.history.replaceState(null, "", url.pathname + url.search);
+        return;
+      }
+      setExternalMeetup(meetup);
+      setDetailFromList(true);
+      setSelectedMeetupId(meetup.post_id);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 선택된 모임이 바뀌면 URL의 암호화된 id 파라미터를 동기화
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (selectedMeetupId === null) {
+      if (url.searchParams.has("m")) {
+        url.searchParams.delete("m");
+        window.history.replaceState(null, "", url.pathname + url.search);
+      }
+      return;
+    }
+
+    const token = selectedMeetup?.id_token;
+    if (token && url.searchParams.get("m") !== token) {
+      url.searchParams.set("m", token);
+      window.history.replaceState(null, "", url.pathname + url.search);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedMeetupId]);
 
   const handlePinClick = useCallback((meetup: Meetup) => {
     setDetailFromList(false);
@@ -326,8 +377,7 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
   };
 
   return (
-    <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
-      <div className="relative h-[calc(100vh-48px)] overflow-hidden md:h-[calc(100vh-109px)]">
+    <div className="relative h-[calc(100vh-48px)] overflow-hidden md:h-[calc(100vh-109px)]">
         <Map
           id={MAP_ID}
           mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID}
@@ -487,7 +537,6 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
           isOpen={showLoginModal}
           onClose={() => setShowLoginModal(false)}
         />
-      </div>
-    </APIProvider>
+    </div>
   );
 }

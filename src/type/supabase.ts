@@ -1706,7 +1706,8 @@ export type Database = {
           external_id: string
           id: number
           paid_at: string | null
-          post_id: number
+          post_id: number | null
+          post_title: string | null
           released_at: string | null
           seller_id: number
           status: Database["public"]["Enums"]["transaction_status"]
@@ -1722,7 +1723,8 @@ export type Database = {
           external_id: string
           id?: never
           paid_at?: string | null
-          post_id: number
+          post_id?: number | null
+          post_title?: string | null
           released_at?: string | null
           seller_id: number
           status?: Database["public"]["Enums"]["transaction_status"]
@@ -1738,7 +1740,8 @@ export type Database = {
           external_id?: string
           id?: never
           paid_at?: string | null
-          post_id?: number
+          post_id?: number | null
+          post_title?: string | null
           released_at?: string | null
           seller_id?: number
           status?: Database["public"]["Enums"]["transaction_status"]

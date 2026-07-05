@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
+import { MANUAL_SIGNOUT_KEY } from "@/hooks/useAuthInit";
 import type { User as UserType } from "@/type/user";
 import { updateProfile, fetchRestoredUser, saveBankAccount } from "@/services/profile/profileInfo";
 
@@ -85,6 +86,7 @@ export function useProfileInfo(user: UserType) {
       alert(t("deleteFailed"));
       return;
     }
+    localStorage.setItem(MANUAL_SIGNOUT_KEY, "1");
     await supabase.auth.signOut();
     clearUser();
     router.push("/");

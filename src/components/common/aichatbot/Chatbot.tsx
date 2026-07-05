@@ -1,9 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { BotMessageSquare, X, Send, History, ChevronLeft, Plus } from "lucide-react";
-import ReactMarkdown from "react-markdown";
 import { useTranslations, useLocale } from "next-intl";
+
+// 봇 패널을 실제로 열 때만 react-markdown 청크를 로드 (공통 번들에서 제외)
+const ReactMarkdown = dynamic(() => import("react-markdown"), { ssr: false });
 import { BCP47_LOCALE } from "@/i18n/config";
 
 interface Message {

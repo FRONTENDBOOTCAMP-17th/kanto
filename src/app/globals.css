@@ -7,16 +7,28 @@
 @import "../styles/carousel.css";
 
 @keyframes slideInRight {
-  from { transform: translateX(100%); }
-  to   { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 @keyframes slideInLeft {
-  from { transform: translateX(-100%); }
-  to   { transform: translateX(0); }
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 @keyframes slideInUp {
-  from { transform: translateY(100%); }
-  to   { transform: translateY(0); }
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 @keyframes slideOutLeft {
   from { transform: translateX(0); }
@@ -49,9 +61,19 @@
   to   { opacity: 0; }
 }
 @keyframes pullDown {
-  0%   { transform: translateY(0); }
-  40%  { transform: translateY(6px); }
-  100% { transform: translateY(0); }
+  0% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(6px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -190,7 +212,7 @@
     @apply absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center transition-colors;
   }
   .dropdown-item {
-    @apply w-full text-left px-5 py-2.5 text-sm transition-colors hover:bg-teal-50 hover:text-teal-600;
+    @apply w-full text-left px-5 py-2.5 text-sm transition-colors hover:bg-teal-50 hover:text-teal-600 active:scale-100;
   }
   .btn-primary {
     @apply bg-teal-500 hover:bg-teal-600 text-white;
@@ -206,6 +228,11 @@
   }
   html {
     @apply font-sans;
+    scrollbar-gutter: stable;
+  }
+  button:not(:disabled),
+  a {
+    @apply transition-transform duration-100 active:scale-[1.05];
   }
 }
 
@@ -219,6 +246,7 @@
     height: calc(100dvh - var(--header-height, 109px));
   }
 }
+
 
 @media (max-width: 767px) {
   html[data-chat-boot] body::before {

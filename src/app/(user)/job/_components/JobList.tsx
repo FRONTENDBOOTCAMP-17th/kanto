@@ -41,6 +41,7 @@ export function JobList({ posts, likedIds, currentUserId, currentPage, emptyMess
           <JobCard
             key={post.id}
             id={post.id}
+            idToken={post.id_token}
             fromPage={currentPage > 1 ? currentPage : undefined}
             title={post.title}
             companyName={job.company_name}

@@ -1,18 +1,22 @@
 import type { Metadata } from "next";
 import { createClient } from "@/utils/supabase/server";
+import { resolvePostId, encryptPostId } from "@/utils/postIdCipher";
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: number }>;
+  params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
+  const postId = resolvePostId(id);
+  if (postId === null) return { title: "게시글을 찾을 수 없습니다", robots: { index: false } };
+
   const supabase = await createClient();
 
   const { data } = await supabase
     .from("jobs")
     .select("main_task, images, posts!inner(title)")
-    .eq("post_id", id)
+    .eq("post_id", postId)
     .single();
 
   if (!data) return { title: "게시글을 찾을 수 없습니다", robots: { index: false } };
@@ -30,7 +34,7 @@ export async function generateMetadata({
       type: "article",
     },
     alternates: {
-      canonical: `${process.env.NEXT_PUBLIC_BASE_URL!.replace(/\/$/, "")}/job/${id}`,
+      canonical: `${process.env.NEXT_PUBLIC_BASE_URL!.replace(/\/$/, "")}/job/${encryptPostId(postId)}`,
     },
   };
 }

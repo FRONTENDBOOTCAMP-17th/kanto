@@ -24,10 +24,11 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL!.replace(/\/$/, "");
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "칸토 | 필리핀 한인 중고거래 & 렌탈 플랫폼",
+    default: "칸토 - 필리핀 정보 플랫폼",
     template: "%s | 칸토",
   },
-  description: "필리핀 한인 커뮤니티를 위한 중고거래, 렌탈, 구인구직 플랫폼입니다.",
+  description:
+    "필리핀 정보 - 채팅, 중고거래, 부동산, 구인구직, 모임 등 생활에 필요한 모든 정보를 보다 편리하게 제공하는 플랫폼을 이용해보세요.",
   keywords: ["칸토", "필리핀 한인", "중고거래", "렌탈", "구인구직"],
   authors: [{ name: "칸토" }],
   openGraph: {
@@ -35,13 +36,15 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     url: BASE_URL,
     siteName: "칸토",
-    title: "칸토 | 필리핀 한인 중고거래 & 렌탈 플랫폼",
-    description: "필리핀 한인 커뮤니티를 위한 중고거래, 렌탈, 구인구직 플랫폼입니다.",
+    title: "칸토 - 필리핀 정보 플랫폼",
+    description:
+      "필리핀 정보 - 채팅, 중고거래, 부동산, 구인구직, 모임 등 생활에 필요한 모든 정보를 보다 편리하게 제공하는 플랫폼을 이용해보세요.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "칸토 | 필리핀 한인 중고거래 & 렌탈 플랫폼",
-    description: "필리핀 한인 커뮤니티를 위한 중고거래, 렌탈, 구인구직 플랫폼입니다.",
+    title: "칸토 - 필리핀 정보 플랫폼",
+    description:
+      "필리핀 정보 - 채팅, 중고거래, 부동산, 구인구직, 모임 등 생활에 필요한 모든 정보를 보다 편리하게 제공하는 플랫폼을 이용해보세요.",
   },
   alternates: {
     canonical: BASE_URL,
@@ -85,7 +88,18 @@ export default async function RootLayout({
             }),
           }}
         />
-        
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "칸토",
+              url: BASE_URL,
+            }),
+          }}
+        />
+
         <script
           dangerouslySetInnerHTML={{
             __html: `try{if(innerWidth<768){var c=new URLSearchParams(location.search).get('chat');if(c||sessionStorage.getItem('chatWidget:newChatDraft'))document.documentElement.setAttribute('data-chat-boot','')}}catch(e){}`,

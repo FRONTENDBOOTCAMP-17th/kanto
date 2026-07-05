@@ -6,34 +6,28 @@ export default function JobContent({ job }: { job: JobDetail }) {
   const hasTags = !!job.preferred_tags && job.preferred_tags.length > 0;
   const t = useTranslations("Job");
   return (
-    <div className="p-6 space-y-6">
-      <h2 className="font-semibold text-base md:text-lg">{t("details")}</h2>
-      <div className="space-y-2">
-        <h3 className="font-medium text-gray-700 md:text-lg">{t("mainTask")}</h3>
-        <p className="text-sm md:text-base text-gray-600 whitespace-pre-line">{job.main_task}</p>
-      </div>
+    <div>
+      <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-gray-600 mb-4">{t("details")}</h2>
+      <h3 className="text-xs font-medium tracking-widest text-gray-600 uppercase mb-2">{t("mainTask")}</h3>
+      <p className="text-gray-700 whitespace-pre-line leading-relaxed text-sm">{job.main_task}</p>
       {(hasTags || job.preferred) && (
-        <div className="space-y-2">
-<h3 className="font-medium text-gray-700 md:text-lg">
-  {t("preferred")}
-</h3>
-
-<div className="flex flex-wrap gap-2">
-  {job.preferred_tags?.map((tag) => (
-    <span
-      key={tag}
-      className="text-xs md:text-sm bg-gray-100 text-gray-600 rounded-full px-2.5 py-1"
-    >
-      {PREFERRED_LABELS[tag] ?? tag}
-    </span>
-  ))}
-
-  {job.preferred && (
-    <span className="text-xs md:text-sm bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">
-      {job.preferred}
-    </span>
-  )}
-</div>
+        <div className="mt-6">
+          <h3 className="text-xs font-medium tracking-widest text-gray-600 uppercase mb-3">{t("preferred")}</h3>
+          <div className="flex flex-wrap gap-2">
+            {job.preferred_tags?.map((tag) => (
+              <span
+                key={tag}
+                className="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1"
+              >
+                {PREFERRED_LABELS[tag] ?? tag}
+              </span>
+            ))}
+            {job.preferred && (
+              <span className="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1">
+                {job.preferred}
+              </span>
+            )}
+          </div>
         </div>
       )}
     </div>

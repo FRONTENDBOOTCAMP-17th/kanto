@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import type { UsedGoodsWithPost, ProductCondition } from "@/type/usedGoods";
 import type { TradeLocation } from "@/type/location";
+import { encryptPostId } from "@/utils/postIdCipher";
 
 const USED_GOODS_SELECT = `
   *,
@@ -86,7 +87,12 @@ export async function getUsedGoodsList(
   const { data, count, error } = await query;
   if (error) throw new Error(error.message);
 
-  return { posts: (data as unknown as UsedGoodsWithPost[]) ?? [], total: count ?? 0 };
+  const posts = ((data as unknown as UsedGoodsWithPost[]) ?? []).map((p) => ({
+    ...p,
+    id_token: encryptPostId(p.id),
+  }));
+
+  return { posts, total: count ?? 0 };
 }
 
 async function getUsedGoodsListByPrice(

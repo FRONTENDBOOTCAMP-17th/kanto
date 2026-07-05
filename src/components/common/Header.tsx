@@ -7,7 +7,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
-import { useAuthInit } from "@/hooks/useAuthInit";
+import { useAuthInit, MANUAL_SIGNOUT_KEY } from "@/hooks/useAuthInit";
 import {
   Menu,
   User,
@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
+import Toast from "@/components/common/Toast";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { UnifiedBanner } from "@/components/common/UnifiedBanner";
 import { NotificationBell } from "./header/NotificationBell";
@@ -49,7 +50,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
   const router = useRouter();
   const user = useAuthStore((s) => s.user) ?? initialUser;
   const clearUser = useAuthStore((s) => s.clearUser);
-  useAuthInit();
+  const { kickedOut } = useAuthInit();
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -96,6 +97,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
 
   const handleLogoutConfirm = async () => {
     setIsLogoutModalOpen(false);
+    localStorage.setItem(MANUAL_SIGNOUT_KEY, "1");
     await supabase.auth.signOut();
     clearUser();
     router.push(ROUTES.home);
@@ -130,7 +132,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
           
           <Link
             href={ROUTES.home}
-            className="flex items-center hover:opacity-80 transition-opacity shrink-0"
+            className="flex items-center hover:opacity-80 transition-opacity shrink-0 active:scale-100"
             onClick={() => setIsMobileOpen(false)}
           >
             <Image
@@ -189,7 +191,6 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
                       width={36}
                       height={36}
                       priority
-                      unoptimized
                       className="w-9 h-9 rounded-full object-cover"
                     />
                   ) : (
@@ -274,7 +275,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
             <Link
               key={href}
               href={href}
-              className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 hover:text-teal-500 hover:bg-teal-50 rounded-lg transition-colors font-medium"
+              className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 hover:text-teal-500 hover:bg-teal-50 rounded-lg transition-colors font-medium active:scale-100"
             >
               <Icon className="w-4 h-4" />
               {t(`nav.${key}`)}
@@ -288,7 +289,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
                 if (isSuspended) { openModal(); return; }
                 router.push(ROUTES.create);
               }}
-              className="absolute right-0 flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition-colors"
+              className="absolute right-0 flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition-colors active:scale-100"
             >
               <SquarePen className="w-4 h-4" />
               {t("write")}
@@ -305,7 +306,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
                   key={href}
                   href={href}
                   onClick={() => setIsMobileOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-500 rounded-lg transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-500 rounded-lg transition-colors active:scale-100"
                 >
                   <Icon className="w-5 h-5" />
                   <span className="font-medium text-sm">{t(`nav.${key}`)}</span>
@@ -337,7 +338,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
                       key={href}
                       href={href}
                       onClick={() => setIsMobileOpen(false)}
-                      className="flex flex-col items-center gap-1 p-2 text-gray-600 hover:text-teal-500 transition-colors"
+                      className="flex flex-col items-center gap-1 p-2 text-gray-600 hover:text-teal-500 transition-colors active:scale-100"
                     >
                       <Icon className="w-6 h-6" />
                       <span className="text-xs">{label}</span>
@@ -345,7 +346,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
                   ))}
                   <button
                     onClick={handleLogoutClick}
-                    className="flex flex-col items-center gap-1 p-2 text-red-500 hover:text-red-600 transition-colors"
+                    className="flex flex-col items-center gap-1 p-2 text-red-500 hover:text-red-600 transition-colors active:scale-100"
                   >
                     <LogOut className="w-6 h-6" />
                     <span className="text-xs">{t("logout")}</span>
@@ -376,6 +377,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
         onConfirm={handleLogoutConfirm}
         onCancel={() => setIsLogoutModalOpen(false)}
       />
+      <Toast message={t("kickedOut")} showMessage={kickedOut} type="error" />
     </header>
     </>
   );

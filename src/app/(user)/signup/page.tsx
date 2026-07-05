@@ -3,16 +3,31 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { ChevronLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { SignupForm } from "./_components/SignupForm";
-import { AgreeSection } from "./_components/AgreeSection";
+import {
+  AgreeSection,
+  type SignupAgreements,
+} from "./_components/AgreeSection";
+import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
+
+const INITIAL_AGREEMENTS: SignupAgreements = {
+  terms: false,
+  privacy: false,
+  age: false,
+  marketing: false,
+  push: false,
+};
 
 export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [requiredChecked, setRequiredChecked] = useState(false);
+  const [agreements, setAgreements] =
+    useState<SignupAgreements>(INITIAL_AGREEMENTS);
   const t = useTranslations("Signup");
 
   const handleSignup = async ({
@@ -30,14 +45,24 @@ export default function SignupPage() {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { name } },
+        options: {
+          data: {
+            name,
+            terms_agreed: agreements.terms,
+            privacy_agreed: agreements.privacy,
+            age_confirmed: agreements.age,
+            marketing_consent: agreements.marketing,
+            push_consent: agreements.push,
+            agreements_updated_at: new Date().toISOString(),
+          },
+        },
       });
 
       if (error) {
         if (error.code === "user_already_exists") {
           setErrorMessage(t("emailExists"));
         } else {
-          setErrorMessage(error.message);
+          setErrorMessage(t("signupFailed"));
         }
         return;
       }
@@ -54,20 +79,35 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-teal-50 to-teal-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-97.5 bg-white rounded-2xl shadow-md p-8 my-8">
-        <Link href="/" className="text-sm text-teal-600 font-semibold">
-          {t("home")}
-        </Link>
-        <div className="flex justify-center mb-8 mt-4">
+    <div className="min-h-screen bg-linear-to-br from-teal-50 via-cyan-50 to-emerald-100 flex items-center justify-center p-3 sm:px-6">
+      <div className="w-full max-w-115 px-5 py-6 sm:px-8 sm:py-8">
+        <div className="flex items-center justify-between">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-teal-700 transition-colors hover:text-teal-800 active:scale-100"
+          >
+            <ChevronLeft className="h-4 w-4" strokeWidth={2.2} aria-hidden />
+            {t("home")}
+          </Link>
+          <LanguageSwitcher />
+        </div>
+        <div className="flex justify-center mt-5">
           <Image
             src="/kantoLogo.png"
-            width={200}
-            height={94}
+            width={152}
+            height={72}
             priority
             alt="Kanto"
-            className="select-none"
+            className="select-none -translate-x-0.5"
           />
+        </div>
+        <div className="mb-7 mt-5 text-center">
+          <h1 className="text-[24px] font-bold text-gray-950 sm:text-[26px]">
+            {t("title")}
+          </h1>
+          <p className="mt-2 text-sm leading-5 text-gray-500 break-keep">
+            {t("description")}
+          </p>
         </div>
 
         <SignupForm
@@ -78,13 +118,19 @@ export default function SignupPage() {
           onSubmit={handleSignup}
           onClearError={() => setErrorMessage("")}
         >
-          <AgreeSection onRequiredChange={setRequiredChecked} />
+          <AgreeSection
+            onRequiredChange={setRequiredChecked}
+            onAgreedChange={setAgreements}
+          />
         </SignupForm>
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             {t("haveAccount")}{" "}
-            <Link href="/login" className="text-teal-500 hover:text-teal-600 font-semibold">
+            <Link
+              href="/login"
+              className="font-semibold text-teal-600 underline-offset-4 hover:text-teal-700 hover:underline"
+            >
               {t("login")}
             </Link>
           </p>

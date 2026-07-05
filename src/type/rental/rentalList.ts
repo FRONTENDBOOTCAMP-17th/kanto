@@ -25,4 +25,5 @@ export type Rental = Tables<"rentals">;
 export interface RentalWithPost extends Post {
   rentals: Rental[];
   users: SellerInfo;
+  id_token?: string;
 }

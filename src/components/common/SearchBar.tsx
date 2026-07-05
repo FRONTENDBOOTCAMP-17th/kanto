@@ -47,7 +47,7 @@ export function SearchBar({
             <button
               type="submit"
               aria-label={t("search")}
-              className="cursor-pointer shrink-0 w-7 h-7 bg-gray-800 hover:bg-teal-500 rounded-full flex items-center justify-center transition-colors mr-0.5"
+              className="cursor-pointer shrink-0 w-7 h-7 bg-gray-800 hover:bg-teal-500 rounded-full flex items-center justify-center transition-colors mr-0.5 active:scale-100"
             >
               <ArrowRight className="w-3.5 h-3.5 text-white" />
             </button>
@@ -72,7 +72,7 @@ export function SearchBar({
           <button
             type="submit"
             aria-label={t("search")}
-            className="cursor-pointer shrink-0 w-8 h-8 bg-gray-800 hover:bg-teal-500 rounded-full flex items-center justify-center transition-colors mr-0.5"
+            className="cursor-pointer shrink-0 w-8 h-8 bg-gray-800 hover:bg-teal-500 rounded-full flex items-center justify-center transition-colors mr-0.5 active:scale-100"
           >
             <ArrowRight className="w-4 h-4 text-white" />
           </button>
