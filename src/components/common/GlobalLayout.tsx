@@ -9,6 +9,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useChatStore } from "@/store/chatStore";
 import { useGoUiStore } from "@/store/goUiStore";
 import type { User } from "@/type/user";
+import type { PublicNotice } from "@/services/admin/adminNotices";
 import { DeletionPendingBanner } from "@/components/common/DeletionPendingBanner";
 import { SuspendedModal } from "@/components/common/SuspendedModal";
 import FloatingChatWidget from "@/components/common/chat/FloatingChatWidget";
@@ -17,12 +18,13 @@ import Chatbot from "@/components/common/aichatbot/Chatbot"
 interface Props {
   children: React.ReactNode;
   initialUser: User | null;
+  initialNotices: PublicNotice[];
 }
 
 const useIsoLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-export function GlobalLayout({ children, initialUser }: Props) {
+export function GlobalLayout({ children, initialUser, initialNotices }: Props) {
   const pathname = usePathname();
   
   
@@ -66,7 +68,7 @@ export function GlobalLayout({ children, initialUser }: Props) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {!hideGlobalUI && <Header initialUser={initialUser} />}
+      {!hideGlobalUI && <Header initialUser={initialUser} initialNotices={initialNotices} />}
       {!hideGlobalUI && <div className="h-12 md:h-0" aria-hidden="true" />}
       {!hideGlobalUI && <DeletionPendingBanner />}
       {!hideGlobalUI && (

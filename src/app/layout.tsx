@@ -6,6 +6,7 @@ import { GlobalLayout } from "@/components/common/GlobalLayout";
 import { Providers } from "@/components/common/Providers";
 import { WebVitalsReporter } from "@/components/common/WebVitalsReporter";
 import { getSessionUser } from "@/services/user/user";
+import { getActivePublicNotices } from "@/services/admin/adminNotices";
 import { BCP47_LOCALE, type Locale } from "@/i18n/config";
 import "./globals.css";
 
@@ -64,9 +65,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const initialUser = await getSessionUser();
   const locale = (await getLocale()) as Locale;
-  const messages = await getMessages();
+  const [initialUser, messages, initialNotices] = await Promise.all([
+    getSessionUser(),
+    getMessages(),
+    getActivePublicNotices(locale),
+  ]);
 
   return (
     <html
@@ -108,7 +112,9 @@ export default async function RootLayout({
         <WebVitalsReporter />
         <NextIntlClientProvider messages={messages}>
           <Providers>
-            <GlobalLayout initialUser={initialUser}>{children}</GlobalLayout>
+            <GlobalLayout initialUser={initialUser} initialNotices={initialNotices}>
+              {children}
+            </GlobalLayout>
           </Providers>
         </NextIntlClientProvider>
       </body>

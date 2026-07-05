@@ -27,7 +27,8 @@ import { ROUTES } from "@/constants/routes";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import Toast from "@/components/common/Toast";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
-import { UnifiedBanner } from "@/components/common/UnifiedBanner";
+import { UnifiedBanner, noticeShownInHeader } from "@/components/common/UnifiedBanner";
+import type { PublicNotice } from "@/services/admin/adminNotices";
 import { NotificationBell } from "./header/NotificationBell";
 import type { NotificationBellHandle } from "./header/NotificationBell";
 import type { User as AppUser } from "@/type/user";
@@ -45,7 +46,13 @@ const NAV_ITEMS = [
   { key: "go", icon: MapPin, href: ROUTES.go },
 ] as const;
 
-export function Header({ initialUser }: { initialUser: AppUser | null }) {
+export function Header({
+  initialUser,
+  initialNotices,
+}: {
+  initialUser: AppUser | null;
+  initialNotices: PublicNotice[];
+}) {
   const t = useTranslations("Header");
   const router = useRouter();
   const user = useAuthStore((s) => s.user) ?? initialUser;
@@ -156,7 +163,13 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
           
           <div className="flex items-center shrink-0">
             
-            {pathname.startsWith("/go") && <GoNoticeIcon />}
+            {pathname.startsWith("/go") ? (
+              <GoNoticeIcon initialNotices={initialNotices} />
+            ) : noticeShownInHeader(pathname) ? (
+              <div className="md:hidden">
+                <GoNoticeIcon initialNotices={initialNotices} />
+              </div>
+            ) : null}
             <LanguageSwitcher />
 
             {user && (
@@ -368,7 +381,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
           </div>
         )}
       </div>
-      <UnifiedBanner />
+      <UnifiedBanner initialNotices={initialNotices} />
       <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <ConfirmModal
         isOpen={isLogoutModalOpen}

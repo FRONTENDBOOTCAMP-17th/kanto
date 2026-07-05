@@ -15,14 +15,14 @@ interface Notice {
   ends_at: string;
 }
 
-function isHiddenToday(id: number): boolean {
+function getHiddenIds(): number[] {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) return false;
+    if (!stored) return [];
     const { ids, date } = JSON.parse(stored);
-    return date === new Date().toDateString() && Array.isArray(ids) && ids.includes(id);
+    return date === new Date().toDateString() && Array.isArray(ids) ? ids : [];
   } catch {
-    return false;
+    return [];
   }
 }
 
@@ -39,13 +39,15 @@ function saveHideToday(id: number) {
   } catch {}
 }
 
-export function GoNoticeIcon() {
+export function GoNoticeIcon({ initialNotices }: { initialNotices: Notice[] }) {
   const locale = useLocale();
   const tb = useTranslations("Notice.Banner");
-  const [notices, setNotices] = useState<Notice[]>([]);
+  const [notices, setNotices] = useState<Notice[]>(initialNotices);
   const [dismissedIds, setDismissedIds] = useState<number[]>([]);
   const [open, setOpen] = useState(false);
   const [idx, setIdx] = useState(0);
+
+  const [hiddenIds, setHiddenIds] = useState<number[]>([]);
 
   useEffect(() => {
     fetch("/api/admin/notices")
@@ -54,10 +56,11 @@ export function GoNoticeIcon() {
         const now = new Date();
         setNotices(data.filter((n) => new Date(n.starts_at) <= now && now <= new Date(n.ends_at)));
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setHiddenIds(getHiddenIds()));
   }, [locale]);
 
-  const active = notices.filter((n) => !dismissedIds.includes(n.id) && !isHiddenToday(n.id));
+  const active = notices.filter((n) => !dismissedIds.includes(n.id) && !hiddenIds.includes(n.id));
   if (active.length === 0) return null;
 
   const safeIdx = Math.min(idx, active.length - 1);
