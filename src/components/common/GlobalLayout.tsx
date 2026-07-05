@@ -80,7 +80,7 @@ export function GlobalLayout({ children, initialUser, initialNotices }: Props) {
         className={`h-full flex flex-col ${isGo ? "overflow-hidden" : "overflow-y-auto"}`}
         style={isGo ? undefined : { scrollbarGutter: "stable" }}
       >
-        {!hideGlobalUI && <Header initialUser={initialUser} />}
+        {!hideGlobalUI && <Header initialUser={initialUser} initialNotices={initialNotices} />}
         {!hideGlobalUI && <div className="h-12 md:h-0" aria-hidden="true" />}
         {!hideGlobalUI && <DeletionPendingBanner />}
         {!hideGlobalUI && (
