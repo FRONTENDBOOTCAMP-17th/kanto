@@ -75,7 +75,7 @@ export default function MainSearchBar() {
             </button>
 
             {dropdownOpen && (
-              <div className="absolute top-full left-0 mt-2 w-32 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+              <div className="absolute top-full left-0 mt-2 w-32 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50 overflow-hidden">
                 {CATEGORIES.map((cat) => (
                   <button
                     key={cat.id}

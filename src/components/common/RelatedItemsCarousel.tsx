@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, TrendingUp } from "lucide-react";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 
 export interface RelatedItem {
@@ -17,9 +17,10 @@ export interface RelatedItem {
 interface Props {
   title: string;
   items: RelatedItem[];
+  variant?: "boxed" | "plain";
 }
 
-export default function RelatedItemsCarousel({ title, items }: Props) {
+export default function RelatedItemsCarousel({ title, items, variant = "boxed" }: Props) {
   const [page, setPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(4);
   const touchStartX = useRef(0);
@@ -45,9 +46,18 @@ export default function RelatedItemsCarousel({ title, items }: Props) {
 
   if (items.length === 0) return null;
 
+  const isPlain = variant === "plain";
+
   return (
-    <div className="mt-2 md:mt-4 border border-gray-200 rounded-2xl p-6">
-      <h2 className="text-xl font-semibold mb-4">{title}</h2>
+    <div className={isPlain ? "" : "mt-2 md:mt-4 border border-gray-200 rounded-2xl p-6"}>
+      {isPlain ? (
+        <div className="flex items-center gap-1.5 mb-3">
+          <h2 className="text-xl font-black text-gray-700">{title}</h2>
+          <TrendingUp className="w-6 h-6 -mb-2 text-teal-500" />
+        </div>
+      ) : (
+        <h2 className="text-xl font-semibold mb-4">{title}</h2>
+      )}
       <div className="relative">
         {totalPages > 1 && (
           <>

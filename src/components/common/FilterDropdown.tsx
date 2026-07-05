@@ -74,7 +74,7 @@ export function FilterDropdown({
 
         {open && (
           <div
-            className={`absolute top-full mt-2 w-40 bg-white rounded-2xl shadow-xl border border-gray-200 py-2 z-50 ${
+            className={`absolute top-full mt-2 w-40 bg-white rounded-2xl shadow-xl border border-gray-200 py-2 z-50 overflow-hidden ${
               align === "right" ? "right-0" : "left-0"
             }`}
           >
