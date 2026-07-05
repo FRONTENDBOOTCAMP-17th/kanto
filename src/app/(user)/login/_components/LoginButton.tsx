@@ -68,7 +68,7 @@ export default function LoginButton({ variant, onClick }: LoginButtonProps) {
     <Button
       type="button"
       variant="outline"
-      className={`${className} active:scale-[1.05]`}
+      className={`${className} rounded-md active:scale-[1.05]`}
       onClick={onClick}
     >
       {icon}

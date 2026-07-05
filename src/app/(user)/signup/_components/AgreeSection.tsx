@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { Checkbox } from "@/components/ui/checkbox";
 import { TermsModal } from "./TermsModal";
 
 type ModalType = "terms" | "privacy" | "age";
@@ -102,12 +103,11 @@ export function AgreeSection({ onRequiredChange, onAgreedChange }: AgreeSectionP
   return (
     <>
       <div className="space-y-3 border-t border-gray-100 pt-4">
-        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 px-4 py-3.5 transition-colors hover:bg-gray-100/70">
-          <input
-            type="checkbox"
+        <label className="flex cursor-pointer items-center gap-3 rounded-md border border-gray-100 bg-gray-50 px-4 py-3.5 transition-colors hover:bg-gray-100/70">
+          <Checkbox
             checked={allChecked}
-            onChange={handleToggleAll}
-            className="h-5 w-5 shrink-0 accent-teal-500"
+            onCheckedChange={handleToggleAll}
+            className="h-5 w-5 shrink-0 border-gray-300 bg-white data-checked:border-gray-300 data-checked:bg-white data-checked:text-gray-900"
           />
           <span className="text-sm font-bold text-gray-950">{t("all")}</span>
         </label>
@@ -115,13 +115,12 @@ export function AgreeSection({ onRequiredChange, onAgreedChange }: AgreeSectionP
           {AGREES.map((a) => (
             <label
               key={a.id}
-              className="flex cursor-pointer items-start gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-gray-50"
+              className="flex cursor-pointer items-start gap-3 rounded-md px-3 py-2.5 transition-colors hover:bg-gray-50"
             >
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={agreed[a.id as keyof AgreedState]}
-                onChange={() => handleItemClick(a.id)}
-                className="mt-0.5 h-4.5 w-4.5 shrink-0 accent-teal-500"
+                onCheckedChange={() => handleItemClick(a.id)}
+                className="mt-0.5 h-4.5 w-4.5 shrink-0 border-gray-300 bg-white data-checked:border-gray-300 data-checked:bg-white data-checked:text-gray-900"
               />
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-1.5">
@@ -129,7 +128,7 @@ export function AgreeSection({ onRequiredChange, onAgreedChange }: AgreeSectionP
                     {t(`items.${a.id}.label`)}
                   </span>
                   <span
-                    className={`rounded-full px-2 py-0.5 text-[11px] font-bold leading-4 ${a.required ? "bg-teal-100 text-teal-700" : "bg-gray-100 text-gray-500"}`}
+                    className={`rounded-md px-1.5 py-0.5 text-[10px] font-semibold tracking-wide uppercase ${a.required ? "bg-slate-700 text-white" : "bg-gray-50 text-gray-400 ring-1 ring-inset ring-gray-200"}`}
                   >
                     {a.required ? t("required") : t("optional")}
                   </span>

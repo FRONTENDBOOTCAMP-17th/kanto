@@ -186,7 +186,7 @@ export function SignupForm({
       <button
         onClick={handleSubmit}
         disabled={!requiredChecked || isLoading || isSuccess}
-        className="w-full rounded-xl bg-teal-500 py-3 text-base font-bold text-white shadow-sm transition-colors hover:bg-teal-600 active:bg-teal-700 disabled:bg-gray-300 disabled:text-white disabled:shadow-none disabled:cursor-not-allowed sm:text-sm"
+        className="w-full rounded-md bg-teal-500 py-3 text-base font-bold text-white shadow-sm transition-colors hover:bg-teal-600 active:bg-teal-700 disabled:bg-gray-300 disabled:text-white disabled:shadow-none disabled:cursor-not-allowed sm:text-sm"
       >
         {isLoading ? t("processing") : t("submit")}
       </button>

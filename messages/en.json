@@ -63,12 +63,10 @@
     "copyright": "© 2026 Kanto. All rights reserved."
   },
   "Auth": {
-    "home": "Go home",
-    "homeShort": "Home",
     "welcome": "Welcome to Kanto.",
-    "heroTitle": "Start your life in the Philippines with Kanto",
-    "heroSubtitle": "Jobs, rentals, and secondhand deals — everything you need in one place.",
-    "or": "or",
+    "heroTitleLine1": "Start your life in the Philippines",
+    "heroTitleLine2": "with Kanto",
+    "heroSubtitle": "From meetups to jobs, rentals, and secondhand deals — everything you need in one place.",
     "email": "Email",
     "password": "Password",
     "emailPlaceholder": "example@email.com",
@@ -78,8 +76,7 @@
     "findPassword": "Find password",
     "noAccountInline": "Don't have an account?",
     "signup": "Sign up",
-    "noAccount": "Don't have an account yet?",
-    "signupCta": "Go to sign up",
+    "goHomeCta": "Back to home",
     "social": {
       "kakao": "Continue with Kakao",
       "google": "Continue with Google",
@@ -906,10 +903,7 @@
     }
   },
   "Signup": {
-    "home": "Home",
     "title": "Create your account",
-    "description": "Find what you need on Kanto and trade with more confidence.",
-    "haveAccount": "Already have an account?",
     "login": "Log in",
     "emailExists": "This email is already registered.",
     "signupFailed": "Sign-up failed. Please check your information and try again.",
