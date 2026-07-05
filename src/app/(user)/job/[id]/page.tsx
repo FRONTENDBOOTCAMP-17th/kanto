@@ -124,7 +124,7 @@ export default async function JobDetailPage({
           <div className="flex flex-col gap-6 pt-4 md:pt-0">
             <JobTitle job={job} userId={userId} initialLiked={initialLiked} initialReported={initialReported} />
             <hr className="border-gray-200" />
-            <div className="flex flex-col md:flex-row gap-6 items-start">
+            <div className="flex flex-col lg:flex-row gap-6 items-start">
               <div className="flex-1 flex flex-col gap-4">
                 <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-gray-600">{t("jobInfo")}</h2>
                 <JobInfo job={job} />
@@ -137,7 +137,7 @@ export default async function JobDetailPage({
         <div className="mt-6">
           <JobTitle job={job} userId={userId} initialLiked={initialLiked} initialReported={initialReported} />
           <hr className="border-gray-200 my-8" />
-          <div className="flex flex-col md:flex-row gap-6 items-start">
+          <div className="flex flex-col lg:flex-row gap-6 items-start">
             <div className="flex-1 flex flex-col gap-4">
               <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-gray-600">{t("jobInfo")}</h2>
               <JobInfo job={job} />

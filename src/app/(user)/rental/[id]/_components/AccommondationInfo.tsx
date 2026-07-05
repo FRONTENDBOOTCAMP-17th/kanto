@@ -67,7 +67,7 @@ export default function AccommondationInfo({ rental, children }: { rental: Renta
 
       <hr className="border-gray-200" />
 
-      <div className="flex flex-col md:flex-row gap-6 items-start">
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
         <dl className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 text-sm flex-1">
           <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("deposit")}</dt>
           <dd className="text-gray-900 font-medium">
@@ -90,7 +90,7 @@ export default function AccommondationInfo({ rental, children }: { rental: Renta
                 : rental.location}
           </dd>
         </dl>
-        {children && <div className="w-full md:w-56 shrink-0">{children}</div>}
+        {children && <div className="w-full lg:w-56 shrink-0">{children}</div>}
       </div>
 
       {rental.location_lat != null && rental.location_lng != null && (

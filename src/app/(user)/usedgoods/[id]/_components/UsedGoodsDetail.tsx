@@ -157,8 +157,8 @@ export default function UsedGoodsDetail({
 
       
       {images.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 items-stretch gap-4 md:gap-8 mt-4">
-          <div className="relative">
+        <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-4 md:gap-8 mt-4">
+          <div className="relative aspect-4/3 w-full">
             <ImageCarousel images={images} />
             {data.posts.is_sold ? (
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-2xl bg-black/50 z-10">
