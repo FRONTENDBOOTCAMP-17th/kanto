@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { SquarePen, ShieldCheck } from "lucide-react";
@@ -71,7 +72,7 @@ export function CategoryWriteButton({
 
       <LoginRequiredModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
 
-      {isConfirmOpen && (
+      {isConfirmOpen && createPortal(
         <div
           className="fixed inset-0 z-100 flex items-center justify-center bg-black/45 px-4"
           onClick={() => setIsConfirmOpen(false)}
@@ -108,7 +109,8 @@ export function CategoryWriteButton({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
 
       {isVerificationOpen && (
