@@ -52,7 +52,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
 
   try {
     await deleteNotice(Number(id));
-    insertAuditLog(admin, "delete_notice", { targetType: "notice", targetId: Number(id) });
+    await insertAuditLog(admin, "delete_notice", { targetType: "notice", targetId: Number(id) });
     return new NextResponse(null, { status: 204 });
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });

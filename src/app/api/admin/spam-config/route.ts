@@ -74,7 +74,7 @@ export async function PUT(req: NextRequest) {
       },
       admin.id,
     );
-    insertAuditLog(admin, "update_spam", {
+    await insertAuditLog(admin, "update_spam", {
       targetType: "spam_config",
       targetId: 1,
       detail: { chat_window_sec, chat_max_count, chat_cooldown_sec, post_window_sec, post_max_count, max_urls_per_post, profanity_strike_max, report_strike_max, auto_sanction_enabled },

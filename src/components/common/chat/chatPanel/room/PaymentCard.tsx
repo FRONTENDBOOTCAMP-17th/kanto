@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldCheck, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -28,13 +28,21 @@ export default function PaymentCard({
   const t = useTranslations("Chat.payment");
   const router = useRouter();
 
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (transaction.status !== "pending") return;
+    const id = setInterval(() => setNow(Date.now()), 60_000);
+    return () => clearInterval(id);
+  }, [transaction.status]);
+
   const isBuyer = currentUser.id === transaction.buyer_id;
   const isSeller = currentUser.id === transaction.seller_id;
   const amount = `₱${transaction.amount.toLocaleString()}`;
 
   const isTimedOut =
     transaction.status === "pending" &&
-    Date.now() - new Date(transaction.created_at).getTime() > 24 * 60 * 60 * 1000;
+    now - new Date(transaction.created_at).getTime() > 24 * 60 * 60 * 1000;
 
   const run = async (fn: () => Promise<unknown>) => {
     setIsLoading(true);

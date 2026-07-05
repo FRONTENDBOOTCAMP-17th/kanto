@@ -56,7 +56,7 @@ export async function applySanction(
     type: "suspension",
   } as never);
 
-  insertAuditLog(sessionUser, "sanction_user", {
+  await insertAuditLog(sessionUser, "sanction_user", {
     targetType: "user",
     targetId: userId,
     detail: { sanction_type: sanctionType },

@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const data = await createProfanityRule({ scopes, words }, admin.id);
-    insertAuditLog(admin, "add_profanity", { targetType: "profanity", targetId: data.id, detail: { scopes, words } });
+    await insertAuditLog(admin, "add_profanity", { targetType: "profanity", targetId: data.id, detail: { scopes, words } });
     return NextResponse.json(data, { status: 201 });
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });

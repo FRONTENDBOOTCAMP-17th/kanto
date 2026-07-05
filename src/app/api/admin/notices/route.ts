@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
   try {
     const { title_en, title_fil } = await translateNoticeTitle(title);
     const data = await createNotice({ title, title_en, title_fil, starts_at, ends_at }, admin.id);
-    insertAuditLog(admin, "write_notice", { targetType: "notice", targetId: data.id, detail: { title, starts_at, ends_at } });
+    await insertAuditLog(admin, "write_notice", { targetType: "notice", targetId: data.id, detail: { title, starts_at, ends_at } });
     return NextResponse.json(data, { status: 201 });
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });

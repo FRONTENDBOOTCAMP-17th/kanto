@@ -10,6 +10,7 @@ import { buildImageOrder } from "@/utils/reorderImages";
 import { cityToTradeLocation, type TradeLocation } from "@/type/location";
 import type { EmployeeType, SalaryType, JobInitialData } from "@/type/job/jobCreate";
 import type { PickedLocation } from "@/type/go";
+import { createJobPostRecord } from "@/app/(user)/job/create/actions";
 
 export function useCreateJobForm(userId: number, userName: string, initialData?: JobInitialData) {
   const router = useRouter();
@@ -118,13 +119,6 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     }
     setUrlError("");
 
-    const rateRes = await fetch("/api/posts/rate-check");
-    if (!rateRes.ok) {
-      const { message } = await rateRes.json().catch(() => ({}));
-      alert(message ?? "도배 방지를 위해 짧은 시간안에 글 작성을 금지하고 있습니다. 잠시 후 다시 시도해주세요.");
-      return;
-    }
-
     setIsSubmitting(true);
 
     const uploadLogo = async (postId: number): Promise<string | null> => {
@@ -201,14 +195,17 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       return;
     }
 
-    const { data: post, error: postError } = await supabase
-      .from("posts")
-      .insert({ user_id: userId, post_type: "jobs", title, status: "active", view_count: 0, like_count: 0 })
-      .select("id")
-      .single();
-
-    if (postError || !post) {
-      alert(t("errorPost"));
+    let post: { id: number };
+    try {
+      const { postId } = await createJobPostRecord(title);
+      post = { id: postId };
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "";
+      if (msg === "RATE_LIMIT") {
+        alert("도배 방지를 위해 짧은 시간안에 글 작성을 금지하고 있습니다. 잠시 후 다시 시도해주세요.");
+      } else {
+        alert(t("errorPost"));
+      }
       setIsSubmitting(false);
       return;
     }

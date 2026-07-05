@@ -15,7 +15,7 @@ export async function deletePost(postId: number): Promise<void> {
     .eq("id", postId);
   if (error) throw error;
 
-  insertAuditLog(sessionUser, "delete_post", { targetType: "post", targetId: postId });
+  await insertAuditLog(sessionUser, "delete_post", { targetType: "post", targetId: postId });
 
   revalidatePath("/admin/posts");
   revalidatePath("/admin");
