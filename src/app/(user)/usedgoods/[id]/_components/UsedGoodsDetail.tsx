@@ -157,8 +157,8 @@ export default function UsedGoodsDetail({
 
       
       {images.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-4 md:gap-8 mt-4">
-          <div className="relative aspect-4/3 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mt-4">
+          <div className="relative">
             <ImageCarousel images={images} />
             {data.posts.is_sold ? (
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-2xl bg-black/50 z-10">
@@ -175,7 +175,7 @@ export default function UsedGoodsDetail({
 
           <div className="flex flex-col gap-6 pt-4 md:pt-0">
             <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-gray-400">{t("productInfo")}</h2>
-            <div className="flex flex-col md:flex-row gap-6 items-start">
+            <div className="flex flex-col lg:flex-row gap-6 items-start">
               <dl className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3 text-sm flex-1">
                 <dt className="text-xs font-medium tracking-widest text-gray-400 uppercase self-center">{t("category")}</dt>
                 <dd className="text-gray-900">{data.category ? te(`productCategory.${data.category}`) : ""}</dd>
@@ -194,7 +194,7 @@ export default function UsedGoodsDetail({
                   </>
                 )}
               </dl>
-              <div className="w-full md:w-48 shrink-0 flex flex-col gap-7">
+              <div className="w-full lg:w-48 shrink-0 flex flex-col gap-7">
                 <button
                   type="button"
                   onClick={handleOpenProfile}
@@ -236,7 +236,14 @@ export default function UsedGoodsDetail({
                 )}
               </div>
             </div>
-            {approxMap}
+            {hasCoords && (
+              <div className="mt-auto">
+                <ApproxAreaMap
+                  lat={data.location_lat as number}
+                  lng={data.location_lng as number}
+                />
+              </div>
+            )}
           </div>
         </div>
       ) : (
