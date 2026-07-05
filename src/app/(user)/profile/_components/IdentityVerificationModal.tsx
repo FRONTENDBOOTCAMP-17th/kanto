@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Mail, ShieldCheck, Timer, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -135,7 +136,7 @@ export function IdentityVerificationModal({
 
   const isExpired = isCodeSent && secondsLeft <= 0;
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/45 px-4"
       onClick={onClose}
@@ -249,6 +250,7 @@ export function IdentityVerificationModal({
           </p>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
