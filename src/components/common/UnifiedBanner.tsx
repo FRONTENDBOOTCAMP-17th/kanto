@@ -16,7 +16,7 @@ import { useTranslations, useLocale } from "next-intl";
 
 const STORAGE_KEY = "notice_hidden_until";
 
-interface Notice {
+export interface Notice {
   id: number;
   title: string;
   starts_at: string;
@@ -27,14 +27,20 @@ type BannerItem =
   | { type: "notice"; notice: Notice }
   | { type: "suspension"; suspendedUntil: string };
 
-function isHiddenToday(noticeId: number): boolean {
+export function noticeShownInHeader(pathname: string): boolean {
+  return ["/usedgoods", "/job", "/rental", "/notifications"].some((p) =>
+    pathname.startsWith(p),
+  );
+}
+
+function getHiddenIds(): number[] {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) return false;
+    if (!stored) return [];
     const { ids, date } = JSON.parse(stored);
-    return date === new Date().toDateString() && Array.isArray(ids) && ids.includes(noticeId);
+    return date === new Date().toDateString() && Array.isArray(ids) ? ids : [];
   } catch {
-    return false;
+    return [];
   }
 }
 
@@ -51,7 +57,7 @@ function saveHideToday(noticeId: number) {
   } catch {}
 }
 
-export function UnifiedBanner() {
+export function UnifiedBanner({ initialNotices }: { initialNotices: Notice[] }) {
   const pathname = usePathname();
   const { user } = useAuthStore();
   const t = useTranslations("Common");
@@ -61,9 +67,11 @@ export function UnifiedBanner() {
   const goDetailOpen = useGoUiStore((s) => s.detailOpen);
   const goListOpen = useGoUiStore((s) => s.listOpen);
 
-  const [notices, setNotices] = useState<Notice[]>([]);
+  const [notices, setNotices] = useState<Notice[]>(initialNotices);
   const [dismissedIds, setDismissedIds] = useState<number[]>([]);
   const [hideTodayChecked, setHideTodayChecked] = useState(false);
+
+  const [hiddenIds, setHiddenIds] = useState<number[]>([]);
 
   
   const [desktopIndex, setDesktopIndex] = useState(0);
@@ -92,14 +100,15 @@ export function UnifiedBanner() {
         );
         setNotices(active);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setHiddenIds(getHiddenIds()));
   }, [locale]);
 
   const items = useMemo<BannerItem[]>(() => {
     const result: BannerItem[] = [];
     const suspendedUntil = user?.suspended_until;
     for (const n of notices) {
-      if (!dismissedIds.includes(n.id) && !isHiddenToday(n.id)) {
+      if (!dismissedIds.includes(n.id) && !hiddenIds.includes(n.id)) {
         result.push({ type: "notice", notice: n });
       }
     }
@@ -107,7 +116,7 @@ export function UnifiedBanner() {
       result.push({ type: "suspension", suspendedUntil });
     }
     return result;
-  }, [notices, dismissedIds, user]);
+  }, [notices, dismissedIds, hiddenIds, user]);
 
   const noticeItems = useMemo(
     () => items.filter((i): i is { type: "notice"; notice: Notice } => i.type === "notice"),
@@ -133,7 +142,10 @@ export function UnifiedBanner() {
   }
 
   function handleDismissNotice(noticeId: number, forceHideToday = false) {
-    if (forceHideToday || hideTodayChecked) saveHideToday(noticeId);
+    if (forceHideToday || hideTodayChecked) {
+      saveHideToday(noticeId);
+      setHiddenIds((prev) => [...prev, noticeId]);
+    }
     setDismissedIds((prev) => [...prev, noticeId]);
     setHideTodayChecked(false);
     setNoticeModalOpen(false);
@@ -195,11 +207,11 @@ export function UnifiedBanner() {
       ) : (
         <div className="md:hidden relative h-0 overflow-visible">
           <div className={`absolute -top-1.5 ${mobileTabSide} flex items-start gap-2`}>
-            {noticeCount > 0 && (
+            {noticeCount > 0 && !noticeShownInHeader(pathname) && (
               <button
                 onClick={() => setNoticeModalOpen(true)}
                 aria-label="공지 보기"
-                className="flex flex-col items-center gap-1.5 bg-teal-500 text-white px-3 pt-4 pb-3.5 rounded-b-2xl shadow-md active:translate-y-1.5 transition-transform"
+                className="flex flex-col items-center gap-1.5 bg-teal-500 text-white px-3 pt-4 pb-3.5 rounded-b-2xl shadow-md active:translate-y-1.5 active:scale-100 transition-transform"
               >
                 <Megaphone className="w-4 h-4" />
                 {noticeCount > 1 && (
@@ -213,7 +225,7 @@ export function UnifiedBanner() {
               <button
                 onClick={() => setSuspensionModalOpen(true)}
                 aria-label="제재 안내"
-                className="flex flex-col items-center gap-1.5 bg-red-600 text-white px-3 pt-4 pb-3.5 rounded-b-2xl shadow-md active:translate-y-1.5 transition-transform"
+                className="flex flex-col items-center gap-1.5 bg-red-600 text-white px-3 pt-4 pb-3.5 rounded-b-2xl shadow-md active:translate-y-1.5 active:scale-100 transition-transform"
               >
                 <ShieldAlert className="w-4 h-4" />
               </button>
