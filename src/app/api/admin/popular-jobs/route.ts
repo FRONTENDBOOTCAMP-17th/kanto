@@ -71,7 +71,7 @@ export async function PATCH(req: NextRequest) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  insertAuditLog(admin, "update_job_popular_count", {
+  await insertAuditLog(admin, "update_job_popular_count", {
     targetType: "post",
     targetId: job_id,
     detail: { popular_count, _label: post_title ?? `job #${job_id}` },

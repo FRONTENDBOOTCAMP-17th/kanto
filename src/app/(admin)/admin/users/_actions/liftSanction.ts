@@ -27,5 +27,5 @@ export async function liftSanction(userId: number): Promise<void> {
     type: "suspension",
   } as never);
 
-  insertAuditLog(sessionUser, "revoke_sanction", { targetType: "user", targetId: userId });
+  await insertAuditLog(sessionUser, "revoke_sanction", { targetType: "user", targetId: userId });
 }
