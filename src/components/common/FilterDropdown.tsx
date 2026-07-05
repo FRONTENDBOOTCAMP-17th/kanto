@@ -1,5 +1,6 @@
 "use client";
 
+import { lockScroll, unlockScroll } from "@/utils/lockScroll";
 import { useState, useRef, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronDown, X } from "lucide-react";
@@ -44,9 +45,9 @@ export function FilterDropdown({
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    mobileOpen ? lockScroll() : unlockScroll();
     return () => {
-      document.body.style.overflow = "";
+      unlockScroll();
     };
   }, [mobileOpen]);
 

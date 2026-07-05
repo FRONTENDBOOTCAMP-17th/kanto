@@ -6,7 +6,7 @@
 
 **[https://kanto-iota.vercel.app](https://kanto-iota.vercel.app)**
 
-> 테스트 계정: _(추후 업데이트 예정)_
+> 테스트 계정 — ID: `asdf1234@naver.com` / PW: `asdf1234`
 
 ---
 

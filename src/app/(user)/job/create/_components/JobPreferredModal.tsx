@@ -1,5 +1,6 @@
 "use client";
 
+import { lockScroll, unlockScroll } from "@/utils/lockScroll";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
@@ -25,13 +26,13 @@ export function JobPreferredModal({ isOpen, onClose, selected, onToggle }: Props
 
   useEffect(() => {
     if (!isOpen) return;
-    document.body.style.overflow = "hidden";
+    lockScroll();
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.body.style.overflow = "";
+      unlockScroll();
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [isOpen, onClose]);

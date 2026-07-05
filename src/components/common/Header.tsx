@@ -33,6 +33,7 @@ import type { NotificationBellHandle } from "./header/NotificationBell";
 import type { User as AppUser } from "@/type/user";
 import { useTranslations } from "next-intl";
 import { useSuspended } from "@/hooks/useSuspended";
+import { useScrollContainer } from "@/contexts/ScrollContext";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 import { GoNoticeIcon } from "@/components/go/GoNoticeIcon";
 
@@ -58,12 +59,15 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
   const [isVisible, setIsVisible] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
+  const scrollContainer = useScrollContainer();
   const profileRef = useRef<HTMLDivElement>(null);
   const notificationBellRef = useRef<NotificationBellHandle>(null);
   const prevScrollY = useRef(0);
   useEffect(() => {
+    const container = scrollContainer.current;
+    if (!container) return;
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      const currentScrollY = container.scrollTop;
       if (currentScrollY > HEADER_HEIGHT) {
         setIsMobileOpen(false);
       }
@@ -76,9 +80,9 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
       }
       prevScrollY.current = currentScrollY;
     };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [scrollContainer]);
 
   const pathname = usePathname();
   const { isSuspended, openModal } = useSuspended();

@@ -1,5 +1,6 @@
 "use client";
 
+import { lockScroll, unlockScroll } from "@/utils/lockScroll";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
@@ -63,9 +64,9 @@ export function ResponsiveSelect({
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    mobileOpen ? lockScroll() : unlockScroll();
     return () => {
-      document.body.style.overflow = "";
+      unlockScroll();
     };
   }, [mobileOpen]);
 

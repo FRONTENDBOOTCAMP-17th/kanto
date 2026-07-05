@@ -1,5 +1,6 @@
 "use client";
 
+import { lockScroll, unlockScroll } from "@/utils/lockScroll";
 import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { BotMessageSquare, X, Send, History, ChevronLeft, Plus } from "lucide-react";
@@ -110,8 +111,8 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
 
   useEffect(() => {
     if (isOpen && window.innerWidth < 768) {
-      document.body.style.overflow = "hidden";
-      return () => { document.body.style.overflow = ""; };
+      lockScroll();
+      return () => { unlockScroll(); };
     }
   }, [isOpen]);
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { lockScroll, unlockScroll } from "@/utils/lockScroll";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -45,9 +46,9 @@ export function AgreeSection({ onRequiredChange, onAgreedChange }: AgreeSectionP
   const allChecked = Object.values(agreed).every((v) => v);
 
   useEffect(() => {
-    document.body.style.overflow = modalType ? "hidden" : "";
+    modalType ? lockScroll() : unlockScroll();
     return () => {
-      document.body.style.overflow = "";
+      unlockScroll();
     };
   }, [modalType]);
 

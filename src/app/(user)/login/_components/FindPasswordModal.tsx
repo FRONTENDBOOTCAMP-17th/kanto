@@ -1,5 +1,6 @@
 "use client";
 
+import { lockScroll, unlockScroll } from "@/utils/lockScroll";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Mail, Timer, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
@@ -77,14 +78,13 @@ export function FindPasswordModal({ isOpen, onClose }: FindPasswordModalProps) {
 
   useEffect(() => {
     if (!isOpen) return;
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    lockScroll();
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.body.style.overflow = originalOverflow;
+      unlockScroll();
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [isOpen, onClose]);
