@@ -25,6 +25,33 @@ export async function getNotices(): Promise<Notice[]> {
   return data ?? [];
 }
 
+export interface PublicNotice {
+  id: number;
+  title: string;
+  starts_at: string;
+  ends_at: string;
+}
+
+export async function getActivePublicNotices(locale: string): Promise<PublicNotice[]> {
+  try {
+    const data = await getNotices();
+    const now = new Date();
+    return data
+      .filter((n) => new Date(n.starts_at) <= now && now <= new Date(n.ends_at))
+      .map(({ id, title, title_en, title_fil, starts_at, ends_at }) => ({
+        id,
+        starts_at,
+        ends_at,
+        title:
+          locale === "en" ? (title_en ?? title) :
+          locale === "fil" ? (title_fil ?? title) :
+          title,
+      }));
+  } catch {
+    return [];
+  }
+}
+
 export async function createNotice(
   payload: { title: string; title_en: string; title_fil: string; starts_at: string; ends_at: string },
   createdBy: number,
@@ -33,7 +60,7 @@ export async function createNotice(
 
   const { data, error } = await admin
     .from("notices")
-    .insert({ ...payload, created_by: createdBy } as any)
+    .insert({ ...payload, created_by: createdBy })
     .select("id, title, title_en, title_fil, starts_at, ends_at, created_at")
     .single() as unknown as { data: Notice | null; error: { message: string } | null };
 
@@ -49,7 +76,7 @@ export async function updateNotice(
 
   const { data, error } = await admin
     .from("notices")
-    .update(payload as any)
+    .update(payload)
     .eq("id", id)
     .select("id, title, title_en, title_fil, starts_at, ends_at, created_at")
     .single() as unknown as { data: Notice | null; error: { message: string } | null };
