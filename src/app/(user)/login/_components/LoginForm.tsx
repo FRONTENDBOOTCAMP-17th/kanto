@@ -4,9 +4,9 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Lock, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/supabase";
 import LoginButton from "./LoginButton";
 import { FindPasswordModal } from "./FindPasswordModal";
@@ -27,8 +27,9 @@ export default function LoginForm() {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const inputClass =
-    "h-auto rounded-xl border-gray-200 bg-white px-3.5 py-3 text-base text-gray-950 placeholder:text-gray-400 outline-none transition-colors focus-visible:border-teal-400 focus-visible:ring-3 focus-visible:ring-teal-100 sm:text-sm";
-  const labelClass = "text-[13px] font-semibold text-gray-800";
+    "h-auto rounded-none border-0 border-b border-gray-200 bg-transparent py-3 pr-2 pl-8 text-base text-gray-950 placeholder:text-gray-400 outline-none transition-colors focus-visible:border-teal-400 focus-visible:ring-0 sm:text-sm";
+  const iconClass =
+    "pointer-events-none absolute top-1/2 left-0 h-5 w-5 -translate-y-1/2 text-gray-400";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorKey, setErrorKey] = useState<LoginErrorKey | null>(null);
@@ -139,31 +140,32 @@ export default function LoginForm() {
         className="space-y-4"
       >
         <div className="space-y-1.5">
-          <Label htmlFor="email" className={labelClass}>
-            {t("email")}
-          </Label>
-          <Input
-            id="email"
-            ref={emailInputRef}
-            type="email"
-            placeholder={t("emailPlaceholder")}
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setFieldErrors((prev) => ({ ...prev, email: undefined }));
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                  setFieldErrors({ email: "emailInvalid" });
-                  return;
+          <div className="relative">
+            <Mail className={iconClass} strokeWidth={1.8} aria-hidden />
+            <Input
+              id="email"
+              ref={emailInputRef}
+              type="email"
+              aria-label={t("email")}
+              placeholder={t("emailPlaceholder")}
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setFieldErrors((prev) => ({ ...prev, email: undefined }));
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    setFieldErrors({ email: "emailInvalid" });
+                    return;
+                  }
+                  passwordInputRef.current?.focus();
                 }
-                passwordInputRef.current?.focus();
-              }
-            }}
-            className={`${inputClass} ${fieldErrors.email ? "border-red-400 focus-visible:border-red-400 focus-visible:ring-red-100" : ""}`}
-          />
+              }}
+              className={`${inputClass} ${fieldErrors.email ? "border-red-400 focus-visible:border-red-400" : ""}`}
+            />
+          </div>
           {fieldErrors.email && (
             <p className="text-xs font-medium text-red-500">
               {t(`errors.${fieldErrors.email}`)}
@@ -171,21 +173,22 @@ export default function LoginForm() {
           )}
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="password" className={labelClass}>
-            {t("password")}
-          </Label>
-          <Input
-            id="password"
-            ref={passwordInputRef}
-            type="password"
-            placeholder={t("passwordPlaceholder")}
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              setFieldErrors((prev) => ({ ...prev, password: undefined }));
-            }}
-            className={`${inputClass} ${fieldErrors.password ? "border-red-400 focus-visible:border-red-400 focus-visible:ring-red-100" : ""}`}
-          />
+          <div className="relative">
+            <Lock className={iconClass} strokeWidth={1.8} aria-hidden />
+            <Input
+              id="password"
+              ref={passwordInputRef}
+              type="password"
+              aria-label={t("password")}
+              placeholder={t("passwordPlaceholder")}
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setFieldErrors((prev) => ({ ...prev, password: undefined }));
+              }}
+              className={`${inputClass} ${fieldErrors.password ? "border-red-400 focus-visible:border-red-400" : ""}`}
+            />
+          </div>
           {fieldErrors.password && (
             <p className="text-xs font-medium text-red-500">
               {t(`errors.${fieldErrors.password}`)}
