@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { SignupForm } from "./_components/SignupForm";
@@ -87,21 +86,10 @@ export default function SignupPage() {
         </div>
         <div className="flex flex-1 items-center justify-center py-10">
           <div className="w-full max-w-md px-5 sm:px-8">
-            <div className="mb-7 flex flex-col items-center">
-              <Image
-                src="/kantoLogo.png"
-                alt="Kanto"
-                width={240}
-                height={113}
-                priority
-                className="h-auto w-44 select-none sm:w-48"
-              />
-              <h1 className="mt-5 text-[24px] font-bold text-gray-950 sm:text-[26px]">
+            <div className="mb-7">
+              <h1 className="text-[24px] font-bold text-gray-950 sm:text-[26px]">
                 {t("title")}
               </h1>
-              <p className="mt-2 text-center text-sm leading-5 text-gray-500 break-keep">
-                {t("description")}
-              </p>
             </div>
 
             <SignupForm
@@ -119,15 +107,12 @@ export default function SignupPage() {
             </SignupForm>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                {t("haveAccount")}{" "}
-                <Link
-                  href="/login"
-                  className="font-semibold text-teal-600 underline-offset-4 hover:text-teal-700 hover:underline"
-                >
-                  {t("login")}
-                </Link>
-              </p>
+              <Link
+                href="/login"
+                className="text-sm font-semibold text-teal-600 hover:text-teal-700"
+              >
+                {t("login")}
+              </Link>
             </div>
           </div>
         </div>

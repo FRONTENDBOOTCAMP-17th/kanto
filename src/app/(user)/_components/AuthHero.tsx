@@ -30,16 +30,16 @@ function AuthBubbles() {
       {BUBBLES.map((bubble, i) => (
         <span
           key={i}
-          className="auth-bubble absolute bottom-[-10%] rounded-full border border-teal-300/40"
+          className="auth-bubble absolute bottom-[-10%] rounded-full"
           style={
             {
               left: bubble.left,
               width: bubble.size,
               height: bubble.size,
               background:
-                "radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), rgba(94,234,212,0.18) 55%, rgba(45,212,191,0.05) 100%)",
+                "radial-gradient(circle at 30% 28%, rgba(255,255,255,0.85), rgba(94,234,212,0.08) 60%, rgba(94,234,212,0.02) 100%)",
               boxShadow:
-                "inset 0 0 8px rgba(255,255,255,0.6), 0 4px 10px rgba(20,184,166,0.08)",
+                "inset 2px 3px 5px rgba(255,255,255,0.9), inset -3px -4px 8px rgba(45,212,191,0.1), 0 2px 6px rgba(15,23,42,0.05)",
               animationDuration: `${bubble.duration}s`,
               animationDelay: `${bubble.delay}s`,
               "--bubble-drift": `${bubble.drift}px`,
@@ -64,12 +64,31 @@ export function AuthHero() {
         aria-hidden
         className="absolute right-0 -bottom-32 h-112 w-112 translate-x-1/4 rounded-full bg-cyan-50 blur-3xl"
       />
+      {/* eslint-disable-next-line @next/next/no-page-custom-font -- Jua isn't in next/font's Google Fonts metadata for the Korean subset; App Router has no pages/_document.js, and this <link> is hoisted to <head> automatically. */}
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Jua&display=swap"
+      />
       <AuthBubbles />
-      <div className="relative z-10 max-w-md px-10 text-center">
-        <h2 className="text-[28px] font-bold leading-snug text-gray-900 break-keep xl:text-[32px]">
-          {t("heroTitle")}
+      <div className="font-jua relative z-10 max-w-md px-10 text-center">
+        <h2 className="text-[28px] leading-snug text-gray-900 break-keep xl:text-[32px]">
+          <span
+            className="hero-fade-up block"
+            style={{ animationDelay: "0ms" }}
+          >
+            {t("heroTitleLine1")}
+          </span>
+          <span
+            className="hero-fade-up block"
+            style={{ animationDelay: "150ms" }}
+          >
+            {t("heroTitleLine2")}
+          </span>
         </h2>
-        <p className="mt-4 text-[15px] leading-relaxed text-gray-500 break-keep">
+        <p
+          className="hero-fade-up mt-4 text-[15px] leading-relaxed text-gray-500 break-keep"
+          style={{ animationDelay: "350ms" }}
+        >
           {t("heroSubtitle")}
         </p>
       </div>

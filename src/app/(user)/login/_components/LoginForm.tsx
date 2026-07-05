@@ -125,10 +125,8 @@ export default function LoginForm() {
         />
       </div>
 
-      <div className="my-6 flex items-center gap-3" aria-hidden>
-        <span className="h-px flex-1 bg-gray-200" />
-        <span className="text-xs font-medium text-gray-400">{t("or")}</span>
-        <span className="h-px flex-1 bg-gray-200" />
+      <div className="my-8 flex justify-center" aria-hidden>
+        <span className="h-1.5 w-1.5 rounded-full bg-gray-300" />
       </div>
 
       <form
@@ -230,22 +228,25 @@ export default function LoginForm() {
           variant="teal"
           type="submit"
           disabled={isLoading}
-          className="w-full active:scale-[1.05]"
+          className="h-auto w-full rounded-md border border-teal-200 bg-white py-3 text-base font-bold text-teal-500 hover:bg-teal-50 active:scale-[1.05] sm:text-sm"
         >
           {t("loginButton")}
         </Button>
       </form>
 
       <div className="mt-6 text-center">
-        <p className="text-sm text-gray-600">
-          {t("noAccount")}{" "}
-          <Link
-            href="/signup"
-            className="text-teal-500 hover:text-teal-600 font-semibold underline"
-          >
-            {t("signupCta")}
-          </Link>
-        </p>
+        <Link
+          href="/signup"
+          className="block text-sm font-semibold text-teal-500 hover:text-teal-600"
+        >
+          {t("signup")}
+        </Link>
+        <Link
+          href="/"
+          className="mt-2 block text-sm text-gray-400 hover:text-gray-600"
+        >
+          {t("goHomeCta")}
+        </Link>
       </div>
 
       <FindPasswordModal

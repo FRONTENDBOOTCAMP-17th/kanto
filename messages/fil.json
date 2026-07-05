@@ -63,12 +63,10 @@
     "copyright": "© 2026 Kanto. All rights reserved."
   },
   "Auth": {
-    "home": "Pumunta sa home",
-    "homeShort": "Home",
     "welcome": "Maligayang pagdating sa Kanto.",
-    "heroTitle": "Simulan ang buhay sa Pilipinas kasama ang Kanto",
-    "heroSubtitle": "Trabaho, rental, at secondhand na bilihan — lahat ng kailangan mo sa isang lugar.",
-    "or": "o",
+    "heroTitleLine1": "Simulan ang buhay sa Pilipinas",
+    "heroTitleLine2": "kasama ang Kanto",
+    "heroSubtitle": "Mula sa mga meetup hanggang trabaho, rental, at secondhand na bilihan — lahat ng kailangan mo sa isang lugar.",
     "email": "Email",
     "password": "Password",
     "emailPlaceholder": "example@email.com",
@@ -78,8 +76,7 @@
     "findPassword": "Hanapin ang password",
     "noAccountInline": "Wala ka pang account?",
     "signup": "Mag-sign up",
-    "noAccount": "Wala ka pa rin bang account?",
-    "signupCta": "Pumunta sa pag-sign up",
+    "goHomeCta": "Bumalik sa home",
     "social": {
       "kakao": "Magpatuloy gamit ang Kakao",
       "google": "Magpatuloy gamit ang Google",
@@ -933,10 +930,7 @@
     }
   },
   "Signup": {
-    "home": "Home",
     "title": "Gumawa ng account",
-    "description": "Hanapin ang kailangan mo sa Kanto at makipag-trade nang mas panatag.",
-    "haveAccount": "May account ka na?",
     "login": "Mag-log in",
     "emailExists": "Nakarehistro na ang email na ito.",
     "signupFailed": "Nabigo ang pag-sign up. Pakisuri ang iyong impormasyon at subukang muli.",
