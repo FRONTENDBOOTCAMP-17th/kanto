@@ -32,15 +32,15 @@ export default function KpiCards({
       {KPIS.map((k, i) => (
         <div
           key={k.label}
-          className={`rounded-2xl border border-[#edf0f2] bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)] ${i === KPIS.length - 1 ? "col-span-2 sm:col-span-1" : ""}`}
+          className={`@container flex flex-col rounded-2xl border border-[#edf0f2] bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)] ${i === KPIS.length - 1 ? "col-span-2 sm:col-span-1" : ""}`}
         >
           <span className="text-[13px] font-semibold text-slate-500">
             {k.label}
           </span>
-          <div className="mt-3.5">
-            <div className="text-[27px] font-extrabold tracking-tight text-slate-900">
+          <div className="mt-auto pt-3.5">
+            <div className="whitespace-nowrap text-[clamp(14px,17cqw,27px)] font-extrabold tracking-tight text-slate-900">
               {k.value}
-              <span className="ml-0.5 text-[14px] font-semibold text-slate-400">
+              <span className="ml-0.5 text-[clamp(11px,9cqw,14px)] font-semibold text-slate-400">
                 {k.unit}
               </span>
             </div>
