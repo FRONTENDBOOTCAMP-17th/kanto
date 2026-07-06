@@ -46,7 +46,8 @@ export function AgreeSection({ onRequiredChange, onAgreedChange }: AgreeSectionP
   const allChecked = Object.values(agreed).every((v) => v);
 
   useEffect(() => {
-    modalType ? lockScroll() : unlockScroll();
+    if (!modalType) return;
+    lockScroll();
     return () => {
       unlockScroll();
     };

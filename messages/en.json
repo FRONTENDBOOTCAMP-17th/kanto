@@ -834,7 +834,12 @@
       "confirmTitle": "Are you sure you want to delete your account?",
       "confirmDesc": "Deleting your account erases all data including your posts and chat history, and cannot be undone.",
       "cancel": "Cancel",
-      "confirmDelete": "Delete"
+      "confirmDelete": "Delete",
+      "mangoScore": "Mango Score",
+      "scoreUnit": "/ 100 pts",
+      "refresh": "Refresh now",
+      "refreshing": "Refreshing...",
+      "mangoScoreDesc": "The Mango Score combines your trade reviews, completed trades, and activity history, and updates automatically 1–2 times a day."
     },
     "history": {
       "title": "Transaction History",

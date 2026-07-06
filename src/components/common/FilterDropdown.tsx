@@ -45,7 +45,8 @@ export function FilterDropdown({
   }, []);
 
   useEffect(() => {
-    mobileOpen ? lockScroll() : unlockScroll();
+    if (!mobileOpen) return;
+    lockScroll();
     return () => {
       unlockScroll();
     };

@@ -1,7 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import type { JobWithPost } from "@/type/job/jobList";
 import type { Pagination, PagedResult } from "@/services/usedGoods/usedGoods";
-import type { TradeLocation } from "@/type/location";
 import { encryptPostId } from "@/utils/postIdCipher";
 
 interface JobListFilter {
@@ -12,6 +11,56 @@ interface JobListFilter {
   targetIds?: number[];
   userId?: number;
   sort?: string;
+}
+
+// 목록 조회는 정렬에 따라 부모(posts) 기준과 자식(jobs) 기준으로 뒤집어 조회하는데,
+// 그때 같은 필터라도 컬럼 이름 앞에 붙는 접두사가 달라진다(예: "jobs.employee_type" ↔ "employee_type").
+// 두 경로가 서로 다른 규칙을 쓰다 한쪽만 고치는 실수를 막기 위해, 필터가 걸리는 컬럼 이름을
+// 경로별로 한 곳에 모아두고 적용부는 공통 헬퍼(applyScalarFilters)로 통일한다.
+interface JobFilterColumns {
+  userId: string;
+  title: string;
+  employeeType: string;
+  salaryType: string;
+  location: string;
+}
+
+// posts(부모) 기준 조회: 최신순 경로.
+const POSTS_BASED_COLUMNS: JobFilterColumns = {
+  userId: "user_id",
+  title: "title",
+  employeeType: "jobs.employee_type",
+  salaryType: "jobs.salary_type",
+  location: "jobs.location_type",
+};
+
+// jobs(자식) 기준 조회: 인기순·마감일순 경로.
+const JOBS_BASED_COLUMNS: JobFilterColumns = {
+  userId: "posts.user_id",
+  title: "posts.title",
+  employeeType: "employee_type",
+  salaryType: "salary_type",
+  location: "location_type",
+};
+
+type JobFilterQuery<Q> = {
+  eq(column: string, value: string | number): Q;
+  ilike(column: string, pattern: string): Q;
+};
+
+// targetIds 는 빈 배열일 때 "결과 없음"으로 조기 반환해야 해서 호출부에 남기고,
+// 나머지 스칼라 필터(userId·검색·고용형태·급여형태·지역)만 여기서 공통 적용한다.
+function applyScalarFilters<Q extends JobFilterQuery<Q>>(
+  query: Q,
+  filter: JobListFilter,
+  cols: JobFilterColumns,
+): Q {
+  if (filter.userId) query = query.eq(cols.userId, filter.userId);
+  if (filter.search) query = query.ilike(cols.title, `%${filter.search}%`);
+  if (filter.employeeType) query = query.eq(cols.employeeType, filter.employeeType);
+  if (filter.salaryType) query = query.eq(cols.salaryType, filter.salaryType);
+  if (filter.location) query = query.eq(cols.location, filter.location);
+  return query;
 }
 
 export async function getJobList(
@@ -47,12 +96,7 @@ export async function getJobList(
     if (filter.targetIds.length === 0) return { posts: [], total: 0 };
     query = query.in("id", filter.targetIds);
   }
-  if (filter?.userId) query = query.eq("user_id", filter.userId);
-  if (filter?.search) query = query.ilike("title", `%${filter.search}%`);
-
-  if (filter?.employeeType) query = query.eq("jobs.employee_type", filter.employeeType);
-  if (filter?.salaryType) query = query.eq("jobs.salary_type", filter.salaryType);
-  if (filter?.location) query = query.eq("jobs.location_type", filter.location as TradeLocation);
+  if (filter) query = applyScalarFilters(query, filter, POSTS_BASED_COLUMNS);
 
   if (pagination) {
     const from = (pagination.page - 1) * pagination.pageSize;
@@ -95,11 +139,7 @@ async function getJobListByPopular(
     if (filter.targetIds.length === 0) return { posts: [], total: 0 };
     query = query.in("post_id", filter.targetIds);
   }
-  if (filter.userId) query = query.eq("posts.user_id", filter.userId);
-  if (filter.search) query = query.ilike("posts.title", `%${filter.search}%`);
-  if (filter.employeeType) query = query.eq("employee_type", filter.employeeType);
-  if (filter.salaryType) query = query.eq("salary_type", filter.salaryType);
-  if (filter.location) query = query.eq("location_type", filter.location as TradeLocation);
+  query = applyScalarFilters(query, filter, JOBS_BASED_COLUMNS);
 
   if (pagination) {
     const from = (pagination.page - 1) * pagination.pageSize;
@@ -151,11 +191,7 @@ async function getJobListByDeadline(
     if (filter.targetIds.length === 0) return { posts: [], total: 0 };
     query = query.in("post_id", filter.targetIds);
   }
-  if (filter.userId) query = query.eq("posts.user_id", filter.userId);
-  if (filter.search) query = query.ilike("posts.title", `%${filter.search}%`);
-  if (filter.employeeType) query = query.eq("employee_type", filter.employeeType);
-  if (filter.salaryType) query = query.eq("salary_type", filter.salaryType);
-  if (filter.location) query = query.eq("location_type", filter.location as TradeLocation);
+  query = applyScalarFilters(query, filter, JOBS_BASED_COLUMNS);
 
   if (pagination) {
     const from = (pagination.page - 1) * pagination.pageSize;
