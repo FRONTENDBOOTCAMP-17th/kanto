@@ -5,8 +5,8 @@ import fs from "node:fs";
 // 사용자 여정: 메인 → 목록(중고/렌탈/구인, 필터 UI 개편) → 상세 → 로그인/회원가입(개편) → 프로필
 // 이월 확인: anon users PII / 삭제글 상세 노출 / 비로그인 목록 500
 
-const EMAIL = "kanto-review@example.com";
-const PASSWORD = "Review!2026";
+const EMAIL = "whrqkfdlwhgdk12@gmail.com";
+const PASSWORD = "kanto0000";
 const DATE = "2026-07-06";
 const IMG = `../images/${DATE}`;
 
