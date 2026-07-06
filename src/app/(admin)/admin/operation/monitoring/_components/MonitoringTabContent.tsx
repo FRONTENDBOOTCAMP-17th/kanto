@@ -24,7 +24,7 @@ export function MonitoringTabContent({ stats, sentry, performance }: Props) {
     <button
       onClick={() => setTab(t)}
       className={[
-        "flex items-center gap-2 rounded-xl px-5 py-2.5 text-[14px] font-semibold transition-colors",
+        "flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-[14px] font-semibold transition-colors sm:px-5",
         tab === t
           ? "bg-teal-500 text-white shadow-sm"
           : "border border-[#ebeef0] bg-white text-slate-500 hover:bg-slate-50",
@@ -37,7 +37,7 @@ export function MonitoringTabContent({ stats, sentry, performance }: Props) {
 
   return (
     <>
-      <div className="mb-6 flex gap-3">
+      <div className="mb-6 flex flex-wrap gap-2 sm:gap-3">
         {tabBtn("stats", <BarChart2 className="h-4 w-4" strokeWidth={2} />, "통계")}
         {tabBtn("perf", <Zap className="h-4 w-4" strokeWidth={2} />, "성능")}
         {tabBtn(

@@ -155,8 +155,8 @@ export default function ProfanityForm({
 
         
         <div className="border-t border-[#ebeef0] pt-4">
-          <div className="mb-3 flex items-center justify-between">
-            <div>
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div className="min-w-0">
               <p className="text-[14px] font-semibold text-slate-800">영향받는 기존 게시물</p>
               <p className="mt-0.5 text-[12px] text-slate-400">
                 등록한 금칙어가 포함된 기존 게시물을 검색합니다.
@@ -165,7 +165,7 @@ export default function ProfanityForm({
             <button
               onClick={() => searchMutation.mutate(words)}
               disabled={words.length === 0 || searchMutation.isPending}
-              className="flex items-center gap-1.5 rounded-xl border border-[#ebeef0] px-4 py-2 text-[13px] font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+              className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl border border-[#ebeef0] px-4 py-2 text-[13px] font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-40"
             >
               {searchMutation.isPending ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" strokeWidth={2} />
