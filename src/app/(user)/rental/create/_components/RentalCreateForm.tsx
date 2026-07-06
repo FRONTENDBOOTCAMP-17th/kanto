@@ -250,6 +250,13 @@ export default function RentalCreateForm({
     if (!rentType || !roomType) return;
     if (!picked && !hasExistingLocation) return;
 
+    const profanityRes = await fetch(`/api/admin/profanity-rules/check?text=${encodeURIComponent([title, description].join(" "))}`).catch(() => null);
+    const profanityData = profanityRes ? await profanityRes.json().catch(() => null) : null;
+    if (profanityData?.blocked) {
+      showErrorToast("부적절한 텍스트가 포함되었습니다");
+      return;
+    }
+
     const urlCount = (description.match(/https?:\/\/[^\s]+/g) ?? []).length;
     if (urlCount > maxUrlsRef.current) {
       setUrlError(`게시물에 URL은 최대 ${maxUrlsRef.current}개까지 허용됩니다.`);
