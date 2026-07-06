@@ -638,6 +638,53 @@ USING (user_id = (SELECT auth.uid()))
 
 ---
 
+## 팀원 회고
+
+<table>
+  <tr>
+    <td align="center" width="180">
+      <img src="public/readme/profile-soyupark.png" width="120" height="120" style="border-radius:50%; object-fit:cover;" alt="박소유" /><br/>
+      <b>박소유</b><br/>
+      <sub>팀장 · @soyupark1997</sub>
+    </td>
+    <td>
+      <!-- 소유 회고 작성해주세요 -->
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="180">
+      <img src="public/readme/profile-dohyukkim.png" width="120" height="120" style="border-radius:50%; object-fit:cover;" alt="김도혁" /><br/>
+      <b>김도혁</b><br/>
+      <sub>@DoHyuk-Centric</sub>
+    </td>
+    <td>
+      <!-- 도혁 회고 작성해주세요 -->
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="180">
+      <img src="public/readme/profile-dongkeunlee.png" width="120" height="120" style="border-radius:50%; object-fit:cover;" alt="이동근" /><br/>
+      <b>이동근</b><br/>
+      <sub>@dongkeun99</sub>
+    </td>
+    <td>
+      <!-- 동근 회고 작성해주세요 -->
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="180">
+      <img src="public/readme/profile-taehyunglim.png" width="120" height="120" style="border-radius:50%; object-fit:cover;" alt="임태형" /><br/>
+      <b>임태형</b><br/>
+      <sub>@THLIMM</sub>
+    </td>
+    <td>
+      <!-- 태형 회고 작성해주세요 -->
+    </td>
+  </tr>
+</table>
+
+---
+
 ## 커밋 컨벤션
 
 커밋 메시지는 `<type>: <설명>` 형식으로 작성합니다.
