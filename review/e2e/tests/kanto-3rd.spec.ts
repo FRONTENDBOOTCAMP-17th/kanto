@@ -11,7 +11,7 @@ test("중고거래 목록 — 검색창 공동컴포넌트 렌더", async ({ pag
   await page.goto("/usedgoods");
   // SearchBar는 모바일/데스크톱 입력을 둘 다 렌더하므로(반응형) 보이는 것만 검사
   await expect(
-    page.getByPlaceholder("검색어를 입력해주세요").locator("visible=true"),
+    page.getByPlaceholder("Enter a search term").locator("visible=true"),
   ).toBeVisible();
   await page.screenshot({
     path: `${SHOT}/3rd-01-usedgoods-searchbar.png`,
@@ -22,7 +22,7 @@ test("중고거래 목록 — 검색창 공동컴포넌트 렌더", async ({ pag
 test("방렌트 목록 — 검색창 + 지역 드롭다운 렌더", async ({ page }) => {
   await page.goto("/rental");
   await expect(
-    page.getByPlaceholder("검색어를 입력해주세요").locator("visible=true"),
+    page.getByPlaceholder("Enter a search term").locator("visible=true"),
   ).toBeVisible();
   await page.screenshot({
     path: `${SHOT}/3rd-02-rental-searchbar.png`,

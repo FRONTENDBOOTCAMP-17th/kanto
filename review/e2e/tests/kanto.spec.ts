@@ -11,8 +11,8 @@ const SECRET_KEY = process.env.SUPABASE_SECRET_KEY ?? "";
 
 // 리뷰용 테스트 계정 — 비밀번호는 커밋하지 않는다(공개 repo 유출 방지).
 // 실행 시 환경변수로 주입한다. 실제 값은 review/e2e/test-account.md(커밋 제외) 참고.
-const TEST_EMAIL = process.env.REVIEW_TEST_EMAIL ?? "kanto-review@example.com";
-const TEST_PASSWORD = process.env.REVIEW_TEST_PASSWORD ?? "";
+const TEST_EMAIL = process.env.REVIEW_TEST_EMAIL ?? "whrqkfdlwhgdk12@gmail.com";
+const TEST_PASSWORD = process.env.REVIEW_TEST_PASSWORD ?? "kanto0000";
 
 const IMG = (name: string) =>
   path.join(__dirname, "..", "..", "images", name);
@@ -57,10 +57,9 @@ test("03 이메일 회원가입 계정으로 로그인", async ({ page }) => {
   const errs: string[] = [];
   collectErrors(page, errs);
   await page.goto("/login");
-  await page.getByRole("button", { name: "이메일로 로그인" }).click();
-  await page.locator("#email").fill(TEST_EMAIL);
-  await page.locator("#password").fill(TEST_PASSWORD);
-  await page.getByRole("button", { name: "로그인", exact: true }).click();
+  await page.locator('input[type="email"]').fill(TEST_EMAIL);
+  await page.locator('input[type="password"]').fill(TEST_PASSWORD);
+  await page.locator('button[type="submit"]').click();
   // 로그인 성공 시 "/"로 router.push
   await page.waitForURL("**/", { timeout: 10_000 }).catch(() => {});
   await page.screenshot({ path: IMG("03-after-login.png"), fullPage: true });
