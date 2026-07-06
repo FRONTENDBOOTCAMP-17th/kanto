@@ -1095,6 +1095,8 @@
       "back": "목록으로",
       "reportAria": "모임 신고",
       "report": "신고",
+      "shareAria": "모임 공유 링크 복사",
+      "share": "공유",
       "close": "닫기",
       "full": "정원 마감",
       "host": "모임 개설자",
@@ -1119,6 +1121,7 @@
     "toast": {
       "joined": "모임에 참여했습니다! 주최자에게 알림이 전송됩니다",
       "cancelled": "참여를 취소했습니다",
+      "urlCopied": "URL이 복사되었습니다.",
       "reentryForbidden": "재입장이 불가합니다.",
       "cancelAfterStart": "모임이 시작되어 취소할 수 없습니다.",
       "ended": "모임을 종료했습니다",

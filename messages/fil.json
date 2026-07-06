@@ -1095,6 +1095,8 @@
       "back": "Bumalik sa listahan",
       "reportAria": "I-report ang meetup",
       "report": "I-report",
+      "shareAria": "Kopyahin ang share link ng meetup",
+      "share": "I-share",
       "close": "Isara",
       "full": "Puno na",
       "host": "Host",
@@ -1119,6 +1121,7 @@
     "toast": {
       "joined": "Sumali ka na! Naabisuhan na ang host",
       "cancelled": "Nakansela ang pagsali",
+      "urlCopied": "Nakopya ang URL.",
       "reentryForbidden": "Hindi pinapayagan ang muling pagsali.",
       "cancelAfterStart": "Nagsimula na ang meetup, kaya hindi mo na ito makakansela.",
       "ended": "Natapos ang meetup",
