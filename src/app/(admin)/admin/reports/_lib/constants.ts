@@ -1,4 +1,4 @@
-import type { Sanction, Status } from "@/type/admin";
+import type { Status } from "@/type/admin";
 
 export const REASON_STYLE: Record<string, { fg: string; bg: string }> = {
   욕설: { fg: "#ea580c", bg: "#fff7ed" },

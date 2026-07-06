@@ -1,7 +1,7 @@
 "use client";
 
 import { lockScroll, unlockScroll } from "@/utils/lockScroll";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
@@ -36,12 +36,10 @@ export function FilterModal({
 }: FilterModalProps) {
   const tc = useTranslations("Common");
   const { updateParams } = useUrlParams();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
   const [draft, setDraft] = useState<Record<string, string>>(() => ({
     ...values,
   }));
-
-  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {

@@ -18,11 +18,17 @@ export function PopularJobsClient({ isSuperAdmin }: { isSuperAdmin: boolean }) {
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
   const [saving, setSaving] = useState<number | null>(null);
+  const [prevQuery, setPrevQuery] = useState(query);
+  const [prevIsSuperAdmin, setPrevIsSuperAdmin] = useState(isSuperAdmin);
+  if (prevQuery !== query || prevIsSuperAdmin !== isSuperAdmin) {
+    setPrevQuery(query);
+    setPrevIsSuperAdmin(isSuperAdmin);
+    if (isSuperAdmin) setRows(null);
+  }
 
   useEffect(() => {
     if (!isSuperAdmin) return;
     let cancelled = false;
-    setRows(null);
     const params = query ? `?search=${encodeURIComponent(query)}` : "";
     fetch(`/api/admin/popular-jobs${params}`)
       .then((res) => res.json())

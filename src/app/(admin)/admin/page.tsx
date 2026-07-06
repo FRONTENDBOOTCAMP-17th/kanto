@@ -22,7 +22,7 @@ export default async function DashboardPage() {
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
   const todayISO = todayStart.toISOString();
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 86400_000).toISOString();
+  const thirtyDaysAgo = new Date(new Date().getTime() - 30 * 86400_000).toISOString();
 
   const [
     usersRes,

@@ -31,6 +31,12 @@ export function NoticeBanner() {
   const [notice, setNotice] = useState<Notice | null>(null);
   const [dismissed, setDismissed] = useState(false);
   const [hideToday, setHideToday] = useState(false);
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
+    setDismissed(false);
+    setHideToday(false);
+  }
 
   useEffect(() => {
     fetch("/api/admin/notices")
@@ -46,11 +52,6 @@ export function NoticeBanner() {
   }, []);
 
   
-  useEffect(() => {
-    setDismissed(false);
-    setHideToday(false);
-  }, [pathname]);
-
   function handleDismiss() {
     if (hideToday && notice) hideNoticeToday(notice.id);
     setDismissed(true);

@@ -94,7 +94,9 @@ export default function Chatbot({ isOpen, onToggle, mobileHidden }: Props) {
 
   
   const handleCloseRef = useRef(handleClose);
-  handleCloseRef.current = handleClose;
+  useEffect(() => {
+    handleCloseRef.current = handleClose;
+  });
 
   
   useEffect(() => {
