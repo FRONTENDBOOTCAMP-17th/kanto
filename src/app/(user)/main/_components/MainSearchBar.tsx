@@ -1,5 +1,6 @@
 "use client";
 
+import { lockScroll, unlockScroll } from "@/utils/lockScroll";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -34,8 +35,8 @@ export default function MainSearchBar() {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = bottomSheetOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    bottomSheetOpen ? lockScroll() : unlockScroll();
+    return () => { unlockScroll(); };
   }, [bottomSheetOpen]);
 
   const handleSubmit = (e: { preventDefault(): void }) => {

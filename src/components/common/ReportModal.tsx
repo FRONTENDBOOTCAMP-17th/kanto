@@ -1,5 +1,6 @@
 "use client";
 
+import { lockScroll, unlockScroll } from "@/utils/lockScroll";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
@@ -64,7 +65,7 @@ export default function ReportModal({
   useEffect(() => {
     if (!isOpen || !userId) return;
 
-    document.body.style.overflow = "hidden";
+    lockScroll();
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
@@ -78,7 +79,7 @@ export default function ReportModal({
       onToast?.(alreadyText, "error", "x");
       onClose();
       return () => {
-        document.body.style.overflow = "";
+        unlockScroll();
         document.removeEventListener("keydown", onKeyDown);
       };
     }
@@ -98,7 +99,7 @@ export default function ReportModal({
       .catch(() => {});
 
     return () => {
-      document.body.style.overflow = "";
+      unlockScroll();
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [isOpen, onClose, postId, userId, targetType, initialReported, isReported, onToast, t]);

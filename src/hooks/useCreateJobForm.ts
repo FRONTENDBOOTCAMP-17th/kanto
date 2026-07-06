@@ -94,7 +94,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       return;
     }
     setStep(2);
-    window.scrollTo(0, 0);
+    document.getElementById("scroll-root")?.scrollTo(0, 0);
   };
 
   const handleSubmit = async () => {
@@ -288,6 +288,6 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     imageUpload,
     handleSubmit,
     handleBack: () => router.back(),
-    handlePrevStep: () => { setStep(1); window.scrollTo(0, 0); },
+    handlePrevStep: () => { setStep(1); document.getElementById("scroll-root")?.scrollTo(0, 0); },
   };
 }

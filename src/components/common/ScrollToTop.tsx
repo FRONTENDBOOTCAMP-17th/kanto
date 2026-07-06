@@ -5,6 +5,7 @@ import { ChevronUp, Plus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useScrollContainer } from "@/contexts/ScrollContext";
 
 export function ScrollToTop() {
   const t = useTranslations("Common");
@@ -13,18 +14,21 @@ export function ScrollToTop() {
   const path = usePathname();
   const { isLoggedIn } = useAuthStore();
   const { isSuspended, openModal } = useSuspended();
+  const scrollContainer = useScrollContainer();
 
   useEffect(() => {
+    const container = scrollContainer.current;
+    if (!container) return;
     const handleScroll = () => {
-      setIsVisible(window.scrollY > 240);
+      setIsVisible(container.scrollTop > 240);
     };
     handleScroll();
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [scrollContainer]);
 
   const handleScrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollContainer.current?.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handlePlus = () => {

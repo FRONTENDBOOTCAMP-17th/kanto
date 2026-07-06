@@ -1,5 +1,6 @@
 "use client";
 
+import { lockScroll, unlockScroll } from "@/utils/lockScroll";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
@@ -51,9 +52,9 @@ export function FilterModal({
   }, [onClose]);
 
   useEffect(() => {
-    document.body.style.overflow = "hidden";
+    lockScroll();
     return () => {
-      document.body.style.overflow = "";
+      unlockScroll();
     };
   }, []);
 

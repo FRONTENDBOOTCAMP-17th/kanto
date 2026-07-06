@@ -275,11 +275,12 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground overflow-x-hidden;
+    @apply bg-background text-foreground;
+    overflow: hidden;
   }
   html {
     @apply font-sans;
-    scrollbar-gutter: stable;
+    overflow: hidden;
   }
   button:not(:disabled),
   a {

@@ -78,7 +78,7 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
+      <body className="h-full overflow-hidden flex flex-col">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

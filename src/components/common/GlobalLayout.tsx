@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { ScrollContext } from "@/contexts/ScrollContext";
 import { Header } from "@/components/common/Header";
 import { Footer } from "@/components/common/Footer";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
@@ -26,6 +27,11 @@ const useIsoLayoutEffect =
 
 export function GlobalLayout({ children, initialUser, initialNotices }: Props) {
   const pathname = usePathname();
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo(0, 0);
+  }, [pathname]);
   
   
   const [botOpen, setBotOpen] = useState(false);
@@ -67,33 +73,39 @@ export function GlobalLayout({ children, initialUser, initialNotices }: Props) {
   const hideGlobalUI = isTerms || isLogin || isSignup || isAdmin;
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {!hideGlobalUI && <Header initialUser={initialUser} initialNotices={initialNotices} />}
-      {!hideGlobalUI && <div className="h-12 md:h-0" aria-hidden="true" />}
-      {!hideGlobalUI && <DeletionPendingBanner />}
-      {!hideGlobalUI && (
-        <div
-          className={`fixed z-50 flex flex-col items-end gap-2 ${hasStickyBar ? "bottom-20 right-4 md:bottom-6 md:right-6" : "bottom-6 right-6"} ${
-            goDetailOpen ? "hidden" : goListOpen ? "max-md:hidden" : ""
-          }`}
-        >
-          
-          {!isGo && <ScrollToTop />}
-          <Chatbot
-            isOpen={botOpen}
-            onToggle={() => {
-              const next = !botOpen;
-              setBotOpen(next);
-              if (next) setWidgetOpen(false); 
-            }}
-            mobileHidden={chatOpen}
-          />
-          <FloatingChatWidget initialUser={initialUser} />
-        </div>
-      )}
-      <SuspendedModal />
-      <main className="flex-1">{children}</main>
-      {!hideGlobalUI && !isGo && <Footer />}
-    </div>
+    <ScrollContext.Provider value={scrollRef}>
+      <div
+        ref={scrollRef}
+        id="scroll-root"
+        className={`h-full flex flex-col ${isGo ? "overflow-hidden" : "overflow-y-auto"}`}
+        style={isGo ? undefined : { scrollbarGutter: "stable" }}
+      >
+        {!hideGlobalUI && <Header initialUser={initialUser} initialNotices={initialNotices} />}
+        {!hideGlobalUI && <div className="h-12 md:h-0" aria-hidden="true" />}
+        {!hideGlobalUI && <DeletionPendingBanner />}
+        {!hideGlobalUI && (
+          <div
+            className={`fixed z-50 flex flex-col items-end gap-2 ${hasStickyBar ? "bottom-20 right-4 md:bottom-6 md:right-6" : "bottom-6 right-6"} ${
+              goDetailOpen ? "hidden" : goListOpen ? "max-md:hidden" : ""
+            }`}
+          >
+            {!isGo && <ScrollToTop />}
+            <Chatbot
+              isOpen={botOpen}
+              onToggle={() => {
+                const next = !botOpen;
+                setBotOpen(next);
+                if (next) setWidgetOpen(false);
+              }}
+              mobileHidden={chatOpen}
+            />
+            <FloatingChatWidget initialUser={initialUser} />
+          </div>
+        )}
+        <SuspendedModal />
+        <main className="flex-1">{children}</main>
+        {!hideGlobalUI && !isGo && <Footer />}
+      </div>
+    </ScrollContext.Provider>
   );
 }

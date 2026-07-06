@@ -1,5 +1,6 @@
 "use client";
 
+import { lockScroll, unlockScroll } from "@/utils/lockScroll";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
@@ -150,8 +151,8 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
+    lockScroll();
+    return () => { unlockScroll(); };
   }, []);
 
   useEffect(() => {

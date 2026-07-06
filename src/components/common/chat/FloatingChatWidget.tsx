@@ -1,5 +1,6 @@
 "use client";
 
+import { lockScroll, unlockScroll } from "@/utils/lockScroll";
 import { useCallback, useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
@@ -112,8 +113,8 @@ export default function FloatingChatWidget({
 
   useEffect(() => {
     if (isOpen && window.innerWidth < 768) {
-      document.body.style.overflow = "hidden";
-      return () => { document.body.style.overflow = ""; };
+      lockScroll();
+      return () => { unlockScroll(); };
     }
   }, [isOpen]);
 

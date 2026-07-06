@@ -117,10 +117,8 @@ export default async function JobDetailPage({
       </div>
 
       {images.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-4 md:gap-8 mt-4">
-          <div className="aspect-4/3 w-full">
-            <ImageCarousel images={images} />
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mt-4">
+          <ImageCarousel images={images} />
           <div className="flex flex-col gap-6 pt-4 md:pt-0">
             <JobTitle job={job} userId={userId} initialLiked={initialLiked} initialReported={initialReported} />
             <hr className="border-gray-200" />
