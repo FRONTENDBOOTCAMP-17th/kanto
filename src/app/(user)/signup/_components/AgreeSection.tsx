@@ -3,10 +3,13 @@
 import { lockScroll, unlockScroll } from "@/utils/lockScroll";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TermsModal } from "./TermsModal";
-
-type ModalType = "terms" | "privacy" | "age";
+import {
+  type ModalType,
+  useSignupTerms,
+} from "../_hooks/useSignupTerms";
 
 type AgreedState = {
   terms: boolean;
@@ -33,6 +36,8 @@ interface AgreeSectionProps {
 
 export function AgreeSection({ onRequiredChange, onAgreedChange }: AgreeSectionProps) {
   const t = useTranslations("Signup.agree");
+  const locale = useLocale();
+  const { resources, retry } = useSignupTerms(locale);
   const [agreed, setAgreed] = useState<AgreedState>({
     terms: false,
     privacy: false,
@@ -146,6 +151,8 @@ export function AgreeSection({ onRequiredChange, onAgreedChange }: AgreeSectionP
         <TermsModal
           key={modalType}
           modalType={modalType}
+          resource={resources[modalType]}
+          onRetry={() => retry(modalType)}
           onClose={handleModalClose}
           onAgree={handleModalAgree}
         />
