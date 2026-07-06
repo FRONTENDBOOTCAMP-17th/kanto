@@ -2,9 +2,12 @@
 
 > 필리핀 생활 필수 플랫폼 — 중고거래·구인구직·부동산를 한 곳에서
 
-## 🔗 라이브 데모
+## 🔗 링크
 
-**[https://kanto-iota.vercel.app](https://kanto-iota.vercel.app)**
+| 항목 | URL |
+| ---- | --- |
+| 라이브 데모 | [https://kanto-iota.vercel.app](https://kanto-iota.vercel.app) |
+| 프로젝트 노션 | [Notion 기획 문서](https://app.notion.com/p/1-it-s-real-36e73873401a8099b037f045e2d2c9eb) |
 
 > 테스트 계정 — ID: `asdf1234@naver.com` / PW: `asdf1234`
 
@@ -26,6 +29,16 @@
 
 ---
 
+## 개발 기간 및 팀원
+
+| 항목 | 내용 |
+| ---- | ---- |
+| 개발 기간 | 2026.05.29 ~ 2026.07.06 (약 6주) |
+| 팀 구성 | 프론트엔드 4인 |
+| 배포 환경 | Vercel (main 브랜치 자동 배포) |
+
+---
+
 ## 프로젝트 소개
 
 프로젝트 Kanto는 필리핀에서 "우리 동네"라는 뜻을 가지고 있습니다.
@@ -33,6 +46,74 @@
 필리핀 생활에 필요한 거래, 일자리, 주거 정보를 한곳에서 찾고 관리할 수 있는 신뢰도 높은 플랫폼을 목표로 시작했습니다.
 
 구인구직, 부동산, 중고거래 정보는 여러 채널에 흩어져 있어 탐색과 비교가 어렵습니다. Kanto는 이 흐름을 체계적인 서비스로 묶어 사용자가 더 빠르고 안전하게 생활 정보를 찾도록 돕습니다.
+
+## 중고거래 (Used Goods)
+
+필리핀 현지에서 불필요한 물건을 팔거나 필요한 물건을 찾을 수 있는 중고 직거래 마켓입니다.
+
+| 기능           | 설명                                                                                                    |
+| -------------- | ------------------------------------------------------------------------------------------------------- |
+| 상품 등록      | 제목·가격·카테고리·상태·위치·설명·이미지 최대 10장 업로드, AI 이미지 자동 검수                         |
+| 카테고리 필터  | 가구 / 의류 / 전자기기 / 악세서리 / 유아용품 / 자동차 / 기타 — URL 파라미터 기반 필터 유지             |
+| 상품 상태 표시 | 미개봉 / 가벼운 사용감 / 사용감 있음 / 기타 배지로 상태 명시                                           |
+| 예약 · 판매완료 | 예약 중 배지 실시간 표시, 판매완료 시 상품 오버레이 처리                                                |
+| 1:1 채팅       | 상세 페이지에서 바로 판매자에게 채팅 개시, 차단 사용자 채팅 시작 방지                                  |
+| 안전결제       | Xendit 에스크로 인보이스 발행 → 구매자 결제 → 판매자 수령 확인 3단계 거래 흐름                         |
+| 위치 기반 탐색 | 바랑가이·도시 단위 위치 표시, 근사 위치 지도 핀 제공                                                   |
+| 관련 매물 추천 | 상세 페이지 하단에 같은 카테고리 관련 상품 캐러셀 자동 노출                                             |
+| 찜 · 공유 · 신고 | 로그인 없이 공유, 로그인 시 찜 토글·신고 접수                                                         |
+
+---
+
+## 구인구직 (Job)
+
+필리핀 현지 한인 커뮤니티를 위한 구인·구직 게시판입니다. 채용 공고를 올리거나 원하는 조건의 일자리를 검색할 수 있습니다.
+
+| 기능           | 설명                                                                                                          |
+| -------------- | ------------------------------------------------------------------------------------------------------------- |
+| 공고 등록      | 2단계 폼으로 구성 — 1단계: 직무 조건, 2단계: 회사 정보                                                       |
+| 고용 형태      | 정규직 / 계약직 / 파트타임 선택                                                                               |
+| 급여 설정      | 시급 · 주급 · 월급 유형 선택, 금액 입력 또는 협의 표시                                                       |
+| 근무 조건      | 근무 요일(평일·주말·매일 프리셋 또는 개별 선택), 출퇴근 시간 설정, 시간 협의 가능 체크박스                   |
+| 우대 조건 태그 | 어학(한/영/따갈로그/중/일/통역), 체류(9G비자·영주권·배우자비자 등), 경력, 직군, 기타 — 다중 태그 선택        |
+| 회사 정보      | 회사 로고·소개·업종·설립연도·직원수·웹사이트, Google Maps 주소 자동완성으로 회사 위치 지도 핀 설정           |
+| 담당자 연락처  | 담당자 이름·직함·전화번호·이메일 등록, 지원자가 상세 페이지에서 바로 확인                                     |
+| 마감일 관리    | 공고 마감일 설정, D-N / D-day / 마감 배지로 목록에서 시각적으로 구분                                         |
+| 검색 · 필터    | 키워드 검색, 고용 형태·위치 필터, URL 파라미터 기반으로 공유 가능                                             |
+
+---
+
+## 부동산 (Rental)
+
+필리핀 현지 숙소·방을 구하거나 임대 매물을 등록하는 부동산 게시판입니다.
+
+| 기능            | 설명                                                                                                              |
+| --------------- | ----------------------------------------------------------------------------------------------------------------- |
+| 매물 등록       | 제목·가격·보증금·방 타입·최대 입주 인원·설명·이미지 업로드, AI 이미지 자동 검수                                  |
+| 임대 유형       | 월세 / 매매 선택                                                                                                  |
+| 방 타입         | 아파트 / 스튜디오 / 원룸 / 투룸 선택                                                                             |
+| 편의시설 태그   | 주차·엘리베이터·에어컨·세탁기·냉장고·반려동물 허용·금고·TV·인터넷·수영장·헬스장·보안요원 — 12종 다중 선택        |
+| 위치 설정       | Google Maps 장소 자동완성으로 정확한 주소 입력, 바랑가이·도시 단위 저장                                          |
+| 이미지 캐러셀   | 상세 페이지에서 등록된 이미지 슬라이드 뷰어 제공                                                                 |
+| 판매완료 처리   | 거래 완료 시 매물 오버레이로 숨김 처리, 삭제된 매물도 안전하게 숨김                                              |
+| 관련 매물 추천  | 상세 페이지 하단에 같은 지역·방 타입 관련 매물 캐러셀 자동 노출                                                  |
+| 찜 · 공유 · 신고 | 로그인 없이 공유, 로그인 시 찜 토글·신고 접수                                                                   |
+
+---
+
+## 칸토고 (Kanto Go)
+
+**칸토고**는 Kanto의 지도 기반 번개모임 서비스입니다.
+
+필리핀 현지에서 빠르게 사람을 모아 소규모 활동을 함께하고 싶을 때, 칸토고를 통해 지도에 모임 핀을 꽂고 주변 사람들을 즉시 초대할 수 있습니다.
+
+| 기능          | 설명                                                                                    |
+| ------------- | --------------------------------------------------------------------------------------- |
+| 모임 생성     | Google Maps 위에서 원하는 장소를 선택해 번개모임을 개설, 주제·인원·시간 설정           |
+| 지도 탐색     | 지도 위 핀과 클러스터로 주변 활성 모임을 한눈에 확인, 토픽 칩으로 빠른 필터링          |
+| 실시간 채팅   | 참여자들 간 Supabase Realtime 기반 그룹 채팅, 신규 참여 시 즉시 채팅방 진입            |
+| 참여 / 탈퇴   | 모임 상세 패널에서 원클릭 참여·탈퇴, 마감 인원 도달 시 자동 입장 차단                  |
+| 신고 / 차단   | 모임 및 참여자 신고·차단으로 안전한 모임 환경 유지                                     |
 
 ## 대표 색상
 
@@ -117,6 +198,28 @@ Teal 색상은 한때 필리핀의 바다 색상을 본 뒤 힐링을 받았던 
 
 ---
 
+## 관리자 대시보드 (Admin)
+
+`super_admin` 권한을 가진 운영자만 접근 가능한 전용 관리 시스템입니다.
+
+| 페이지            | 경로                              | 설명                                                                                               |
+| ----------------- | --------------------------------- | -------------------------------------------------------------------------------------------------- |
+| 대시보드          | `/admin`                          | KPI 카드(총 회원·활성 사용자·신규 가입·총 게시글·총 거래금액), 트렌드 차트, 신고 현황 요약        |
+| 글 관리           | `/admin/posts`                    | 전 카테고리 게시글 목록, 소프트 딜리트, 게시글 상세 드로어, 신고 연결 처리, 일괄 삭제             |
+| 유저 관리         | `/admin/users`                    | 회원 목록·검색, 7일/30일/영구 정지 개별·일괄 제재, 정지 해제, 회원 상세 드로어(게시글·신고 이력) |
+| 신고 내역         | `/admin/reports`                  | 게시글·사용자 신고 목록, 신고 유형별 분류, 처리 상태 관리, 미처리 신고 배지 실시간 표시           |
+| 결제 관리         | `/admin/payments`                 | 결제내역 전체 조회, 결제 상태(대기·완료·환불) 필터                                                |
+| 번개모임 관리     | `/admin/go`                       | 칸토고 모임 현황 조회 및 관리                                                                      |
+| 채팅 기록         | `/admin/chats`                    | 채팅방 목록 검색, 메시지 내용 열람                                                                 |
+| 운영 관리         | `/admin/operation`                | 하위 메뉴 모음                                                                                     |
+| ㄴ 공지사항       | `/admin/operation/notices`        | 공지 등록·수정·삭제, 헤더 미리보기, 한/영/필 자동 번역 저장                                       |
+| ㄴ 금칙어 설정    | `/admin/operation/content`        | 금칙어 룰 등록·수정, 기존 게시물에서 금칙어 포함 게시글 검색                                      |
+| ㄴ 스팸 설정      | `/admin/operation/content`        | 스팸 탐지 설정, 제재 템플릿 관리                                                                   |
+| ㄴ 인기 공고 설정 | `/admin/operation/popular-jobs`   | 메인 페이지에 노출할 인기 구인 공고 수동 지정                                                      |
+| ㄴ 권한 관리      | `/admin/operation/permissions`    | 관리자 계정 생성·목록 조회, 팀별 권한 체계 관리                                                   |
+| ㄴ 감사 로그      | `/admin/operation/audit-logs`     | 관리자 액션 전체 이력 조회, 액션 유형·날짜 필터, 상세 드로어                                      |
+| ㄴ 모니터링       | `/admin/operation/monitoring`     | 서비스 통계·성능·에러 탭으로 구성된 운영 모니터링 대시보드                                        |
+
 ## 기술 스택
 
 ### Frontend
@@ -143,11 +246,161 @@ Teal 색상은 한때 필리핀의 바다 색상을 본 뒤 힐링을 받았던 
 
 ---
 
+## 시스템 아키텍처
+
+```mermaid
+graph TD
+    subgraph Client["클라이언트 (Next.js App Router)"]
+        UI["UI 컴포넌트\n(React 19 + Tailwind)"]
+        Store["Zustand Store\n(인증 · 채팅 상태)"]
+    end
+
+    subgraph Backend["백엔드 인프라"]
+        Supabase["Supabase\nPostgreSQL · Auth · Realtime · Storage"]
+        Redis["Upstash Redis\n캐시 · Rate Limit · 도배방지"]
+    end
+
+    subgraph External["외부 서비스"]
+        Xendit["Xendit\n필리핀 결제 에스크로"]
+        GMaps["Google Maps API\n주소 자동완성 · 지도"]
+        Notion["Notion API\n이용약관 CMS"]
+        Gmail["Gmail / Nodemailer\n이메일 인증"]
+        AI["AI 모델\nGemini → Groq → Cerebras (폴백)"]
+        Sentry["Sentry\n에러 모니터링"]
+    end
+
+    UI <-->|"DB CRUD / Auth / Realtime 구독"| Supabase
+    UI <-->|"Rate Limit / 캐시"| Redis
+    UI -->|"인보이스 발행 · 정산"| Xendit
+    UI -->|"지도 렌더링 · 장소 검색"| GMaps
+    UI -->|"약관 Fetch (5분 캐시)"| Notion
+    UI -->|"이메일 발송"| Gmail
+    UI -->|"챗봇 · 이미지 검수"| AI
+    UI -->|"에러 리포트"| Sentry
+```
+
+---
+
+## ERD
+
+```mermaid
+erDiagram
+    users ||--o{ posts : "작성"
+    users }o--o{ chats : "참여"
+    users ||--o{ user_sanctions : "제재"
+    users ||--o{ common_notifications : "수신"
+    users ||--o{ common_reports : "신고"
+
+    posts ||--o| used_goods : "중고거래"
+    posts ||--o| jobs : "구인구직"
+    posts ||--o| rentals : "부동산"
+    posts ||--o{ common_likes : "찜"
+
+    chats ||--o{ messages : "메시지"
+    chats ||--o{ transactions : "거래"
+    transactions }o--|| users : "buyer"
+    transactions }o--|| users : "seller"
+
+    kanto_go_meetups ||--o{ meetup_participants : "참여자"
+    kanto_go_meetups ||--|| meetup_chat_rooms : "채팅방"
+    meetup_chat_rooms ||--o{ meetup_chat_messages : "메시지"
+
+    users {
+        int id PK
+        uuid auth_id
+        string name
+        string role
+        string avatar_url
+    }
+    posts {
+        int id PK
+        int user_id FK
+        string title
+        string category
+        bool is_sold
+        bool is_popular
+        string id_token
+    }
+    used_goods {
+        int id PK
+        int post_id FK
+        int price
+        string category
+        string[] images
+        string location_type
+        float location_lat
+        float location_lng
+    }
+    jobs {
+        int id PK
+        int post_id FK
+        string employee_type
+        int salary
+        string salary_type
+        string work_days
+        string deadline
+        string company_name
+        float company_lat
+        float company_lng
+    }
+    rentals {
+        int id PK
+        int post_id FK
+        int price
+        int deposit
+        string rent_type
+        string room_type
+        string[] amenities
+        string[] images
+    }
+    chats {
+        int id PK
+        int user_id_1 FK
+        int user_id_2 FK
+        int post_id FK
+        int user_id_1_unread
+        int user_id_2_unread
+    }
+    messages {
+        int id PK
+        int chat_id FK
+        int sender_id FK
+        string content
+        string type
+        int transaction_id FK
+        bool is_read
+    }
+    transactions {
+        int id PK
+        int chat_id FK
+        int post_id FK
+        int buyer_id FK
+        int seller_id FK
+        int amount
+        string status
+        string xendit_invoice_id
+        string post_title
+    }
+    kanto_go_meetups {
+        int id PK
+        int host_id FK
+        string title
+        float location_lat
+        float location_lng
+        int capacity
+        string status
+        string topic
+    }
+```
+
+---
+
 ## 주요 기능
 
 - **중고거래**: 상품 등록·검색·카테고리 필터, 이미지 업로드, 안전결제(에스크로)
 - **구인구직**: 채용 공고 등록·검색, 직종·지역 필터, 지원자 연락처 제공
 - **부동산**: 숙소·방 등록, 방 타입·편의시설·위치 기반 검색
+- **칸토고 (번개모임)**: Google Maps 기반 지도에서 번개모임 생성·참여, 실시간 그룹 채팅, 토픽 필터·클러스터 핀
 - **실시간 채팅**: 판매자-구매자 간 1:1 채팅, 채팅 내 결제 요청
 - **안전결제**: Xendit 기반 인보이스 발행, 거래 상태 추적
 - **리뷰 시스템**: 거래 완료 후 상대방 평가
@@ -175,6 +428,7 @@ Teal 색상은 한때 필리핀의 바다 색상을 본 뒤 힐링을 받았던 
 | `/job/[id]`       | 구인공고 상세                            |
 | `/rental`         | 부동산 목록                              |
 | `/rental/[id]`    | 방 상세                                  |
+| `/go`             | 칸토고 — 지도 기반 번개모임 목록·생성   |
 | `/payment/return` | 결제 완료/실패                           |
 | `/terms/[type]`   | 이용약관·개인정보처리방침                |
 
@@ -182,11 +436,14 @@ Teal 색상은 한때 필리핀의 바다 색상을 본 뒤 힐링을 받았던 
 
 | 경로             | 설명                       |
 | ---------------- | -------------------------- |
-| `/admin`         | 대시보드 (통계, 신고 현황) |
-| `/admin/users`   | 사용자 관리                |
-| `/admin/posts`   | 게시글 관리                |
-| `/admin/chats`   | 채팅 모니터링              |
-| `/admin/reports` | 신고 처리                  |
+| `/admin`                           | 대시보드 (KPI, 트렌드, 신고 현황)  |
+| `/admin/users`                     | 사용자 관리·제재               |
+| `/admin/posts`                     | 게시글 관리                    |
+| `/admin/reports`                   | 신고 처리                      |
+| `/admin/payments`                  | 결제 내역 관리                 |
+| `/admin/go`                        | 번개모임 관리                  |
+| `/admin/chats`                     | 채팅 기록 열람                 |
+| `/admin/operation`                 | 운영 관리 (공지·금칙어·권한·로그·모니터링) |
 
 ## 프로젝트 구조
 
@@ -265,6 +522,121 @@ npm run build
 # Supabase 타입 자동 생성
 npm run gen:types
 ```
+
+## 트러블슈팅
+
+### 1. 미읽음 카운트가 증가하지 않는 버그
+
+**문제** `chats` 테이블의 `unread` 컬럼 기본값이 `NULL`이었고, PostgreSQL에서 `NULL + 1 = NULL`이므로 미읽음 배지가 전혀 올라가지 않았다.
+
+**해결**
+- 컬럼 기본값을 `0`으로 마이그레이션
+- `increment_unread()` DB 함수에 `COALESCE(unread, 0) + 1` 처리 추가
+
+**결과** 플로팅 채팅 위젯의 미읽음 배지 정상 동작
+
+---
+
+### 2. 삭제된 게시글과 연결된 거래내역 깨짐
+
+**문제** 거래가 진행 중인 게시글을 삭제하면 FK 제약(`NO ACTION`)으로 삭제 자체가 불가능하고, 삭제되더라도 거래내역에서 제목이 사라지는 문제가 있었다.
+
+**해결**
+- `transactions` 테이블에 `post_title` 스냅샷 컬럼 추가 (게시글 삭제 후에도 제목 표시 유지)
+- FK를 `SET NULL`로 변경하여 게시글 삭제 허용
+
+**결과** 게시글이 삭제된 이후에도 결제 내역에서 거래 제목 정상 표시
+
+---
+
+### 3. RLS 정책으로 인한 쿼리 성능 저하
+
+**문제** RLS 정책에서 `auth.uid()`를 직접 호출하면 행마다 함수를 재평가하여 대량 조회 시 쿼리 속도가 급감했다.
+
+**해결**
+```sql
+-- Before
+USING (user_id = auth.uid())
+
+-- After
+USING (user_id = (SELECT auth.uid()))
+```
+서브쿼리로 감싸 실행 계획에서 InitPlan으로 한 번만 평가되도록 수정
+
+**결과** 목록 페이지 쿼리 응답 시간 단축
+
+---
+
+### 4. Supabase Storage 이미지 트래픽 급증
+
+**문제** 이미지를 원본 그대로 업로드하고 렌더링하여 Storage 트래픽이 과도하게 발생했다.
+
+**해결**
+- 업로드 전 클라이언트에서 Canvas API로 최대 1600px 다운스케일 후 WebP 변환 (`optimizeImage.ts`)
+- `next.config.ts`에서 `formats: ["image/avif", "image/webp"]`, `minimumCacheTTL: 2592000`(30일) 설정
+
+**결과** 이미지 파일 크기 및 Storage 트래픽 대폭 감소
+
+---
+
+### 5. Google Maps APIProvider 중복 로드 에러
+
+**문제** 여러 컴포넌트에서 `APIProvider`를 각자 import하면서 `libraries` 파라미터 불일치로 콘솔 에러가 발생했다.
+
+**해결** `APIProvider`를 앱 최상단 레이아웃에 싱글턴으로 위치시키고 하위 컴포넌트에서는 `useMap()` 훅으로만 접근
+
+**결과** 중복 로드 에러 제거, 지도 관련 네트워크 요청 1회로 통일
+
+---
+
+### 6. 결제 중복 요청 방지
+
+**문제** 네트워크 지연 상황에서 사용자가 결제 버튼을 여러 번 클릭하거나, 수령 확인과 결제 요청이 동시에 들어오는 경우 중복 인보이스가 생성될 수 있었다.
+
+**해결**
+- 버튼 클릭 즉시 로딩 상태로 비활성화, 처리 완료 전 재클릭 차단
+- Server Action에서 `transactions` 테이블의 상태를 트랜잭션으로 확인 후 처리
+- 판매자 계좌 미등록 시 결제 버튼 자체를 노출하지 않는 사전 차단
+
+**결과** 중복 인보이스 생성 방지, 안전한 에스크로 흐름 보장
+
+---
+
+## 성능 최적화
+
+### 이미지 최적화
+
+| 항목 | 내용 |
+| ---- | ---- |
+| 업로드 전 처리 | Canvas API로 최대 1600px 리사이즈 후 WebP 변환 (품질 0.8), 실패 시 JPEG 폴백 |
+| Next.js 포맷 | `image/avif`, `image/webp` 순서로 자동 변환 |
+| 캐시 TTL | `minimumCacheTTL: 2592000` (30일) — 기본값 60초 대비 대폭 증가 |
+| LCP 우선 | 목록 상위 4개 이미지에 `priority` 속성 부여 |
+
+### 번들 최적화
+
+| 항목 | 내용 |
+| ---- | ---- |
+| React Compiler | `reactCompiler: true` 활성화 — 불필요한 리렌더링 자동 최적화 |
+| Dynamic Import | `CompanyLocationMap`, `ReactMarkdown`, AI 챗봇 등 지연 로딩으로 초기 번들 축소 |
+| Sentry | `removeDebugLogging: true`로 프로덕션 번들에서 디버그 로그 제거 |
+
+### DB 쿼리 최적화
+
+| 항목 | 내용 |
+| ---- | ---- |
+| RLS InitPlan | `auth.uid()` → `(SELECT auth.uid())` 서브쿼리로 행별 재평가 방지 |
+| 쿼리 병렬화 | 상세 페이지에서 관련 매물·판매자 정보·찜 상태를 `Promise.all`로 동시 조회 |
+| 페이지네이션 | 목록 페이지 전체 DB 페이지네이션 적용으로 대량 데이터 조회 비용 감소 |
+
+### 캐싱 전략
+
+| 항목 | 내용 |
+| ---- | ---- |
+| 이용약관 | `Cache-Control: public, max-age=300, s-maxage=3600, stale-while-revalidate=86400` |
+| Redis 캐시 | 로그인 시도·게시글 도배·AI 챗봇 Rate Limit을 Upstash Redis 슬라이딩 윈도우로 처리 |
+
+---
 
 ## 커밋 컨벤션
 
