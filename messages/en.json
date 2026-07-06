@@ -994,6 +994,7 @@
       },
       "loading": "Loading...",
       "loadError": "Unable to load content. Please try again later.",
+      "retry": "Try again",
       "cancel": "Cancel",
       "agree": "Agree",
       "readToEnd": "Please read to the end",

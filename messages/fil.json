@@ -994,6 +994,7 @@
       },
       "loading": "Naglo-load...",
       "loadError": "Hindi ma-load ang nilalaman. Pakisubukan muli mamaya.",
+      "retry": "Subukan muli",
       "cancel": "Kanselahin",
       "agree": "Sumang-ayon",
       "readToEnd": "Pakibasa hanggang dulo",
