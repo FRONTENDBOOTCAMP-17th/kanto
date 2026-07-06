@@ -383,8 +383,7 @@ export async function adminGetMeetups(): Promise<AdminMeetup[]> {
       posts!inner ( title, user_id, status, created_at, users!posts_user_id_fkey ( name ) ),
       meetup_participants ( id, user_id, status, users ( name ) )
     `,
-    )
-    .order("start_at", { ascending: false });
+    );
 
   if (error) throw error;
 
@@ -406,7 +405,7 @@ export async function adminGetMeetups(): Promise<AdminMeetup[]> {
 
   const now = new Date();
 
-  return rows.map((row) => {
+  const meetups = rows.map((row) => {
     const startAt = new Date(row.start_at);
     const endAt = new Date(row.end_at);
     let status: "active" | "upcoming" | "ended" = "upcoming";
@@ -443,6 +442,8 @@ export async function adminGetMeetups(): Promise<AdminMeetup[]> {
       created_at: row.posts.created_at,
     };
   });
+
+  return meetups.sort((a, b) => b.created_at.localeCompare(a.created_at));
 }
 
 export async function adminForceEndMeetup(postId: number): Promise<void> {
