@@ -10,7 +10,8 @@ export function ImageWithFallback({
   onError,
   ...rest
 }: ImageProps) {
-  const [imgSrc, setImgSrc] = useState(src);
+  const [failedSrc, setFailedSrc] = useState<ImageProps["src"] | null>(null);
+  const imgSrc = failedSrc === src ? "/fallback-image.svg" : src;
 
   return (
     <Image
@@ -18,7 +19,7 @@ export function ImageWithFallback({
       src={imgSrc}
       alt={alt}
       onError={(e) => {
-        setImgSrc("/fallback-image.svg");
+        setFailedSrc(src);
         onError?.(e);
       }}
     />

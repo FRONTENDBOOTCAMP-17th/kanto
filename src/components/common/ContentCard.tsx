@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useMemo, useState, type TouchEvent } from "react";
 import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
 import { MapPin, ImageIcon, ChevronLeft, ChevronRight } from "lucide-react";
@@ -57,6 +57,24 @@ export function ContentCard({
   const [count, setCount] = useState(likeCount);
   const hasImages = images.length > 0;
   const hasCarousel = images.length > 1;
+  const [shouldPreloadAdjacent, setShouldPreloadAdjacent] = useState(priority);
+  const adjacentIndexes = useMemo(() => {
+    if (!hasCarousel || !shouldPreloadAdjacent) return [];
+    const prev = (currentIndex - 1 + images.length) % images.length;
+    const next = (currentIndex + 1) % images.length;
+    return Array.from(new Set([prev, next])).filter((idx) => idx !== currentIndex);
+  }, [currentIndex, hasCarousel, images.length, shouldPreloadAdjacent]);
+
+  const warmAdjacentImages = () => setShouldPreloadAdjacent(true);
+  const carouselHandlers = hasCarousel
+    ? {
+        ...dragHandlers,
+        onTouchStart: (e: TouchEvent) => {
+          warmAdjacentImages();
+          dragHandlers.onTouchStart(e);
+        },
+      }
+    : {};
 
   return (
     <div className="relative h-full">
@@ -75,10 +93,25 @@ export function ContentCard({
                 ? "w-24 h-24 self-center rounded-lg md:w-full md:h-auto md:self-stretch md:aspect-square md:rounded-none"
                 : "aspect-square"
             }`}
-            {...(hasCarousel ? dragHandlers : {})}
+            onMouseEnter={warmAdjacentImages}
+            onFocus={warmAdjacentImages}
+            {...carouselHandlers}
           >
             {hasImages ? (
               <>
+                {adjacentIndexes.map((idx) => (
+                  <ImageWithFallback
+                    key={`preload-${idx}`}
+                    src={images[idx]}
+                    alt=""
+                    fill
+                    sizes="(max-width: 768px) 100vw, 25vw"
+                    className="pointer-events-none invisible object-cover"
+                    draggable={false}
+                    loading="eager"
+                    aria-hidden
+                  />
+                ))}
                 {prevIndex !== null && (
                   <div
                     className={`absolute inset-0 ${
@@ -93,6 +126,7 @@ export function ContentCard({
                       sizes="(max-width: 768px) 100vw, 25vw"
                       className="object-cover"
                       draggable={false}
+                      loading="eager"
                     />
                   </div>
                 )}
@@ -111,6 +145,8 @@ export function ContentCard({
                     alt={`${title} ${currentIndex + 1}`}
                     fill
                     sizes="(max-width: 768px) 100vw, 25vw"
+                    priority={priority && currentIndex === 0}
+                    loading={priority && currentIndex === 0 ? undefined : "eager"}
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                     draggable={false}
                   />
