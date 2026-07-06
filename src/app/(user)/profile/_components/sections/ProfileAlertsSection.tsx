@@ -7,7 +7,6 @@ import { useAlertSettings, CATEGORIES, MAX_KEYWORDS, type AlertSettings } from "
 
 const ALERT_ITEMS = [
   { key: "chat", field: "alert_chat" as const },
-  { key: "comment", field: "alert_comment" as const },
   { key: "post", field: "alert_post" as const },
 ];
 
