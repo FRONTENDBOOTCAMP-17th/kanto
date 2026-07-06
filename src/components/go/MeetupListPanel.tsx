@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { X, Search, MapPin, Users, Clock, Plus } from "lucide-react";
 import { TOPIC_META } from "@/constants/meetupTopics";
@@ -40,11 +40,12 @@ export function MeetupListPanel({
   const [snapClosing, setSnapClosing] = useState(false);
   const touchStartY = useRef<number | null>(null);
   const dragOffsetRef = useRef(0);
-
-  useEffect(() => {
+  const [prevMode, setPrevMode] = useState(mode);
+  if (prevMode !== mode) {
+    setPrevMode(mode);
     setQuery("");
     setMineTab("hosted");
-  }, [mode]);
+  }
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartY.current = e.touches[0].clientY;

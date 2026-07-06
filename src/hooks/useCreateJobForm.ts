@@ -64,6 +64,14 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   const [companyLogoFile, setCompanyLogoFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [urlError, setUrlError] = useState("");
+  const [showProfanityToast, setShowProfanityToast] = useState(false);
+  const profanityToastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const triggerProfanityToast = () => {
+    if (profanityToastTimerRef.current) clearTimeout(profanityToastTimerRef.current);
+    setShowProfanityToast(true);
+    profanityToastTimerRef.current = setTimeout(() => setShowProfanityToast(false), 3000);
+  };
   const imageUpload = useImageUpload(initialData?.images as string[] ?? []);
   const maxUrlsRef = useRef(3);
 
@@ -88,9 +96,16 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     companyName.trim() !== "" &&
     companyIntro.trim() !== "";
 
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
     if (!isTimeNegotiable && (!workHoursStart || !workHoursEnd)) {
       alert("근무 시간을 입력하거나 시간 협의를 선택해주세요.");
+      return;
+    }
+    const checkText = [title, mainTask].join(" ");
+    const res = await fetch(`/api/admin/profanity-rules/check?text=${encodeURIComponent(checkText)}`).catch(() => null);
+    const data = res ? await res.json().catch(() => null) : null;
+    if (data?.blocked) {
+      triggerProfanityToast();
       return;
     }
     setStep(2);
@@ -111,7 +126,15 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       return;
     }
 
-    const checkText = [mainTask, companyIntro].join(" ");
+    const checkText = [title, mainTask, companyName, companyIntro].join(" ");
+
+    const profanityRes = await fetch(`/api/admin/profanity-rules/check?text=${encodeURIComponent(checkText)}`).catch(() => null);
+    const profanityData = profanityRes ? await profanityRes.json().catch(() => null) : null;
+    if (profanityData?.blocked) {
+      triggerProfanityToast();
+      return;
+    }
+
     const urlCount = (checkText.match(/https?:\/\/[^\s]+/g) ?? []).length;
     if (urlCount > maxUrlsRef.current) {
       setUrlError(`게시물에 URL은 최대 ${maxUrlsRef.current}개까지 허용됩니다.`);
@@ -285,6 +308,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     companyLogoFile, setCompanyLogoFile,
     isSubmitting,
     urlError,
+    showProfanityToast,
     imageUpload,
     handleSubmit,
     handleBack: () => router.back(),

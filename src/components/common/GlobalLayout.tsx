@@ -81,7 +81,7 @@ export function GlobalLayout({ children, initialUser, initialNotices }: Props) {
         style={isGo ? undefined : { scrollbarGutter: "stable" }}
       >
         {!hideGlobalUI && <Header initialUser={initialUser} initialNotices={initialNotices} />}
-        {!hideGlobalUI && <div className="h-12 md:h-0" aria-hidden="true" />}
+        {!hideGlobalUI && <div className="h-12 md:h-0 shrink-0" aria-hidden="true" />}
         {!hideGlobalUI && <DeletionPendingBanner />}
         {!hideGlobalUI && (
           <div

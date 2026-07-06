@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { useCreateJobForm } from "@/hooks/useCreateJobForm";
 import { CreateJobFormPageOne } from "./CreateJobFormPage1";
 import { CreateJobFormPageTwo } from "./CreateJobFormPage2";
+import Toast from "@/components/common/Toast";
 import type { JobInitialData } from "@/type/job/jobCreate";
 
 export function CreateJobForm({ userId, userName, initialData }: { userId: number; userName: string; initialData?: JobInitialData }) {
@@ -14,6 +15,8 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
   const form = useCreateJobForm(userId, userName, initialData);
 
   return (
+    <>
+    <Toast message="부적절한 텍스트가 포함되었습니다" showMessage={form.showProfanityToast} type="error" />
     <main className="flex-1 bg-gray-50 py-8 px-4 pb-32">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center gap-2">
@@ -123,5 +126,6 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
         </div>
       </div>
     </main>
+    </>
   );
 }

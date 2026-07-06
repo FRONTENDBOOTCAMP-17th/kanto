@@ -8,11 +8,20 @@ const SHOT = "../images";
 
 test("방렌트 목록 페이지 렌더링", async ({ page }) => {
   await page.goto("/rental");
-  await expect(page.getByRole("heading", { name: "방렌트" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Rentals" })).toBeVisible();
   await page.screenshot({ path: `${SHOT}/2nd-01-rental-list.png`, fullPage: true });
 });
 
-test("구인구직 글쓰기 페이지 렌더링", async ({ page }) => {
+// /job/create는 identity_verified(카카오/구글 OAuth) 계정만 접근 가능 — 이메일 계정으로 자동화 불가
+test.skip("구인구직 글쓰기 페이지 렌더링", async ({ page }) => {
+  const email = process.env.REVIEW_TEST_EMAIL ?? "whrqkfdlwhgdk12@gmail.com";
+  const password = process.env.REVIEW_TEST_PASSWORD ?? "kanto0000";
+  await page.goto("/login", { waitUntil: "domcontentloaded" });
+  await page.waitForSelector('#email', { timeout: 12000 });
+  await page.locator('#email').fill(email);
+  await page.locator('#password').fill(password);
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await page.waitForURL(/main|^\/$/, { timeout: 15000 }).catch(() => {});
   await page.goto("/job/create");
   await expect(page.getByRole("heading", { name: "구인구직 글쓰기" })).toBeVisible();
   await page.screenshot({ path: `${SHOT}/2nd-02-job-create.png`, fullPage: true });

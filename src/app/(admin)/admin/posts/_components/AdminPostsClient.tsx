@@ -5,7 +5,6 @@ import { FileText } from "lucide-react";
 import { AdminPagination } from "@/app/(admin)/admin/_components/AdminPagination";
 import {
   AdminPost,
-  POST_TYPE_LABEL,
 } from "@/services/admin/adminPosts";
 import AdminPostsTable from "./AdminPostsTable";
 import AdminPostsCard from "./AdminPostsCard";
@@ -84,7 +83,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
     setPage(1);
   }
 
-  const totalCount = items.filter((p) => p.status !== "deleted").length;
+  const totalCount = items.length;
   const activeCount = items.filter((p) => p.status === "active").length;
   const deletedCount = items.filter((p) => p.status === "deleted").length;
 

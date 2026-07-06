@@ -85,7 +85,7 @@ export default function MaintenancePage() {
         <div>
           <Link
             href="/admin/operation"
-            className="mb-2 flex items-center gap-1 text-[13px] text-slate-400 hover:text-slate-600"
+            className="mb-2 flex items-center gap-1 text-[13px] text-slate-400 hover:text-slate-600 active:scale-100"
           >
             <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.5} />
             운영 관리

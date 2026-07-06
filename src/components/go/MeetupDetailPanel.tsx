@@ -7,6 +7,7 @@ import {
   MapPin,
   Zap,
   Siren,
+  Share2,
   MessageCircle,
   ChevronLeft,
 } from "lucide-react";
@@ -48,14 +49,19 @@ type MyMeetupStatus = "loading" | "joined" | "cancelled" | "none";
 export function MeetupDetailPanel({ meetup, ...props }: MeetupDetailPanelProps) {
   const [renderMeetup, setRenderMeetup] = useState<Meetup | null>(meetup);
   const [isClosing, setIsClosing] = useState(false);
-
-  useEffect(() => {
+  const [prevMeetup, setPrevMeetup] = useState(meetup);
+  if (prevMeetup !== meetup) {
+    setPrevMeetup(meetup);
     if (meetup) {
       setRenderMeetup(meetup);
       setIsClosing(false);
-      return;
+    } else {
+      setIsClosing(true);
     }
-    setIsClosing(true);
+  }
+
+  useEffect(() => {
+    if (meetup) return;
     const id = setTimeout(() => {
       setRenderMeetup(null);
       setIsClosing(false);
@@ -161,6 +167,7 @@ function MeetupDetailPanelContent({
 
   useEffect(() => {
     let active = true;
+    let statusFallback: ReturnType<typeof setTimeout> | undefined;
 
     getMeetupDetail(meetup.post_id)
       .then(({ participants }) => {
@@ -169,25 +176,30 @@ function MeetupDetailPanelContent({
       .catch(() => {});
 
     if (currentUserId) {
+      let resolved = false;
+      const applyStatus = (status: MyMeetupStatus) => {
+        resolved = true;
+        if (active) {
+          setMyStatusState({
+            postId: meetup.post_id,
+            userId: currentUserId,
+            status,
+          });
+        }
+      };
       getMyMeetupStatus(meetup.post_id)
-        .then((status) => {
-          if (active) {
-            setMyStatusState({
-              postId: meetup.post_id,
-              userId: currentUserId,
-              status,
-            });
-          }
-        })
-        .catch(() => {
-          if (active) {
-            setMyStatusState({
-              postId: meetup.post_id,
-              userId: currentUserId,
-              status: "none",
-            });
-          }
-        });
+        .then(applyStatus)
+        .catch(() => applyStatus("none"));
+
+      statusFallback = setTimeout(() => {
+        if (active && !resolved) {
+          setMyStatusState({
+            postId: meetup.post_id,
+            userId: currentUserId,
+            status: "none",
+          });
+        }
+      }, 4000);
       checkReported(meetup.post_id, currentUserId)
         .then((isReported) => {
           if (active) setReported(isReported);
@@ -197,6 +209,7 @@ function MeetupDetailPanelContent({
 
     return () => {
       active = false;
+      if (statusFallback) clearTimeout(statusFallback);
     };
   }, [meetup.post_id, currentUserId]);
 
@@ -231,6 +244,18 @@ function MeetupDetailPanelContent({
   const showToast = (msg: string, error = false) => {
     setToast({ msg, error });
     setTimeout(() => setToast(null), 2600);
+  };
+
+  const handleShare = async () => {
+    const shareUrl = meetup.id_token
+      ? `${window.location.origin}/go?m=${meetup.id_token}`
+      : window.location.href;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      showToast(t("toast.urlCopied"));
+    } catch {
+      showToast(t("toast.error"), true);
+    }
   };
 
   const handleJoin = async () => {
@@ -352,6 +377,16 @@ function MeetupDetailPanelContent({
               </h2>
             </div>
             <div className="flex shrink-0 items-center gap-1.5">
+              <button
+                onClick={handleShare}
+                aria-label={t("detail.shareAria")}
+                className="flex h-8 items-center gap-1.5 rounded-[9px] border border-slate-200 px-2.5 text-slate-500 hover:border-teal-200 hover:bg-teal-50 hover:text-teal-600"
+              >
+                <Share2 className="h-4 w-4" strokeWidth={2.2} />
+                <span className="text-[12.5px] font-bold">
+                  {t("detail.share")}
+                </span>
+              </button>
               {canReport && (
                 <button
                   onClick={() => setShowReportModal(true)}

@@ -350,10 +350,10 @@ export function UnifiedBanner({ initialNotices }: { initialNotices: Notice[] }) 
 
       
       <div className={`hidden md:block w-full ${desktopBgColor} text-white px-4 py-2.5`}>
-        <div className="max-w-5xl mx-auto flex items-center relative">
+        <div className="max-w-5xl mx-auto flex items-start gap-3">
 
           {hasMultiple && (
-            <div className="absolute left-0 flex items-center gap-0.5 text-xs">
+            <div className="shrink-0 flex items-center gap-0.5 text-xs mt-0.5">
               <button
                 onClick={() => setDesktopIndex((i) => Math.max(0, i - 1))}
                 disabled={safeDesktopIndex === 0}
@@ -374,16 +374,16 @@ export function UnifiedBanner({ initialNotices }: { initialNotices: Notice[] }) 
             </div>
           )}
 
-          <div className="flex-1 flex items-center justify-center gap-2 px-20">
+          <div className="flex-1 flex items-start justify-center gap-2">
             {desktopCurrent.type === "notice" ? (
               <>
-                <Megaphone className="w-4 h-4 shrink-0" />
-                <p className="text-sm font-medium line-clamp-1">{desktopCurrent.notice.title}</p>
+                <Megaphone className="w-4 h-4 shrink-0 mt-0.5" />
+                <p className="text-sm font-medium leading-snug">{desktopCurrent.notice.title}</p>
               </>
             ) : (
               <>
-                <ShieldAlert className="w-4 h-4 shrink-0" />
-                <p className="text-sm line-clamp-1">
+                <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" />
+                <p className="text-sm leading-snug">
                   <span className="font-semibold">{t("suspended.bannerTitle")}</span>{" "}
                   {isPermanent
                     ? t("suspended.bannerPermanent")
@@ -394,7 +394,7 @@ export function UnifiedBanner({ initialNotices }: { initialNotices: Notice[] }) 
           </div>
 
           {desktopCurrent.type === "notice" && (
-            <div className="absolute right-0 flex items-center gap-2">
+            <div className="shrink-0 flex items-center gap-2">
               <label className="flex items-center gap-1.5 cursor-pointer select-none">
                 <input
                   type="checkbox"
