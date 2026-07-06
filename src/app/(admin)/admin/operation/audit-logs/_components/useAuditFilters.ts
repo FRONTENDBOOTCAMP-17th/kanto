@@ -13,6 +13,7 @@ export function useAuditFilters(initialLogs: AuditLog[]) {
   const [filterDateTo, setFilterDateTo] = useState("");
   const [page, setPage] = useState(1);
   const [actionDropdownOpen, setActionDropdownOpen] = useState(false);
+  const [targetDropdownOpen, setTargetDropdownOpen] = useState(false);
   const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
 
   const today = new Date().toISOString().slice(0, 10);
@@ -59,6 +60,7 @@ export function useAuditFilters(initialLogs: AuditLog[]) {
     filterDateTo, setFilterDateTo,
     page, setPage,
     actionDropdownOpen, setActionDropdownOpen,
+    targetDropdownOpen, setTargetDropdownOpen,
     dateDropdownOpen, setDateDropdownOpen,
     today,
     filtered,
