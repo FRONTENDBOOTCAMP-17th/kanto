@@ -5,7 +5,6 @@ import { FileText } from "lucide-react";
 import { AdminPagination } from "@/app/(admin)/admin/_components/AdminPagination";
 import {
   AdminPost,
-  POST_TYPE_LABEL,
 } from "@/services/admin/adminPosts";
 import AdminPostsTable from "./AdminPostsTable";
 import AdminPostsCard from "./AdminPostsCard";

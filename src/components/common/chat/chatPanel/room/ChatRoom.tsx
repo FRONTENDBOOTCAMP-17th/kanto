@@ -3,8 +3,7 @@
 import ChatRoomClient from "./ChatRoomClient";
 import { MessageWithSender } from "@/type/chat/message";
 import { SellerInfo } from "@/type/user";
-import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useEffect, useMemo, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { PendingNewChat } from "@/store/chatStore";
 
@@ -37,38 +36,40 @@ export default function ChatRoom({
   onLeave?: () => void;
   onChatCreated?: (chatId: number) => void;
 }) {
-  const t = useTranslations("Chat");
-  const [data, setData] = useState<ChatRoomData | null>(null);
+  const newChatData = useMemo<ChatRoomData | null>(() => {
+    if (chatId !== null || !newChatMeta || !currentUserOverride) return null;
+    return {
+      messages: [],
+      currentUser: currentUserOverride,
+      chatId: null,
+      postId: newChatMeta.postId,
+      partner: { ...newChatMeta.partner, name: newChatMeta.partner.name ?? "" },
+      postTitle: newChatMeta.postTitle,
+      postType: newChatMeta.postType ?? "",
+      sellerId: newChatMeta.sellerId,
+      postPrice: newChatMeta.postPrice,
+      isReserved: false,
+      isSold: false,
+    };
+  }, [chatId, newChatMeta, currentUserOverride]);
+
+  const [fetchedData, setFetchedData] = useState<ChatRoomData | null>(null);
 
   useEffect(() => {
-    if (chatId === null) {
-      if (!newChatMeta || !currentUserOverride) return;
-      setData({
-        messages: [],
-        currentUser: currentUserOverride,
-        chatId: null,
-        postId: newChatMeta.postId,
-        partner: { ...newChatMeta.partner, name: newChatMeta.partner.name ?? "" },
-        postTitle: newChatMeta.postTitle,
-        postType: newChatMeta.postType ?? "",
-        sellerId: newChatMeta.sellerId,
-        postPrice: newChatMeta.postPrice,
-        isReserved: false,
-        isSold: false,
-      });
-      return;
-    }
+    if (chatId === null) return;
     fetch(`/api/chat/${chatId}`)
       .then((r) => r.json())
       .then((json) => {
         if (json.error) return;
-        setData({
+        setFetchedData({
           ...json,
           currentUser: { ...json.currentUser, name: json.currentUser.name ?? "" },
           partner: { ...json.partner, name: json.partner.name ?? "" },
         });
       });
-  }, [chatId, newChatMeta, currentUserOverride]);
+  }, [chatId]);
+
+  const data = newChatData ?? fetchedData;
 
   if (!data)
     return (

@@ -49,14 +49,19 @@ type MyMeetupStatus = "loading" | "joined" | "cancelled" | "none";
 export function MeetupDetailPanel({ meetup, ...props }: MeetupDetailPanelProps) {
   const [renderMeetup, setRenderMeetup] = useState<Meetup | null>(meetup);
   const [isClosing, setIsClosing] = useState(false);
-
-  useEffect(() => {
+  const [prevMeetup, setPrevMeetup] = useState(meetup);
+  if (prevMeetup !== meetup) {
+    setPrevMeetup(meetup);
     if (meetup) {
       setRenderMeetup(meetup);
       setIsClosing(false);
-      return;
+    } else {
+      setIsClosing(true);
     }
-    setIsClosing(true);
+  }
+
+  useEffect(() => {
+    if (meetup) return;
     const id = setTimeout(() => {
       setRenderMeetup(null);
       setIsClosing(false);

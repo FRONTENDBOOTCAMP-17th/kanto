@@ -10,7 +10,7 @@ export default function CreateLayout({ children }: { children: React.ReactNode }
     if (isSuspended) {
       openModal();
     }
-  }, [isSuspended]);
+  }, [isSuspended, openModal]);
 
   if (isSuspended) return null;
   return <>{children}</>;

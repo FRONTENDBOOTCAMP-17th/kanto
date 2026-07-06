@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -20,14 +20,11 @@ export function ConfirmModal({
   title,
   description,
   confirmLabel,
-  cancelLabel,
   onConfirm,
   onCancel,
 }: Props) {
   const t = useTranslations("Common");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
 
   useEffect(() => {
     if (!isOpen) return;

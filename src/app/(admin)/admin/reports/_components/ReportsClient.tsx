@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Flag, FileText, User, X, ExternalLink } from "lucide-react";
 import { AdminPagination } from "@/app/(admin)/admin/_components/AdminPagination";
 import { REPORT_STATUS } from "@/constants/report";
@@ -83,11 +83,12 @@ export default function ReportsClient({ reports }: Props) {
   const [overrides, setOverrides] = useState<Record<number, Status>>({});
   const [outcomes, setOutcomes] = useState<Record<number, Outcome>>({});
   const [toast, setToast] = useState("");
+  const toastTimerRef = useRef<number | null>(null);
 
   function showToast(msg: string) {
     setToast(msg);
-    window.clearTimeout((showToast as any)._t);
-    (showToast as any)._t = window.setTimeout(() => setToast(""), 2600);
+    if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = window.setTimeout(() => setToast(""), 2600);
   }
   function setFilter(fn: () => void) {
     fn();
