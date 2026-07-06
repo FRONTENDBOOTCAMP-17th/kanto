@@ -20,6 +20,7 @@ import {
   updateReportResolution,
 } from "../_lib/actions";
 import { getPostDetailUrl } from "@/services/admin/adminPosts";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface Props {
   reports: Report[];
@@ -38,7 +39,7 @@ function Pill({
 }) {
   return (
     <span
-      className="inline-flex items-center whitespace-nowrap rounded-full px-[11px] py-1 text-[12px]"
+      className="inline-flex items-center whitespace-nowrap rounded-full px-2.75 py-1 text-[12px]"
       style={{ background: bg, color: fg, fontWeight: bold ? 700 : 600 }}
     >
       {text}
@@ -59,7 +60,7 @@ function SegButton({
     <button
       onClick={onClick}
       className={[
-        "whitespace-nowrap rounded-lg px-[15px] py-2 text-[13.5px] font-semibold",
+        "whitespace-nowrap rounded-lg px-3.75 py-2 text-[13.5px] font-semibold",
         active
           ? "bg-white text-teal-600 shadow-sm"
           : "bg-transparent text-slate-500",
@@ -120,6 +121,7 @@ export default function ReportsClient({ reports }: Props) {
   const pageItems = filtered.slice(startIdx, startIdx + PAGE_SIZE);
 
   const sel = selId != null ? (all.find((r) => r.id === selId) ?? null) : null;
+  useBodyScrollLock(sel != null);
   const selIsPending = sel?.status === REPORT_STATUS.PENDING;
   const sanctionTarget = sel
     ? sel.type === "post"
@@ -209,7 +211,7 @@ export default function ReportsClient({ reports }: Props) {
   ];
   function sanctionClass(key: Sanction) {
     const base =
-      "flex-1 whitespace-nowrap rounded-[9px] border px-1.5 py-[9px] text-center text-[12.5px] font-bold ";
+      "flex-1 whitespace-nowrap rounded-[9px] border px-1.5 py-2.25 text-center text-[12.5px] font-bold ";
     if (sanction !== key)
       return base + "border-[#e7ebee] bg-white text-slate-500";
     if (key === "none")
@@ -237,7 +239,7 @@ export default function ReportsClient({ reports }: Props) {
             접수된 신고를 검토하고 처리하세요
           </p>
         </div>
-        <div className="whitespace-nowrap rounded-[11px] border border-[#e7ebee] bg-white px-[14px] py-[9px] text-[13px] font-medium text-slate-500">
+        <div className="whitespace-nowrap rounded-[11px] border border-[#e7ebee] bg-white px-3.5 py-2.25 text-[13px] font-medium text-slate-500">
           총 <span className="font-bold text-slate-900">{totalCount}</span>건 ·{" "}
           <span className="font-bold text-red-600">{pendingCount}</span>건
           대기중
@@ -245,7 +247,7 @@ export default function ReportsClient({ reports }: Props) {
       </div>
 
       
-      <div className="flex items-center gap-2.5 rounded-[14px] border border-[#e7ebee] bg-white px-4 py-[13px] shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+      <div className="flex items-center gap-2.5 rounded-[14px] border border-[#e7ebee] bg-white px-4 py-3.25 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <svg
           width="19"
           height="19"
@@ -268,7 +270,7 @@ export default function ReportsClient({ reports }: Props) {
       </div>
 
       
-      <div className="flex flex-wrap gap-7 rounded-2xl border border-[#e7ebee] bg-white px-[22px] py-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+      <div className="flex flex-wrap gap-7 rounded-2xl border border-[#e7ebee] bg-white px-5.5 py-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         <div>
           <div className="mb-2.5 text-[13px] font-bold text-slate-600">
             신고 유형
@@ -285,7 +287,7 @@ export default function ReportsClient({ reports }: Props) {
               onClick={() => setFilter(() => setType("post"))}
             >
               <span className="inline-flex items-center gap-1.5">
-                <FileText className="h-[15px] w-[15px]" />
+                <FileText className="h-3.75 w-3.75" />
                 게시글
               </span>
             </SegButton>
@@ -294,7 +296,7 @@ export default function ReportsClient({ reports }: Props) {
               onClick={() => setFilter(() => setType("user"))}
             >
               <span className="inline-flex items-center gap-1.5">
-                <User className="h-[15px] w-[15px]" />
+                <User className="h-3.75 w-3.75" />
                 유저
               </span>
             </SegButton>
@@ -337,18 +339,18 @@ export default function ReportsClient({ reports }: Props) {
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         
         <div className="hidden overflow-x-auto lg:block">
-          <table className="w-full min-w-[760px] border-collapse">
+          <table className="w-full min-w-190 border-collapse">
             <thead>
               <tr className="border-b border-[#f1f4f6] bg-slate-50">
                 {["유형", "대상", "신고 사유", "신고일", "상태"].map((h) => (
                   <th
                     key={h}
-                    className="px-[18px] py-[13px] text-left text-[12px] font-bold uppercase tracking-wide text-slate-400"
+                    className="px-4.5 py-3.25 text-left text-[12px] font-bold uppercase tracking-wide text-slate-400"
                   >
                     {h}
                   </th>
                 ))}
-                <th className="px-[18px] py-[13px] text-right text-[12px] font-bold uppercase tracking-wide text-slate-400">
+                <th className="px-4.5 py-3.25 text-right text-[12px] font-bold uppercase tracking-wide text-slate-400">
                   액션
                 </th>
               </tr>
@@ -365,7 +367,7 @@ export default function ReportsClient({ reports }: Props) {
                     onClick={() => openDrawer(r.id)}
                     className="cursor-pointer border-t border-[#f3f5f7] hover:bg-slate-50"
                   >
-                    <td className="px-[18px] py-[15px]">
+                    <td className="px-4.5 py-3.75">
                       <div className="flex items-center gap-2">
                         <span
                           style={{
@@ -374,9 +376,9 @@ export default function ReportsClient({ reports }: Props) {
                           className="flex"
                         >
                           {r.type === "post" ? (
-                            <FileText className="h-[17px] w-[17px]" />
+                            <FileText className="h-4.25 w-4.25" />
                           ) : (
-                            <User className="h-[17px] w-[17px]" />
+                            <User className="h-4.25 w-4.25" />
                           )}
                         </span>
                         <span className="whitespace-nowrap text-[13.5px] font-semibold text-slate-600">
@@ -384,14 +386,14 @@ export default function ReportsClient({ reports }: Props) {
                         </span>
                       </div>
                     </td>
-                    <td className="px-[18px] py-[15px]">
+                    <td className="px-4.5 py-3.75">
                       <div className="min-w-0">
-                        <div className="max-w-[320px] truncate text-[14px] font-bold text-slate-900">
+                        <div className="max-w-80 truncate text-[14px] font-bold text-slate-900">
                           {r.targetName}
                         </div>
                         {cat && (
                           <span
-                            className="mt-[5px] inline-flex items-center whitespace-nowrap rounded-md px-2 py-0.5 text-[11.5px] font-semibold"
+                            className="mt-1.25 inline-flex items-center whitespace-nowrap rounded-md px-2 py-0.5 text-[11.5px] font-semibold"
                             style={{ background: cat.bg, color: cat.fg }}
                           >
                             {r.category}
@@ -399,16 +401,16 @@ export default function ReportsClient({ reports }: Props) {
                         )}
                       </div>
                     </td>
-                    <td className="px-[18px] py-[15px]">
+                    <td className="px-4.5 py-3.75">
                       <Pill text={r.reason} fg={reason.fg} bg={reason.bg} />
                     </td>
-                    <td className="whitespace-nowrap px-[18px] py-[15px] text-[13.5px] text-slate-500">
+                    <td className="whitespace-nowrap px-4.5 py-3.75 text-[13.5px] text-slate-500">
                       {r.reportDate}
                     </td>
-                    <td className="px-[18px] py-[15px]">
+                    <td className="px-4.5 py-3.75">
                       <Pill text={st.label} fg={st.fg} bg={st.bg} bold />
                     </td>
-                    <td className="px-[18px] py-[15px]">
+                    <td className="px-4.5 py-3.75">
                       <div className="flex items-center justify-end">
                         <button
                           onClick={(e) => {
@@ -493,7 +495,7 @@ export default function ReportsClient({ reports }: Props) {
             <div className="mt-4 text-[15px] font-bold text-slate-500">
               조건에 맞는 신고가 없습니다
             </div>
-            <div className="mt-[5px] text-[13.5px] text-slate-400">
+            <div className="mt-1.25 text-[13.5px] text-slate-400">
               필터를 변경하거나 검색어를 지워보세요
             </div>
           </div>
@@ -515,15 +517,15 @@ export default function ReportsClient({ reports }: Props) {
         <>
           <div
             onClick={() => setSelId(null)}
-            className="fixed inset-0 z-[70] bg-slate-900/45"
+            className="fixed inset-0 z-70 bg-slate-900/45"
             style={{ animation: "fadeIn .18s ease" }}
           />
           <div
-            className="fixed right-0 top-0 z-[71] flex h-screen w-[460px] max-w-full flex-col bg-white shadow-[-12px_0_44px_rgba(15,23,42,0.18)]"
+            className="fixed right-0 top-0 z-71 flex h-screen w-115 max-w-full flex-col bg-white shadow-[-12px_0_44px_rgba(15,23,42,0.18)]"
             style={{ animation: "drawerIn .26s cubic-bezier(.4,0,.2,1)" }}
           >
             
-            <div className="flex items-center justify-between gap-3 border-b border-[#f1f4f6] px-6 py-[22px]">
+            <div className="flex items-center justify-between gap-3 border-b border-[#f1f4f6] px-6 py-5.5">
               <div className="flex items-center gap-2.5">
                 <h2 className="text-[18px] font-extrabold tracking-tight text-slate-900">
                   신고 상세
@@ -534,9 +536,9 @@ export default function ReportsClient({ reports }: Props) {
               </div>
               <button
                 onClick={() => setSelId(null)}
-                className="flex h-[34px] w-[34px] items-center justify-center rounded-[9px] border border-[#eef1f3] bg-white text-slate-500 hover:bg-slate-100"
+                className="flex h-8.5 w-8.5 items-center justify-center rounded-[9px] border border-[#eef1f3] bg-white text-slate-500 hover:bg-slate-100"
               >
-                <X className="h-[18px] w-[18px]" strokeWidth={2.2} />
+                <X className="h-4.5 w-4.5" strokeWidth={2.2} />
               </button>
             </div>
 
@@ -554,7 +556,7 @@ export default function ReportsClient({ reports }: Props) {
                     </div>
 
                     
-                    <div className="mb-5 rounded-[14px] border border-[#eef1f3] bg-slate-50 p-[18px]">
+                    <div className="mb-5 rounded-[14px] border border-[#eef1f3] bg-slate-50 p-4.5">
                       <div className="mb-3 flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wide text-slate-400">
                         <span
                           style={{
@@ -563,9 +565,9 @@ export default function ReportsClient({ reports }: Props) {
                           className="flex"
                         >
                           {sel.type === "post" ? (
-                            <FileText className="h-[17px] w-[17px]" />
+                            <FileText className="h-4.25 w-4.25" />
                           ) : (
-                            <User className="h-[17px] w-[17px]" />
+                            <User className="h-4.25 w-4.25" />
                           )}
                         </span>
                         {sel.type === "post" ? "게시글" : "유저"} 신고 대상
@@ -591,7 +593,7 @@ export default function ReportsClient({ reports }: Props) {
                         >
                           유저 프로필 보기
                           <ExternalLink
-                            className="h-[14px] w-[14px]"
+                            className="h-3.5 w-3.5"
                             strokeWidth={2.2}
                           />
                         </Link>
@@ -607,7 +609,7 @@ export default function ReportsClient({ reports }: Props) {
                           >
                             원본 게시글 보기
                             <ExternalLink
-                              className="h-[14px] w-[14px]"
+                              className="h-3.5 w-3.5"
                               strokeWidth={2.2}
                             />
                           </Link>
@@ -615,7 +617,7 @@ export default function ReportsClient({ reports }: Props) {
                           <span className="mt-3.5 inline-flex items-center gap-1.5 text-[13px] font-semibold text-slate-400">
                             원본 게시글 보기
                             <ExternalLink
-                              className="h-[14px] w-[14px]"
+                              className="h-3.5 w-3.5"
                               strokeWidth={2.2}
                             />
                           </span>
@@ -628,7 +630,7 @@ export default function ReportsClient({ reports }: Props) {
                       <div className="mb-2.5 text-[12px] font-bold uppercase tracking-wide text-slate-400">
                         신고 내용
                       </div>
-                      <p className="rounded-xl border border-[#eef1f3] bg-white p-[15px] text-[14px] leading-relaxed text-slate-700">
+                      <p className="rounded-xl border border-[#eef1f3] bg-white p-3.75 text-[14px] leading-relaxed text-slate-700">
                         {sel.description || "추가 내용 없음"}
                       </p>
                     </div>
@@ -636,7 +638,7 @@ export default function ReportsClient({ reports }: Props) {
                     
                     <div className="mb-6 overflow-hidden rounded-xl border border-[#eef1f3]">
                       {sel.type === "post" && (
-                        <div className="flex items-center justify-between border-b border-[#f3f5f7] px-4 py-[11px]">
+                        <div className="flex items-center justify-between border-b border-[#f3f5f7] px-4 py-2.75">
                           <span className="text-[13px] text-slate-400">
                             작성자
                           </span>
@@ -645,7 +647,7 @@ export default function ReportsClient({ reports }: Props) {
                           </span>
                         </div>
                       )}
-                      <div className="flex items-center justify-between px-4 py-[11px]">
+                      <div className="flex items-center justify-between px-4 py-2.75">
                         <span className="text-[13px] text-slate-400">
                           신고일
                         </span>
@@ -681,7 +683,7 @@ export default function ReportsClient({ reports }: Props) {
                         const sancBorder = perm ? "#fecaca" : "#fed7aa";
                         return (
                           <div className="mb-2 overflow-hidden rounded-[14px] border border-[#eef1f3]">
-                            <div className="flex items-center gap-2 border-b border-[#f1f4f6] bg-slate-50 px-4 py-[13px]">
+                            <div className="flex items-center gap-2 border-b border-[#f1f4f6] bg-slate-50 px-4 py-3.25">
                               <span
                                 style={{
                                   color: isResolved ? "#059669" : "#94a3b8",
@@ -726,7 +728,7 @@ export default function ReportsClient({ reports }: Props) {
                               {isResolved && (
                                 <button
                                   onClick={startEdit}
-                                  className="ml-2 inline-flex items-center gap-1.5 rounded-lg border border-[#e2e8eb] bg-white px-[11px] py-[5px] text-[12.5px] font-bold text-slate-600 hover:bg-slate-100"
+                                  className="ml-2 inline-flex items-center gap-1.5 rounded-lg border border-[#e2e8eb] bg-white px-2.75 py-1.25 text-[12.5px] font-bold text-slate-600 hover:bg-slate-100"
                                 >
                                   <svg
                                     width="13"
@@ -748,7 +750,7 @@ export default function ReportsClient({ reports }: Props) {
                             <div className="flex flex-col gap-2.5 px-4 py-3.5">
                               {sel.handledBy && (
                                 <div className="flex items-center gap-2.5">
-                                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-[7px] bg-slate-100">
+                                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[7px] bg-slate-100">
                                     <svg
                                       width="14"
                                       height="14"
@@ -773,7 +775,7 @@ export default function ReportsClient({ reports }: Props) {
                               )}
                               {oc.deactivated && (
                                 <div className="flex items-center gap-2.5">
-                                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-[7px] bg-orange-50">
+                                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[7px] bg-orange-50">
                                     <svg
                                       width="14"
                                       height="14"
@@ -800,7 +802,7 @@ export default function ReportsClient({ reports }: Props) {
                               {oc.sanctionLabel && (
                                 <div className="flex items-center gap-2.5">
                                   <span
-                                    className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-[7px]"
+                                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[7px]"
                                     style={{ background: sancBg }}
                                   >
                                     <svg
@@ -842,7 +844,7 @@ export default function ReportsClient({ reports }: Props) {
                               )}
                               {isResolved && noAction && (
                                 <div className="flex items-center gap-2.5">
-                                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-[7px] bg-emerald-50">
+                                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[7px] bg-emerald-50">
                                     <svg
                                       width="14"
                                       height="14"
@@ -904,7 +906,7 @@ export default function ReportsClient({ reports }: Props) {
 
                       return (
                         <div className="mb-6 overflow-hidden rounded-[14px] border border-[#eef1f3]">
-                          <div className="flex items-center gap-2 border-b border-[#f1f4f6] bg-slate-50 px-4 py-[13px]">
+                          <div className="flex items-center gap-2 border-b border-[#f1f4f6] bg-slate-50 px-4 py-3.25">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
                             </svg>
@@ -913,8 +915,8 @@ export default function ReportsClient({ reports }: Props) {
                           </div>
                           <div className="divide-y divide-[#f3f5f7]">
                             {logs.map((log) => (
-                              <div key={log.key} className="flex items-start gap-3 px-4 py-[13px]">
-                                <span className="mt-0.5 flex h-[26px] w-[26px] flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold" style={{ background: log.bg, color: log.color }}>
+                              <div key={log.key} className="flex items-start gap-3 px-4 py-3.25">
+                                <span className="mt-0.5 flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold" style={{ background: log.bg, color: log.color }}>
                                   {log.key === "created" ? "접" : log.key === "dismissed" ? "무" : log.key === "resolved" ? "✓" : "✕"}
                                 </span>
                                 <div className="flex-1 min-w-0">
@@ -935,7 +937,7 @@ export default function ReportsClient({ reports }: Props) {
                     {(selIsPending || editing) && (
                       <>
                         {editing && (
-                          <div className="mb-3.5 flex items-center gap-1.5 rounded-[10px] border border-blue-100 bg-blue-50 px-[13px] py-[9px]">
+                          <div className="mb-3.5 flex items-center gap-1.5 rounded-[10px] border border-blue-100 bg-blue-50 px-3.25 py-2.25">
                             <svg
                               width="15"
                               height="15"
@@ -955,20 +957,20 @@ export default function ReportsClient({ reports }: Props) {
                           </div>
                         )}
                         {sel.type === "post" && (
-                          <div className="mb-[18px]">
+                          <div className="mb-4.5">
                             <div className="mb-2.5 text-[12px] font-bold uppercase tracking-wide text-slate-400">
                               게시글 조치
                             </div>
                             <label
                               onClick={() => setDeactivate((v) => !v)}
-                              className="flex cursor-pointer items-start gap-3 rounded-xl border p-[15px]"
+                              className="flex cursor-pointer items-start gap-3 rounded-xl border p-3.75"
                               style={{
                                 borderColor: deactivate ? "#99f6e4" : "#e7ebee",
                                 background: deactivate ? "#f0fdfa" : "#f8fafc",
                               }}
                             >
                               <div
-                                className="mt-px flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md border-2"
+                                className="mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2"
                                 style={{
                                   borderColor: deactivate
                                     ? "#14b8a6"
@@ -995,7 +997,7 @@ export default function ReportsClient({ reports }: Props) {
                                 <div className="text-[14px] font-bold text-slate-900">
                                   게시글 비활성화
                                 </div>
-                                <div className="mt-[3px] text-[12.5px] text-slate-500">
+                                <div className="mt-0.75 text-[12.5px] text-slate-500">
                                   다른 사용자에게 노출이 중단됩니다
                                 </div>
                               </div>
@@ -1012,7 +1014,7 @@ export default function ReportsClient({ reports }: Props) {
                               {sanctionTarget}
                             </span>
                           </div>
-                          <div className="flex gap-[7px]">
+                          <div className="flex gap-1.75">
                             {sanctions.map((s) => (
                               <button
                                 key={s.key}
@@ -1032,18 +1034,18 @@ export default function ReportsClient({ reports }: Props) {
             </div>
 
             
-            <div className="border-t border-[#f1f4f6] px-6 py-[18px]">
+            <div className="border-t border-[#f1f4f6] px-6 py-4.5">
               {editing ? (
                 <div className="flex gap-2.5">
                   <button
                     onClick={() => setEditing(false)}
-                    className="flex-1 rounded-[11px] border border-[#e2e8eb] bg-slate-50 py-[13px] text-[14px] font-bold text-slate-600 hover:bg-slate-100"
+                    className="flex-1 rounded-[11px] border border-[#e2e8eb] bg-slate-50 py-3.25 text-[14px] font-bold text-slate-600 hover:bg-slate-100"
                   >
                     취소
                   </button>
                   <button
                     onClick={resolve}
-                    className="flex-[1.4] rounded-[11px] bg-teal-500 py-[13px] text-[14px] font-bold text-white shadow-[0_4px_12px_rgba(20,184,166,0.3)] hover:bg-teal-600"
+                    className="flex-[1.4] rounded-[11px] bg-teal-500 py-3.25 text-[14px] font-bold text-white shadow-[0_4px_12px_rgba(20,184,166,0.3)] hover:bg-teal-600"
                   >
                     수정 저장
                   </button>
@@ -1052,19 +1054,19 @@ export default function ReportsClient({ reports }: Props) {
                 <div className="flex gap-2.5">
                   <button
                     onClick={dismiss}
-                    className="flex-1 rounded-[11px] border border-[#e2e8eb] bg-slate-50 py-[13px] text-[14px] font-bold text-slate-600 hover:bg-slate-100"
+                    className="flex-1 rounded-[11px] border border-[#e2e8eb] bg-slate-50 py-3.25 text-[14px] font-bold text-slate-600 hover:bg-slate-100"
                   >
                     신고 무시
                   </button>
                   <button
                     onClick={resolve}
-                    className="flex-[1.4] rounded-[11px] bg-teal-500 py-[13px] text-[14px] font-bold text-white shadow-[0_4px_12px_rgba(20,184,166,0.3)] hover:bg-teal-600"
+                    className="flex-[1.4] rounded-[11px] bg-teal-500 py-3.25 text-[14px] font-bold text-white shadow-[0_4px_12px_rgba(20,184,166,0.3)] hover:bg-teal-600"
                   >
                     처리완료
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center justify-center gap-2 rounded-[11px] bg-slate-50 py-[11px] text-[13.5px] font-semibold text-slate-500">
+                <div className="flex items-center justify-center gap-2 rounded-[11px] bg-slate-50 py-2.75 text-[13.5px] font-semibold text-slate-500">
                   <svg
                     width="16"
                     height="16"
@@ -1090,7 +1092,7 @@ export default function ReportsClient({ reports }: Props) {
       
       {toast && (
         <div
-          className="fixed bottom-7 left-1/2 z-[80] flex -translate-x-1/2 items-center gap-2.5 rounded-xl bg-slate-900 px-5 py-[13px] text-white shadow-[0_10px_30px_rgba(15,23,42,0.3)]"
+          className="fixed bottom-7 left-1/2 z-80 flex -translate-x-1/2 items-center gap-2.5 rounded-xl bg-slate-900 px-5 py-3.25 text-white shadow-[0_10px_30px_rgba(15,23,42,0.3)]"
           style={{ animation: "fadeIn .18s ease" }}
         >
           <svg

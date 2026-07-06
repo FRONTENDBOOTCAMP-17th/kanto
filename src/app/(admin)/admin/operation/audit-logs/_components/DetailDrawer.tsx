@@ -2,6 +2,7 @@ import { ClipboardList, Crown, ShieldCheck, X } from "lucide-react";
 import type { AuditLog } from "@/services/admin/auditLog";
 import { TARGET_LABELS, formatDate } from "./auditLogConfig";
 import { ActionBadge } from "./ActionBadge";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface Props {
   log: AuditLog;
@@ -10,6 +11,8 @@ interface Props {
 
 export function DetailDrawer({ log, onClose }: Props) {
   const entries = Object.entries(log.detail);
+
+  useBodyScrollLock();
 
   return (
     <div

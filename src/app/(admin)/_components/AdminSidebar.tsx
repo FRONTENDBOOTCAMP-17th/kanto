@@ -16,6 +16,7 @@ import {
   CreditCard,
   Settings,
 } from "lucide-react";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 type NavItem = {
   icon: LucideIcon;
@@ -27,6 +28,8 @@ type NavItem = {
 export default function AdminSidebar({ pendingCount }: { pendingCount: number }) {
   const [navOpen, setNavOpen] = useState(false);
   const pathname = usePathname();
+
+  useBodyScrollLock(navOpen);
 
   const navItems: NavItem[] = [
     { icon: LayoutDashboard, label: "대시보드", href: "/admin" },
@@ -76,7 +79,7 @@ export default function AdminSidebar({ pendingCount }: { pendingCount: number })
 
       <aside
         className={[
-          "sticky top-0 flex h-screen w-62.5 shrink-0 flex-col border-r border-[#ebeef0] bg-white px-4 py-5.5",
+          "sticky top-0 flex h-dvh w-62.5 shrink-0 flex-col overflow-y-auto border-r border-[#ebeef0] bg-white px-4 py-5.5",
           "max-lg:fixed max-lg:left-0 max-lg:top-0 max-lg:z-60 max-lg:shadow-2xl",
           "max-lg:transition-transform max-lg:duration-300 max-lg:ease-out",
           navOpen
@@ -108,7 +111,7 @@ export default function AdminSidebar({ pendingCount }: { pendingCount: number })
                 ? pathname === "/admin"
                 : pathname.startsWith(href));
             const className = [
-              "flex items-center gap-3 rounded-[11px] px-[13px] py-[11px] text-left text-[14.5px]",
+              "flex items-center gap-3 rounded-[11px] px-3.25 py-2.75 text-left text-[14.5px]",
               isActive
                 ? "bg-teal-50 font-semibold text-teal-600"
                 : "font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900",

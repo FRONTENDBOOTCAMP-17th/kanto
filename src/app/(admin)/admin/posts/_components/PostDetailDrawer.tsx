@@ -17,6 +17,7 @@ import {
 import { ConfirmModal } from "@/components/common/ConfirmModal";
 import { SANCTION_LABEL } from "@/app/(admin)/admin/reports/_lib/constants";
 import { formatDate, formatDateTime } from "@/utils/format";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 const CATEGORY_STYLE: Record<string, { bg: string; fg: string }> = {
   used_goods: { bg: "#f0fdfa", fg: "#0d9488" },
@@ -32,7 +33,7 @@ const POST_STATUS_STYLE: Record<string, { label: string; bg: string; fg: string 
 function Pill({ text, fg, bg, bold }: { text: string; fg: string; bg: string; bold?: boolean }) {
   return (
     <span
-      className="inline-flex items-center whitespace-nowrap rounded-full px-[11px] py-1 text-[12px]"
+      className="inline-flex items-center whitespace-nowrap rounded-full px-2.75 py-1 text-[12px]"
       style={{ background: bg, color: fg, fontWeight: bold ? 700 : 600 }}
     >
       {text}
@@ -53,6 +54,8 @@ export default function PostDetailDrawer({ post, onClose, onChanged, onDeleted, 
   const [reportsLoading, setReportsLoading] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  useBodyScrollLock();
 
   useEffect(() => {
     let alive = true;
@@ -109,14 +112,14 @@ export default function PostDetailDrawer({ post, onClose, onChanged, onDeleted, 
       `}</style>
       <div
         onClick={onClose}
-        className="fixed inset-0 z-[70] bg-slate-900/45"
+        className="fixed inset-0 z-70 bg-slate-900/45"
         style={{ animation: "fadeIn .18s ease" }}
       />
       <div
-        className="fixed right-0 top-0 z-[71] flex h-screen w-[460px] max-w-full flex-col bg-white shadow-[-12px_0_44px_rgba(15,23,42,0.18)]"
+        className="fixed right-0 top-0 z-71 flex h-screen w-115 max-w-full flex-col bg-white shadow-[-12px_0_44px_rgba(15,23,42,0.18)]"
         style={{ animation: "drawerIn .26s cubic-bezier(.4,0,.2,1)" }}
       >
-        <div className="flex items-center justify-between gap-3 border-b border-[#f1f4f6] px-6 py-[22px]">
+        <div className="flex items-center justify-between gap-3 border-b border-[#f1f4f6] px-6 py-5.5">
           <div className="flex items-center gap-2.5">
             <h2 className="text-[18px] font-extrabold tracking-tight text-slate-900">
               게시글 상세
@@ -125,9 +128,9 @@ export default function PostDetailDrawer({ post, onClose, onChanged, onDeleted, 
           </div>
           <button
             onClick={onClose}
-            className="flex h-[34px] w-[34px] items-center justify-center rounded-[9px] border border-[#eef1f3] bg-white text-slate-500 hover:bg-slate-100"
+            className="flex h-8.5 w-8.5 items-center justify-center rounded-[9px] border border-[#eef1f3] bg-white text-slate-500 hover:bg-slate-100"
           >
-            <X className="h-[18px] w-[18px]" strokeWidth={2.2} />
+            <X className="h-4.5 w-4.5" strokeWidth={2.2} />
           </button>
         </div>
 
@@ -145,9 +148,9 @@ export default function PostDetailDrawer({ post, onClose, onChanged, onDeleted, 
             )}
           </div>
 
-          <div className="mb-5 rounded-[14px] border border-[#eef1f3] bg-slate-50 p-[18px]">
+          <div className="mb-5 rounded-[14px] border border-[#eef1f3] bg-slate-50 p-4.5">
             <div className="mb-3 flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wide text-slate-400">
-              <FileText className="h-[17px] w-[17px] text-teal-600" strokeWidth={2} />
+              <FileText className="h-4.25 w-4.25 text-teal-600" strokeWidth={2} />
               게시글
             </div>
             <div className="text-[15.5px] font-bold text-slate-900">{post.title}</div>
@@ -159,34 +162,34 @@ export default function PostDetailDrawer({ post, onClose, onChanged, onDeleted, 
                 className="mt-3.5 inline-flex items-center gap-1.5 text-[13px] font-semibold text-orange-500"
               >
                 원본 게시글 보기
-                <ExternalLink className="h-[14px] w-[14px]" strokeWidth={2.2} />
+                <ExternalLink className="h-3.5 w-3.5" strokeWidth={2.2} />
               </a>
             )}
           </div>
 
           <div className="overflow-hidden rounded-xl border border-[#eef1f3]">
-            <div className="flex items-center justify-between border-b border-[#f3f5f7] px-4 py-[11px]">
+            <div className="flex items-center justify-between border-b border-[#f3f5f7] px-4 py-2.75">
               <span className="text-[13px] text-slate-400">작성자</span>
               <span className="text-[13px] font-bold text-slate-900">{post.author_name ?? "-"}</span>
             </div>
-            <div className="flex items-center justify-between border-b border-[#f3f5f7] px-4 py-[11px]">
+            <div className="flex items-center justify-between border-b border-[#f3f5f7] px-4 py-2.75">
               <span className="text-[13px] text-slate-400">조회수</span>
               <span className="text-[13px] font-semibold text-slate-900">
                 {(post.view_count ?? 0).toLocaleString()}
               </span>
             </div>
-            <div className={`flex items-center justify-between px-4 py-[11px]${post.handled_by_name ? " border-b border-[#f3f5f7]" : ""}`}>
+            <div className={`flex items-center justify-between px-4 py-2.75${post.handled_by_name ? " border-b border-[#f3f5f7]" : ""}`}>
               <span className="text-[13px] text-slate-400">작성일</span>
               <span className="text-[13px] font-semibold text-slate-900">{formatDate(post.created_at)}</span>
             </div>
             {post.handled_by_name && (
-              <div className={`flex items-center justify-between px-4 py-[11px]${post.handled_at ? " border-b border-[#f3f5f7]" : ""}`}>
+              <div className={`flex items-center justify-between px-4 py-2.75${post.handled_at ? " border-b border-[#f3f5f7]" : ""}`}>
                 <span className="text-[13px] text-slate-400">처리 관리자</span>
                 <span className="text-[13px] font-bold text-slate-900">{post.handled_by_name}</span>
               </div>
             )}
             {post.handled_at && (
-              <div className="flex items-center justify-between px-4 py-[11px]">
+              <div className="flex items-center justify-between px-4 py-2.75">
                 <span className="text-[13px] text-slate-400">처리 일시</span>
                 <span className="text-[13px] font-semibold text-slate-900">{formatDate(post.handled_at)}</span>
               </div>
@@ -194,7 +197,7 @@ export default function PostDetailDrawer({ post, onClose, onChanged, onDeleted, 
           </div>
 
           <div className="mt-5 overflow-hidden rounded-[14px] border border-[#eef1f3]">
-            <div className="flex items-center gap-2 border-b border-[#f1f4f6] bg-slate-50 px-4 py-[13px]">
+            <div className="flex items-center gap-2 border-b border-[#f1f4f6] bg-slate-50 px-4 py-3.25">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
                 <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
@@ -223,7 +226,7 @@ export default function PostDetailDrawer({ post, onClose, onChanged, onDeleted, 
                   };
                   const ss = statusStyle[r.status] ?? statusStyle.pending;
                   return (
-                    <div key={r.id} className="px-4 py-[13px]">
+                    <div key={r.id} className="px-4 py-3.25">
                       <div className="flex items-center gap-2 flex-wrap">
                         {r.reason && (
                           <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-[12px] font-semibold text-slate-600">
@@ -316,7 +319,7 @@ export default function PostDetailDrawer({ post, onClose, onChanged, onDeleted, 
 
             return (
               <div className="mt-5 overflow-hidden rounded-[14px] border border-[#eef1f3]">
-                <div className="flex items-center gap-2 border-b border-[#f1f4f6] bg-slate-50 px-4 py-[13px]">
+                <div className="flex items-center gap-2 border-b border-[#f1f4f6] bg-slate-50 px-4 py-3.25">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
                   </svg>
@@ -342,9 +345,9 @@ export default function PostDetailDrawer({ post, onClose, onChanged, onDeleted, 
                       const bgColor =
                         log.icon === "activate" ? "#ecfdf5" : log.icon === "sanction" ? "#fef2f2" : "#fff7ed";
                       return (
-                        <div key={log.key} className="flex items-start gap-3 px-4 py-[13px]">
+                        <div key={log.key} className="flex items-start gap-3 px-4 py-3.25">
                           <span
-                            className="mt-0.5 flex h-[26px] w-[26px] flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold"
+                            className="mt-0.5 flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold"
                             style={{ background: bgColor, color: iconColor }}
                           >
                             {log.icon === "activate" ? "✓" : "✕"}
@@ -370,19 +373,19 @@ export default function PostDetailDrawer({ post, onClose, onChanged, onDeleted, 
           })()}
         </div>
 
-        <div className="border-t border-[#f1f4f6] px-6 py-[18px]">
+        <div className="border-t border-[#f1f4f6] px-6 py-4.5">
           {isActive ? (
             <div className="flex gap-2.5">
               <button
                 onClick={handleToggle}
                 disabled={isPending}
-                className="flex-1 rounded-[11px] border border-[#e2e8eb] bg-slate-50 py-[13px] text-[14px] font-bold text-slate-600 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex-1 rounded-[11px] border border-[#e2e8eb] bg-slate-50 py-3.25 text-[14px] font-bold text-slate-600 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 비공개 처리
               </button>
               <button
                 onClick={onClose}
-                className="flex-[1.4] rounded-[11px] border border-[#e2e8eb] bg-white py-[13px] text-[14px] font-bold text-slate-600 hover:bg-slate-50"
+                className="flex-[1.4] rounded-[11px] border border-[#e2e8eb] bg-white py-3.25 text-[14px] font-bold text-slate-600 hover:bg-slate-50"
               >
                 닫기
               </button>
@@ -392,13 +395,13 @@ export default function PostDetailDrawer({ post, onClose, onChanged, onDeleted, 
               <button
                 onClick={handleToggle}
                 disabled={isPending}
-                className="flex-1 rounded-[11px] bg-teal-500 py-[13px] text-[14px] font-bold text-white shadow-[0_4px_12px_rgba(20,184,166,0.3)] hover:bg-teal-600 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex-1 rounded-[11px] bg-teal-500 py-3.25 text-[14px] font-bold text-white shadow-[0_4px_12px_rgba(20,184,166,0.3)] hover:bg-teal-600 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 활성화
               </button>
               <button
                 onClick={onClose}
-                className="flex-[1.4] rounded-[11px] border border-[#e2e8eb] bg-white py-[13px] text-[14px] font-bold text-slate-600 hover:bg-slate-50"
+                className="flex-[1.4] rounded-[11px] border border-[#e2e8eb] bg-white py-3.25 text-[14px] font-bold text-slate-600 hover:bg-slate-50"
               >
                 닫기
               </button>
