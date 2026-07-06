@@ -1,7 +1,9 @@
 "use client";
 
+import { lockScroll, unlockScroll } from "@/utils/lockScroll";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { Checkbox } from "@/components/ui/checkbox";
 import { TermsModal } from "./TermsModal";
 
 type ModalType = "terms" | "privacy" | "age";
@@ -14,6 +16,8 @@ type AgreedState = {
   push: boolean;
 };
 
+export type SignupAgreements = AgreedState;
+
 const AGREES = [
   { id: "terms", required: true },
   { id: "privacy", required: true },
@@ -24,9 +28,10 @@ const AGREES = [
 
 interface AgreeSectionProps {
   onRequiredChange: (required: boolean) => void;
+  onAgreedChange?: (agreed: SignupAgreements) => void;
 }
 
-export function AgreeSection({ onRequiredChange }: AgreeSectionProps) {
+export function AgreeSection({ onRequiredChange, onAgreedChange }: AgreeSectionProps) {
   const t = useTranslations("Signup.agree");
   const [agreed, setAgreed] = useState<AgreedState>({
     terms: false,
@@ -41,15 +46,17 @@ export function AgreeSection({ onRequiredChange }: AgreeSectionProps) {
   const allChecked = Object.values(agreed).every((v) => v);
 
   useEffect(() => {
-    document.body.style.overflow = modalType ? "hidden" : "";
+    if (!modalType) return;
+    lockScroll();
     return () => {
-      document.body.style.overflow = "";
+      unlockScroll();
     };
   }, [modalType]);
 
   useEffect(() => {
     onRequiredChange(agreed.terms && agreed.privacy && agreed.age);
-  }, [agreed.terms, agreed.privacy, agreed.age, onRequiredChange]);
+    onAgreedChange?.(agreed);
+  }, [agreed, onAgreedChange, onRequiredChange]);
 
   const handleItemClick = (id: string) => {
     if (id === "marketing" || id === "push") {
@@ -97,38 +104,38 @@ export function AgreeSection({ onRequiredChange }: AgreeSectionProps) {
 
   return (
     <>
-      <div className="border-t pt-4 space-y-3">
-        <label className="flex items-center gap-3 bg-gray-50 rounded-lg px-4 py-3 cursor-pointer">
-          <input
-            type="checkbox"
+      <div className="space-y-3 border-t border-gray-100 pt-4">
+        <label className="flex cursor-pointer items-center gap-3 rounded-md border border-gray-100 bg-gray-50 px-4 py-3.5 transition-colors hover:bg-gray-100/70">
+          <Checkbox
             checked={allChecked}
-            onChange={handleToggleAll}
-            className="w-4 h-4 accent-teal-500 shrink-0"
+            onCheckedChange={handleToggleAll}
+            className="h-5 w-5 shrink-0 border-gray-300 bg-white data-checked:border-gray-300 data-checked:bg-white data-checked:text-gray-900"
           />
-          <span className="text-sm font-medium text-gray-900">{t("all")}</span>
+          <span className="text-sm font-bold text-gray-950">{t("all")}</span>
         </label>
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           {AGREES.map((a) => (
             <label
               key={a.id}
-              className="flex items-start gap-3 px-4 py-2 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors"
+              className="flex cursor-pointer items-start gap-3 rounded-md px-3 py-2.5 transition-colors hover:bg-gray-50"
             >
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={agreed[a.id as keyof AgreedState]}
-                onChange={() => handleItemClick(a.id)}
-                className="mt-0.5 w-4 h-4 accent-teal-500 shrink-0"
+                onCheckedChange={() => handleItemClick(a.id)}
+                className="mt-0.5 h-4.5 w-4.5 shrink-0 border-gray-300 bg-white data-checked:border-gray-300 data-checked:bg-white data-checked:text-gray-900"
               />
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-900">{t(`items.${a.id}.label`)}</span>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[13px] font-semibold leading-5 text-gray-900">
+                    {t(`items.${a.id}.label`)}
+                  </span>
                   <span
-                    className={`text-xs px-2 py-0.5 rounded-full font-medium ${a.required ? "bg-teal-100 text-teal-600" : "bg-gray-100 text-gray-500"}`}
+                    className={`rounded-md px-1.5 py-0.5 text-[10px] font-semibold tracking-wide uppercase ${a.required ? "bg-slate-700 text-white" : "bg-gray-50 text-gray-400 ring-1 ring-inset ring-gray-200"}`}
                   >
                     {a.required ? t("required") : t("optional")}
                   </span>
                 </div>
-                <p className="text-xs text-gray-500 mt-0.5">{t(`items.${a.id}.desc`)}</p>
+                <p className="mt-0.5 text-xs leading-4 text-gray-500">{t(`items.${a.id}.desc`)}</p>
               </div>
             </label>
           ))}

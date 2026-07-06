@@ -5,9 +5,12 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { useImageUpload } from "@/hooks/useImageUpload";
+import { optimizeImage } from "@/utils/optimizeImage";
+import { buildImageOrder } from "@/utils/reorderImages";
 import { cityToTradeLocation, type TradeLocation } from "@/type/location";
 import type { EmployeeType, SalaryType, JobInitialData } from "@/type/job/jobCreate";
 import type { PickedLocation } from "@/type/go";
+import { createJobPostRecord } from "@/app/(user)/job/create/actions";
 
 export function useCreateJobForm(userId: number, userName: string, initialData?: JobInitialData) {
   const router = useRouter();
@@ -91,7 +94,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       return;
     }
     setStep(2);
-    window.scrollTo(0, 0);
+    document.getElementById("scroll-root")?.scrollTo(0, 0);
   };
 
   const handleSubmit = async () => {
@@ -116,20 +119,14 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     }
     setUrlError("");
 
-    const rateRes = await fetch("/api/posts/rate-check");
-    if (!rateRes.ok) {
-      const { message } = await rateRes.json().catch(() => ({}));
-      alert(message ?? "도배 방지를 위해 짧은 시간안에 글 작성을 금지하고 있습니다. 잠시 후 다시 시도해주세요.");
-      return;
-    }
-
     setIsSubmitting(true);
 
     const uploadLogo = async (postId: number): Promise<string | null> => {
       if (!companyLogoFile) return companyLogoUrl || null;
-      const ext = companyLogoFile.name.split(".").pop()?.toLowerCase() ?? "jpg";
+      const optimized = await optimizeImage(companyLogoFile, 512);
+      const ext = optimized.name.split(".").pop()?.toLowerCase() ?? "jpg";
       const logoPath = `logos/${userId}/${postId}.${ext}`;
-      const { error } = await supabase.storage.from("images").upload(logoPath, companyLogoFile, { upsert: true });
+      const { error } = await supabase.storage.from("images").upload(logoPath, optimized, { upsert: true });
       if (error) { alert(t("errorImage")); return null; }
       const { data } = supabase.storage.from("images").getPublicUrl(logoPath);
       return data.publicUrl;
@@ -171,7 +168,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       for (const file of imageUpload.imageFiles) {
         const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
         const filePath = `${userId}/${initialData.post_id}/${Date.now()}.${ext}`;
-        const { error: uploadError } = await supabase.storage.from("images").upload(filePath, file);
+        const { error: uploadError } = await supabase.storage.from("images").upload(filePath, file, { cacheControl: "31536000" });
         if (uploadError) {
           alert(t("errorImage"));
           setIsSubmitting(false);
@@ -181,8 +178,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
         uploadedUrls.push(urlData.publicUrl);
       }
 
-      const existingUrls = imageUpload.imagePreviews.filter(url => !url.startsWith("blob:"));
-      const finalImages = [...existingUrls, ...uploadedUrls];
+      const finalImages = buildImageOrder(imageUpload.imagePreviews, uploadedUrls);
 
       await supabase.from("posts").update({ title }).eq("id", initialData.post_id);
       const { error } = await supabase.from("jobs")
@@ -199,14 +195,17 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
       return;
     }
 
-    const { data: post, error: postError } = await supabase
-      .from("posts")
-      .insert({ user_id: userId, post_type: "jobs", title, status: "active", view_count: 0, like_count: 0 })
-      .select("id")
-      .single();
-
-    if (postError || !post) {
-      alert(t("errorPost"));
+    let post: { id: number };
+    try {
+      const { postId } = await createJobPostRecord(title);
+      post = { id: postId };
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "";
+      if (msg === "RATE_LIMIT") {
+        alert("도배 방지를 위해 짧은 시간안에 글 작성을 금지하고 있습니다. 잠시 후 다시 시도해주세요.");
+      } else {
+        alert(t("errorPost"));
+      }
       setIsSubmitting(false);
       return;
     }
@@ -222,7 +221,7 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     for (const file of imageUpload.imageFiles) {
       const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
       const filePath = `${userId}/${post.id}/${Date.now()}.${ext}`;
-      const { error: uploadError } = await supabase.storage.from("images").upload(filePath, file);
+      const { error: uploadError } = await supabase.storage.from("images").upload(filePath, file, { cacheControl: "31536000" });
       if (uploadError) {
         await supabase.from("posts").delete().eq("id", post.id);
         alert(t("errorImage"));
@@ -289,6 +288,6 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     imageUpload,
     handleSubmit,
     handleBack: () => router.back(),
-    handlePrevStep: () => { setStep(1); window.scrollTo(0, 0); },
+    handlePrevStep: () => { setStep(1); document.getElementById("scroll-root")?.scrollTo(0, 0); },
   };
 }

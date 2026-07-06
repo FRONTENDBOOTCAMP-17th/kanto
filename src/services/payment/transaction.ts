@@ -3,6 +3,7 @@ import type { Transaction, TransactionStatus } from "@/type/transaction";
 
 export async function createTransaction(input: {
   postId: number;
+  postTitle: string | null;
   chatId: number;
   buyerId: number;
   sellerId: number;
@@ -13,6 +14,7 @@ export async function createTransaction(input: {
     .from("transactions")
     .insert({
       post_id: input.postId,
+      post_title: input.postTitle,
       chat_id: input.chatId,
       buyer_id: input.buyerId,
       seller_id: input.sellerId,

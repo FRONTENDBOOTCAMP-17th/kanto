@@ -81,7 +81,7 @@ function AdminRow({
           <span className="text-[12px] text-slate-300">미배정</span>
         )}
       </td>
-      <td className="hidden whitespace-nowrap px-5 py-4 text-slate-500 md:table-cell">{admin.createdAt}</td>
+      <td className="whitespace-nowrap px-5 py-4 text-slate-500">{admin.createdAt}</td>
       <td className="px-5 py-4">
         {!isSuperAdminRole && (
           pendingRoleChangeId === admin.id ? (
@@ -165,7 +165,7 @@ export function AdminListTab({ admins, teams, onAdminDeleted, onAdminPromoted }:
           <tr className="border-b border-[#ebeef0] text-left text-[12px] font-semibold uppercase tracking-wide text-slate-400">
             <th className="min-w-45 px-5 py-3.5">계정</th>
             <th className="px-5 py-3.5">권한</th>
-            <th className="hidden whitespace-nowrap px-5 py-3.5 md:table-cell">추가일</th>
+            <th className="whitespace-nowrap px-5 py-3.5">추가일</th>
             <th className="px-5 py-3.5" />
           </tr>
         </thead>

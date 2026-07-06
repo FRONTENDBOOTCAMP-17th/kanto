@@ -9,6 +9,7 @@ import { formatTimeAgo, getDeadlineDiff } from "@/utils/format";
 
 interface JobCardProps {
   id: number;
+  idToken?: string;
   title: string;
   companyName: string;
   salary: number;
@@ -25,6 +26,7 @@ interface JobCardProps {
 
 export function JobCard({
   id,
+  idToken,
   title,
   companyName,
   salary,
@@ -70,14 +72,14 @@ export function JobCard({
 
   return (
     <div
-      className="bg-white px-5 py-4 flex justify-between gap-3 md:gap-4 hover:bg-gray-50 transition-colors cursor-pointer group"
-      onClick={() => router.push(`/job/${id}${fromPage ? `?fromPage=${fromPage}` : ""}`)}
+      className="bg-white px-5 py-4 flex justify-between gap-3 md:gap-4 hover:bg-teal-50/40 transition-colors cursor-pointer group"
+      onClick={() => router.push(`/job/${idToken ?? id}${fromPage ? `?fromPage=${fromPage}` : ""}`)}
     >
       
       <div className="flex flex-col gap-2 flex-1 min-w-0 md:hidden">
         <div>
           <div className="flex items-center gap-2">
-            <p className="font-semibold text-gray-900 text-lg truncate transition-colors">
+            <p className="font-semibold text-gray-900 text-lg truncate transition-colors group-hover:text-teal-700">
               {title}
             </p>
             <span className={`shrink-0 text-sm rounded px-1.5 py-0.5 font-medium ${employeeTypeClass}`}>
@@ -109,7 +111,7 @@ export function JobCard({
         </div>
 
         <div className="flex items-center gap-2 flex-4 min-w-0 border-l px-4 self-stretch">
-          <p className="font-semibold text-gray-900 text-base lg:text-lg truncate transition-colors">
+          <p className="font-semibold text-gray-900 text-base lg:text-lg truncate transition-colors group-hover:text-teal-700">
             {title}
           </p>
           <span className={`shrink-0 text-xs lg:text-sm rounded px-1.5 py-0.5 font-medium ${employeeTypeClass}`}>

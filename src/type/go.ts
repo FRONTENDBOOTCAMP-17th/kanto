@@ -5,23 +5,25 @@ type MeetupRow = Tables<"meetups">;
 
 export interface Meetup extends Omit<MeetupRow, "topic"> {
   topic: MeetupTopicKey;
-  title: string; 
-  host_id: number; 
-  host_name: string; 
-  status: string; 
-  participant_count: number; 
+  title: string;
+  host_id: number;
+  host_name: string;
+  status: string;
+  participant_count: number;
+  id_token?: string;
 }
 
 export interface MeetupParticipant {
   id: number;
   meetup_post_id: number;
   user_id: number;
+  id_token?: string;
   joined_at: string;
   status: "joined" | "cancelled";
-  display_name: string; 
+  display_name: string;
   avatar_url: string | null;
-  is_host?: boolean; 
-  is_deleted?: boolean; 
+  is_host?: boolean;
+  is_deleted?: boolean;
 }
 
 export interface PickedLocation {

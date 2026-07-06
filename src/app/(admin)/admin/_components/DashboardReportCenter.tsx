@@ -19,6 +19,7 @@ import {
   getPostDetailAction,
 } from "../_actions/getReportDetail";
 import { daysSince } from "../_lib/utils";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 interface ReportCenter {
   openQueue: () => void;
@@ -54,6 +55,8 @@ export default function DashboardReportCenter({
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState("");
   const [, startTransition] = useTransition();
+
+  useBodyScrollLock(queueOpen);
 
   function showToast(msg: string) {
     setToast(msg);
@@ -106,22 +109,22 @@ export default function DashboardReportCenter({
         <>
           <div
             onClick={() => setQueueOpen(false)}
-            className="fixed inset-0 z-[60] bg-slate-900/45"
+            className="fixed inset-0 z-60 bg-slate-900/45"
             style={{ animation: "fadeIn .18s ease" }}
           />
           <div
-            className="fixed right-0 top-0 z-[61] flex h-screen w-[460px] max-w-full flex-col bg-white shadow-[-12px_0_44px_rgba(15,23,42,0.18)]"
+            className="fixed right-0 top-0 z-61 flex h-screen w-115 max-w-full flex-col bg-white shadow-[-12px_0_44px_rgba(15,23,42,0.18)]"
             style={{ animation: "drawerIn .26s cubic-bezier(.4,0,.2,1)" }}
           >
-            <div className="flex items-center justify-between gap-3 border-b border-[#f1f4f6] px-6 py-[22px]">
+            <div className="flex items-center justify-between gap-3 border-b border-[#f1f4f6] px-6 py-5.5">
               <h2 className="text-[18px] font-extrabold tracking-tight text-slate-900">
                 신고 처리 대기열
               </h2>
               <button
                 onClick={() => setQueueOpen(false)}
-                className="flex h-[34px] w-[34px] items-center justify-center rounded-[9px] border border-[#eef1f3] bg-white text-slate-500 hover:bg-slate-100"
+                className="flex h-8.5 w-8.5 items-center justify-center rounded-[9px] border border-[#eef1f3] bg-white text-slate-500 hover:bg-slate-100"
               >
-                <X className="h-[18px] w-[18px]" strokeWidth={2.2} />
+                <X className="h-4.5 w-4.5" strokeWidth={2.2} />
               </button>
             </div>
 
@@ -165,8 +168,8 @@ export default function DashboardReportCenter({
                         key={m.user_id}
                         className="flex items-center gap-3 rounded-[12px] border border-[#eef1f3] px-3 py-2.5"
                       >
-                        <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-violet-50 text-violet-500">
-                          <UserIcon className="h-[18px] w-[18px]" strokeWidth={2} />
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-violet-50 text-violet-500">
+                          <UserIcon className="h-4.5 w-4.5" strokeWidth={2} />
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="truncate text-[14px] font-bold text-slate-900">
@@ -178,7 +181,7 @@ export default function DashboardReportCenter({
                         </div>
                         <button
                           onClick={() => openUser(m.user_id)}
-                          className="flex-shrink-0 whitespace-nowrap rounded-[9px] bg-teal-500 px-3.5 py-[7px] text-[13px] font-bold text-white hover:bg-teal-600"
+                          className="shrink-0 whitespace-nowrap rounded-[9px] bg-teal-500 px-3.5 py-1.75 text-[13px] font-bold text-white hover:bg-teal-600"
                         >
                           처리
                         </button>
@@ -199,8 +202,8 @@ export default function DashboardReportCenter({
                         key={p.post_id}
                         className="flex items-center gap-3 rounded-[12px] border border-[#eef1f3] px-3 py-2.5"
                       >
-                        <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-600">
-                          <FileText className="h-[18px] w-[18px]" strokeWidth={2} />
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-600">
+                          <FileText className="h-4.5 w-4.5" strokeWidth={2} />
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="truncate text-[14px] font-bold text-slate-900">
@@ -216,7 +219,7 @@ export default function DashboardReportCenter({
                         </div>
                         <button
                           onClick={() => openPost(p.post_id)}
-                          className="flex-shrink-0 whitespace-nowrap rounded-[9px] bg-teal-500 px-3.5 py-[7px] text-[13px] font-bold text-white hover:bg-teal-600"
+                          className="shrink-0 whitespace-nowrap rounded-[9px] bg-teal-500 px-3.5 py-1.75 text-[13px] font-bold text-white hover:bg-teal-600"
                         >
                           처리
                         </button>
@@ -232,7 +235,7 @@ export default function DashboardReportCenter({
 
       
       {loading && (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-900/20">
+        <div className="fixed inset-0 z-90 flex items-center justify-center bg-slate-900/20">
           <div className="flex items-center gap-2.5 rounded-xl bg-white px-5 py-3 shadow-lg">
             <span className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-teal-500" />
             <span className="text-[13.5px] font-semibold text-slate-600">
@@ -277,7 +280,7 @@ export default function DashboardReportCenter({
 
       {toast && (
         <div
-          className="fixed bottom-7 left-1/2 z-[95] flex -translate-x-1/2 items-center gap-2.5 rounded-xl bg-slate-900 px-5 py-[13px] text-white shadow-[0_10px_30px_rgba(15,23,42,0.3)]"
+          className="fixed bottom-7 left-1/2 z-95 flex -translate-x-1/2 items-center gap-2.5 rounded-xl bg-slate-900 px-5 py-3.25 text-white shadow-[0_10px_30px_rgba(15,23,42,0.3)]"
           style={{ animation: "fadeIn .18s ease" }}
         >
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">

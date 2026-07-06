@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 
-type LoginButtonVariant = "kakao" | "google" | "facebook" | "email";
+type LoginButtonVariant = "kakao" | "google" | "facebook";
 
 interface LoginButtonProps {
   variant: LoginButtonVariant;
@@ -58,10 +58,6 @@ const BUTTON_CONFIG: Record<
       </svg>
     ),
   },
-  email: {
-    className: "w-full h-11 text-gray-700 bg-gray-100 hover:bg-gray-200",
-    icon: null,
-  },
 };
 
 export default function LoginButton({ variant, onClick }: LoginButtonProps) {
@@ -72,7 +68,7 @@ export default function LoginButton({ variant, onClick }: LoginButtonProps) {
     <Button
       type="button"
       variant="outline"
-      className={className}
+      className={`${className} rounded-md active:scale-[1.05]`}
       onClick={onClick}
     >
       {icon}

@@ -6,6 +6,7 @@ import { GlobalLayout } from "@/components/common/GlobalLayout";
 import { Providers } from "@/components/common/Providers";
 import { WebVitalsReporter } from "@/components/common/WebVitalsReporter";
 import { getSessionUser } from "@/services/user/user";
+import { getActivePublicNotices } from "@/services/admin/adminNotices";
 import { BCP47_LOCALE, type Locale } from "@/i18n/config";
 import "./globals.css";
 
@@ -24,10 +25,11 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL!.replace(/\/$/, "");
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "칸토 | 필리핀 한인 중고거래 & 렌탈 플랫폼",
+    default: "칸토 - 필리핀 정보 플랫폼",
     template: "%s | 칸토",
   },
-  description: "필리핀 한인 커뮤니티를 위한 중고거래, 렌탈, 구인구직 플랫폼입니다.",
+  description:
+    "필리핀 정보 - 채팅, 중고거래, 부동산, 구인구직, 모임 등 생활에 필요한 모든 정보를 보다 편리하게 제공하는 플랫폼을 이용해보세요.",
   keywords: ["칸토", "필리핀 한인", "중고거래", "렌탈", "구인구직"],
   authors: [{ name: "칸토" }],
   openGraph: {
@@ -35,13 +37,15 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     url: BASE_URL,
     siteName: "칸토",
-    title: "칸토 | 필리핀 한인 중고거래 & 렌탈 플랫폼",
-    description: "필리핀 한인 커뮤니티를 위한 중고거래, 렌탈, 구인구직 플랫폼입니다.",
+    title: "칸토 - 필리핀 정보 플랫폼",
+    description:
+      "필리핀 정보 - 채팅, 중고거래, 부동산, 구인구직, 모임 등 생활에 필요한 모든 정보를 보다 편리하게 제공하는 플랫폼을 이용해보세요.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "칸토 | 필리핀 한인 중고거래 & 렌탈 플랫폼",
-    description: "필리핀 한인 커뮤니티를 위한 중고거래, 렌탈, 구인구직 플랫폼입니다.",
+    title: "칸토 - 필리핀 정보 플랫폼",
+    description:
+      "필리핀 정보 - 채팅, 중고거래, 부동산, 구인구직, 모임 등 생활에 필요한 모든 정보를 보다 편리하게 제공하는 플랫폼을 이용해보세요.",
   },
   alternates: {
     canonical: BASE_URL,
@@ -61,9 +65,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const initialUser = await getSessionUser();
   const locale = (await getLocale()) as Locale;
-  const messages = await getMessages();
+  const [initialUser, messages, initialNotices] = await Promise.all([
+    getSessionUser(),
+    getMessages(),
+    getActivePublicNotices(locale),
+  ]);
 
   return (
     <html
@@ -71,7 +78,7 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
+      <body className="h-full overflow-hidden flex flex-col">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -85,7 +92,18 @@ export default async function RootLayout({
             }),
           }}
         />
-        
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "칸토",
+              url: BASE_URL,
+            }),
+          }}
+        />
+
         <script
           dangerouslySetInnerHTML={{
             __html: `try{if(innerWidth<768){var c=new URLSearchParams(location.search).get('chat');if(c||sessionStorage.getItem('chatWidget:newChatDraft'))document.documentElement.setAttribute('data-chat-boot','')}}catch(e){}`,
@@ -94,7 +112,9 @@ export default async function RootLayout({
         <WebVitalsReporter />
         <NextIntlClientProvider messages={messages}>
           <Providers>
-            <GlobalLayout initialUser={initialUser}>{children}</GlobalLayout>
+            <GlobalLayout initialUser={initialUser} initialNotices={initialNotices}>
+              {children}
+            </GlobalLayout>
           </Providers>
         </NextIntlClientProvider>
       </body>

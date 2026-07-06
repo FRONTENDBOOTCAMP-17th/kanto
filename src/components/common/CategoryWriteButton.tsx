@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { SquarePen, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
@@ -21,6 +23,7 @@ export function CategoryWriteButton({
   isLoggedIn,
   initialIsVerified,
 }: CategoryWriteButtonProps) {
+  const tc = useTranslations("Common");
   const router = useRouter();
   const { isSuspended, openModal: openSuspendedModal } = useSuspended();
   const [isVerified, setIsVerified] = useState(initialIsVerified);
@@ -69,7 +72,7 @@ export function CategoryWriteButton({
 
       <LoginRequiredModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
 
-      {isConfirmOpen && (
+      {isConfirmOpen && createPortal(
         <div
           className="fixed inset-0 z-100 flex items-center justify-center bg-black/45 px-4"
           onClick={() => setIsConfirmOpen(false)}
@@ -82,12 +85,12 @@ export function CategoryWriteButton({
           >
             <div className="flex items-center gap-2 mb-3">
               <ShieldCheck className="w-5 h-5 text-teal-500" />
-              <h2 className="text-base font-semibold text-gray-900">본인인증 필요</h2>
+              <h2 className="text-base font-semibold text-gray-900">{tc("verifyRequired.title")}</h2>
             </div>
             <p className="text-sm text-gray-600 leading-relaxed mb-6">
-              본인인증을 해야 글 작성이 가능합니다.
+              {tc("verifyRequired.message")}
               <br />
-              본인인증 하시겠습니까?
+              {tc("verifyRequired.question")}
             </p>
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -95,18 +98,19 @@ export function CategoryWriteButton({
                 onClick={() => setIsConfirmOpen(false)}
                 className="h-10 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
               >
-                취소
+                {tc("cancel")}
               </button>
               <button
                 type="button"
                 onClick={handleConfirm}
                 className="h-10 rounded-lg bg-teal-500 text-sm font-medium text-white hover:bg-teal-600 transition-colors cursor-pointer"
               >
-                확인
+                {tc("confirm")}
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
 
       {isVerificationOpen && (

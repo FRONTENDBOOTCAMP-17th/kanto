@@ -1,12 +1,13 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useMemo, useState, type TouchEvent } from "react";
 import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
-import { MapPin, Clock, Heart, ImageIcon } from "lucide-react";
+import { MapPin, ImageIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import { LikeButton } from "@/components/common/LikeButton";
+import { useCarousel } from "@/hooks/useCarousel";
 import { formatTimeAgo } from "@/utils/format";
 import type { Locale } from "@/i18n/config";
 
@@ -27,6 +28,7 @@ export interface ContentCardProps {
   subtitle?: string;
   tags?: React.ReactNode;
   listOnMobile?: boolean;
+  priority?: boolean;
 }
 
 export function ContentCard({
@@ -46,17 +48,37 @@ export function ContentCard({
   subtitle,
   tags,
   listOnMobile = false,
+  priority = false,
 }: ContentCardProps) {
   const t = useTranslations("Common");
   const locale = useLocale() as Locale;
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { currentIndex, prevIndex, direction, isAnimating, navigate, dragHandlers } =
+    useCarousel(images.length);
   const [count, setCount] = useState(likeCount);
   const hasImages = images.length > 0;
   const hasCarousel = images.length > 1;
+  const [shouldPreloadAdjacent, setShouldPreloadAdjacent] = useState(priority);
+  const adjacentIndexes = useMemo(() => {
+    if (!hasCarousel || !shouldPreloadAdjacent) return [];
+    const prev = (currentIndex - 1 + images.length) % images.length;
+    const next = (currentIndex + 1) % images.length;
+    return Array.from(new Set([prev, next])).filter((idx) => idx !== currentIndex);
+  }, [currentIndex, hasCarousel, images.length, shouldPreloadAdjacent]);
+
+  const warmAdjacentImages = () => setShouldPreloadAdjacent(true);
+  const carouselHandlers = hasCarousel
+    ? {
+        ...dragHandlers,
+        onTouchStart: (e: TouchEvent) => {
+          warmAdjacentImages();
+          dragHandlers.onTouchStart(e);
+        },
+      }
+    : {};
 
   return (
     <div className="relative h-full">
-      <Link href={href} className="h-full block">
+      <Link href={href} className="h-full block active:scale-100">
         <Card
           className={`overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group h-full ${
             listOnMobile
@@ -66,49 +88,114 @@ export function ContentCard({
         >
           
           <div
-            className={`relative overflow-hidden bg-gray-100 shrink-0 ${
+            className={`relative overflow-hidden bg-gray-100 shrink-0 select-none ${
               listOnMobile
                 ? "w-24 h-24 self-center rounded-lg md:w-full md:h-auto md:self-stretch md:aspect-square md:rounded-none"
                 : "aspect-square"
             }`}
+            onMouseEnter={warmAdjacentImages}
+            onFocus={warmAdjacentImages}
+            {...carouselHandlers}
           >
             {hasImages ? (
               <>
-                {images.map((src, idx) => (
+                {adjacentIndexes.map((idx) => (
+                  <ImageWithFallback
+                    key={`preload-${idx}`}
+                    src={images[idx]}
+                    alt=""
+                    fill
+                    sizes="(max-width: 768px) 100vw, 25vw"
+                    className="pointer-events-none invisible object-cover"
+                    draggable={false}
+                    loading="eager"
+                    aria-hidden
+                  />
+                ))}
+                {prevIndex !== null && (
                   <div
-                    key={idx}
-                    className={`absolute inset-0 transition-opacity duration-300 ${
-                      idx === currentImageIndex ? "opacity-100" : "opacity-0"
+                    className={`absolute inset-0 ${
+                      direction === "right" ? "animate-slide-out-left" : "animate-slide-out-right"
                     }`}
                   >
                     <ImageWithFallback
-                      src={src}
-                      alt={`${title} ${idx + 1}`}
+                      key={prevIndex}
+                      src={images[prevIndex]}
+                      alt={`${title} ${prevIndex + 1}`}
                       fill
                       sizes="(max-width: 768px) 100vw, 25vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="object-cover"
+                      draggable={false}
+                      loading="eager"
                     />
                   </div>
-                ))}
+                )}
+                <div
+                  className={`absolute inset-0 ${
+                    isAnimating
+                      ? direction === "right"
+                        ? "animate-slide-in-right"
+                        : "animate-slide-in-left"
+                      : ""
+                  }`}
+                >
+                  <ImageWithFallback
+                    key={currentIndex}
+                    src={images[currentIndex]}
+                    alt={`${title} ${currentIndex + 1}`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 25vw"
+                    priority={priority && currentIndex === 0}
+                    loading={priority && currentIndex === 0 ? undefined : "eager"}
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    draggable={false}
+                  />
+                </div>
                 {hasCarousel && (
-                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10">
-                    {images.map((_, idx) => (
-                      <button
-                        key={idx}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setCurrentImageIndex(idx);
-                        }}
-                        className={`h-1.5 rounded-full transition-all ${
-                          idx === currentImageIndex
-                            ? "bg-white w-4"
-                            : "bg-white/60 hover:bg-white/80 w-1.5"
-                        }`}
-                        aria-label={t("imageUpload.goToImage", { index: idx + 1 })}
-                      />
-                    ))}
-                  </div>
+                  <>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        navigate("left");
+                      }}
+                      aria-label={t("carousel.prevImage")}
+                      className="cursor-pointer absolute left-2 top-1/2 -translate-y-1/2 z-10 hidden md:flex items-center justify-center rounded-full bg-white/80 hover:bg-white p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        navigate("right");
+                      }}
+                      aria-label={t("carousel.nextImage")}
+                      className="cursor-pointer absolute right-2 top-1/2 -translate-y-1/2 z-10 hidden md:flex items-center justify-center rounded-full bg-white/80 hover:bg-white p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10">
+                      {images.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            navigate(idx > currentIndex ? "right" : "left", idx);
+                          }}
+                          className={`cursor-pointer h-1.5 rounded-full transition-all ${
+                            idx === currentIndex
+                              ? "bg-white w-4"
+                              : "bg-white/60 hover:bg-white/80 w-1.5"
+                          }`}
+                          aria-label={t("imageUpload.goToImage", { index: idx + 1 })}
+                        />
+                      ))}
+                    </div>
+                  </>
                 )}
               </>
             ) : (
@@ -148,12 +235,10 @@ export function ContentCard({
             )}
             <div className="flex items-center justify-between text-xs text-gray-500 mt-auto pt-1">
               <div className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
                 <time dateTime={createdAt}>{formatTimeAgo(createdAt, locale)}</time>
               </div>
               <div className="flex items-center gap-1">
-                <Heart className="w-3 h-3" />
-                <span>{count}</span>
+                <span>{t("likes")} {count}</span>
               </div>
             </div>
           </div>

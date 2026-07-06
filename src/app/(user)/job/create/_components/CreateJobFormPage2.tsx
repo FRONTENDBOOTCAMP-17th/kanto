@@ -149,7 +149,11 @@ export function CreateJobFormPageTwo({
         </div>
         <div className="space-y-2">
           <Label htmlFor="companyAddress">{t("form.addressLabel")}<RequiredMark /></Label>
-          <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
+          <APIProvider
+            apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
+            libraries={["places"]}
+            version="weekly"
+          >
             <PlaceAutocomplete
               selected={companyLocation}
               onSelect={setCompanyLocation}
@@ -207,6 +211,7 @@ export function CreateJobFormPageTwo({
           onUploadClick={imageUpload.handleImageUpload}
           onSelect={handleImageSelectWithToast}
           onRemove={imageUpload.removeImage}
+          onReorder={imageUpload.reorderImages}
         />
       </div>
 

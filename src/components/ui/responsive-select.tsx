@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { lockScroll, unlockScroll } from "@/utils/lockScroll";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
+import { useTranslations } from "next-intl";
 import { ChevronDown, X } from "lucide-react";
 import {
   Select,
@@ -14,6 +16,22 @@ import {
 interface Option {
   value: string;
   label: string;
+}
+
+const MOBILE_QUERY = "(max-width: 767px)";
+
+function subscribeMobile(callback: () => void) {
+  const mq = window.matchMedia(MOBILE_QUERY);
+  mq.addEventListener("change", callback);
+  return () => mq.removeEventListener("change", callback);
+}
+
+function useIsMobile() {
+  return useSyncExternalStore(
+    subscribeMobile,
+    () => window.matchMedia(MOBILE_QUERY).matches,
+    () => false,
+  );
 }
 
 interface Props {
@@ -39,12 +57,15 @@ export function ResponsiveSelect({
   className,
   label,
 }: Props) {
+  const tc = useTranslations("Common");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    if (!mobileOpen) return;
+    lockScroll();
     return () => {
-      document.body.style.overflow = "";
+      unlockScroll();
     };
   }, [mobileOpen]);
 
@@ -53,30 +74,32 @@ export function ResponsiveSelect({
   return (
     <div className={`relative ${className ?? "w-full"}`}>
 
-      <button
-        type="button"
-        disabled={disabled}
-        onClick={() => setMobileOpen(true)}
-        className="flex h-full w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:hidden"
-      >
-        <span className={`truncate ${selectedLabel ? "" : "text-muted-foreground"}`}>
-          {selectedLabel ?? placeholder}
-        </span>
-        <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
-      </button>
-
-      <Select value={value} onValueChange={onValueChange} disabled={disabled}>
-        <SelectTrigger className="hidden h-full w-full md:flex">
-          <SelectValue placeholder={placeholder} />
-        </SelectTrigger>
-        <SelectContent className="max-h-60">
-          {options.map((o) => (
-            <SelectItem key={o.value} value={o.value}>
-              {o.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      {isMobile ? (
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => setMobileOpen(true)}
+          className="flex h-full w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <span className={`truncate ${selectedLabel ? "" : "text-muted-foreground"}`}>
+            {selectedLabel ?? placeholder}
+          </span>
+          <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
+        </button>
+      ) : (
+        <Select value={value} onValueChange={onValueChange} disabled={disabled}>
+          <SelectTrigger className="flex h-full w-full">
+            <SelectValue placeholder={placeholder} />
+          </SelectTrigger>
+          <SelectContent className="max-h-60">
+            {options.map((o) => (
+              <SelectItem key={o.value} value={o.value}>
+                {o.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
 
       
       {required && (
@@ -110,12 +133,12 @@ export function ResponsiveSelect({
               </div>
               <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
                 <span className="text-lg font-bold text-gray-900">
-                  {label ?? placeholder ?? "선택"}
+                  {label ?? placeholder ?? tc("select")}
                 </span>
                 <button
                   type="button"
                   onClick={() => setMobileOpen(false)}
-                  aria-label="닫기"
+                  aria-label={tc("close")}
                   className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-100"
                 >
                   <X className="h-5 w-5 text-gray-500" />

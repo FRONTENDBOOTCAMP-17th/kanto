@@ -7,6 +7,8 @@ import { supabase } from "@/lib/supabase";
 import UsedGoodsDetail from "@/app/(user)/usedgoods/[id]/_components/UsedGoodsDetail";
 import { viewCountUp } from "@/services/view";
 import { getUserLikeReportStatus } from "@/services/getUserLikeReportStatus";
+import { resolvePostId, encryptPostId } from "@/utils/postIdCipher";
+import { encryptUserId } from "@/utils/userIdCipher";
 export { generateMetadata } from "./metadata";
 
 export default async function UsedGoodsDetailPage({
@@ -15,12 +17,25 @@ export default async function UsedGoodsDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const data = await getUsedGoodsItem(Number(id));
+  const postId = resolvePostId(id);
+  if (postId === null) notFound();
 
-  if (!data || !data.posts) notFound();
+  const rawData = await getUsedGoodsItem(postId);
 
+  if (!rawData || !rawData.posts) notFound();
 
-  const [{ data: relatedData }, { userId, initialLiked, initialReported }] =
+  const data = {
+    ...rawData,
+    id_token: encryptPostId(rawData.post_id),
+    posts: {
+      ...rawData.posts,
+      users: rawData.posts.users
+        ? { ...rawData.posts.users, id_token: encryptUserId(rawData.posts.users.id ?? 0) }
+        : rawData.posts.users,
+    },
+  };
+
+  const [{ data: rawRelatedData }, { userId, initialLiked, initialReported }] =
     await Promise.all([
       supabase
         .from("used_goods")
@@ -32,7 +47,12 @@ export default async function UsedGoodsDetailPage({
       getUserLikeReportStatus(data.post_id),
     ]);
 
-  
+  const relatedData = (rawRelatedData ?? []).map((item) => ({
+    ...item,
+    id_token: encryptPostId(item.post_id),
+  }));
+
+
   after(() => viewCountUp(data.post_id));
 
   const jsonLd = {

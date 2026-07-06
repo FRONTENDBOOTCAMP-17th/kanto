@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { formatTimeAgo } from "@/utils/format";
-import { Clock, Eye, Heart } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
 import { RentalWithPost } from "@/type/rental/rentalDetail";
 import InteractionButtons from "@/components/common/InteractionButtons";
@@ -33,9 +32,9 @@ export default function PostInfo({
     setLikeCount((prev) => liked ? prev + 1 : Math.max(prev - 1, 0));
 
   return (
-    <div className="mt-2 md:mt-4 border border-gray-200 rounded-2xl p-6">
+    <div className="mt-6">
       <div className="flex items-start justify-between gap-2">
-        <h1 className="text-2xl font-semibold">{rental.posts.title}</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">{rental.posts.title}</h1>
         <InteractionButtons
           postId={postId}
           userId={userId}
@@ -46,7 +45,7 @@ export default function PostInfo({
           className="hidden md:flex shrink-0"
         />
       </div>
-      <p className="text-gray-500 text-sm mt-1">
+      <p className="text-xs text-gray-400 tracking-wide mt-2">
         {rental.room_type ? te(`roomType.${rental.room_type}`) : ""} ·{" "}
         {rental.location_barangay || rental.location_city
           ? formatBarangayLabel(rental.location_barangay, rental.location_city)
@@ -54,18 +53,13 @@ export default function PostInfo({
             (rental.location === "그 외 지역" ? te("tradeLocation.otherAreas") : rental.location))}
       </p>
 
-      <div className="text-gray-400 text-sm flex items-center gap-4 mt-3">
-        <span className="flex items-center leading-none gap-1">
-          <Clock className="w-4 h-4" />
-          <time dateTime={rental.created_at}>{formatTimeAgo(rental.created_at, locale)}</time>
+      <div className="text-gray-400 text-xs flex items-center gap-5 mt-3">
+        <time dateTime={rental.created_at}>{formatTimeAgo(rental.created_at, locale)}</time>
+        <span className="flex items-center gap-1">
+          {t("views")} {t("viewCount", { count: rental.posts.view_count })}
         </span>
         <span className="flex items-center gap-1">
-          <Eye className="w-4 h-4" />
-          {t("viewCount", { count: rental.posts.view_count })}
-        </span>
-        <span className="flex items-center gap-1">
-          <Heart className="w-4 h-4" />
-          {likeCount}
+          {t("likes")} {likeCount}
         </span>
         <InteractionButtons
           postId={postId}
@@ -78,10 +72,10 @@ export default function PostInfo({
         />
       </div>
 
-      <hr className="border-gray-200 my-4" />
+      <hr className="border-gray-200 my-8" />
 
-      <h2 className="text-xl font-semibold mb-3">{t("description")}</h2>
-      <p className="text-gray-700 whitespace-pre-line">{rental.description}</p>
+      <h2 className="text-xs font-semibold tracking-[0.15em] uppercase text-gray-400 mb-4">{t("description")}</h2>
+      <p className="text-gray-700 whitespace-pre-line leading-relaxed text-sm">{rental.description}</p>
     </div>
   );
 }

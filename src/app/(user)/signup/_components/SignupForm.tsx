@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { Lock, Mail, User } from "lucide-react";
 import { EyeIcon } from "./EyeIcon";
 
 type FormValues = { name: string; email: string; password: string };
@@ -48,6 +49,12 @@ export function SignupForm({
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const passwordValid = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/.test(password);
   const confirmPasswordValid = confirmPassword === password && confirmPassword !== "";
+  const inputClass =
+    "w-full border-b bg-transparent py-3 pr-2 pl-8 text-base text-gray-950 placeholder:text-gray-400 outline-none transition-colors focus:border-teal-400 sm:text-sm";
+  const passwordInputClass = `${inputClass} pr-11`;
+  const iconClass =
+    "pointer-events-none absolute top-1/2 left-0 h-5 w-5 -translate-y-1/2 text-gray-400";
+  const errorClass = "text-xs font-medium text-red-500";
 
   const handleSubmit = () => {
     setTouched({ name: true, email: true, password: true, confirmPassword: true });
@@ -58,117 +65,120 @@ export function SignupForm({
 
   return (
     <div className="space-y-4">
-      <div className="space-y-2">
-        <label htmlFor="name" className="text-sm font-medium text-gray-700">
-          {t("name")}
-        </label>
-        <input
-          id="name"
-          ref={nameRef}
-          autoFocus
-          type="text"
-          placeholder={t("namePlaceholder")}
-          value={name}
-          onChange={(e) => { setName(e.target.value); onClearError(); }}
-          onBlur={() => { if (name) setTouched((p) => ({ ...p, name: true })); }}
-          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); emailRef.current?.focus(); } }}
-          className={`w-full border rounded-md px-3 py-2 text-sm text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 ${touched.name && !nameValid ? "border-red-400" : "border-gray-300"}`}
-        />
-        {touched.name && !nameValid && (
-          <p className="text-xs text-red-500">{t("nameError")}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <label htmlFor="email" className="text-sm font-medium text-gray-700">
-          {t("email")}
-        </label>
-        <input
-          id="email"
-          ref={emailRef}
-          type="email"
-          placeholder={t("emailPlaceholder")}
-          value={email}
-          onChange={(e) => { setEmail(e.target.value); onClearError(); }}
-          onBlur={() => { if (email) setTouched((p) => ({ ...p, email: true })); }}
-          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); passwordRef.current?.focus(); } }}
-          className={`w-full border rounded-md px-3 py-2 text-sm text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 ${touched.email && !emailValid ? "border-red-400" : "border-gray-300"}`}
-        />
-        {touched.email && !emailValid && (
-          <p className="text-xs text-red-500">{t("emailError")}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <label htmlFor="password" className="text-sm font-medium text-gray-700">
-          {t("password")}
-        </label>
+      <div className="space-y-1.5">
         <div className="relative">
+          <User className={iconClass} strokeWidth={1.8} aria-hidden />
+          <input
+            id="name"
+            ref={nameRef}
+            autoFocus
+            type="text"
+            aria-label={t("name")}
+            placeholder={t("namePlaceholder")}
+            value={name}
+            onChange={(e) => { setName(e.target.value); onClearError(); }}
+            onBlur={() => { if (name) setTouched((p) => ({ ...p, name: true })); }}
+            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); emailRef.current?.focus(); } }}
+            className={`${inputClass} ${touched.name && !nameValid ? "border-red-400 focus:border-red-400" : "border-gray-200"}`}
+          />
+        </div>
+        {touched.name && !nameValid && (
+          <p className={errorClass}>{t("nameError")}</p>
+        )}
+      </div>
+
+      <div className="space-y-1.5">
+        <div className="relative">
+          <Mail className={iconClass} strokeWidth={1.8} aria-hidden />
+          <input
+            id="email"
+            ref={emailRef}
+            type="email"
+            aria-label={t("email")}
+            placeholder={t("emailPlaceholder")}
+            value={email}
+            onChange={(e) => { setEmail(e.target.value); onClearError(); }}
+            onBlur={() => { if (email) setTouched((p) => ({ ...p, email: true })); }}
+            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); passwordRef.current?.focus(); } }}
+            className={`${inputClass} ${touched.email && !emailValid ? "border-red-400 focus:border-red-400" : "border-gray-200"}`}
+          />
+        </div>
+        {touched.email && !emailValid && (
+          <p className={errorClass}>{t("emailError")}</p>
+        )}
+      </div>
+
+      <div className="space-y-1.5">
+        <div className="relative">
+          <Lock className={iconClass} strokeWidth={1.8} aria-hidden />
           <input
             id="password"
             ref={passwordRef}
             type={showPassword ? "text" : "password"}
+            aria-label={t("password")}
             placeholder={t("passwordPlaceholder")}
             value={password}
             onChange={(e) => { setPassword(e.target.value); onClearError(); }}
             onBlur={() => { if (password) setTouched((p) => ({ ...p, password: true })); }}
             onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); confirmPasswordRef.current?.focus(); } }}
-            className={`w-full border rounded-md px-3 py-2 pr-10 text-sm text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 ${touched.password && !passwordValid ? "border-red-400" : "border-gray-300"}`}
+            className={`${passwordInputClass} ${touched.password && !passwordValid ? "border-red-400 focus:border-red-400" : "border-gray-200"}`}
           />
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
             aria-label={showPassword ? t("hidePassword") : t("showPassword")}
             aria-pressed={showPassword}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-0 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600"
           >
             <EyeIcon visible={showPassword} />
           </button>
         </div>
         {touched.password && !passwordValid && (
-          <p className="text-xs text-red-500">{t("passwordError")}</p>
+          <p className={errorClass}>{t("passwordError")}</p>
         )}
       </div>
 
-      <div className="space-y-2">
-        <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
-          {t("confirmPassword")}
-        </label>
+      <div className="space-y-1.5">
         <div className="relative">
+          <Lock className={iconClass} strokeWidth={1.8} aria-hidden />
           <input
             id="confirmPassword"
             ref={confirmPasswordRef}
             type={showConfirmPassword ? "text" : "password"}
+            aria-label={t("confirmPassword")}
             placeholder={t("confirmPlaceholder")}
             value={confirmPassword}
             onChange={(e) => { setConfirmPassword(e.target.value); onClearError(); }}
             onBlur={() => { if (confirmPassword) setTouched((p) => ({ ...p, confirmPassword: true })); }}
             onKeyDown={(e) => { if (e.key === "Enter") handleSubmit(); }}
-            className={`w-full border rounded-md px-3 py-2 pr-10 text-sm text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-400 ${touched.confirmPassword && !confirmPasswordValid ? "border-red-400" : "border-gray-300"}`}
+            className={`${passwordInputClass} ${touched.confirmPassword && !confirmPasswordValid ? "border-red-400 focus:border-red-400" : "border-gray-200"}`}
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword((v) => !v)}
             aria-label={showConfirmPassword ? t("hidePassword") : t("showPassword")}
             aria-pressed={showConfirmPassword}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-0 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600"
           >
             <EyeIcon visible={showConfirmPassword} />
           </button>
         </div>
         {touched.confirmPassword && !confirmPasswordValid && (
-          <p className="text-xs text-red-500">{t("confirmError")}</p>
+          <p className={errorClass}>{t("confirmError")}</p>
+        )}
+        {confirmPasswordValid && (
+          <p className="text-xs font-medium text-teal-600">{t("confirmSuccess")}</p>
         )}
       </div>
 
       {children}
 
       {errorMessage && (
-        <p className="text-sm text-red-500 text-center">{errorMessage}</p>
+        <p className="rounded-xl bg-red-50 px-3 py-2 text-center text-sm font-medium text-red-600">{errorMessage}</p>
       )}
 
       {isSuccess && (
-        <div className="text-sm text-teal-600 text-center bg-teal-50 rounded-md p-3 whitespace-pre-line">
+        <div className="whitespace-pre-line rounded-xl bg-teal-50 p-3 text-center text-sm font-medium text-teal-700">
           {t("success")}
         </div>
       )}
@@ -176,7 +186,7 @@ export function SignupForm({
       <button
         onClick={handleSubmit}
         disabled={!requiredChecked || isLoading || isSuccess}
-        className="w-full btn-primary disabled:bg-gray-300 disabled:cursor-not-allowed font-medium py-2.5 rounded-md transition-colors"
+        className="w-full rounded-md bg-teal-500 py-3 text-base font-bold text-white shadow-sm transition-colors hover:bg-teal-600 active:bg-teal-700 disabled:bg-gray-300 disabled:text-white disabled:shadow-none disabled:cursor-not-allowed sm:text-sm"
       >
         {isLoading ? t("processing") : t("submit")}
       </button>

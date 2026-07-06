@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import {
   Calendar,
@@ -9,6 +9,7 @@ import {
   ChevronRight,
   ClipboardList,
   Crown,
+  Crosshair,
   Filter,
   Search,
   ShieldCheck,
@@ -19,6 +20,7 @@ import { ACTION_META, TARGET_LABELS, formatShortDate } from "./auditLogConfig";
 import { ActionBadge } from "./ActionBadge";
 import { DetailDrawer } from "./DetailDrawer";
 import { useAuditFilters } from "./useAuditFilters";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 const SANCTION_ACTIONS = ["sanction_user", "delete_post", "delete_comment"];
 const PERMISSION_ACTIONS = ["grant_permission", "revoke_permission", "promote_admin", "revoke_admin"];
@@ -101,16 +103,18 @@ export function AuditLogsClient({ initialLogs }: Props) {
           <ActionDropdown
             value={filters.filterAction}
             open={filters.actionDropdownOpen}
-            onToggle={() => filters.setActionDropdownOpen((v) => !v)}
+            onToggle={filters.setActionDropdownOpen}
             onChange={(v) => { filters.setFilterAction(v); filters.setActionDropdownOpen(false); filters.setPage(1); }}
           />
-          <TargetSelect
+          <TargetDropdown
             value={filters.filterTarget}
-            onChange={(v) => { filters.setFilterTarget(v); filters.setPage(1); }}
+            open={filters.targetDropdownOpen}
+            onToggle={filters.setTargetDropdownOpen}
+            onChange={(v) => { filters.setFilterTarget(v); filters.setTargetDropdownOpen(false); filters.setPage(1); }}
           />
           <DateRangeDropdown
             open={filters.dateDropdownOpen}
-            onToggle={() => filters.setDateDropdownOpen((v) => !v)}
+            onToggle={filters.setDateDropdownOpen}
             dateFrom={filters.filterDateFrom}
             dateTo={filters.filterDateTo}
             today={filters.today}
@@ -191,79 +195,127 @@ function RoleToggle({ value, onChange }: { value: ActorRoleFilter; onChange: (v:
   );
 }
 
-function ActionDropdown({
-  value, open, onToggle, onChange,
+function dropdownOptionCls(selected: boolean) {
+  return [
+    "flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-[13px] transition-colors hover:bg-slate-50",
+    selected ? "font-semibold text-slate-800" : "text-slate-500",
+  ].join(" ");
+}
+
+function FilterDropdown({
+  open, active, onToggle, icon, label, panelWidth, panelClassName, children,
 }: {
-  value: string;
   open: boolean;
-  onToggle: () => void;
-  onChange: (v: string) => void;
+  active: boolean;
+  onToggle: (open: boolean) => void;
+  icon: React.ReactNode;
+  label: React.ReactNode;
+  panelWidth: number;
+  panelClassName: string;
+  children: React.ReactNode;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [alignRight, setAlignRight] = useState(false);
+  useClickOutside(ref, () => {
+    if (open) onToggle(false);
+  });
+
+  function handleToggle() {
+    if (!open && ref.current) {
+      const rect = ref.current.getBoundingClientRect();
+      setAlignRight(rect.left + panelWidth > window.innerWidth - 16);
+    }
+    onToggle(!open);
+  }
+
   return (
-    <div className="relative">
+    <div ref={ref} className="relative">
       <button
-        onClick={onToggle}
+        onClick={handleToggle}
         className={[
           "flex cursor-pointer items-center gap-1.5 rounded-xl border px-3.5 py-2 text-[13px] font-medium transition-colors",
-          value !== "all"
+          active
             ? "border-teal-300 bg-teal-50 text-teal-700"
             : "border-[#ebeef0] bg-white text-slate-500 hover:bg-slate-50",
         ].join(" ")}
       >
-        <Filter className="h-3.5 w-3.5" strokeWidth={2} />
-        {value === "all" ? "액션 전체" : (ACTION_META[value]?.label ?? value)}
+        {icon}
+        {label}
         <ChevronDown className="h-3.5 w-3.5" strokeWidth={2} />
       </button>
       {open && (
-        <div className="absolute left-0 top-full z-20 mt-1.5 w-44 rounded-2xl border border-[#ebeef0] bg-white py-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.1)]">
-          <button
-            onClick={() => onChange("all")}
-            className={[
-              "flex w-full cursor-pointer items-center px-4 py-2 text-[13px] transition-colors hover:bg-slate-50",
-              value === "all" ? "font-semibold text-slate-800" : "text-slate-500",
-            ].join(" ")}
-          >
-            전체
-          </button>
-          {Object.entries(ACTION_META).map(([key, meta]) => (
-            <button
-              key={key}
-              onClick={() => onChange(key)}
-              className={[
-                "flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-[13px] transition-colors hover:bg-slate-50",
-                value === key ? "font-semibold text-slate-800" : "text-slate-500",
-              ].join(" ")}
-            >
-              <span className={`h-1.5 w-1.5 rounded-full ${meta.bg.replace("50", "400")}`} />
-              {meta.label}
-            </button>
-          ))}
+        <div
+          className={[
+            "absolute top-full z-20 mt-1.5 rounded-2xl border border-[#ebeef0] bg-white shadow-[0_8px_30px_rgba(0,0,0,0.1)]",
+            alignRight ? "right-0" : "left-0",
+            panelClassName,
+          ].join(" ")}
+        >
+          {children}
         </div>
       )}
     </div>
   );
 }
 
-function TargetSelect({
-  value, onChange,
+function ActionDropdown({
+  value, open, onToggle, onChange,
+}: {
+  value: string;
+  open: boolean;
+  onToggle: (open: boolean) => void;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <FilterDropdown
+      open={open}
+      active={value !== "all"}
+      onToggle={onToggle}
+      icon={<Filter className="h-3.5 w-3.5" strokeWidth={2} />}
+      label={value === "all" ? "액션 전체" : (ACTION_META[value]?.label ?? value)}
+      panelWidth={176}
+      panelClassName="w-44 py-1.5"
+    >
+      <button onClick={() => onChange("all")} className={dropdownOptionCls(value === "all")}>
+        전체
+      </button>
+      {Object.entries(ACTION_META).map(([key, meta]) => (
+        <button key={key} onClick={() => onChange(key)} className={dropdownOptionCls(value === key)}>
+          <span className={`h-1.5 w-1.5 rounded-full ${meta.bg.replace("50", "400")}`} />
+          {meta.label}
+        </button>
+      ))}
+    </FilterDropdown>
+  );
+}
+
+function TargetDropdown({
+  value, open, onToggle, onChange,
 }: {
   value: AuditTargetType | "all";
+  open: boolean;
+  onToggle: (open: boolean) => void;
   onChange: (v: AuditTargetType | "all") => void;
 }) {
   return (
-    <div className="relative">
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value as AuditTargetType | "all")}
-        className="cursor-pointer appearance-none rounded-xl border border-[#ebeef0] bg-white px-3.5 py-2 pr-8 text-[13px] font-medium text-slate-500 outline-none hover:bg-slate-50 focus:border-teal-300 focus:ring-2 focus:ring-teal-100"
-      >
-        <option value="all">대상 전체</option>
-        {(Object.keys(TARGET_LABELS) as AuditTargetType[]).map((t) => (
-          <option key={t} value={t}>{TARGET_LABELS[t]}</option>
-        ))}
-      </select>
-      <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" strokeWidth={2} />
-    </div>
+    <FilterDropdown
+      open={open}
+      active={value !== "all"}
+      onToggle={onToggle}
+      icon={<Crosshair className="h-3.5 w-3.5" strokeWidth={2} />}
+      label={value === "all" ? "대상 전체" : TARGET_LABELS[value]}
+      panelWidth={176}
+      panelClassName="w-44 py-1.5"
+    >
+      <button onClick={() => onChange("all")} className={dropdownOptionCls(value === "all")}>
+        전체
+      </button>
+      {(Object.keys(TARGET_LABELS) as AuditTargetType[]).map((t) => (
+        <button key={t} onClick={() => onChange(t)} className={dropdownOptionCls(value === t)}>
+          {TARGET_LABELS[t]}
+        </button>
+      ))}
+    </FilterDropdown>
   );
 }
 
@@ -272,7 +324,7 @@ function DateRangeDropdown({
   onChangeDateFrom, onChangeDateTo, onReset, onApply,
 }: {
   open: boolean;
-  onToggle: () => void;
+  onToggle: (open: boolean) => void;
   dateFrom: string;
   dateTo: string;
   today: string;
@@ -283,64 +335,56 @@ function DateRangeDropdown({
   onApply: () => void;
 }) {
   return (
-    <div className="relative">
-      <button
-        onClick={onToggle}
-        className={[
-          "flex cursor-pointer items-center gap-1.5 rounded-xl border px-3.5 py-2 text-[13px] font-medium transition-colors",
-          hasActiveDate
-            ? "border-teal-300 bg-teal-50 text-teal-700"
-            : "border-[#ebeef0] bg-white text-slate-500 hover:bg-slate-50",
-        ].join(" ")}
-      >
-        <Calendar className="h-3.5 w-3.5" strokeWidth={2} />
-        {hasActiveDate
-          ? `${dateFrom ? formatShortDate(dateFrom) : "시작"} ~ ${dateTo ? formatShortDate(dateTo) : "종료"}`
-          : "날짜 범위"}
-      </button>
-      {open && (
-        <div className="absolute left-0 top-full z-20 mt-1.5 w-64 rounded-2xl border border-[#ebeef0] bg-white p-4 shadow-[0_8px_30px_rgba(0,0,0,0.1)]">
-          <p className="mb-3 text-[12px] font-semibold uppercase tracking-wide text-slate-400">날짜 범위 선택</p>
-          <div className="flex flex-col gap-2.5">
-            <div>
-              <label className="mb-1 block text-[12px] font-medium text-slate-500">시작일</label>
-              <input
-                type="date"
-                value={dateFrom}
-                max={dateTo || today}
-                onChange={(e) => onChangeDateFrom(e.target.value)}
-                className="w-full rounded-xl border border-[#ebeef0] px-3 py-2 text-[13px] text-slate-700 outline-none focus:border-teal-300 focus:ring-2 focus:ring-teal-100"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-[12px] font-medium text-slate-500">종료일</label>
-              <input
-                type="date"
-                value={dateTo}
-                min={dateFrom || undefined}
-                max={today}
-                onChange={(e) => onChangeDateTo(e.target.value)}
-                className="w-full rounded-xl border border-[#ebeef0] px-3 py-2 text-[13px] text-slate-700 outline-none focus:border-teal-300 focus:ring-2 focus:ring-teal-100"
-              />
-            </div>
-            <div className="flex gap-2 pt-1">
-              <button
-                onClick={onReset}
-                className="flex-1 cursor-pointer rounded-xl border border-[#ebeef0] py-2 text-[12.5px] font-semibold text-slate-500 hover:bg-slate-50"
-              >
-                초기화
-              </button>
-              <button
-                onClick={onApply}
-                className="flex-1 rounded-xl bg-teal-500 py-2 text-[12.5px] font-semibold text-white hover:bg-teal-600"
-              >
-                적용
-              </button>
-            </div>
-          </div>
+    <FilterDropdown
+      open={open}
+      active={hasActiveDate}
+      onToggle={onToggle}
+      icon={<Calendar className="h-3.5 w-3.5" strokeWidth={2} />}
+      label={hasActiveDate
+        ? `${dateFrom ? formatShortDate(dateFrom) : "시작"} ~ ${dateTo ? formatShortDate(dateTo) : "종료"}`
+        : "날짜 범위"}
+      panelWidth={256}
+      panelClassName="w-64 p-4"
+    >
+      <p className="mb-3 text-[12px] font-semibold uppercase tracking-wide text-slate-400">날짜 범위 선택</p>
+      <div className="flex flex-col gap-2.5">
+        <div>
+          <label className="mb-1 block text-[12px] font-medium text-slate-500">시작일</label>
+          <input
+            type="date"
+            value={dateFrom}
+            max={dateTo || today}
+            onChange={(e) => onChangeDateFrom(e.target.value)}
+            className="w-full rounded-xl border border-[#ebeef0] px-3 py-2 text-[13px] text-slate-700 outline-none focus:border-teal-300 focus:ring-2 focus:ring-teal-100"
+          />
         </div>
-      )}
-    </div>
+        <div>
+          <label className="mb-1 block text-[12px] font-medium text-slate-500">종료일</label>
+          <input
+            type="date"
+            value={dateTo}
+            min={dateFrom || undefined}
+            max={today}
+            onChange={(e) => onChangeDateTo(e.target.value)}
+            className="w-full rounded-xl border border-[#ebeef0] px-3 py-2 text-[13px] text-slate-700 outline-none focus:border-teal-300 focus:ring-2 focus:ring-teal-100"
+          />
+        </div>
+        <div className="flex gap-2 pt-1">
+          <button
+            onClick={onReset}
+            className="flex-1 cursor-pointer rounded-xl border border-[#ebeef0] py-2 text-[12.5px] font-semibold text-slate-500 hover:bg-slate-50"
+          >
+            초기화
+          </button>
+          <button
+            onClick={onApply}
+            className="flex-1 rounded-xl bg-teal-500 py-2 text-[12.5px] font-semibold text-white hover:bg-teal-600"
+          >
+            적용
+          </button>
+        </div>
+      </div>
+    </FilterDropdown>
   );
 }
 
@@ -357,8 +401,8 @@ function LogTable({ logs, onSelect }: { logs: AuditLog[]; onSelect: (log: AuditL
   }
 
   return (
-    <div className="rounded-2xl border border-[#ebeef0] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
-      <table className="w-full text-[13.5px]">
+    <div className="overflow-x-auto rounded-2xl border border-[#ebeef0] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
+      <table className="w-full min-w-100 text-[13.5px]">
         <thead>
           <tr className="border-b border-[#ebeef0] text-left text-[12px] font-semibold uppercase tracking-wide text-slate-400">
             <th className="px-5 py-3.5">#</th>

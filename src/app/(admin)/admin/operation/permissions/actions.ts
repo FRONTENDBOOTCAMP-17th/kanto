@@ -97,7 +97,7 @@ export async function promoteToAdmin(userId: number, teamId: number | null) {
   const db = createAdminClient();
   await raw(db).from("users").update({ role: "admin", admin_team_id: teamId }).eq("id", userId);
   const actor = await getSessionUser();
-  if (actor) insertAuditLog(actor, "promote_admin", { targetType: "user", targetId: userId });
+  if (actor) await insertAuditLog(actor, "promote_admin", { targetType: "user", targetId: userId });
   revalidatePath("/admin/operation/permissions");
 }
 
@@ -105,7 +105,7 @@ export async function revokeAdmin(userId: number) {
   const db = createAdminClient();
   await raw(db).from("users").update({ role: "user", admin_team_id: null }).eq("id", userId);
   const actor = await getSessionUser();
-  if (actor) insertAuditLog(actor, "revoke_admin", { targetType: "user", targetId: userId });
+  if (actor) await insertAuditLog(actor, "revoke_admin", { targetType: "user", targetId: userId });
   revalidatePath("/admin/operation/permissions");
 }
 

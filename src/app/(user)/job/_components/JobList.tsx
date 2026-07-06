@@ -22,7 +22,7 @@ export function JobList({ posts, likedIds, currentUserId, currentPage, emptyMess
   }
 
   return (
-    <div className="border-t border-b border-gray-200">
+    <div className="border border-gray-200 rounded-2xl overflow-hidden">
       
       <div className="hidden md:flex justify-between gap-3 md:gap-4 px-5 py-3 bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wide">
         <div className="flex items-center gap-4 flex-1 min-w-0">
@@ -41,6 +41,7 @@ export function JobList({ posts, likedIds, currentUserId, currentPage, emptyMess
           <JobCard
             key={post.id}
             id={post.id}
+            idToken={post.id_token}
             fromPage={currentPage > 1 ? currentPage : undefined}
             title={post.title}
             companyName={job.company_name}

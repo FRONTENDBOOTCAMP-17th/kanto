@@ -7,7 +7,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
-import { useAuthInit } from "@/hooks/useAuthInit";
+import { useAuthInit, MANUAL_SIGNOUT_KEY } from "@/hooks/useAuthInit";
 import {
   Menu,
   User,
@@ -25,14 +25,18 @@ import {
 } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
 import { ConfirmModal } from "@/components/common/ConfirmModal";
+import Toast from "@/components/common/Toast";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
-import { UnifiedBanner } from "@/components/common/UnifiedBanner";
+import { UnifiedBanner, noticeShownInHeader } from "@/components/common/UnifiedBanner";
+import type { PublicNotice } from "@/services/admin/adminNotices";
 import { NotificationBell } from "./header/NotificationBell";
 import type { NotificationBellHandle } from "./header/NotificationBell";
 import type { User as AppUser } from "@/type/user";
 import { useTranslations } from "next-intl";
 import { useSuspended } from "@/hooks/useSuspended";
+import { useScrollContainer } from "@/contexts/ScrollContext";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
+import { GoNoticeIcon } from "@/components/go/GoNoticeIcon";
 
 const HEADER_HEIGHT = 48; 
 
@@ -43,12 +47,18 @@ const NAV_ITEMS = [
   { key: "go", icon: MapPin, href: ROUTES.go },
 ] as const;
 
-export function Header({ initialUser }: { initialUser: AppUser | null }) {
+export function Header({
+  initialUser,
+  initialNotices,
+}: {
+  initialUser: AppUser | null;
+  initialNotices: PublicNotice[];
+}) {
   const t = useTranslations("Header");
   const router = useRouter();
   const user = useAuthStore((s) => s.user) ?? initialUser;
   const clearUser = useAuthStore((s) => s.clearUser);
-  useAuthInit();
+  const { kickedOut } = useAuthInit();
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -56,12 +66,15 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
   const [isVisible, setIsVisible] = useState(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
+  const scrollContainer = useScrollContainer();
   const profileRef = useRef<HTMLDivElement>(null);
   const notificationBellRef = useRef<NotificationBellHandle>(null);
   const prevScrollY = useRef(0);
   useEffect(() => {
+    const container = scrollContainer.current;
+    if (!container) return;
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      const currentScrollY = container.scrollTop;
       if (currentScrollY > HEADER_HEIGHT) {
         setIsMobileOpen(false);
       }
@@ -74,9 +87,9 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
       }
       prevScrollY.current = currentScrollY;
     };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [scrollContainer]);
 
   const pathname = usePathname();
   const { isSuspended, openModal } = useSuspended();
@@ -95,6 +108,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
 
   const handleLogoutConfirm = async () => {
     setIsLogoutModalOpen(false);
+    localStorage.setItem(MANUAL_SIGNOUT_KEY, "1");
     await supabase.auth.signOut();
     clearUser();
     router.push(ROUTES.home);
@@ -129,7 +143,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
           
           <Link
             href={ROUTES.home}
-            className="flex items-center hover:opacity-80 transition-opacity shrink-0"
+            className="flex items-center hover:opacity-80 transition-opacity shrink-0 active:scale-100"
             onClick={() => setIsMobileOpen(false)}
           >
             <Image
@@ -153,6 +167,13 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
           
           <div className="flex items-center shrink-0">
             
+            {pathname.startsWith("/go") ? (
+              <GoNoticeIcon initialNotices={initialNotices} />
+            ) : noticeShownInHeader(pathname) ? (
+              <div className="md:hidden">
+                <GoNoticeIcon initialNotices={initialNotices} />
+              </div>
+            ) : null}
             <LanguageSwitcher />
 
             {user && (
@@ -187,7 +208,6 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
                       width={36}
                       height={36}
                       priority
-                      unoptimized
                       className="w-9 h-9 rounded-full object-cover"
                     />
                   ) : (
@@ -272,7 +292,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
             <Link
               key={href}
               href={href}
-              className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 hover:text-teal-500 hover:bg-teal-50 rounded-lg transition-colors font-medium"
+              className="flex items-center gap-1.5 px-4 py-2 text-sm text-gray-600 hover:text-teal-500 hover:bg-teal-50 rounded-lg transition-colors font-medium active:scale-100"
             >
               <Icon className="w-4 h-4" />
               {t(`nav.${key}`)}
@@ -286,7 +306,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
                 if (isSuspended) { openModal(); return; }
                 router.push(ROUTES.create);
               }}
-              className="absolute right-0 flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition-colors"
+              className="absolute right-0 flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition-colors active:scale-100"
             >
               <SquarePen className="w-4 h-4" />
               {t("write")}
@@ -303,7 +323,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
                   key={href}
                   href={href}
                   onClick={() => setIsMobileOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-500 rounded-lg transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-500 rounded-lg transition-colors active:scale-100"
                 >
                   <Icon className="w-5 h-5" />
                   <span className="font-medium text-sm">{t(`nav.${key}`)}</span>
@@ -335,7 +355,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
                       key={href}
                       href={href}
                       onClick={() => setIsMobileOpen(false)}
-                      className="flex flex-col items-center gap-1 p-2 text-gray-600 hover:text-teal-500 transition-colors"
+                      className="flex flex-col items-center gap-1 p-2 text-gray-600 hover:text-teal-500 transition-colors active:scale-100"
                     >
                       <Icon className="w-6 h-6" />
                       <span className="text-xs">{label}</span>
@@ -343,7 +363,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
                   ))}
                   <button
                     onClick={handleLogoutClick}
-                    className="flex flex-col items-center gap-1 p-2 text-red-500 hover:text-red-600 transition-colors"
+                    className="flex flex-col items-center gap-1 p-2 text-red-500 hover:text-red-600 transition-colors active:scale-100"
                   >
                     <LogOut className="w-6 h-6" />
                     <span className="text-xs">{t("logout")}</span>
@@ -365,7 +385,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
           </div>
         )}
       </div>
-      <UnifiedBanner />
+      <UnifiedBanner initialNotices={initialNotices} />
       <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <ConfirmModal
         isOpen={isLogoutModalOpen}
@@ -374,6 +394,7 @@ export function Header({ initialUser }: { initialUser: AppUser | null }) {
         onConfirm={handleLogoutConfirm}
         onCancel={() => setIsLogoutModalOpen(false)}
       />
+      <Toast message={t("kickedOut")} showMessage={kickedOut} type="error" />
     </header>
     </>
   );

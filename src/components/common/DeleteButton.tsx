@@ -29,7 +29,7 @@ export default function DeleteButton({ postId, redirectPath }: DeleteButtonProps
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="cursor-pointer text-sm text-red-500 transition-colors hover:underline"
+        className="cursor-pointer text-xs font-medium text-red-400 px-3 py-1.5 rounded-lg border border-red-100 bg-white hover:bg-red-50 transition-colors active:scale-105"
       >
         {t("delete")}
       </button>

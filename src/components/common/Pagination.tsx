@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface PaginationProps {
   currentPage: number;
@@ -11,6 +12,7 @@ export const Pagination = ({
   totalPage,
   onPageChange,
 }: PaginationProps) => {
+  const tc = useTranslations("Common");
   const canGoPrev = currentPage !== 1;
   const canGoNext = currentPage < totalPage;
 
@@ -24,7 +26,8 @@ export const Pagination = ({
 
     for (let i = 1; i <= totalPage; i++) {
       const isEdge = i === 1 || i === totalPage;
-      const isNearCurrent = i >= currentPage - delta && i <= currentPage + delta;
+      const isNearCurrent =
+        i >= currentPage - delta && i <= currentPage + delta;
 
       if (isEdge || isNearCurrent) {
         range.push(i);
@@ -38,10 +41,9 @@ export const Pagination = ({
 
   return (
     <>
-      
-      <div className="hidden sm:flex items-center justify-center gap-[18px]">
+      <div className="hidden sm:flex items-center justify-center gap-4.5">
         <button
-          aria-label="이전 페이지"
+          aria-label={tc("prevPage")}
           disabled={!canGoPrev}
           onClick={() => onPageChange(currentPage - 1)}
           className="p-1.5 text-gray-400 disabled:opacity-40 cursor-pointer hover:text-teal-600 transition-colors"
@@ -70,7 +72,7 @@ export const Pagination = ({
         )}
 
         <button
-          aria-label="다음 페이지"
+          aria-label={tc("nextPage")}
           disabled={!canGoNext}
           onClick={() => onPageChange(currentPage + 1)}
           className="p-1.5 text-gray-400 disabled:opacity-40 cursor-pointer hover:text-teal-600 transition-colors"
@@ -79,10 +81,9 @@ export const Pagination = ({
         </button>
       </div>
 
-      
       <div className="flex sm:hidden items-center justify-center gap-7">
         <button
-          aria-label="이전 페이지"
+          aria-label={tc("prevPage")}
           disabled={!canGoPrev}
           onClick={() => onPageChange(currentPage - 1)}
           className="flex h-10 w-10 items-center justify-center text-gray-500 disabled:opacity-40 cursor-pointer hover:text-teal-600 transition-colors"
@@ -98,7 +99,7 @@ export const Pagination = ({
         </div>
 
         <button
-          aria-label="다음 페이지"
+          aria-label={tc("nextPage")}
           disabled={!canGoNext}
           onClick={() => onPageChange(currentPage + 1)}
           className="flex h-10 w-10 items-center justify-center text-gray-500 disabled:opacity-40 cursor-pointer hover:text-teal-600 transition-colors"

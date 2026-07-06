@@ -50,8 +50,8 @@ export default function ProfanityList({ onEdit }: Props) {
   }
 
   return (
-    <div className="rounded-2xl border border-[#ebeef0] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
-      <table className="w-full text-[13.5px]">
+    <div className="overflow-x-auto rounded-2xl border border-[#ebeef0] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
+      <table className="w-full min-w-120 text-[13.5px]">
         <thead>
           <tr className="border-b border-[#ebeef0] text-left text-[12px] font-semibold uppercase tracking-wide text-slate-400">
             <th className="px-5 py-3.5">범위</th>

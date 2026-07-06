@@ -82,7 +82,7 @@ export async function resolveReport(
     } as never);
   }
 
-  insertAuditLog(sessionUser, "resolve_report", {
+  await insertAuditLog(sessionUser, "resolve_report", {
     targetType: "report",
     targetId: reportId,
     detail: { sanction: opts.sanction, deactivatePost: opts.deactivatePost },
@@ -105,7 +105,7 @@ export async function dismissReport(reportId: number): Promise<void> {
     } as never)
     .eq("id", reportId);
 
-  insertAuditLog(sessionUser, "dismiss_report", { targetType: "report", targetId: reportId });
+  await insertAuditLog(sessionUser, "dismiss_report", { targetType: "report", targetId: reportId });
 
   revalidatePath("/admin/reports");
 }
