@@ -58,7 +58,6 @@ export function FilterModal({
     };
   }, []);
 
-  // 섹션 값 선택. 이 섹션에 의존하는 섹션(dependsOn)은 같은 setState 안에서 "all" 로 리셋한다.
   const select = (key: string, id: string) =>
     setDraft((d) => {
       const next = { ...d, [key]: id };

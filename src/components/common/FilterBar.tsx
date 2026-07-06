@@ -35,13 +35,11 @@ export function FilterBar({ sections, values, optionsMaps }: FilterBarProps) {
     (s) => (values[s.key] ?? "all") !== "all",
   );
 
-  // 의존 옵션(barangay)은 값 자체가 사람이 읽을 수 있는 지명이라 value 를 그대로 라벨로 쓴다.
   const labelFor = (section: FilterSection, value: string) =>
     section.dependsOn
       ? value
       : (section.options.find((o) => o.id === value)?.label ?? value);
 
-  // 칩 제거: 이 섹션에 의존하는 섹션(barangay 등)도 함께 "all" 로 넘겨 캐스케이드 해제.
   const removeChip = (section: FilterSection) => {
     const cascade: Record<string, string> = { [section.key]: "all" };
     for (const s of sections) {

@@ -48,9 +48,6 @@ export async function getRentalList(
   filter?: RentalListFilter,
   pagination?: Pagination,
 ): Promise<PagedResult<RentalWithPost>> {
-  // 가격순: price 는 자식(rentals) 컬럼이라 부모(posts) 기준 정렬이 불가능해
-  // rentals 기준으로 뒤집어 조회한다. 거래유형(rent_type) 필터와 함께 써야
-  // 매매/월세가 섞이지 않고 의미 있는 정렬이 된다.
   if (filter?.sort === "price_asc" || filter?.sort === "price_desc") {
     return getRentalListByPrice(filter, pagination, filter.sort === "price_asc");
   }

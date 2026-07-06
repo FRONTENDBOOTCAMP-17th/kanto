@@ -24,8 +24,6 @@ export default function MeetupCarousel({ meetups }: { meetups: Meetup[] }) {
   const fetchingRef = useRef(false);
   const hasControls = items.length > 1 || !exhausted;
 
-  // 마지막 카드에 닿기 전에 미리 다음 묶음을 불러와, 사용자가 실제로 넘길 때는
-  // 이미 준비된 데이터로 끊김 없이 이어지도록 한다.
   useEffect(() => {
     if (exhausted || fetchingRef.current) return;
     if (index < items.length - PREFETCH_THRESHOLD) return;
