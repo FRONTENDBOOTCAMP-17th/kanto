@@ -284,7 +284,17 @@
   }
   button:not(:disabled),
   a {
+    cursor: pointer;
     @apply transition-transform duration-100 active:scale-[1.05];
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+  select,
+  summary,
+  label[for],
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
   }
 }
 
