@@ -40,8 +40,6 @@ export async function getUsedGoodsList(
   filter?: UsedGoodsListFilter,
   pagination?: Pagination,
 ): Promise<PagedResult<UsedGoodsWithPost>> {
-  // price 는 used_goods 자식 테이블 컬럼이라 posts 기준 쿼리로는 정렬할 수 없어
-  // used_goods 를 기준 테이블로 뒤집어 조회한다.
   if (filter?.sort === "price_asc" || filter?.sort === "price_desc") {
     return getUsedGoodsListByPrice(filter, pagination, filter.sort === "price_asc");
   }

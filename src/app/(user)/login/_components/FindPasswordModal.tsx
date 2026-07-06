@@ -18,7 +18,6 @@ type TouchedFields = {
   confirmPassword?: boolean;
 };
 
-// 서버(reset-password API)가 내려주는 에러 코드 → FindPassword.errors.* 키
 const API_ERROR_CODES = new Set([
   "missing_fields",
   "account_not_found",

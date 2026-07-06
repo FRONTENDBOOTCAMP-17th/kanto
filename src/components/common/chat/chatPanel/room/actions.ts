@@ -22,7 +22,6 @@ export async function checkBlockedAction(partnerId: number) {
   return isBlockedPair(userData.id, partnerId);
 }
 
-// 양방향 차단 여부(blocked)와 내가 차단했는지(iBlocked)를 함께 반환한다.
 export async function getBlockStateAction(partnerId: number) {
   const supabase = await createClient();
   const {
@@ -105,7 +104,6 @@ export async function sendMessageAction(params: {
     supabase,
   );
 
-  // 새 메시지가 오가면 (차단 해제 후 재대화 포함) 양쪽 모두에게 채팅을 다시 노출한다.
   const revive: { user_id_1_left?: boolean; user_id_2_left?: boolean } = {};
   if (chat.user_id_1_left) revive.user_id_1_left = false;
   if (chat.user_id_2_left) revive.user_id_2_left = false;

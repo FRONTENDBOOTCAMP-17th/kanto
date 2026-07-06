@@ -12,7 +12,6 @@ function getKey(): Buffer {
   return Buffer.from(secret, "hex");
 }
 
-// domain은 서로 다른 종류의 id(post, user 등) 토큰이 뒤섞여 해석되지 않도록 묶는 AAD입니다.
 export function encryptId(id: number, domain: string): string {
   const key = getKey();
   const iv = randomBytes(IV_LENGTH);

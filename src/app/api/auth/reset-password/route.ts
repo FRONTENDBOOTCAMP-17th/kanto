@@ -14,7 +14,6 @@ import {
 
 const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
 
-// error 필드는 클라이언트(FindPasswordModal)가 FindPassword.errors.* 메시지 키로 번역하는 코드
 const EMAIL_TEXTS: Record<string, { subject: string; intro: (name: string) => string; validityNote: string }> = {
   ko: {
     subject: "[Kanto] 비밀번호 재설정 인증번호",

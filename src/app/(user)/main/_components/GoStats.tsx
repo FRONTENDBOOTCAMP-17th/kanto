@@ -14,8 +14,6 @@ export default async function GoStats({ meetups }: { meetups: Meetup[] }) {
   const participantCount = meetups.reduce((sum, m) => sum + m.participant_count + 1, 0);
   const topics = MEETUP_TOPICS.filter(({ key }) => key !== "other");
   const half = Math.ceil(topics.length / 2);
-  // 행마다 뱃지 텍스트 총량이 달라 폭이 다르므로, 반복 횟수를 충분히 늘려 컨테이너보다
-  // 항상 넓게 채우고(빈 구간 방지), 재생 시간을 텍스트량에 비례시켜 두 행의 체감 속도를 맞춘다.
   const ROW_REPEAT = 4;
   const topicRows = [topics.slice(0, half), topics.slice(half)].map((row) => {
     const setChars = row.reduce((sum, { key }) => sum + tg(`topics.${key}`).length, 0) * ROW_REPEAT;

@@ -98,12 +98,9 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
   const [externalMeetup, setExternalMeetup] = useState<Meetup | null>(null);
   const initializedFromUrlRef = useRef(false);
   const [showCreate, setShowCreate] = useState(false);
-  // 생성 모달 닫힘 애니메이션 중에도 모달을 유지하기 위한 상태
   const [createClosing, setCreateClosing] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  // "all" = 모임 진행중, "mine" = 내 모임, null = 닫힘
   const [listMode, setListMode] = useState<"all" | "mine" | null>(null);
-  // 닫힘 애니메이션 중에도 패널을 유지하기 위한 렌더 상태
   const [renderListMode, setRenderListMode] = useState<"all" | "mine" | null>(null);
   const [listClosing, setListClosing] = useState(false);
   const [joinedMeetupIds, setJoinedMeetupIds] = useState<number[]>([]);
@@ -160,14 +157,11 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
     return () => clearTimeout(id);
   }, []);
 
-  // listMode가 바뀔 때: 전환이면 즉시 교체, 닫힘이면 애니메이션 후 언마운트
   if (listMode !== null && listMode !== renderListMode) {
-    // 열기 or 전환 — 애니메이션 없이 즉시 내용 교체
     setRenderListMode(listMode);
     setListClosing(false);
     setShiftButtons(true);
   } else if (listMode === null && renderListMode !== null && !listClosing) {
-    // 닫기 시작 — 닫힘 애니메이션 트리거
     setListClosing(true);
     setShiftButtons(false);
   }
@@ -258,7 +252,6 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
     (externalMeetup?.post_id === selectedMeetupId ? externalMeetup : null);
   const mobileSheetOpen = renderListMode !== null || selectedMeetupId !== null;
 
-  // 공유된 링크(?m=토큰)로 진입 시 최초 1회 상세 패널을 복원
   useEffect(() => {
     if (initializedFromUrlRef.current) return;
     initializedFromUrlRef.current = true;
@@ -288,7 +281,6 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 선택된 모임이 바뀌면 URL의 암호화된 id 파라미터를 동기화
   useEffect(() => {
     const url = new URL(window.location.href);
     if (selectedMeetupId === null) {
@@ -363,7 +355,6 @@ export default function GoClient({ initialMeetups }: { initialMeetups: Meetup[] 
     setJoinedMeetupIds(ids);
   };
 
-  // 닫힘 애니메이션이 끝난 뒤 언마운트
   const closeCreate = () => {
     if (createClosing) return;
     setCreateClosing(true);

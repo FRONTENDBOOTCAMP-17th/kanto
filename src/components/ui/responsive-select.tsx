@@ -26,8 +26,6 @@ function subscribeMobile(callback: () => void) {
   return () => mq.removeEventListener("change", callback);
 }
 
-// 모바일/데스크탑 중 한쪽만 마운트하기 위한 훅 — 양쪽을 모두 마운트하고
-// CSS로 숨기면 모바일에서도 Radix Select 마운트 비용을 지불하게 됨
 function useIsMobile() {
   return useSyncExternalStore(
     subscribeMobile,
