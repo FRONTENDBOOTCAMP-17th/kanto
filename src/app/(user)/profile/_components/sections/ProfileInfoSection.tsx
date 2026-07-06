@@ -34,7 +34,7 @@ export function ProfileInfoSection({
       <div className="px-5 md:px-0 py-6">
         <div className="max-w-md mx-auto">
           <h2 className="text-lg font-semibold text-gray-900 mb-6">
-            망고 지수
+            {t("mangoScore")}
           </h2>
           <ProfileScore user={user} />
         </div>

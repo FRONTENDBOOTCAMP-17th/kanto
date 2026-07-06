@@ -64,7 +64,8 @@ export function ResponsiveSelect({
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    mobileOpen ? lockScroll() : unlockScroll();
+    if (!mobileOpen) return;
+    lockScroll();
     return () => {
       unlockScroll();
     };

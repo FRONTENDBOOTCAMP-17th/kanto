@@ -834,7 +834,12 @@
       "confirmTitle": "정말 탈퇴하시겠습니까?",
       "confirmDesc": "탈퇴 시 작성하신 게시글, 채팅 내역 등 모든 데이터가 삭제되며 복구할 수 없습니다.",
       "cancel": "취소",
-      "confirmDelete": "탈퇴하기"
+      "confirmDelete": "탈퇴하기",
+      "mangoScore": "망고 지수",
+      "scoreUnit": "/ 100점",
+      "refresh": "지금 갱신",
+      "refreshing": "갱신 중...",
+      "mangoScoreDesc": "망고 지수는 거래 후기·완료 거래·활동 이력을 종합해 하루 1~2회 자동 갱신됩니다."
     },
     "history": {
       "title": "거래내역",

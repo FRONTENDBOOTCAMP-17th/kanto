@@ -834,7 +834,12 @@
       "confirmTitle": "Sigurado ka bang nais mong tanggalin ang account?",
       "confirmDesc": "Ang pagtanggal ng account ay magbubura sa lahat ng data kabilang ang iyong mga post at kasaysayan ng chat, at hindi na maibabalik.",
       "cancel": "Kanselahin",
-      "confirmDelete": "Tanggalin"
+      "confirmDelete": "Tanggalin",
+      "mangoScore": "Mango Score",
+      "scoreUnit": "/ 100 puntos",
+      "refresh": "I-refresh ngayon",
+      "refreshing": "Nire-refresh...",
+      "mangoScoreDesc": "Pinagsasama ng Mango Score ang iyong mga review sa transaksyon, mga natapos na transaksyon, at kasaysayan ng aktibidad, at awtomatikong nag-a-update nang 1–2 beses sa isang araw."
     },
     "history": {
       "title": "Kasaysayan ng Transaksyon",

@@ -35,7 +35,8 @@ export default function MainSearchBar() {
   }, []);
 
   useEffect(() => {
-    bottomSheetOpen ? lockScroll() : unlockScroll();
+    if (!bottomSheetOpen) return;
+    lockScroll();
     return () => { unlockScroll(); };
   }, [bottomSheetOpen]);
 

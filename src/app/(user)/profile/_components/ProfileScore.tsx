@@ -17,6 +17,7 @@ const DURATION = 1200;
 
 export default function ProfileScore({ user }: { user: UserType }) {
   const t = useTranslations("Common");
+  const tp = useTranslations("Profile.info");
   const target = user.kts_score ?? 0;
   const grade = resolveGrade(user.kts_grade);
   const isSuspended =
@@ -70,7 +71,7 @@ export default function ProfileScore({ user }: { user: UserType }) {
       <div className="flex items-center justify-between">
         <div className="flex items-baseline gap-2">
           <span className="text-3xl font-bold text-gray-900">{displayed}</span>
-          <span className="text-sm text-gray-400">/ 100점</span>
+          <span className="text-sm text-gray-400">{tp("scoreUnit")}</span>
         </div>
         {process.env.NODE_ENV === "development" && (
           <button
@@ -79,7 +80,7 @@ export default function ProfileScore({ user }: { user: UserType }) {
             disabled={isPending}
             className="cursor-pointer text-xs text-teal-500 border border-teal-300 rounded-lg px-3 py-1.5 hover:bg-teal-50 transition-colors disabled:opacity-50"
           >
-            {isPending ? "갱신 중..." : "지금 갱신"}
+            {isPending ? tp("refreshing") : tp("refresh")}
           </button>
         )}
       </div>
@@ -92,7 +93,7 @@ export default function ProfileScore({ user }: { user: UserType }) {
       </div>
 
       <p className="text-xs text-gray-400 leading-relaxed">
-        망고 지수는 거래 후기·완료 거래·활동 이력을 종합해 하루 1~2회 자동 갱신됩니다.
+        {tp("mangoScoreDesc")}
       </p>
     </div>
   );
