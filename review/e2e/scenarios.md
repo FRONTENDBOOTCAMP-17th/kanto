@@ -50,6 +50,23 @@
 | -- | -------- | ----------- | --------- |
 | K30| 비관리자(user) 어드민 직접 진입 | role=user 로 `/admin/posts`·`/admin/chats`·`/admin/chats/11`·`/admin/users` 진입 → **차단(리다이렉트)되어야 함** | 2026-06-22 **pass — 4곳 모두 `/main` 리다이렉트(blocked). 9차 결함 해결**. (2026-06-19 fail) |
 
+## 발견 (2026-07-06) — 19차, 발표 D-2 / UI 개편 회귀 + 이월 [필수] 실측
+
+dev 3101, `tests/kanto-daily.spec.ts` 5개 시나리오 전부 pass. 캡처 `review/images/2026-07-06/`.
+
+- **[해결·칭찬] anon `users` PII 노출 — 7회 연속 미해결이던 항목이 닫힘**: publishable 키로
+  `GET /rest/v1/users?select=*` → 200이지만 0행, `role=in.(admin,super_admin)` 필터도 0행.
+  같은 키로 `posts` 200(데이터), `public_profiles` 뷰 정상 → 키가 죽은 게 아니라 `users`만 정확히 막힘.
+- **[필수][신규] 보안 수정이 마이그레이션에 미반영(재현성)**: 라이브는 닫혔으나
+  `migrations/20260626000000_grant_anon_select_users.sql`은 여전히 `grant select on users to anon`,
+  `public_profiles` 뷰 정의는 어느 마이그레이션에도 없음(`grep` 확인). `db reset` 시 뷰 부재로 쿼리 붕괴 + 구멍 재발.
+- **[해결·칭찬] 삭제글 상세**: `/usedgoods/422`(soft-delete) → 500 아닌 친절한 404. 소프트딜리트 가드 안정.
+- **[해결·칭찬] 비로그인 목록 500 회귀 없음**: `/main`·`/usedgoods`·`/rental`·`/job` 전부 <500.
+- **[칭찬] 지난 [제안] 반영**: 번역 폴백(translate.ts try/catch), 도배 서버강제(job/create/actions.ts),
+  PaymentCard 렌더중 Date.now → useState+interval, 감사로그 await, CI eslint 스텝(continue-on-error) 추가.
+- **[제안] i18n 갭**: `/profile` 영어 상태에서 "망고 지수/지금 갱신/안내문구" 한국어 잔존.
+- **[정적] tsc 0 / build 성공 / eslint 12 error·17 warn(set-state-in-effect·no-explicit-any). CI lint는 continue-on-error라 미게이트.**
+
 ## 발견 (2026-06-25) — 역할별 라이브 E2E (사용자 / 관리자)
 
 테스트 계정(id 198)을 일시 admin 승격 → 실행 → user 원복. dev 3126. 캡처 `review/images/2026-06-25/`.
