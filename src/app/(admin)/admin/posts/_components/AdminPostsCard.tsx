@@ -12,10 +12,17 @@ interface AdminPostsCardProps {
   onOpen: (postId: number) => void;
 }
 
+const CATEGORY_STYLE: Record<string, { bg: string; fg: string }> = {
+  used_goods: { bg: "#f0fdfa", fg: "#0d9488" },
+  jobs: { bg: "#faf5ff", fg: "#7c3aed" },
+  rental: { bg: "#eff6ff", fg: "#2563eb" },
+};
+
 export default function AdminPostsCard({ posts, onOpen }: AdminPostsCardProps) {
   return (
     <div className="space-y-3 p-4">
       {posts.map((post) => {
+        const cat = CATEGORY_STYLE[post.post_type];
         const url = getPostDetailUrl(post.post_type, post.id);
         const isActive = post.status === "active";
         return (
@@ -53,7 +60,14 @@ export default function AdminPostsCard({ posts, onOpen }: AdminPostsCardProps) {
             </div>
 
             <div className="mt-3 flex items-center justify-between gap-2">
-              <span className="inline-flex rounded-full bg-teal-50 px-2.5 py-1 text-[11px] font-bold text-teal-700">
+              <span
+                className="inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold"
+                style={
+                  cat
+                    ? { background: cat.bg, color: cat.fg }
+                    : { background: "#f1f5f9", color: "#64748b" }
+                }
+              >
                 {POST_TYPE_LABEL[post.post_type] ?? post.post_type}
               </span>
               <button
