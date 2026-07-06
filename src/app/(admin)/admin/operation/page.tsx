@@ -13,8 +13,8 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 const sections = [
   {
     icon: Bell,
-    label: "공지 & 점검",
-    description: "전체 공지 등록·관리 및 서비스 점검 일정을 설정합니다.",
+    label: "공지 관리",
+    description: "전체 공지를 등록·관리합니다.",
     href: "/admin/operation/notices",
   },
   {
