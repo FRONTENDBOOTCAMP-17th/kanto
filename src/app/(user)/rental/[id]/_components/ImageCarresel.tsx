@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -12,6 +12,12 @@ export default function ImageCarousel({ images }: { images: string[] }) {
   const { currentIndex, prevIndex, direction, isAnimating, navigate, dragHandlers } =
     useCarousel(images.length);
   const thumbRef = useRef<HTMLDivElement>(null);
+  const adjacentIndexes = useMemo(() => {
+    if (images.length <= 1) return [];
+    const prev = (currentIndex - 1 + images.length) % images.length;
+    const next = (currentIndex + 1) % images.length;
+    return Array.from(new Set([prev, next])).filter((idx) => idx !== currentIndex);
+  }, [currentIndex, images.length]);
 
   const scrollThumbs = (dir: "left" | "right") => {
     thumbRef.current?.scrollBy({ left: dir === "right" ? 120 : -120, behavior: "smooth" });
@@ -32,6 +38,19 @@ export default function ImageCarousel({ images }: { images: string[] }) {
   return (
     <div className="overflow-hidden aspect-square md:aspect-auto md:h-full flex flex-col bg-gray-100">
       <div className="relative w-full flex-1 overflow-hidden" {...dragHandlers}>
+        {adjacentIndexes.map((idx) => (
+          <Image
+            key={`preload-${idx}`}
+            src={images[idx]}
+            alt=""
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="pointer-events-none invisible object-contain"
+            draggable={false}
+            loading="eager"
+            aria-hidden
+          />
+        ))}
         {prevIndex !== null && (
           <div
             className={`absolute inset-0 ${
@@ -45,6 +64,7 @@ export default function ImageCarousel({ images }: { images: string[] }) {
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-contain"
               draggable={false}
+              loading="eager"
               onContextMenu={(e) => e.preventDefault()}
             />
           </div>
@@ -65,6 +85,7 @@ export default function ImageCarousel({ images }: { images: string[] }) {
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             priority={currentIndex === 0}
+            loading={currentIndex === 0 ? undefined : "eager"}
             className="object-contain"
             draggable={false}
             onContextMenu={(e) => e.preventDefault()}
