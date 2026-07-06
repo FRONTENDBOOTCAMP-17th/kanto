@@ -13,8 +13,8 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 const sections = [
   {
     icon: Bell,
-    label: "공지 & 점검",
-    description: "전체 공지 등록·관리 및 서비스 점검 일정을 설정합니다.",
+    label: "공지 관리",
+    description: "전체 공지를 등록·관리합니다.",
     href: "/admin/operation/notices",
   },
   {
@@ -82,7 +82,7 @@ export default async function OperationPage() {
           <Link
             key={label}
             href={href}
-            className="relative flex min-h-40 overflow-hidden rounded-2xl border border-[#ebeef0] bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all hover:bg-teal-50 hover:shadow-[0_4px_20px_rgba(0,0,0,0.10)]"
+            className="relative flex min-h-40 overflow-hidden rounded-2xl border border-[#ebeef0] bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all hover:bg-teal-50 hover:shadow-[0_4px_20px_rgba(0,0,0,0.10)] active:scale-[1.01]"
           >
             <Icon
               className="absolute right-4 top-1/2 -translate-y-1/2 h-30 w-30 text-slate-200"

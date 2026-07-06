@@ -84,7 +84,7 @@ export default function AdminPostsClient({ posts }: AdminPostsClientProps) {
     setPage(1);
   }
 
-  const totalCount = items.filter((p) => p.status !== "deleted").length;
+  const totalCount = items.length;
   const activeCount = items.filter((p) => p.status === "active").length;
   const deletedCount = items.filter((p) => p.status === "deleted").length;
 

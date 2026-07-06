@@ -50,7 +50,7 @@ export function PermissionsClient({
 
       <div className="p-6 lg:p-8">
         <div className="mb-7">
-          <Link href="/admin/operation" className="mb-2 flex items-center gap-1 text-[13px] text-slate-400 hover:text-slate-600">
+          <Link href="/admin/operation" className="mb-2 flex items-center gap-1 text-[13px] text-slate-400 hover:text-slate-600 active:scale-100">
             <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.5} />
             운영 관리
           </Link>

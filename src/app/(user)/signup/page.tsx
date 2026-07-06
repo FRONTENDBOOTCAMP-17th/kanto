@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { SignupForm } from "./_components/SignupForm";
@@ -25,6 +26,7 @@ export default function SignupPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [requiredChecked, setRequiredChecked] = useState(false);
+  const router = useRouter();
   const [agreements, setAgreements] =
     useState<SignupAgreements>(INITIAL_AGREEMENTS);
   const t = useTranslations("Signup");
@@ -72,6 +74,7 @@ export default function SignupPage() {
       }
 
       setIsSuccess(true);
+      setTimeout(() => router.push("/login"), 2000);
     } finally {
       setIsLoading(false);
     }

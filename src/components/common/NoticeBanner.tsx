@@ -60,12 +60,12 @@ export function NoticeBanner() {
 
   return (
     <div className="w-full bg-teal-500 text-white px-4 py-2.5">
-      <div className="max-w-5xl mx-auto flex items-center relative">
-        <div className="flex-1 flex items-center justify-center gap-2">
-          <Megaphone className="w-4 h-4 shrink-0" />
-          <p className="text-sm font-medium">{notice.title}</p>
+      <div className="max-w-5xl mx-auto flex items-start gap-3">
+        <div className="flex-1 flex items-start justify-center gap-2 pt-px">
+          <Megaphone className="w-4 h-4 shrink-0 mt-0.5" />
+          <p className="text-sm font-medium leading-snug">{notice.title}</p>
         </div>
-        <div className="absolute right-0 flex items-center gap-2">
+        <div className="shrink-0 flex items-center gap-2">
           <label className="flex items-center gap-1.5 cursor-pointer select-none">
             <input
               type="checkbox"
