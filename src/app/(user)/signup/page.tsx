@@ -74,7 +74,7 @@ export default function SignupPage() {
       }
 
       setIsSuccess(true);
-      setTimeout(() => router.push("/login"), 2000);
+      router.replace("/main");
     } finally {
       setIsLoading(false);
     }

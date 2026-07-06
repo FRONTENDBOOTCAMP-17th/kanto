@@ -3,40 +3,31 @@
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useLocale, useTranslations } from "next-intl";
-
-type ModalType = "terms" | "privacy" | "age";
+import { useTranslations } from "next-intl";
+import type { ModalType, TermsResource } from "../_hooks/useSignupTerms";
 
 interface TermsModalProps {
   modalType: ModalType;
+  resource: TermsResource;
+  onRetry: () => void;
   onClose: () => void;
   onAgree: () => void;
 }
 
-export function TermsModal({ modalType, onClose, onAgree }: TermsModalProps) {
+export function TermsModal({
+  modalType,
+  resource,
+  onRetry,
+  onClose,
+  onAgree,
+}: TermsModalProps) {
   const t = useTranslations("Signup.modal");
-  const locale = useLocale();
-  const [content, setContent] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadFailed, setLoadFailed] = useState(false);
   const [scrolledToBottom, setScrolledToBottom] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const isLoading = resource.status === "loading";
+  const loadFailed = resource.status === "error";
   const canAgreeWithoutScroll = modalType === "age";
   const canAgree = !loadFailed && (canAgreeWithoutScroll || scrolledToBottom);
-
-  useEffect(() => {
-    fetch(`/api/terms?type=${modalType}&locale=${locale}`)
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
-      .then((data) => setContent(data.content))
-      .catch(() => {
-        setLoadFailed(true);
-        setContent(t("loadError"));
-      })
-      .finally(() => setIsLoading(false));
-  }, [modalType, locale, t]);
 
   useEffect(() => {
     if (isLoading || !scrollRef.current) return;
@@ -75,9 +66,20 @@ export function TermsModal({ modalType, onClose, onAgree }: TermsModalProps) {
             <div className="flex items-center justify-center h-40 text-sm text-gray-400">
               {t("loading")}
             </div>
+          ) : loadFailed ? (
+            <div className="flex h-40 flex-col items-center justify-center gap-3 text-center text-sm text-gray-500">
+              <p>{t("loadError")}</p>
+              <button
+                type="button"
+                onClick={onRetry}
+                className="font-semibold text-teal-600 hover:text-teal-700"
+              >
+                {t("retry")}
+              </button>
+            </div>
           ) : (
             <div className="prose prose-sm max-w-none text-gray-700">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{content ?? ""}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{resource.content ?? ""}</ReactMarkdown>
             </div>
           )}
         </div>
