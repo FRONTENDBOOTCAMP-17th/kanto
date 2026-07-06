@@ -160,6 +160,7 @@ export async function getAdminUserPosts(id: string) {
     .select("id, title, post_type, view_count, created_at")
     .eq("user_id", Number(id))
     .in("post_type", ["used_goods", "jobs", "rental"])
+    .neq("status", "deleted")
     .order("created_at", { ascending: false });
 
   if (error) throw error;

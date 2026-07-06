@@ -14,6 +14,7 @@ import { TopicBadge } from "@/components/go/TopicBadge";
 import { GoToast } from "@/components/go/GoToast";
 import type { AdminMeetup } from "@/type/go";
 import type { MeetupTopicKey } from "@/constants/meetupTopics";
+import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 
 type StatusFilter = "all" | "active" | "upcoming" | "ended";
 
@@ -102,6 +103,7 @@ export default function AdminGoPage() {
   const p = Math.min(page, totalPages);
   const pageItems = filtered.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
   const selected = meetups.find((m) => m.post_id === selectedId) ?? null;
+  useBodyScrollLock(selected != null);
 
   
   const stats = useMemo(() => ({
@@ -159,9 +161,9 @@ export default function AdminGoPage() {
           { label: "총 참여자 (진행 중)", value: stats.participants, unit: "명", icon: Users, iconColor: "#0d9488", iconBg: "#f0fdfa" },
           { label: "신고 포함 모임", value: stats.reports, unit: "건", icon: AlertTriangle, iconColor: stats.reports > 0 ? "#dc2626" : "#94a3b8", iconBg: stats.reports > 0 ? "#fef2f2" : "#f1f5f9" },
         ].map(({ label, value, unit, icon: Icon, iconColor, iconBg }) => (
-          <div key={label} className="flex items-center gap-4 rounded-[16px] border border-[#edf0f2] bg-white p-[18px]">
-            <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[13px]" style={{ background: iconBg }}>
-              <Icon className="h-[22px] w-[22px]" style={{ color: iconColor }} strokeWidth={2} />
+          <div key={label} className="flex items-center gap-4 rounded-[16px] border border-[#edf0f2] bg-white p-4.5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[13px]" style={{ background: iconBg }}>
+              <Icon className="h-5.5 w-5.5" style={{ color: iconColor }} strokeWidth={2} />
             </div>
             <div>
               <div className="text-[13px] font-semibold text-slate-500">{label}</div>
@@ -177,7 +179,7 @@ export default function AdminGoPage() {
       <div className="flex flex-col gap-3.5 rounded-[16px] border border-[#e7ebee] bg-white p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         
         <div className="flex items-center gap-2.5 rounded-[12px] border border-[#ebeef0] bg-[#f7f9fa] px-3.5 py-3">
-          <Search className="h-[18px] w-[18px] flex-shrink-0 text-slate-400" strokeWidth={2} />
+          <Search className="h-4.5 w-4.5 shrink-0 text-slate-400" strokeWidth={2} />
           <input
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
@@ -230,11 +232,11 @@ export default function AdminGoPage() {
       <div className="overflow-hidden rounded-[18px] border border-[#e7ebee] bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
         
         <div className="hidden overflow-x-auto lg:block">
-          <table className="w-full min-w-[740px] border-collapse">
+          <table className="w-full min-w-185 border-collapse">
             <thead>
               <tr className="border-b border-[#f1f4f6] bg-[#f8fafc]">
                 {["주제", "모임 제목", "일시", "정원", "주최자", "상태", ""].map((h, i) => (
-                  <th key={i} className="px-[18px] py-3 text-left text-[12px] font-bold uppercase tracking-[0.04em] text-slate-400">
+                  <th key={i} className="px-4.5 py-3 text-left text-[12px] font-bold uppercase tracking-[0.04em] text-slate-400">
                     {h}
                   </th>
                 ))}
@@ -264,25 +266,25 @@ export default function AdminGoPage() {
                     onClick={() => { setSelectedId(m.post_id); setConfirmEnd(false); }}
                     className="cursor-pointer border-t border-[#f3f5f7] hover:bg-[#f8fafc]"
                   >
-                    <td className="px-[18px] py-3.5"><TopicPill topic={m.topic} /></td>
-                    <td className="px-[18px] py-3.5">
+                    <td className="px-4.5 py-3.5"><TopicPill topic={m.topic} /></td>
+                    <td className="px-4.5 py-3.5">
                       <div className="flex items-center gap-2">
-                        <span className="max-w-[240px] truncate text-[14px] font-bold text-slate-900">{m.title}</span>
+                        <span className="max-w-35 truncate text-[14px] font-bold text-slate-900">{m.title}</span>
                         {m.reports > 0 && (
-                          <span className="flex-shrink-0 rounded-md border border-red-200 bg-red-50 px-1.5 py-0.5 text-[11px] font-bold text-red-600">
+                          <span className="shrink-0 rounded-md border border-red-200 bg-red-50 px-1.5 py-0.5 text-[11px] font-bold text-red-600">
                             신고 {m.reports}건
                           </span>
                         )}
                       </div>
-                      <div className="mt-0.5 max-w-[260px] truncate text-[12.5px] text-slate-400">{m.location_address}</div>
+                      <div className="mt-0.5 max-w-65 truncate text-[12.5px] text-slate-400">{m.location_address}</div>
                     </td>
-                    <td className="px-[18px] py-3.5">
+                    <td className="px-4.5 py-3.5">
                       <div className="text-[13.5px] font-semibold text-slate-700">{dateStr}</div>
                       <div className="mt-0.5 text-[12.5px] text-slate-400">{timeRange}</div>
                     </td>
-                    <td className="px-[18px] py-3.5">
+                    <td className="px-4.5 py-3.5">
                       <div className="flex items-center gap-2">
-                        <div className="h-1.5 min-w-[44px] flex-1 overflow-hidden rounded-full bg-slate-100">
+                        <div className="h-1.5 min-w-11 flex-1 overflow-hidden rounded-full bg-slate-100">
                           <div className="h-full rounded-full" style={{ width: `${cap}%`, background: capColor }} />
                         </div>
                         <span className="whitespace-nowrap text-[13px] font-bold text-slate-900">
@@ -290,15 +292,15 @@ export default function AdminGoPage() {
                         </span>
                       </div>
                     </td>
-                    <td className="px-[18px] py-3.5">
+                    <td className="px-4.5 py-3.5">
                       <div className="flex items-center gap-2">
                         <MeetupAvatar name={m.host_name} size={28} />
-                        <span className="max-w-[64px] truncate text-[13.5px] font-semibold text-slate-700">{m.host_name}</span>
+                        <span className="max-w-20 truncate text-[13.5px] font-semibold text-slate-700">{m.host_name}</span>
                       </div>
                     </td>
-                    <td className="px-[18px] py-3.5"><StatusPill status={m.status} /></td>
-                    <td className="px-[18px] py-3.5 text-right">
-                      <button className="rounded-[9px] border border-[#e2e8eb] bg-white px-3.5 py-1.5 text-[13px] font-bold text-slate-600 hover:bg-[#f7f9fa]">
+                    <td className="px-4.5 py-3.5"><StatusPill status={m.status} /></td>
+                    <td className="px-4.5 py-3.5 text-right">
+                      <button className="whitespace-nowrap rounded-[9px] border border-[#e2e8eb] bg-white px-3.5 py-1.5 text-[13px] font-bold text-slate-600 hover:bg-[#f7f9fa]">
                         상세
                       </button>
                     </td>
@@ -357,7 +359,7 @@ export default function AdminGoPage() {
                     </div>
                     <div className="flex items-center gap-1.5">
                       <MeetupAvatar name={m.host_name} size={22} />
-                      <span className="max-w-[60px] truncate text-[12.5px] font-semibold text-slate-600">{m.host_name}</span>
+                      <span className="max-w-15 truncate text-[12.5px] font-semibold text-slate-600">{m.host_name}</span>
                     </div>
                   </div>
                 </div>
@@ -379,15 +381,15 @@ export default function AdminGoPage() {
       
       {selected && (
         <>
-          <div onClick={() => setSelectedId(null)} className="fixed inset-0 z-[70] bg-slate-900/45" />
-          <div className="fixed right-0 top-0 z-[71] flex h-screen w-[480px] max-w-full flex-col bg-white shadow-2xl animate-[slideInRight_.26s_cubic-bezier(.4,0,.2,1)]">
+          <div onClick={() => setSelectedId(null)} className="fixed inset-0 z-70 bg-slate-900/45" />
+          <div className="fixed right-0 top-0 z-71 flex h-screen w-120 max-w-full flex-col bg-white shadow-2xl animate-[slideInRight_.26s_cubic-bezier(.4,0,.2,1)]">
 
             
-            <div className="flex-shrink-0 border-b border-slate-100 px-6 py-5">
+            <div className="shrink-0 border-b border-slate-100 px-6 py-5">
               <div className="mb-3 flex items-start justify-between gap-3">
                 <h2 className="flex-1 text-[18px] font-extrabold leading-snug tracking-tight text-slate-900">{selected.title}</h2>
-                <button onClick={() => setSelectedId(null)} className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[9px] border border-slate-200 text-slate-500 hover:bg-slate-100">
-                  <X className="h-[18px] w-[18px]" strokeWidth={2.2} />
+                <button onClick={() => setSelectedId(null)} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] border border-slate-200 text-slate-500 hover:bg-slate-100">
+                  <X className="h-4.5 w-4.5" strokeWidth={2.2} />
                 </button>
               </div>
               <div className="flex flex-wrap items-center gap-2">
@@ -429,16 +431,16 @@ export default function AdminGoPage() {
                     content: selected.location_address + (selected.location_detail ? `\n${selected.location_detail}` : ""),
                   },
                 ].map(({ icon: Icon, label, content }, idx) => (
-                  <div key={label} className={`flex items-start gap-3.5 px-[18px] py-3.5 ${idx > 0 ? "border-t border-slate-100" : ""}`}>
-                    <Icon className="mt-0.5 h-[17px] w-[17px] flex-shrink-0 text-slate-400" strokeWidth={2} />
+                  <div key={label} className={`flex items-start gap-3.5 px-4.5 py-3.5 ${idx > 0 ? "border-t border-slate-100" : ""}`}>
+                    <Icon className="mt-0.5 h-4.25 w-4.25 shrink-0 text-slate-400" strokeWidth={2} />
                     <div>
                       <div className="mb-1 text-[12px] font-bold text-slate-400">{label}</div>
                       <div className="text-[14px] font-semibold text-slate-700 whitespace-pre-line">{content}</div>
                     </div>
                   </div>
                 ))}
-                <div className="flex items-start gap-3.5 border-t border-slate-100 px-[18px] py-3.5">
-                  <Users className="mt-0.5 h-[17px] w-[17px] flex-shrink-0 text-slate-400" strokeWidth={2} />
+                <div className="flex items-start gap-3.5 border-t border-slate-100 px-4.5 py-3.5">
+                  <Users className="mt-0.5 h-4.25 w-4.25 shrink-0 text-slate-400" strokeWidth={2} />
                   <div className="w-full">
                     <div className="mb-2 text-[12px] font-bold text-slate-400">한줄 설명</div>
                     <div className="text-[14px] leading-relaxed text-slate-700">{selected.description}</div>
@@ -454,7 +456,7 @@ export default function AdminGoPage() {
                     <span className="font-bold text-slate-900">{selected.participant_count + 1}</span>/{selected.max_participants}명
                   </span>
                 </div>
-                <div className="mb-4 h-[7px] overflow-hidden rounded-full bg-slate-100">
+                <div className="mb-4 h-1.75 overflow-hidden rounded-full bg-slate-100">
                   <div
                     className="h-full rounded-full"
                     style={{
@@ -482,11 +484,11 @@ export default function AdminGoPage() {
               
               {selected.reports > 0 && (
                 <div className="overflow-hidden rounded-[14px] border border-red-200">
-                  <div className="flex items-center gap-2.5 border-b border-red-200 bg-red-50 px-[18px] py-3.5">
+                  <div className="flex items-center gap-2.5 border-b border-red-200 bg-red-50 px-4.5 py-3.5">
                     <AlertTriangle className="h-4 w-4 text-red-600" strokeWidth={2.2} />
                     <span className="text-[14px] font-bold text-red-600">신고 {selected.reports}건 접수됨</span>
                   </div>
-                  <div className="px-[18px] py-3.5">
+                  <div className="px-4.5 py-3.5">
                     <p className="mb-3.5 text-[13.5px] leading-relaxed text-slate-700">
                       이 모임에 신고가 접수되었습니다. 신고 내역 페이지에서 상세 내용을 확인하고 조치하세요.
                     </p>
@@ -502,7 +504,7 @@ export default function AdminGoPage() {
             </div>
 
             
-            <div className="flex-shrink-0 border-t border-slate-100 px-6 py-4">
+            <div className="shrink-0 border-t border-slate-100 px-6 py-4">
               {selected.status === "ended" ? (
                 <div className="flex items-center justify-center gap-2 rounded-[11px] bg-slate-50 py-3 text-[13.5px] font-semibold text-slate-500">
                   종료된 모임입니다
@@ -510,7 +512,7 @@ export default function AdminGoPage() {
               ) : confirmEnd ? (
                 <div className="flex flex-col gap-3 rounded-[13px] border border-orange-200 bg-orange-50 p-4">
                   <div className="flex items-start gap-2.5">
-                    <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-orange-700" strokeWidth={2.1} />
+                    <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-orange-700" strokeWidth={2.1} />
                     <div>
                       <div className="text-[14px] font-bold text-slate-900">모임을 강제 종료하시겠습니까?</div>
                       <div className="mt-1 text-[13px] text-slate-500">참여자에게 종료 알림이 발송되고 지도에서 핀이 사라집니다.</div>

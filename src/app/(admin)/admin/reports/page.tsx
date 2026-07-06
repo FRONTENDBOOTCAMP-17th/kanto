@@ -68,12 +68,12 @@ export default async function ReportsPage() {
     postIds.length
       ? admin
           .from("posts")
-          .select("id, title, post_type, user_id")
+          .select("id, title, post_type, user_id, status")
           .in("id", postIds)
-      : { data: [] as { id: number; title: string; post_type: string; user_id: number }[] },
+      : { data: [] as { id: number; title: string; post_type: string; user_id: number; status: string | null }[] },
     targetUserIds.length
-      ? admin.from("users").select("id, name").in("id", targetUserIds)
-      : { data: [] as { id: number; name: string }[] },
+      ? admin.from("users").select("id, name, deleted_at").in("id", targetUserIds)
+      : { data: [] as { id: number; name: string; deleted_at: string | null }[] },
     adminIds.length
       ? admin.from("users").select("id, name").in("id", adminIds)
       : { data: [] as { id: number; name: string }[] },
@@ -95,8 +95,8 @@ export default async function ReportsPage() {
   );
   const messageSenderIds = [...new Set(messageSenderMap.values())];
   const { data: messageSenders } = messageSenderIds.length
-    ? await admin.from("users").select("id, name").in("id", messageSenderIds)
-    : { data: [] as { id: number; name: string }[] };
+    ? await admin.from("users").select("id, name, deleted_at").in("id", messageSenderIds)
+    : { data: [] as { id: number; name: string; deleted_at: string | null }[] };
 
   
   const sanctionByReport = new Map<number, { sanction_type: string; expires_at: string | null }>();
@@ -126,8 +126,21 @@ export default async function ReportsPage() {
   const authorMap = new Map((authorsData ?? []).map((u) => [u.id, u]));
   const adminUserMap = new Map((adminUsersRes.data ?? []).map((u) => [u.id, u]));
 
-  
-  const reportList: Report[] = reports.map((r) => {
+
+  const visibleReports = reports.filter((r) => {
+    if (r.target_type === "post") {
+      const post = r.target_id != null ? postMap.get(r.target_id) : undefined;
+      return post != null && post.status !== "deleted";
+    }
+    const resolvedUserId =
+      r.target_type === "message" && r.target_id != null
+        ? messageSenderMap.get(r.target_id) ?? null
+        : r.target_id;
+    const targetUser = resolvedUserId != null ? targetUserMap.get(resolvedUserId) : undefined;
+    return targetUser != null && targetUser.deleted_at == null;
+  });
+
+  const reportList: Report[] = visibleReports.map((r) => {
     const reason = r.category ?? "기타";
     const description = r.description ?? "";
     const status = (r.status ?? REPORT_STATUS.PENDING) as Status;
