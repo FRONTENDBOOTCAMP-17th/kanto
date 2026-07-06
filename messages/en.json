@@ -1095,6 +1095,8 @@
       "back": "Back to list",
       "reportAria": "Report meetup",
       "report": "Report",
+      "shareAria": "Copy meetup share link",
+      "share": "Share",
       "close": "Close",
       "full": "Full",
       "host": "Host",
@@ -1119,6 +1121,7 @@
     "toast": {
       "joined": "You've joined! The host has been notified",
       "cancelled": "Participation cancelled",
+      "urlCopied": "URL copied.",
       "reentryForbidden": "Rejoining is not allowed.",
       "cancelAfterStart": "The meetup has already started, so you can't cancel.",
       "ended": "Meetup ended",

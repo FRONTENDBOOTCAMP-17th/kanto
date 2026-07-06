@@ -18,11 +18,17 @@ export function PopularJobsClient({ isSuperAdmin }: { isSuperAdmin: boolean }) {
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
   const [saving, setSaving] = useState<number | null>(null);
+  const [prevQuery, setPrevQuery] = useState(query);
+  const [prevIsSuperAdmin, setPrevIsSuperAdmin] = useState(isSuperAdmin);
+  if (prevQuery !== query || prevIsSuperAdmin !== isSuperAdmin) {
+    setPrevQuery(query);
+    setPrevIsSuperAdmin(isSuperAdmin);
+    if (isSuperAdmin) setRows(null);
+  }
 
   useEffect(() => {
     if (!isSuperAdmin) return;
     let cancelled = false;
-    setRows(null);
     const params = query ? `?search=${encodeURIComponent(query)}` : "";
     fetch(`/api/admin/popular-jobs${params}`)
       .then((res) => res.json())
@@ -108,7 +114,7 @@ export function PopularJobsClient({ isSuperAdmin }: { isSuperAdmin: boolean }) {
         <div className="mb-7">
           <Link
             href="/admin/operation"
-            className="mb-2 flex items-center gap-1 text-[13px] text-slate-400 hover:text-slate-600"
+            className="mb-2 flex items-center gap-1 text-[13px] text-slate-400 hover:text-slate-600 active:scale-100"
           >
             <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.5} />
             운영 관리

@@ -1,7 +1,7 @@
 "use client";
 
 import { lockScroll, unlockScroll } from "@/utils/lockScroll";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -19,10 +19,8 @@ export function JobPreferredModal({ isOpen, onClose, selected, onToggle }: Props
   const t = useTranslations("Job");
   const te = useTranslations("Enums");
   const tc = useTranslations("Common");
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
   const [activeGroup, setActiveGroup] = useState<string>(PREFERRED_CATEGORIES[0].group);
-
-  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (!isOpen) return;

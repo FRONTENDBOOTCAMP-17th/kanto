@@ -1013,13 +1013,6 @@ async function seedTrustHistory(ids: Record<string, number>) {
     const user = userMap.get(email);
     if (!user) continue;
 
-    const currentGradeLevel =
-      user.kts_grade === "A" ? 4
-      : user.kts_grade === "B" ? 3
-      : user.kts_grade === "C" ? 2
-      : user.kts_grade === "D" ? 1
-      : 0;
-
     // 4주 히스토리 (이번 주 포함)
     for (let weekOffset = 3; weekOffset >= 0; weekOffset--) {
       const weekDate = new Date();

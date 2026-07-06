@@ -1,12 +1,12 @@
 "use client";
 
 import { Bell, Tag, Plus, X } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useTranslations } from "next-intl";
 import { useAlertSettings, CATEGORIES, MAX_KEYWORDS, type AlertSettings } from "@/hooks/profile/useAlertSettings";
 
 const ALERT_ITEMS = [
   { key: "chat", field: "alert_chat" as const },
-  { key: "comment", field: "alert_comment" as const },
   { key: "post", field: "alert_post" as const },
 ];
 
@@ -71,11 +71,10 @@ export function ProfileAlertsSection({ initialSettings }: { initialSettings: Ale
                 {CATEGORIES.map(({ key }) => (
                   <label key={key} className="flex items-center justify-between cursor-pointer">
                     <span className="text-sm font-medium text-gray-900">{t(`alertCategories.${key}`)}</span>
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={selectedCategories.includes(key)}
-                      onChange={() => toggleCategory(key)}
-                      className="w-4 h-4 accent-teal-500 cursor-pointer"
+                      onCheckedChange={() => toggleCategory(key)}
+                      className="h-4.5 w-4.5 shrink-0 border-gray-300 bg-white data-checked:border-gray-300 data-checked:bg-white data-checked:text-gray-900"
                     />
                   </label>
                 ))}
