@@ -450,25 +450,124 @@ erDiagram
 ```
 src/
 ├── app/
-│   ├── (user)/          # 사용자 페이지 (main, login, signup, job, rental, usedgoods, ...)
-│   ├── (admin)/         # 관리자 페이지 (admin/*)
-│   └── api/             # API 라우트 (auth, chat, payment, terms, user, ...)
+│   ├── (user)/                        # 사용자 페이지
+│   │   ├── main/                      # 메인 피드 (히어로, 인기 목록, 검색)
+│   │   ├── login/                     # 이메일 · 소셜 로그인
+│   │   ├── signup/                    # 회원가입
+│   │   ├── profile/                   # 내 프로필 · 알림 설정 · 인증
+│   │   ├── user/[id]/                 # 타 사용자 프로필
+│   │   ├── create/                    # 통합 글쓰기 (카테고리 선택)
+│   │   ├── usedgoods/                 # 중고거래 목록
+│   │   │   ├── [id]/                  # 상세 · 수정
+│   │   │   └── create/               # 글쓰기
+│   │   ├── job/                       # 구인구직 목록
+│   │   │   ├── [id]/                  # 상세 · 수정
+│   │   │   └── create/               # 글쓰기
+│   │   ├── rental/                    # 부동산 목록
+│   │   │   ├── [id]/                  # 상세 · 수정
+│   │   │   └── create/               # 글쓰기
+│   │   ├── go/                        # 칸토고 (지도 기반 번개모임)
+│   │   ├── favorites/                 # 찜 목록
+│   │   ├── myposts/                   # 내 게시글
+│   │   ├── notifications/             # 알림 목록
+│   │   ├── payment/return/            # 결제 완료 · 실패 콜백
+│   │   └── terms/[type]/             # 이용약관 (Notion CMS)
+│   │
+│   ├── (admin)/                       # 관리자 페이지
+│   │   └── admin/
+│   │       ├── (대시보드)/            # KPI · 트렌드 · 신고 현황
+│   │       ├── users/[id]/           # 유저 관리 · 제재
+│   │       ├── posts/                 # 게시글 관리
+│   │       ├── reports/               # 신고 처리
+│   │       ├── payments/              # 결제 내역
+│   │       ├── chats/[id]/           # 채팅 기록
+│   │       ├── go/                    # 번개모임 관리
+│   │       └── operation/
+│   │           ├── notices/           # 공지사항 (다국어 자동 번역)
+│   │           ├── content/           # 금칙어 · 스팸 설정
+│   │           ├── popular-jobs/      # 인기 공고 수동 지정
+│   │           ├── permissions/       # 관리자 권한 관리
+│   │           ├── audit-logs/        # 감사 로그
+│   │           ├── monitoring/        # 성능 · 통계 · 에러 모니터링
+│   │           └── maintenance/       # 서비스 점검 설정
+│   │
+│   ├── api/                           # API 라우트
+│   │   ├── admin/                     # 공지·금칙어·스팸·인기공고 관리
+│   │   ├── ai/chat/                   # AI 챗봇 (Gemini → Groq → Cerebras)
+│   │   ├── auth/reset-password/       # 비밀번호 재설정
+│   │   ├── chat/[id]/                 # 채팅방 메시지
+│   │   ├── login/                     # 로그인 Rate Limit (Redis)
+│   │   ├── moderate-image/            # 이미지 AI 검수 (Groq Vision)
+│   │   ├── payment/xendit/webhook/    # Xendit 결제 웹훅
+│   │   ├── posts/rate-check/          # 도배 방지
+│   │   ├── posts/cleanup/             # 만료 게시글 정리
+│   │   ├── profile/verification/      # 본인 인증
+│   │   ├── terms/                     # 약관 (Notion, 캐시 포함)
+│   │   └── user/                      # 유저 정보
+│   │
+│   └── auth/callback/                 # OAuth 콜백 처리
+│
 ├── components/
-│   ├── common/          # 공통 컴포넌트 (Header, Footer, Chat, Notification, ...)
-│   └── ui/              # shadcn UI 기본 컴포넌트
-├── hooks/               # Custom React Hooks
-├── services/            # 비즈니스 로직 / Supabase 쿼리
-├── store/               # Zustand 전역 상태 (authStore, chatStore)
-├── lib/                 # 클라이언트 초기화 (supabase, xendit, ...)
-├── utils/               # 유틸리티 함수
-├── type/                # TypeScript 타입 정의
-├── constants/           # 상수 (routes, report)
-└── i18n/                # 국제화 설정
+│   ├── common/
+│   │   ├── header/                    # 헤더 (알림 드롭다운 · 로그아웃)
+│   │   ├── chat/                      # 플로팅 채팅 위젯 · 채팅 패널
+│   │   └── aichatbot/                 # AI 챗봇 UI
+│   ├── go/                            # 칸토고 전용 컴포넌트 (지도 핀 · 모임 패널 · 그룹 채팅)
+│   └── ui/                            # shadcn/ui 기본 컴포넌트
+│
+├── hooks/
+│   ├── chat/                          # 채팅 Realtime 훅
+│   ├── go/                            # 번개모임 · 그룹 채팅 Realtime 훅
+│   ├── profile/                       # 프로필 관련 훅
+│   └── usedgoods/                     # 중고거래 관련 훅
+│
+├── services/                          # Supabase 쿼리 · 비즈니스 로직
+│   ├── admin/                         # 관리자 CRUD
+│   ├── chat/                          # 채팅방 · 메시지
+│   ├── go/                            # 모임 · 그룹 채팅
+│   ├── job/                           # 구인구직
+│   ├── main/                          # 메인 피드
+│   ├── notion/                        # 약관 Fetch
+│   ├── payment/                       # 에스크로 거래
+│   ├── profile/                       # 계정 설정
+│   ├── rental/                        # 부동산
+│   ├── review/                        # 리뷰 · 평점
+│   ├── usedGoods/                     # 중고거래
+│   └── user/                          # 유저 프로필
+│
+├── store/                             # Zustand 전역 상태
+│   ├── authStore.ts                   # 인증 · 유저 정보
+│   ├── chatStore.ts                   # 채팅 UI 상태
+│   └── goUiStore.ts                   # 칸토고 UI 상태
+│
+├── lib/                               # 외부 클라이언트 초기화
+│   ├── supabase.ts                    # Supabase 클라이언트
+│   ├── supabaseAdmin.ts               # Supabase Admin (서버 전용)
+│   ├── xendit.ts                      # Xendit 결제 API
+│   ├── translate.ts                   # MyMemory 번역 API
+│   └── moderation/                    # 이미지 AI 검수 (Groq Vision)
+│
+├── utils/                             # 유틸리티 함수
+│   ├── optimizeImage.ts               # Canvas WebP 변환
+│   ├── idCipher.ts                    # URL ID 암호화
+│   ├── format.ts                      # 날짜 · 가격 포맷
+│   └── supabase/                      # SSR용 Supabase 클라이언트
+│
+├── type/                              # TypeScript 타입 정의
+│   ├── supabase.ts                    # 자동 생성 (npm run gen:types)
+│   ├── chat/                          # 채팅 · 메시지 타입
+│   ├── job/                           # 구인구직 타입
+│   └── rental/                        # 부동산 타입
+│
+├── constants/                         # 상수 (라우트 · 신고 유형 · 모임 토픽)
+├── contexts/                          # React Context
+├── i18n/                              # 국제화 설정 (next-intl)
+└── styles/                            # 글로벌 CSS
 
 messages/
-├── ko.json              # 한국어
-├── en.json              # 영어
-└── fil.json             # 필리핀어
+├── ko.json                            # 한국어
+├── en.json                            # 영어
+└── fil.json                           # 필리핀어
 ```
 
 ## 시작하기
@@ -505,6 +604,18 @@ NOTION_TERMS_AGE_PAGE_ID=
 # 이메일 (Gmail)
 GMAIL_USER=
 GMAIL_APP_PASSWORD=
+
+# Google Maps
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=
+NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID=
+
+# AI (챗봇 · 이미지 검수)
+GEMINI_API_KEY=
+GROQ_API_KEY=
+CEREBRAS_API_KEY=
+
+# 보안
+ID_ENCRYPTION_SECRET=
 ```
 
 ### 실행
@@ -682,6 +793,18 @@ USING (user_id = (SELECT auth.uid()))
     </td>
   </tr>
 </table>
+
+---
+
+## 개선점
+
+개발 기간 내 구현하지 못했거나 기술적으로 아쉬움이 남는 부분입니다.
+
+| 항목 | 현재 상태 | 개선 방향 |
+| ---- | --------- | --------- |
+| **중고거래 가격 제안** | 판매자가 올린 가격으로만 거래 가능, 구매자가 협상을 요청할 수단 없음 | 상세 페이지에서 구매자가 희망 가격을 입력해 판매자에게 제안을 전송하고, 판매자가 수락·거절할 수 있는 협상 플로우 구현 |
+| **지도 기반 매물 검색** | 목록 페이지에서 키워드·카테고리 필터만 제공, 위치 기반 탐색 불가 | 현재 위치를 기준으로 반경 거리를 설정해 주변 중고거래·부동산 매물을 지도 위에서 바로 확인할 수 있는 지도 뷰 추가 |
+| **구인구직 채용완료 표시** | 마감일 기반 D-N 배지만 제공, 실제 채용이 완료되어도 공고가 그대로 노출됨 | 게시자가 직접 채용완료 처리를 할 수 있는 버튼 추가 및 목록에서 채용완료 오버레이 표시 (중고거래의 `is_sold`와 동일한 방식) |
 
 ---
 
