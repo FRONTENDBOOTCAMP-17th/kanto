@@ -43,7 +43,19 @@ export function Footer() {
         </div>
 
         <p className="text-gray-400">
-          {t("contact.email")}&nbsp;&nbsp;|&nbsp;&nbsp;{t("contact.kakao")}
+          {t("contact.email")}&nbsp;&nbsp;|&nbsp;&nbsp;
+          {t.rich("contact.kakao", {
+            link: (chunks) => (
+              <a
+                href="https://open.kakao.com/o/sPdUNUCi"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-teal-600 transition-colors"
+              >
+                {chunks}
+              </a>
+            ),
+          })}
         </p>
 
         <p className="text-gray-300">{t("copyright")}</p>

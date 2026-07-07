@@ -220,12 +220,14 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
 
     let post: { id: number };
     try {
-      const { postId } = await createJobPostRecord(title);
+      const { postId } = await createJobPostRecord(title, checkText);
       post = { id: postId };
     } catch (e) {
       const msg = e instanceof Error ? e.message : "";
       if (msg === "RATE_LIMIT") {
         alert("도배 방지를 위해 짧은 시간안에 글 작성을 금지하고 있습니다. 잠시 후 다시 시도해주세요.");
+      } else if (msg === "PROFANITY") {
+        triggerProfanityToast();
       } else {
         alert(t("errorPost"));
       }
