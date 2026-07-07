@@ -20,6 +20,8 @@ async function getAdminUser() {
 }
 
 export async function GET() {
+  const admin = await getAdminUser();
+  if (!admin) return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
   try {
     const data = await getProfanityRules();
     return NextResponse.json(data);
