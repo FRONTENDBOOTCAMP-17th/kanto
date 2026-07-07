@@ -5,7 +5,7 @@ const data=JSON.parse(html.match(/const data=(\[[\s\S]*?\n\]);\nfunction avg/)[1
 const font=fs.readFileSync('C:/Windows/Fonts/malgun.ttf');
 const u16=o=>font.readUInt16BE(o),u32=o=>font.readUInt32BE(o);let cmapOff=0;
 for(let i=0,n=u16(4);i<n;i++){let o=12+i*16,tag=font.toString('ascii',o,o+4);if(tag==='cmap')cmapOff=u32(o+8)}
-let sub=0;for(let i=0,n=u16(cmapOff+2);i<n;i++){let o=cmapOff+4+i*8,p=u16(o),e=u16(o+2),x=cmapOff+u32(o+4),f=u16(x);if(f===12||(f===4&&!sub))sub=x}
+let sub=0;for(let i=0,n=u16(cmapOff+2);i<n;i++){let o=cmapOff+4+i*8,x=cmapOff+u32(o+4),f=u16(x);if(f===12||(f===4&&!sub))sub=x}
 function gid(cp){let f=u16(sub);if(f===12){let n=u32(sub+12),lo=0,hi=n-1;while(lo<=hi){let m=(lo+hi)>>1,o=sub+16+m*12,a=u32(o),b=u32(o+4);if(cp<a)hi=m-1;else if(cp>b)lo=m+1;else return u32(o+8)+cp-a}return 0}let seg=u16(sub+6)/2,end=sub+14,start=end+2*seg+2,delta=start+2*seg,range=delta+2*seg;for(let i=0;i<seg;i++){let a=u16(start+2*i),b=u16(end+2*i);if(cp>=a&&cp<=b){let r=u16(range+2*i);return r?u16(range+2*i+r+2*(cp-a)):(cp+u16(delta+2*i))&65535}}return 0}
 const uni=new Map();function hex(s){let out='';for(const ch of s){let cp=ch.codePointAt(0),g=gid(cp);out+=g.toString(16).padStart(4,'0');if(g)uni.set(g,cp)}return out}
 const objs=[null];const add=x=>(objs.push(x),objs.length-1);const set=(i,x)=>objs[i]=x;
@@ -15,7 +15,7 @@ const cid=add(`<< /Type /Font /Subtype /CIDFontType2 /BaseFont /Malgun /CIDSyste
 const toUni=add({stream:Buffer.from(''),dict:''});const fobj=add(`<< /Type /Font /Subtype /Type0 /BaseFont /Malgun /Encoding /Identity-H /DescendantFonts [${cid} 0 R] /ToUnicode ${toUni} 0 R >>`);
 const pagesObj=add('');const catalog=add(`<< /Type /Catalog /Pages ${pagesObj} 0 R >>`);const pageRefs=[];
 const rgb=h=>[0,2,4].map(i=>parseInt(h.slice(i,i+2),16)/255);const names=['김도혁','박소유','이동근','임태형'],cols=['3158A5','EF7B45','39A57B','8B61C2'];
-function text(c,s,x,y,size,color='172038',bold=false){let [r,g,b]=rgb(color);c.push(`${r.toFixed(3)} ${g.toFixed(3)} ${b.toFixed(3)} rg BT /F1 ${size} Tf ${x} ${y} Td <${hex(s)}> Tj ET`)}
+function text(c,s,x,y,size,color='172038'){let [r,g,b]=rgb(color);c.push(`${r.toFixed(3)} ${g.toFixed(3)} ${b.toFixed(3)} rg BT /F1 ${size} Tf ${x} ${y} Td <${hex(s)}> Tj ET`)}
 function line(c,x1,y1,x2,y2,color='D9E0EC',w=1){let [r,g,b]=rgb(color);c.push(`${r} ${g} ${b} RG ${w} w ${x1} ${y1} m ${x2} ${y2} l S`)}
 function donut(c,v,cx,cy,R,r0){let st=-Math.PI/2;v.forEach((q,i)=>{let en=st+Math.PI*2*q/100,[r,g,b]=rgb(cols[i]),pts=[];for(let k=0;k<=24;k++){let a=st+(en-st)*k/24;pts.push([cx+R*Math.cos(a),cy+R*Math.sin(a)])}c.push(`${r} ${g} ${b} rg ${cx} ${cy} m ${pts.map((p,j)=>`${p[0].toFixed(1)} ${p[1].toFixed(1)} ${j?'l':'l'}`).join(' ')} h f`);st=en});c.push(`1 1 1 rg ${Array.from({length:49},(_,k)=>{let a=2*Math.PI*k/48;return `${(cx+r0*Math.cos(a)).toFixed(1)} ${(cy+r0*Math.sin(a)).toFixed(1)} ${k?'l':'m'}`}).join(' ')} h f`)}
 function page(draw){let c=[];draw(c);let con=add({stream:Buffer.from(c.join('\n'),'ascii'),dict:''});let p=add(`<< /Type /Page /Parent ${pagesObj} 0 R /MediaBox [0 0 842 595] /Resources << /Font << /F1 ${fobj} 0 R >> >> /Contents ${con} 0 R >>`);pageRefs.push(p)}
