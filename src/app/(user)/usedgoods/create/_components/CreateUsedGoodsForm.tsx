@@ -35,6 +35,7 @@ import {
   type TradeLocation,
 } from "@/type/location";
 import type { PickedLocation } from "@/type/go";
+import { createUsedGoodsPostRecord } from "../actions";
 
 interface InitialData {
   post_id: number | undefined;
@@ -174,13 +175,6 @@ export function CreateUsedGoodsForm({
     }
     setUrlError("");
 
-    const rateRes = await fetch("/api/posts/rate-check");
-    if (!rateRes.ok) {
-      const { message } = await rateRes.json().catch(() => ({}));
-      showErrorToast(message ?? "글 작성이 일시적으로 제한되었습니다. 잠시 후 다시 시도해 주세요.");
-      return;
-    }
-
     setIsSubmitting(true);
 
     const locationFields = buildLocationFields();
@@ -223,21 +217,19 @@ export function CreateUsedGoodsForm({
         .eq("post_id", postId);
       router.replace(`/usedgoods/${postId}`);
     } else {
-      const { data: post, error: postError } = await supabase
-        .from("posts")
-        .insert({
-          user_id: userId,
-          post_type: "used_goods",
-          title,
-          status: "active",
-          view_count: 0,
-          like_count: 0,
-        })
-        .select("id")
-        .single();
-
-      if (postError || !post) {
-        alert(t("form.errorPost"));
+      let post: { id: number };
+      try {
+        const { postId } = await createUsedGoodsPostRecord({ title, content });
+        post = { id: postId };
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : "";
+        if (msg === "RATE_LIMIT") {
+          showErrorToast("도배 방지를 위해서 짧은 시간동안 글 작성을 방지하고 있습니다. 잠시 후 다시 시도해주세요.");
+        } else if (msg === "PROFANITY") {
+          showErrorToast("부적절한 텍스트가 포함되었습니다");
+        } else {
+          alert(t("form.errorPost"));
+        }
         setIsSubmitting(false);
         return;
       }
