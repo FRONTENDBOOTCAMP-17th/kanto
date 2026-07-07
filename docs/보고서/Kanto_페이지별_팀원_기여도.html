@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>Kanto 페이지별 팀원 기여도</title>
+<style>
+@page { size: A4 landscape; margin: 0; }
+* { box-sizing: border-box; }
+body { margin:0; font-family:"Pretendard","Noto Sans KR","Malgun Gothic",sans-serif; color:#172038; background:#e9edf4; }
+.page { width:297mm; height:210mm; padding:17mm 18mm 13mm; background:#fff; page-break-after:always; position:relative; overflow:hidden; }
+.page:last-child { page-break-after:auto; }
+.cover { color:white; background:linear-gradient(135deg,#10192f 0%,#202c54 55%,#3459a8 100%); display:flex; flex-direction:column; justify-content:center; }
+.cover:after { content:""; position:absolute; width:145mm; height:145mm; border:28mm solid rgba(255,255,255,.06); border-radius:50%; right:-30mm; top:-35mm; }
+.eyebrow { font-size:10pt; letter-spacing:.18em; color:#5873ad; font-weight:800; text-transform:uppercase; }
+.cover .eyebrow { color:#9ebcff; }
+h1 { font-size:32pt; margin:4mm 0; line-height:1.18; letter-spacing:-.04em; }
+.cover p { font-size:14pt; color:#d7e2ff; margin:1mm 0; }
+.cover .meta { margin-top:18mm; font-size:10pt; color:#aec2ee; }
+.header { display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid #d9e0ec; padding-bottom:4mm; }
+h2 { font-size:22pt; margin:1mm 0 0; letter-spacing:-.04em; }
+.route { color:#69758c; font:9pt Consolas,monospace; }
+.grid { display:grid; grid-template-columns:1.45fr .85fr; gap:12mm; margin-top:8mm; }
+.summary { font-size:11pt; line-height:1.65; color:#4c5870; margin:0 0 6mm; }
+.item { padding:4mm 0; border-top:1px solid #e4e9f1; }
+.item h3 { font-size:12pt; margin:0 0 2mm; color:#1c2945; }
+.chips { display:flex; flex-wrap:wrap; gap:2mm; }
+.chip { font-size:9.2pt; background:#f2f5fa; padding:1.5mm 2.4mm; border-radius:2mm; white-space:nowrap; }
+.chip b { color:#284b93; }
+.chartbox { background:#f5f7fb; border-radius:7mm; padding:7mm; min-height:135mm; }
+.chartbox h3 { margin:0 0 5mm; font-size:12pt; text-align:center; }
+.donut { width:76mm; height:76mm; border-radius:50%; margin:0 auto; position:relative; box-shadow:0 8px 24px rgba(31,50,90,.12); }
+.donut:after { content:"종합\A 기여도"; white-space:pre; position:absolute; inset:18mm; border-radius:50%; background:white; display:grid; place-items:center; text-align:center; font-size:11pt; font-weight:800; line-height:1.35; color:#263554; }
+.legend { margin-top:6mm; display:grid; grid-template-columns:1fr 1fr; gap:3mm 5mm; }
+.leg { display:flex; align-items:center; gap:2mm; font-size:9.5pt; }
+.dot { width:3mm; height:3mm; border-radius:50%; flex:none; }
+.leg strong { margin-left:auto; }
+.note { position:absolute; left:18mm; right:18mm; bottom:7mm; color:#7a8498; font-size:7.8pt; display:flex; justify-content:space-between; }
+.method h2 { font-size:25pt; }
+.method .cards { display:grid; grid-template-columns:repeat(3,1fr); gap:6mm; margin-top:10mm; }
+.method .card { background:#f5f7fb; border-radius:5mm; padding:7mm; min-height:55mm; }
+.method h3 { margin:0 0 3mm; color:#2b4f98; }
+.method p,.method li { font-size:10pt; line-height:1.6; color:#4e5a71; }
+.method ul { padding-left:5mm; }
+</style>
+</head>
+<body>
+<section class="page cover">
+  <div class="eyebrow">KANTO PROJECT · CONTRIBUTION REPORT</div>
+  <h1>페이지별 팀원 기여도<br>분석 보고서</h1>
+  <p>기능 구현 · 디자인/UI · 추가 개선 항목별 기여율</p>
+  <p class="meta">대상: 김도혁 · 박소유 · 이동근 · 임태형　|　작성일: 2026. 07. 07.</p>
+</section>
+
+<section class="page method">
+  <div class="eyebrow">METHODOLOGY</div><h2>산정 기준 및 해석 방법</h2>
+  <div class="cards">
+    <div class="card"><h3>01. 근거 자료</h3><p>페이지·핵심 컴포넌트·서비스 파일의 최초 작성자와 이후 코드 계보, 최종 코드에 남은 기능 범위를 확인했습니다.</p></div>
+    <div class="card"><h3>02. 비율 산정</h3><p>페이지의 기반을 처음 만든 사람에게 가장 높은 기본 기여도를 부여하고, 이후 기능 확장·디자인·개선의 실제 작성 범위를 보조 반영했습니다.</p></div>
+    <div class="card"><h3>03. 항목 정의</h3><ul><li>기능 구현: 신규 기능·데이터 연동</li><li>디자인/UI: 레이아웃·반응형·접근성</li><li>추가 개선: 버그·성능·리팩터링·보안</li></ul></div>
+  </div>
+  <div class="cards">
+    <div class="card"><h3>제외 기준</h3><p>커밋 개수와 WBS는 정확한 기여도를 보여주지 못한다고 판단해 산정에서 완전히 제외했습니다.</p></div>
+    <div class="card"><h3>공통 작업 배분</h3><p>헤더, 국제화, 검색·필터 등은 최초 구현자와 해당 페이지에 실제 남은 코드의 영향 범위를 기준으로 반영했습니다.</p></div>
+    <div class="card"><h3>원형 차트</h3><p>우측 차트는 해당 페이지의 세 항목을 종합한 기여도입니다. 좌측에는 항목별 팀원 비율을 별도로 표시했습니다.</p></div>
+  </div>
+  <div class="note"><span>내부 보고서 기반 분석</span><span>2 / 22</span></div>
+</section>
+<div id="pages"></div>
+<script>
+const C={"김도혁":"#3158a5","박소유":"#ef7b45","이동근":"#39a57b","임태형":"#8b61c2"};
+const people=Object.keys(C);
+const data=[
+ ["메인 페이지","/main","인기 콘텐츠·검색·히어로·Kanto GO 미리보기를 제공하는 서비스 진입 화면.",{"기능 구현":[60,15,10,15],"디자인/UI":[55,15,15,15],"추가 개선":[45,15,25,15]}],
+ ["로그인 페이지","/login","이메일 및 소셜 로그인, 오류 안내, 리다이렉트와 보안 처리를 담당.",{"기능 구현":[20,10,25,45],"디자인/UI":[15,10,25,50],"추가 개선":[25,10,25,40]}],
+ ["회원가입 페이지","/signup","약관 동의·회원정보 입력·검증·가입 완료 흐름을 제공.",{"기능 구현":[10,10,60,20],"디자인/UI":[10,10,55,25],"추가 개선":[20,15,45,20]}],
+ ["중고거래 목록 페이지","/usedgoods","검색·필터·정렬·페이지네이션·상품 카드와 찜 기능을 제공.",{"기능 구현":[20,50,10,20],"디자인/UI":[20,45,15,20],"추가 개선":[30,35,15,20]}],
+ ["중고거래 상세 페이지","/usedgoods/[id]","상품 정보·이미지·판매자·찜·채팅 연결과 관련 상품을 제공.",{"기능 구현":[20,15,50,15],"디자인/UI":[20,20,45,15],"추가 개선":[30,20,35,15]}],
+ ["중고거래 등록·수정 페이지","/usedgoods/create · /edit","이미지 검수·지역·가격·내용 입력과 게시물 저장을 담당.",{"기능 구현":[15,15,15,55],"디자인/UI":[20,15,20,45],"추가 개선":[20,15,20,45]}],
+ ["부동산 목록 페이지","/rental","지역·유형 필터와 검색, 매물 카드 및 페이지네이션을 제공.",{"기능 구현":[20,50,15,15],"디자인/UI":[20,45,15,20],"추가 개선":[30,35,20,15]}],
+ ["부동산 상세·등록 페이지","/rental/[id] · /create","상세 페이지는 김도혁, 등록 페이지는 임태형이 최초 구현한 복합 화면.",{"기능 구현":[45,10,10,35],"디자인/UI":[45,10,15,30],"추가 개선":[40,15,20,25]}],
+ ["구인구직 목록 페이지","/job","URL 기반 검색·필터, 인기 공고, 카드 목록을 제공.",{"기능 구현":[55,25,10,10],"디자인/UI":[50,25,15,10],"추가 개선":[45,25,20,10]}],
+ ["구인구직 상세·등록 페이지","/job/[id] · /create","상세 페이지는 박소유, 등록 페이지는 임태형이 최초 구현한 복합 화면.",{"기능 구현":[20,40,10,30],"디자인/UI":[20,40,15,25],"추가 개선":[25,35,20,20]}],
+ ["프로필·공개 프로필 페이지","/profile · /user/[id]","개인 프로필은 김도혁, 공개 프로필은 이동근이 최초 구현한 복합 화면.",{"기능 구현":[55,10,30,5],"디자인/UI":[55,10,30,5],"추가 개선":[45,15,35,5]}],
+ ["찜·내 게시글 페이지","/favorites · /myposts","관심 게시물 탭과 본인 작성 게시물 관리 기능을 제공.",{"기능 구현":[20,50,20,10],"디자인/UI":[20,50,20,10],"추가 개선":[25,40,25,10]}],
+ ["채팅 페이지·플로팅 위젯","/chats · 공통 위젯","실시간 1:1 채팅, 읽음·알림, 결제·후기·신고·차단 흐름을 제공.",{"기능 구현":[40,15,20,25],"디자인/UI":[35,15,20,30],"추가 개선":[40,20,25,15]}],
+ ["Kanto GO 페이지","/go","지도 기반 번개모임 탐색·생성·참여와 그룹 채팅을 제공.",{"기능 구현":[25,10,15,50],"디자인/UI":[20,10,15,55],"추가 개선":[30,10,25,35]}],
+ ["이용약관 페이지","/terms/[type]","Notion CMS 기반 약관을 SSR로 제공하고 유형별 탐색을 지원.",{"기능 구현":[55,20,15,10],"디자인/UI":[55,20,15,10],"추가 개선":[45,25,20,10]}],
+ ["관리자 대시보드","/admin","KPI·신고 큐·지역·인기 게시물 등 운영 현황을 시각화.",{"기능 구현":[20,10,10,60],"디자인/UI":[20,10,10,60],"추가 개선":[30,15,15,40]}],
+ ["관리자 사용자·신고 관리","/admin/users · /reports","사용자 관리는 이동근, 신고 관리는 임태형이 최초 구현한 복합 화면.",{"기능 구현":[10,10,45,35],"디자인/UI":[10,10,45,35],"추가 개선":[20,15,35,30]}],
+ ["관리자 게시글·채팅 관리","/admin/posts · /chats","게시글 관리는 김도혁, 채팅 관리는 박소유가 최초 구현한 복합 화면.",{"기능 구현":[45,40,10,5],"디자인/UI":[40,45,10,5],"추가 개선":[40,35,15,10]}],
+ ["관리자 운영·결제 관리","/admin/operation · /payments","운영 관리는 김도혁, 결제 관리는 박소유가 최초 구현한 복합 화면.",{"기능 구현":[45,40,10,5],"디자인/UI":[45,35,10,10],"추가 개선":[45,35,10,10]}],
+ ["공통 UI·성능·국제화","전 페이지 공통","헤더·푸터·검색·필터·접근성, i18n, SEO·이미지·RLS 성능 최적화.",{"기능 구현":[40,20,30,10],"디자인/UI":[45,15,30,10],"추가 개선":[35,20,35,10]}]
+];
+function avg(rows){return people.map((_,i)=>Math.round(Object.values(rows).reduce((s,a)=>s+a[i],0)/3));}
+function grad(v){let p=0,s=[];v.forEach((x,i)=>{s.push(`${C[people[i]]} ${p}% ${p+x}%`);p+=x});return `conic-gradient(${s.join(',')})`;}
+const root=document.querySelector('#pages');
+data.forEach((d,idx)=>{const [title,route,summary,rows]=d, total=avg(rows); const sec=document.createElement('section');sec.className='page';
+  sec.innerHTML=`<div class="header"><div><div class="eyebrow">PAGE ${String(idx+1).padStart(2,'0')}</div><h2>${title}</h2></div><div class="route">${route}</div></div><div class="grid"><div><p class="summary">${summary}</p>${Object.entries(rows).map(([k,v])=>`<div class="item"><h3>${k}</h3><div class="chips">${v.map((x,i)=>`<span class="chip">${people[i]} <b>${x}%</b></span>`).join('')}</div></div>`).join('')}</div><div class="chartbox"><h3>페이지 종합 기여도</h3><div class="donut" style="background:${grad(total)}"></div><div class="legend">${total.map((x,i)=>`<div class="leg"><i class="dot" style="background:${C[people[i]]}"></i><span>${people[i]}</span><strong>${x}%</strong></div>`).join('')}</div></div></div><div class="note"><span>근거: 최초 코드 작성자·핵심 코드 계보·최종 구현 범위 / 커밋 수·WBS 제외</span><span>${idx+3} / 22</span></div>`;root.appendChild(sec)});
+</script>
+</body></html>
