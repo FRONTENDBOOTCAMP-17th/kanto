@@ -1,13 +1,14 @@
-import { test, expect, Page } from "@playwright/test";
+import { test, expect, Page, request } from "@playwright/test";
 import fs from "node:fs";
 
-// 리뷰 전용 일일 E2E (2026-07-06, 19차) — 발표(7/8) 이틀 전, UI 개편 회귀 확인 중심
-// 사용자 여정: 메인 → 목록(중고/렌탈/구인, 필터 UI 개편) → 상세 → 로그인/회원가입(개편) → 프로필
+// 리뷰 전용 일일 E2E (2026-07-07, 20차) — 발표(7/8) 하루 전, 실개발 마지막 날
+// 사용자 여정: 메인 → 목록(중고/렌탈/구인) → 상세 → 로그인 → 프로필
 // 이월 확인: anon users PII / 삭제글 상세 노출 / 비로그인 목록 500
+// 신규: 금칙어 게시글 등록 차단(check 엔드포인트), 회원가입 개편
 
 const EMAIL = "whrqkfdlwhgdk12@gmail.com";
 const PASSWORD = "kanto0000";
-const DATE = "2026-07-06";
+const DATE = "2026-07-07";
 const IMG = `../images/${DATE}`;
 
 test.beforeAll(() => {
@@ -36,7 +37,7 @@ test("K1 비로그인 메인/목록 200 (500 회귀 확인)", async ({ page }) =
   await page.screenshot({ path: `${IMG}/kanto-01-usedgoods-list.png`, fullPage: false });
 });
 
-test("K2 목록 필터 UI 개편 (FilterBar/FilterModal 렌더)", async ({ page }) => {
+test("K2 목록 필터/상세 렌더 (렌탈·구인)", async ({ page }) => {
   await page.goto("/rental", { waitUntil: "domcontentloaded" });
   await page.waitForTimeout(1500);
   await page.screenshot({ path: `${IMG}/kanto-02-rental-list.png`, fullPage: false });
@@ -71,4 +72,16 @@ test("K5 로그인 후 메인/프로필", async ({ page }) => {
   await page.waitForTimeout(1500);
   await page.screenshot({ path: `${IMG}/kanto-08-profile.png` });
   console.log("/profile status =", pr?.status());
+});
+
+test("K6 금칙어 차단 엔드포인트 동작 (신규)", async ({ baseURL }) => {
+  const ctx = await request.newContext({ baseURL });
+  // 빈 텍스트 → blocked=false
+  const empty = await ctx.get(`/api/admin/profanity-rules/check?text=${encodeURIComponent("   ")}`);
+  console.log("check empty status =", empty.status(), await empty.text());
+  // 평범한 텍스트 → blocked=false (정상 게시 허용)
+  const clean = await ctx.get(`/api/admin/profanity-rules/check?text=${encodeURIComponent("아이폰 팝니다 상태 좋아요")}`);
+  console.log("check clean status =", clean.status(), await clean.text());
+  expect(clean.status()).toBe(200);
+  await ctx.dispose();
 });
