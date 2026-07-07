@@ -35,6 +35,7 @@ import {
   type TradeLocation,
 } from "@/type/location";
 import type { PickedLocation } from "@/type/go";
+import { createRentalPostRecord } from "../actions";
 
 interface InitialData {
   post_id: number;
@@ -264,13 +265,6 @@ export default function RentalCreateForm({
     }
     setUrlError("");
 
-    const rateRes = await fetch("/api/posts/rate-check");
-    if (!rateRes.ok) {
-      const { message } = await rateRes.json().catch(() => ({}));
-      showErrorToast(message ?? "도배 방지를 위해 짧은 시간안에 글 작성을 금지하고 있습니다. 잠시 후 다시 시도해주세요.");
-      return;
-    }
-
     setIsSubmitting(true);
 
     const locationFields = buildLocationFields();
@@ -315,21 +309,19 @@ export default function RentalCreateForm({
 
       router.replace(`/rental/${postId}`);
     } else {
-      const { data: post, error: postError } = await supabase
-        .from("posts")
-        .insert({
-          user_id: userId,
-          post_type: "rental",
-          title,
-          status: "active",
-          view_count: 0,
-          like_count: 0,
-        })
-        .select("id")
-        .single();
-
-      if (postError || !post) {
-        alert(t("form.errorPost"));
+      let post: { id: number };
+      try {
+        const { postId } = await createRentalPostRecord({ title, description });
+        post = { id: postId };
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : "";
+        if (msg === "RATE_LIMIT") {
+          showErrorToast("도배 방지를 위해 짧은 시간안에 글 작성을 금지하고 있습니다. 잠시 후 다시 시도해주세요.");
+        } else if (msg === "PROFANITY") {
+          showErrorToast("부적절한 텍스트가 포함되었습니다");
+        } else {
+          alert(t("form.errorPost"));
+        }
         setIsSubmitting(false);
         return;
       }

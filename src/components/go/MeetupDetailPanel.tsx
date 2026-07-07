@@ -167,13 +167,21 @@ function MeetupDetailPanelContent({
 
   useEffect(() => {
     let active = true;
-    let statusFallback: ReturnType<typeof setTimeout> | undefined;
 
     getMeetupDetail(meetup.post_id)
       .then(({ participants }) => {
         if (active) setParticipants(participants);
       })
       .catch(() => {});
+
+    return () => {
+      active = false;
+    };
+  }, [meetup.post_id, meetup.participant_count]);
+
+  useEffect(() => {
+    let active = true;
+    let statusFallback: ReturnType<typeof setTimeout> | undefined;
 
     if (currentUserId) {
       let resolved = false;

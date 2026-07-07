@@ -42,6 +42,25 @@ export async function getProfanityRules(): Promise<ProfanityRule[]> {
   return (data ?? []) as ProfanityRule[];
 }
 
+// 금칙어 판정 공용 함수. 클라이언트 check 라우트와 글 등록 서버 액션이 함께 쓴다.
+// 규칙 조회 실패 시(예: DB 오류) fail-open(통과)으로 둔다 — 금칙어는 서비스
+// 가용성을 우선해도 위험이 크지 않기 때문. 판단이 바뀌면 이 주석을 함께 고칠 것.
+export async function containsProfanity(
+  text: string,
+  scope: Scope = "post",
+): Promise<boolean> {
+  if (!text.trim()) return false;
+  try {
+    const rules = await getProfanityRules();
+    const lower = text.toLowerCase();
+    return rules
+      .filter((r) => r.scopes.includes(scope))
+      .some((r) => r.words.some((w) => lower.includes(w.toLowerCase())));
+  } catch {
+    return false;
+  }
+}
+
 export async function createProfanityRule(
   payload: { scopes: Scope[]; words: string[] },
   createdBy: number,
