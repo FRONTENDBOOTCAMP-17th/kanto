@@ -64,6 +64,7 @@ export async function getRentalList(
     query = query.order("created_at", { ascending: false });
   } else if (filter?.sort === "popular") {
     query = query
+      .order("is_sold", { ascending: true })
       .order("kpps_score", { ascending: false, nullsFirst: false })
       .order("created_at", { ascending: false });
   } else {
