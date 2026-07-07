@@ -12,6 +12,9 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const nextConfig: NextConfig = {
   reactCompiler: true,
   images: {
+    // Vercel 무료 플랜 이미지 최적화 한도 초과(402 OPTIMIZED_IMAGE_REQUEST_PAYMENT_REQUIRED)로
+    // 이미지가 fallback으로 대체되는 문제 → 최적화 비활성화 (한도 리셋 후 재검토)
+    unoptimized: true,
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30일 캐시 (기본 60초)
     remotePatterns: [
