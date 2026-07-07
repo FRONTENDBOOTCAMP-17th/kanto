@@ -12,6 +12,11 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const nextConfig: NextConfig = {
   reactCompiler: true,
   images: {
+    // Vercel 이미지 최적화(/_next/image)를 전역 우회한다.
+    // Supabase 원본이 업로드 시점에 WebP+리사이즈로 최적화되어 있고, 정적 이미지도
+    // 작아서 최적화 이득이 낮다. Vercel 최적화 한도 초과로 발생하던 402
+    // (OPTIMIZED_IMAGE_REQUEST_PAYMENT_REQUIRED)를 게시물·아바타 등 모든 이미지에서 방지.
+    unoptimized: true,
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30일 캐시 (기본 60초)
     remotePatterns: [
