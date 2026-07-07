@@ -9,18 +9,29 @@ import { useCarousel } from "@/hooks/useCarousel";
 
 export default function ImageCarousel({ images }: { images: string[] }) {
   const t = useTranslations("Common");
-  const { currentIndex, prevIndex, direction, isAnimating, navigate, dragHandlers } =
-    useCarousel(images.length);
+  const {
+    currentIndex,
+    prevIndex,
+    direction,
+    isAnimating,
+    navigate,
+    dragHandlers,
+  } = useCarousel(images.length);
   const thumbRef = useRef<HTMLDivElement>(null);
   const adjacentIndexes = useMemo(() => {
     if (images.length <= 1) return [];
     const prev = (currentIndex - 1 + images.length) % images.length;
     const next = (currentIndex + 1) % images.length;
-    return Array.from(new Set([prev, next])).filter((idx) => idx !== currentIndex);
+    return Array.from(new Set([prev, next])).filter(
+      (idx) => idx !== currentIndex,
+    );
   }, [currentIndex, images.length]);
 
   const scrollThumbs = (dir: "left" | "right") => {
-    thumbRef.current?.scrollBy({ left: dir === "right" ? 120 : -120, behavior: "smooth" });
+    thumbRef.current?.scrollBy({
+      left: dir === "right" ? 120 : -120,
+      behavior: "smooth",
+    });
   };
 
   if (images.length === 0)
@@ -54,7 +65,9 @@ export default function ImageCarousel({ images }: { images: string[] }) {
         {prevIndex !== null && (
           <div
             className={`absolute inset-0 ${
-              direction === "right" ? "animate-slide-out-left" : "animate-slide-out-right"
+              direction === "right"
+                ? "animate-slide-out-left"
+                : "animate-slide-out-right"
             }`}
           >
             <Image
@@ -115,7 +128,7 @@ export default function ImageCarousel({ images }: { images: string[] }) {
         <button
           type="button"
           onClick={() => scrollThumbs("left")}
-          className="hidden md:flex absolute left-0 top-0 bottom-0 z-10 items-center px-1 bg-gradient-to-r from-white to-transparent active:scale-100"
+          className="hidden md:flex absolute left-0 top-0 bottom-0 z-10 items-center px-1 bg-linear-to-r from-white to-transparent active:scale-100"
           aria-label={t("carousel.prevImage")}
         >
           <ChevronLeft className="w-4 h-4 text-gray-500" />
@@ -130,11 +143,15 @@ export default function ImageCarousel({ images }: { images: string[] }) {
             <button
               key={image}
               type="button"
-              onClick={() => navigate(index > currentIndex ? "right" : "left", index)}
+              onClick={() =>
+                navigate(index > currentIndex ? "right" : "left", index)
+              }
               aria-label={t("carousel.goToImage", { index: index + 1 })}
               aria-pressed={currentIndex === index}
               className={`relative shrink-0 w-14 h-14 overflow-hidden focus:outline-none active:scale-100 transition-opacity ${
-                currentIndex === index ? "ring-2 ring-gray-900" : "opacity-50 hover:opacity-100"
+                currentIndex === index
+                  ? "ring-2 ring-gray-900"
+                  : "opacity-50 hover:opacity-100"
               }`}
             >
               <Image
@@ -151,7 +168,7 @@ export default function ImageCarousel({ images }: { images: string[] }) {
         <button
           type="button"
           onClick={() => scrollThumbs("right")}
-          className="hidden md:flex absolute right-0 top-0 bottom-0 z-10 items-center px-1 bg-gradient-to-l from-white to-transparent active:scale-100"
+          className="hidden md:flex absolute right-0 top-0 bottom-0 z-10 items-center px-1 bg-linear-to-l from-white to-transparent active:scale-100"
           aria-label={t("carousel.nextImage")}
         >
           <ChevronRight className="w-4 h-4 text-gray-500" />
