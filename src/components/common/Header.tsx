@@ -54,6 +54,7 @@ export function Header({
   const t = useTranslations("Header");
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
+  const authStatus = useAuthStore((s) => s.status);
   const clearUser = useAuthStore((s) => s.clearUser);
   const { kickedOut } = useAuthInit();
 
@@ -184,7 +185,12 @@ export function Header({
             )}
 
             
-            {user ? (
+            {authStatus === "initializing" ? (
+              <div
+                className="hidden md:block w-9 h-9 rounded-full bg-gray-200 animate-pulse"
+                aria-hidden="true"
+              />
+            ) : user ? (
               <div className="relative hidden md:block" ref={profileRef}>
                 <Button
                   variant="ghost"
@@ -329,7 +335,9 @@ export function Header({
             </nav>
 
             <div className="mt-3 px-4 pt-3 border-t border-gray-100">
-              {user ? (
+              {authStatus === "initializing" ? (
+                <div className="h-10 rounded-lg bg-gray-100 animate-pulse" aria-hidden="true" />
+              ) : user ? (
                 <div className="flex items-center justify-around">
                   {[
                     {

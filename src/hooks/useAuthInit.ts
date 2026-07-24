@@ -41,7 +41,10 @@ export function useAuthInit() {
           }
           return;
         }
-        if (!session) return;
+        if (!session) {
+          clearUser();
+          return;
+        }
 
         const sessionId = getSessionId(session.access_token);
         if (sessionId) {
