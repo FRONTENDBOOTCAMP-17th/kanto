@@ -31,7 +31,6 @@ import { UnifiedBanner, noticeShownInHeader } from "@/components/common/UnifiedB
 import type { PublicNotice } from "@/services/admin/adminNotices";
 import { NotificationBell } from "./header/NotificationBell";
 import type { NotificationBellHandle } from "./header/NotificationBell";
-import type { User as AppUser } from "@/type/user";
 import { useTranslations } from "next-intl";
 import { useSuspended } from "@/hooks/useSuspended";
 import { useScrollContainer } from "@/contexts/ScrollContext";
@@ -48,15 +47,13 @@ const NAV_ITEMS = [
 ] as const;
 
 export function Header({
-  initialUser,
   initialNotices,
 }: {
-  initialUser: AppUser | null;
   initialNotices: PublicNotice[];
 }) {
   const t = useTranslations("Header");
   const router = useRouter();
-  const user = useAuthStore((s) => s.user) ?? initialUser;
+  const user = useAuthStore((s) => s.user);
   const clearUser = useAuthStore((s) => s.clearUser);
   const { kickedOut } = useAuthInit();
 

@@ -15,23 +15,16 @@ import ChatRoom from "./chatPanel/room/ChatRoom";
 import GroupChatRoomBody from "@/components/go/groupChat/GroupChatRoomBody";
 import type { ChatWithUsers } from "@/type/chat/chat";
 import type { MyGroupRoom } from "@/type/groupChat";
-import type { User } from "@/type/user";
 
 const NEW_CHAT_DRAFT_KEY = "chatWidget:newChatDraft";
 
 const useIsoLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-export default function FloatingChatWidget({
-  initialUser,
-}: {
-  initialUser: User | null;
-}) {
+export default function FloatingChatWidget() {
   const t = useTranslations("Chat");
-  
-  
-  const storeUser = useAuthStore((s) => s.user);
-  const authUser = storeUser ?? initialUser;
+
+  const authUser = useAuthStore((s) => s.user);
   const isLoggedIn = !!authUser;
   const { isSuspended, openModal } = useSuspended();
   const setUnreadCount = useChatStore((s) => s.setUnreadCount);
