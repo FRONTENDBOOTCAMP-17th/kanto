@@ -31,7 +31,6 @@ import { UnifiedBanner, noticeShownInHeader } from "@/components/common/UnifiedB
 import type { PublicNotice } from "@/services/admin/adminNotices";
 import { NotificationBell } from "./header/NotificationBell";
 import type { NotificationBellHandle } from "./header/NotificationBell";
-import type { User as AppUser } from "@/type/user";
 import { useTranslations } from "next-intl";
 import { useSuspended } from "@/hooks/useSuspended";
 import { useScrollContainer } from "@/contexts/ScrollContext";
@@ -48,15 +47,14 @@ const NAV_ITEMS = [
 ] as const;
 
 export function Header({
-  initialUser,
   initialNotices,
 }: {
-  initialUser: AppUser | null;
   initialNotices: PublicNotice[];
 }) {
   const t = useTranslations("Header");
   const router = useRouter();
-  const user = useAuthStore((s) => s.user) ?? initialUser;
+  const user = useAuthStore((s) => s.user);
+  const authStatus = useAuthStore((s) => s.status);
   const clearUser = useAuthStore((s) => s.clearUser);
   const { kickedOut } = useAuthInit();
 
@@ -187,7 +185,12 @@ export function Header({
             )}
 
             
-            {user ? (
+            {authStatus === "initializing" ? (
+              <div
+                className="hidden md:block w-9 h-9 rounded-full bg-gray-200 animate-pulse"
+                aria-hidden="true"
+              />
+            ) : user ? (
               <div className="relative hidden md:block" ref={profileRef}>
                 <Button
                   variant="ghost"
@@ -332,7 +335,9 @@ export function Header({
             </nav>
 
             <div className="mt-3 px-4 pt-3 border-t border-gray-100">
-              {user ? (
+              {authStatus === "initializing" ? (
+                <div className="h-10 rounded-lg bg-gray-100 animate-pulse" aria-hidden="true" />
+              ) : user ? (
                 <div className="flex items-center justify-around">
                   {[
                     {

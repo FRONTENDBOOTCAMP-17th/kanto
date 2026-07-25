@@ -1,19 +1,16 @@
 "use client";
 
-import { useState, useRef, useEffect, useTransition } from "react";
-import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Globe, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { locales, type Locale } from "@/i18n/config";
-import { setLocaleCookie } from "@/i18n/cookie";
+import { useLocaleSwitcher } from "@/i18n/LocaleProvider";
 
 export function LanguageSwitcher() {
   const t = useTranslations("LanguageSwitcher");
-  const activeLocale = useLocale() as Locale;
-  const router = useRouter();
+  const { locale: activeLocale, setLocale } = useLocaleSwitcher();
   const [isOpen, setIsOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,10 +25,7 @@ export function LanguageSwitcher() {
   const handleSelect = (locale: Locale) => {
     setIsOpen(false);
     if (locale === activeLocale) return;
-    setLocaleCookie(locale);
-    startTransition(() => {
-      router.refresh();
-    });
+    setLocale(locale);
   };
 
   return (
@@ -43,7 +37,6 @@ export function LanguageSwitcher() {
         aria-label={t("label")}
         aria-expanded={isOpen}
         aria-haspopup="menu"
-        disabled={isPending}
         onClick={() => setIsOpen((v) => !v)}
       >
         <Globe className="w-5 h-5 text-gray-700" />

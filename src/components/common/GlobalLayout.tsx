@@ -6,10 +6,8 @@ import { ScrollContext } from "@/contexts/ScrollContext";
 import { Header } from "@/components/common/Header";
 import { Footer } from "@/components/common/Footer";
 import { ScrollToTop } from "@/components/common/ScrollToTop";
-import { useAuthStore } from "@/store/authStore";
 import { useChatStore } from "@/store/chatStore";
 import { useGoUiStore } from "@/store/goUiStore";
-import type { User } from "@/type/user";
 import type { PublicNotice } from "@/services/admin/adminNotices";
 import { DeletionPendingBanner } from "@/components/common/DeletionPendingBanner";
 import { SuspendedModal } from "@/components/common/SuspendedModal";
@@ -18,14 +16,13 @@ import Chatbot from "@/components/common/aichatbot/Chatbot"
 
 interface Props {
   children: React.ReactNode;
-  initialUser: User | null;
   initialNotices: PublicNotice[];
 }
 
 const useIsoLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-export function GlobalLayout({ children, initialUser, initialNotices }: Props) {
+export function GlobalLayout({ children, initialNotices }: Props) {
   const pathname = usePathname();
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -59,11 +56,6 @@ export function GlobalLayout({ children, initialUser, initialNotices }: Props) {
     document.documentElement.removeAttribute("data-chat-boot");
   }, []);
 
-  const initialized = useRef<true | null>(null);
-  if (initialized.current == null) {
-    initialized.current = true;
-    if (initialUser) useAuthStore.setState({ user: initialUser, isLoggedIn: true });
-  }
   const isTerms = pathname.startsWith("/terms");
   const isLogin = pathname.startsWith("/login");
   const isSignup = pathname.startsWith("/signup");
@@ -80,7 +72,7 @@ export function GlobalLayout({ children, initialUser, initialNotices }: Props) {
         className={`h-full flex flex-col ${isGo ? "overflow-hidden" : "overflow-y-auto"}`}
         style={isGo ? undefined : { scrollbarGutter: "stable" }}
       >
-        {!hideGlobalUI && <Header initialUser={initialUser} initialNotices={initialNotices} />}
+        {!hideGlobalUI && <Header initialNotices={initialNotices} />}
         {!hideGlobalUI && <div className="h-12 md:h-0 shrink-0" aria-hidden="true" />}
         {!hideGlobalUI && <DeletionPendingBanner />}
         {!hideGlobalUI && (
@@ -99,7 +91,7 @@ export function GlobalLayout({ children, initialUser, initialNotices }: Props) {
               }}
               mobileHidden={chatOpen}
             />
-            <FloatingChatWidget initialUser={initialUser} />
+            <FloatingChatWidget />
           </div>
         )}
         <SuspendedModal />

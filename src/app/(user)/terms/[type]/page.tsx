@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
-import { getLocale } from "next-intl/server";
+import { cookies } from "next/headers";
 import { getNotionPage } from "@/services/notion/notion";
+import { LOCALE_COOKIE } from "@/i18n/config";
 import TermsContent from "../_components/TermsContent";
 
 export const revalidate = 86400;
@@ -39,7 +40,7 @@ export default async function TermsPage({
   const { type } = await params;
   if (!VALID.has(type)) notFound();
 
-  const locale = await getLocale();
+  const locale = (await cookies()).get(LOCALE_COOKIE)?.value ?? "ko";
   const lang = PAGE_IDS[locale] ? locale : "ko";
   const pageId = PAGE_IDS[lang][type];
 

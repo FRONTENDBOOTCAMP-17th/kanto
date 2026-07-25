@@ -1,28 +1,14 @@
 import { getRequestConfig } from "next-intl/server";
-import { cookies, headers } from "next/headers";
-import { locales, defaultLocale, LOCALE_COOKIE, type Locale } from "./config";
+import { defaultLocale } from "./config";
 
-function matchAcceptLanguage(header: string | null): Locale | null {
-  if (!header) return null;
-  for (const part of header.split(",")) {
-    const tag = part.split(";")[0].trim().toLowerCase();
-    if (tag.startsWith("ko")) return "ko";
-    if (tag.startsWith("en")) return "en";
-    if (tag.startsWith("fil") || tag.startsWith("tl")) return "fil";
-  }
-  return null;
-}
-
+// 서버는 항상 기본 로케일(ko)로 렌더링한다. cookies()/headers()를 여기서 읽으면
+// Next.js가 이 설정을 쓰는 모든 라우트를 request-time dynamic rendering으로
+// 강제 전환시켜 캐싱이 전부 꺼진다. 실제 언어 선호는 클라이언트에서
+// LocaleProvider(src/i18n/LocaleProvider.tsx)가 쿠키를 읽어 반영한다.
 export default getRequestConfig(async () => {
-  const cookie = (await cookies()).get(LOCALE_COOKIE)?.value;
-  const locale: Locale =
-    cookie && locales.includes(cookie as Locale)
-      ? (cookie as Locale)
-      : (matchAcceptLanguage((await headers()).get("accept-language")) ??
-        defaultLocale);
-
   return {
-    locale,
-    messages: (await import(`../../messages/${locale}.json`)).default,
+    locale: defaultLocale,
+    messages: (await import(`../../messages/${defaultLocale}.json`)).default,
+    timeZone: "Asia/Manila",
   };
 });
