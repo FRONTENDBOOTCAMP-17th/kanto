@@ -39,14 +39,13 @@ export function ProfileBlockedSection() {
 
 
   const handleUnblock = async (blockedId: number) => {
-  await unblockUserStandaloneAction(blockedId);
-  queryClient.setQueryData<BlockedUser[]>(["blockedUsers", user?.id], (prev = []) => {
-    const next = prev.filter((u) => u.id !== blockedId);
-    const maxPage = Math.max(1, Math.ceil(next.length / PAGE_SIZE));
+    await unblockUserStandaloneAction(blockedId);
+    const next = queryClient.setQueryData<BlockedUser[]>(["blockedUsers", user?.id], (prev = []) =>
+      prev.filter((u) => u.id !== blockedId)
+    );
+    const maxPage = Math.max(1, Math.ceil((next?.length ?? 0) / PAGE_SIZE));
     if (page > maxPage) setPage(maxPage);
-    return next;
-  });
-};
+  };
 
   const totalPages = Math.max(1, Math.ceil(blocked.length / PAGE_SIZE));
   const paged = blocked.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
