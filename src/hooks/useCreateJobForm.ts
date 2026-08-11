@@ -5,12 +5,10 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { useImageUpload } from "@/hooks/useImageUpload";
-import { optimizeImage } from "@/utils/optimizeImage";
-import { buildImageOrder } from "@/utils/reorderImages";
 import { cityToTradeLocation, type TradeLocation } from "@/type/location";
 import type { EmployeeType, SalaryType, JobInitialData } from "@/type/job/jobCreate";
 import type { PickedLocation } from "@/type/go";
-import { createJobPostRecord } from "@/app/(user)/job/create/actions";
+import { submitJobPost } from "@/app/(user)/job/create/_lib/submitJobPost";
 
 export function useCreateJobForm(userId: number, userName: string, initialData?: JobInitialData) {
   const router = useRouter();
@@ -149,138 +147,73 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
     setUrlError("");
 
     setIsSubmitting(true);
-
-    const uploadLogo = async (postId: number): Promise<string | null> => {
-      if (!companyLogoFile) return companyLogoUrl || null;
-      const optimized = await optimizeImage(companyLogoFile, 512);
-      const ext = optimized.name.split(".").pop()?.toLowerCase() ?? "jpg";
-      const logoPath = `logos/${userId}/${postId}.${ext}`;
-      const { error } = await supabase.storage.from("images").upload(logoPath, optimized, { upsert: true });
-      if (error) { alert(t("errorImage")); return null; }
-      const { data } = supabase.storage.from("images").getPublicUrl(logoPath);
-      return data.publicUrl;
-    };
-
-    const jobFields = {
-      company_name: companyName,
-      company_intro: companyIntro,
-      industry: industry || null,
-      location_type: locationType as TradeLocation,
-      location_custom: locationCustom || null,
-      main_task: mainTask,
-      employee_type: employeeType as EmployeeType,
-      salary: Number(salary),
-      salary_type: salaryType || null,
-      work_hours: isTimeNegotiable ? null : `${workHoursStart} - ${workHoursEnd}`,
-      work_days: isTimeNegotiable ? null : workDays,
-      is_time_negotiable: isTimeNegotiable,
-      company_year: companyYear ? Number(companyYear) : null,
-      employee_count: employeeCount ? Number(employeeCount) : null,
-      company_address: resolvedAddress || null,
-      company_lat: companyLocation?.lat ?? initialData?.company_lat ?? null,
-      company_lng: companyLocation?.lng ?? initialData?.company_lng ?? null,
-      company_website: companyWebsite || null,
-      preferred: preferred || null,
-      preferred_tags: preferredTags.length > 0 ? preferredTags : null,
+    const result = await submitJobPost({
+      userId,
+      initialData,
+      checkText,
+      title,
+      mainTask,
+      employeeType,
+      salary,
+      salaryType,
+      locationType,
+      locationCustom,
       deadline,
-      manager_name: managerName,
-      manager_title: managerTitle || null,
-      manager_phone: managerPhone || null,
-      manager_email: managerEmail || null,
-    };
+      workHoursStart,
+      workHoursEnd,
+      workDays,
+      isTimeNegotiable,
+      preferred,
+      preferredTags,
+      companyName,
+      companyIntro,
+      industry,
+      companyYear,
+      employeeCount,
+      companyAddress,
+      companyLocation,
+      companyWebsite,
+      managerName,
+      managerTitle,
+      managerPhone,
+      managerEmail,
+      companyLogoUrl,
+      companyLogoFile,
+      imageFiles: imageUpload.imageFiles,
+      imagePreviews: imageUpload.imagePreviews,
+    });
+    setIsSubmitting(false);
 
-    if (initialData?.post_id) {
-      const logoUrl = await uploadLogo(initialData.post_id);
-      if (companyLogoFile && !logoUrl) { setIsSubmitting(false); return; }
-
-      const uploadedUrls: string[] = [];
-      for (const file of imageUpload.imageFiles) {
-        const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-        const filePath = `${userId}/${initialData.post_id}/${Date.now()}.${ext}`;
-        const { error: uploadError } = await supabase.storage.from("images").upload(filePath, file, { cacheControl: "31536000" });
-        if (uploadError) {
-          alert(t("errorImage"));
-          setIsSubmitting(false);
-          return;
-        }
-        const { data: urlData } = supabase.storage.from("images").getPublicUrl(filePath);
-        uploadedUrls.push(urlData.publicUrl);
-      }
-
-      const finalImages = buildImageOrder(imageUpload.imagePreviews, uploadedUrls);
-
-      await supabase.from("posts").update({ title }).eq("id", initialData.post_id);
-      const { error } = await supabase.from("jobs")
-        .update({ ...jobFields, company_logo: logoUrl, images: finalImages.length > 0 ? finalImages : null })
-        .eq("post_id", initialData.post_id);
-
-      if (error) {
-        alert(t("errorEdit"));
-        setIsSubmitting(false);
-        return;
-      }
-
-      router.replace(`/job/${initialData.post_id}`);
+    if (result.status === "success") {
+      if (result.mode === "edit") router.replace(result.redirectTo);
+      else router.push(result.redirectTo);
       return;
     }
 
-    let post: { id: number };
-    try {
-      const { postId } = await createJobPostRecord(title, checkText);
-      post = { id: postId };
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "";
-      if (msg === "RATE_LIMIT") {
+    switch (result.kind) {
+      case "rate-limit":
         alert("도배 방지를 위해 짧은 시간안에 글 작성을 금지하고 있습니다. 잠시 후 다시 시도해주세요.");
-      } else if (msg === "PROFANITY") {
+        break;
+      case "profanity":
         triggerProfanityToast();
-      } else if (msg === "UNAUTHORIZED") {
+        break;
+      case "unauthorized":
         alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
         router.push("/login");
-      } else {
-        alert(t("errorPost"));
-      }
-      setIsSubmitting(false);
-      return;
-    }
-
-    const logoUrl = await uploadLogo(post.id);
-    if (companyLogoFile && !logoUrl) {
-      await supabase.from("posts").delete().eq("id", post.id);
-      setIsSubmitting(false);
-      return;
-    }
-
-    const uploadedUrls: string[] = [];
-    for (const file of imageUpload.imageFiles) {
-      const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-      const filePath = `${userId}/${post.id}/${Date.now()}.${ext}`;
-      const { error: uploadError } = await supabase.storage.from("images").upload(filePath, file, { cacheControl: "31536000" });
-      if (uploadError) {
-        await supabase.from("posts").delete().eq("id", post.id);
+        break;
+      case "image":
         alert(t("errorImage"));
-        setIsSubmitting(false);
-        return;
-      }
-      const { data: urlData } = supabase.storage.from("images").getPublicUrl(filePath);
-      uploadedUrls.push(urlData.publicUrl);
+        break;
+      case "edit":
+        alert(t("errorEdit"));
+        break;
+      case "post":
+        alert(t("errorPost"));
+        break;
+      case "job":
+        alert(t("errorJob"));
+        break;
     }
-
-    const { error: jobError } = await supabase.from("jobs").insert({
-      post_id: post.id,
-      ...jobFields,
-      company_logo: logoUrl,
-      images: uploadedUrls.length > 0 ? uploadedUrls : null,
-    });
-
-    if (jobError) {
-      await supabase.from("posts").delete().eq("id", post.id);
-      alert(t("errorJob"));
-      setIsSubmitting(false);
-      return;
-    }
-
-    router.push("/job");
   };
 
   return {
