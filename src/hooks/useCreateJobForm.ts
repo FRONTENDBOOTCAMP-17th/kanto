@@ -113,7 +113,13 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
   };
 
   const handleSubmit = async () => {
-    
+    const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+    if (authError || !authUser) {
+      alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+      router.push("/login");
+      return;
+    }
+
     const resolvedAddress = companyLocation?.address ?? companyAddress;
     if (
       !industry.trim() ||
@@ -228,6 +234,9 @@ export function useCreateJobForm(userId: number, userName: string, initialData?:
         alert("도배 방지를 위해 짧은 시간안에 글 작성을 금지하고 있습니다. 잠시 후 다시 시도해주세요.");
       } else if (msg === "PROFANITY") {
         triggerProfanityToast();
+      } else if (msg === "UNAUTHORIZED") {
+        alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
+        router.push("/login");
       } else {
         alert(t("errorPost"));
       }
