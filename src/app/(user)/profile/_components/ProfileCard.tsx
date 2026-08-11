@@ -23,26 +23,12 @@ import { ProfileMeetingsSection, type MeetupSummary } from "./sections/ProfileMe
 import type { UserIdentity } from "@supabase/supabase-js";
 import type { ReviewWithReviewer } from "@/type/review";
 import { IdentityVerificationModal } from "./IdentityVerificationModal";
+import type { ProfileOverviewData } from "@/services/profile/profileOverview";
 
 export function ProfileCard({
-  alertSettings,
-  initialIdentities,
-  reviews,
-  initialIsVerified,
-  postCount,
-  likeCount,
-  createdMeetups,
-  joinedMeetups,
-  initialTab,
+  overview, initialTab,
 }: {
-  alertSettings: AlertSettings;
-  initialIdentities: UserIdentity[];
-  reviews: ReviewWithReviewer[];
-  initialIsVerified: boolean;
-  postCount: number;
-  likeCount: number;
-  createdMeetups: MeetupSummary[];
-  joinedMeetups: MeetupSummary[];
+  overview: ProfileOverviewData;
   initialTab?: string;
 }) {
   const { user } = useAuthStore();
@@ -50,14 +36,14 @@ export function ProfileCard({
   return (
     <ProfileForm
       user={user}
-      alertSettings={alertSettings}
-      initialIdentities={initialIdentities}
-      reviews={reviews}
-      initialIsVerified={initialIsVerified}
-      postCount={postCount}
-      likeCount={likeCount}
-      createdMeetups={createdMeetups}
-      joinedMeetups={joinedMeetups}
+      alertSettings={overview.alertSettings}
+      initialIdentities={overview.identities}
+      reviews={overview.reviews}
+      initialIsVerified={overview.initialIsVerified}
+      postCount={overview.postCount}
+      likeCount={overview.likeCount}
+      createdMeetups={overview.createdMeetups}
+      joinedMeetups={overview.joinedMeetups}
       initialTab={initialTab}
     />
   );
