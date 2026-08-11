@@ -4,8 +4,7 @@ import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import { useCreateJobForm } from "@/hooks/useCreateJobForm";
-import { CreateJobFormPageOne } from "./CreateJobFormPage1";
-import { CreateJobFormPageTwo } from "./CreateJobFormPage2";
+import { FormStepBoundary } from "./FormStepBoundary";
 import { BasicInfoSection } from "./BasicInfoSection";
 import { WorkScheduleSection } from "./WorkScheduleSection";
 import { MainTaskSection } from "./MainTaskSection";
@@ -38,7 +37,11 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
 
         <div className="p-8">
           {form.step === 1 && (
-            <CreateJobFormPageOne handleNextStep={form.handleNextStep}>
+            <FormStepBoundary
+              className="space-y-4"
+              heading={t("form.jobInfo")}
+              onSubmit={form.handleNextStep}
+            >
               <BasicInfoSection
                 title={form.title}
                 setTitle={form.setTitle}
@@ -74,11 +77,11 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
                 preferredTags={form.preferredTags}
                 setPreferredTags={form.setPreferredTags}
               />
-            </CreateJobFormPageOne>
+            </FormStepBoundary>
           )}
 
           {form.step === 2 && (
-            <CreateJobFormPageTwo handleSubmit={form.handleSubmit}>
+            <FormStepBoundary className="space-y-6" onSubmit={form.handleSubmit}>
               <CompanyInfoSection
                 companyLogoUrl={form.companyLogoUrl}
                 companyLogoFile={form.companyLogoFile}
@@ -109,7 +112,7 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
                 setManagerEmail={form.setManagerEmail}
               />
               <PhotosSection imageUpload={form.imageUpload} />
-            </CreateJobFormPageTwo>
+            </FormStepBoundary>
           )}
         </div>
       </div>
