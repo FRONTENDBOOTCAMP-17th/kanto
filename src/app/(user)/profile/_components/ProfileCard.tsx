@@ -5,10 +5,8 @@ import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
-import type { User as UserType } from "@/type/user";
 import { ProfileAside, ProfileMobileTabs, TAB_KEYS, type Tab } from "./ProfileAside";
 import { ProfileSidebar } from "./ProfileSidebar";
-import { ProfileCardSkeleton } from "./ProfileCardSkeleton";
 import { ProfileInfoSection } from "./sections/ProfileInfoSection";
 import { ProfileReviewsSection } from "./sections/ProfileReviewsSection";
 import { ProfileAlertsSection } from "./sections/ProfileAlertsSection";
@@ -21,25 +19,13 @@ import { IdentityVerificationModal } from "./IdentityVerificationModal";
 import type { ProfileOverviewData } from "@/services/profile/profileOverview";
 
 export function ProfileCard({
-  overview, initialTab,
+  overview,
+  initialTab,
 }: {
   overview: ProfileOverviewData;
   initialTab?: string;
 }) {
   const { user } = useAuthStore();
-  if (!user) return <ProfileCardSkeleton />;
-  return <ProfileCardBody user={user} overview={overview} initialTab={initialTab} />;
-}
-
-function ProfileCardBody({
-  user,
-  overview,
-  initialTab,
-}: {
-  user: UserType;
-  overview: ProfileOverviewData;
-  initialTab?: string;
-}) {
   const {
     alertSettings,
     identities: initialIdentities,
@@ -58,6 +44,8 @@ function ProfileCardBody({
   const [isIdentityVerified, setIsIdentityVerified] = useState(initialIsVerified);
   const router = useRouter();
   const t = useTranslations("Profile.card");
+
+  if (!user) return null;
 
   const reviewCount = reviews.length;
   const avgRating =

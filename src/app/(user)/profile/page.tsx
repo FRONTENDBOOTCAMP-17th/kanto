@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ProfileGuard } from "@/app/(user)/profile/_components/ProfileGuard";
 import { ProfileCard } from "@/app/(user)/profile/_components/ProfileCard";
 import { profileOverview } from "@/services/profile/profileOverview";
 
@@ -17,7 +18,9 @@ export default async function ProfilePage({
   return (
     <div className="bg-white">
       <div className="max-w-lg md:max-w-5xl mx-auto py-8">
-        <ProfileCard overview={overview} initialTab={tab}/>
+        <ProfileGuard>
+          <ProfileCard overview={overview} initialTab={tab} />
+        </ProfileGuard>
       </div>
     </div>
   );
