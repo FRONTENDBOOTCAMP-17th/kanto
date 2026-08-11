@@ -88,7 +88,7 @@ export default function ProfileScore({ user }: { user: UserType }) {
       <div className="w-full bg-gray-100 rounded-full h-2">
         <div
           className={`h-2 rounded-full ${barColor}`}
-          style={{ width: `${pct}%`, transition: "width 0.05s linear" }}
+          style={{ width: `${pct}%` }}
         />
       </div>
 
