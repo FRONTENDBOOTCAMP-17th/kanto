@@ -1,27 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ShieldCheck } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
 import type { User as UserType } from "@/type/user";
-import ProfileAvatar from "./profileAvatar";
-import { ProfileUserInfo } from "./ProfileUserInfo";
-import { ProfileAccountInfo } from "./ProfileAccountInfo";
 import { ProfileAside, ProfileMobileTabs, TAB_KEYS, type Tab } from "./ProfileAside";
+import { ProfileSidebar } from "./ProfileSidebar";
+import { ProfileCardSkeleton } from "./ProfileCardSkeleton";
 import { ProfileInfoSection } from "./sections/ProfileInfoSection";
 import { ProfileReviewsSection } from "./sections/ProfileReviewsSection";
 import { ProfileAlertsSection } from "./sections/ProfileAlertsSection";
-import type { AlertSettings } from "@/hooks/profile/useAlertSettings";
 import { ProfileBlockedSection } from "./sections/ProfileBlockedSection";
 import { ProfileSettingsSection } from "./sections/ProfileSettingsSection";
 import { ProfilePaymentSection } from "./sections/ProfilePaymentSection";
 import { ProfileTransactionsSection } from "./sections/ProfileTransactionsSection";
-import { ProfileMeetingsSection, type MeetupSummary } from "./sections/ProfileMeetingsSection";
-import type { UserIdentity } from "@supabase/supabase-js";
-import type { ReviewWithReviewer } from "@/type/review";
+import { ProfileMeetingsSection } from "./sections/ProfileMeetingsSection";
 import { IdentityVerificationModal } from "./IdentityVerificationModal";
 import type { ProfileOverviewData } from "@/services/profile/profileOverview";
 
@@ -32,46 +27,30 @@ export function ProfileCard({
   initialTab?: string;
 }) {
   const { user } = useAuthStore();
-  if (!user) return null;
-  return (
-    <ProfileForm
-      user={user}
-      alertSettings={overview.alertSettings}
-      initialIdentities={overview.identities}
-      reviews={overview.reviews}
-      initialIsVerified={overview.initialIsVerified}
-      postCount={overview.postCount}
-      likeCount={overview.likeCount}
-      createdMeetups={overview.createdMeetups}
-      joinedMeetups={overview.joinedMeetups}
-      initialTab={initialTab}
-    />
-  );
+  if (!user) return <ProfileCardSkeleton />;
+  return <ProfileCardBody user={user} overview={overview} initialTab={initialTab} />;
 }
 
-function ProfileForm({
+function ProfileCardBody({
   user,
-  alertSettings,
-  initialIdentities,
-  reviews,
-  initialIsVerified,
-  postCount,
-  likeCount,
-  createdMeetups,
-  joinedMeetups,
+  overview,
   initialTab,
 }: {
   user: UserType;
-  alertSettings: AlertSettings;
-  initialIdentities: UserIdentity[];
-  reviews: ReviewWithReviewer[];
-  initialIsVerified: boolean;
-  postCount: number;
-  likeCount: number;
-  createdMeetups: MeetupSummary[];
-  joinedMeetups: MeetupSummary[];
+  overview: ProfileOverviewData;
   initialTab?: string;
 }) {
+  const {
+    alertSettings,
+    identities: initialIdentities,
+    reviews,
+    initialIsVerified,
+    postCount,
+    likeCount,
+    createdMeetups,
+    joinedMeetups,
+  } = overview;
+
   const [activeTab, setActiveTab] = useState<Tab>(
     TAB_KEYS.includes(initialTab as Tab) ? (initialTab as Tab) : "info"
   );
@@ -85,6 +64,17 @@ function ProfileForm({
     reviewCount > 0
       ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount
       : 0;
+
+  const tabContent: Record<Tab, React.ReactNode> = {
+    info: <ProfileInfoSection user={user} />,
+    payment: <ProfilePaymentSection user={user} />,
+    history: <ProfileTransactionsSection />,
+    reviews: <ProfileReviewsSection reviews={reviews} avgRating={avgRating} reviewCount={reviewCount} />,
+    meetings: <ProfileMeetingsSection createdMeetups={createdMeetups} joinedMeetups={joinedMeetups} />,
+    alerts: <ProfileAlertsSection initialSettings={alertSettings} />,
+    blocked: <ProfileBlockedSection />,
+    settings: <ProfileSettingsSection initialIdentities={initialIdentities} />,
+  };
 
   return (
     <div className="bg-white md:bg-gray-50 min-h-screen md:min-h-0 md:rounded-xl overflow-hidden">
@@ -103,84 +93,22 @@ function ProfileForm({
       <div className="md:flex md:p-8 p-0 bg-white md:rounded-b-xl">
         <ProfileAside activeTab={activeTab} onTabChange={setActiveTab} />
 
-
         <div className="md:w-64 md:shrink-0 flex flex-col gap-6 md:border-r md:border-gray-100 md:px-8">
           <ProfileMobileTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-          <div className={`flex flex-col gap-6 ${activeTab !== "info" ? "hidden md:flex" : ""}`}>
-            <ProfileAvatar
-              avatarUrl={user.avatar_url ?? ""}
-              name={user.name ?? ""}
-              userId={user.id}
-            />
-            <div className="-mt-4">
-              <ProfileUserInfo name={user.name ?? ""} email={user.email ?? ""} />
-            </div>
-
-            <div className="border-t border-gray-100" />
-
-            <div className="flex flex-col gap-3 px-5 md:px-0">
-              <h2 className="text-sm font-semibold text-gray-700">{t("stats")}</h2>
-              <div className="grid grid-cols-3 gap-2 text-center">
-                <Link href="/myposts" className="flex flex-col gap-0.5 rounded-lg p-1 hover:bg-gray-50 transition-colors">
-                  <span className="text-xl font-bold text-gray-900">{postCount}</span>
-                  <span className="text-xs text-gray-500">{t("posts")}</span>
-                </Link>
-                <Link href="/favorites" className="flex flex-col gap-0.5 rounded-lg p-1 hover:bg-gray-50 transition-colors">
-                  <span className="text-xl font-bold text-gray-900">{likeCount}</span>
-                  <span className="text-xs text-gray-500">{t("favorites")}</span>
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setActiveTab("reviews")}
-                  className="flex flex-col gap-0.5 rounded-lg p-1 hover:bg-gray-50 transition-colors w-full cursor-pointer"
-                >
-                  <span className="text-xl font-bold text-gray-900 w-full">{reviewCount}</span>
-                  <span className="text-xs text-gray-500">{t("reviews")}</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="border-t border-gray-100" />
-
-            <ProfileAccountInfo provider={user.provider ?? null} createdAt={user.created_at ?? null} />
-
-            <div className="border-t border-gray-100" />
-
-
-            <div className="flex flex-col gap-3 px-5 md:px-0">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-teal-500" />
-                <h2 className="text-sm font-semibold text-gray-700">{t("verify")}</h2>
-              </div>
-              <p className="text-xs text-gray-500 leading-relaxed">
-                {isIdentityVerified
-                  ? t("verifyComplete")
-                  : t("verifyDesc")}
-              </p>
-              <button
-                type="button"
-                onClick={() => setIsVerificationOpen(true)}
-                disabled={isIdentityVerified}
-                className="cursor-pointer w-full py-2.5 rounded-lg border border-teal-500 text-teal-500 text-sm font-medium bg-transparent hover:bg-teal-50 transition-colors disabled:cursor-default disabled:border-gray-200 disabled:bg-gray-50 disabled:text-gray-400"
-              >
-                {isIdentityVerified ? "인증 완료" : "본인인증 하기"}
-              </button>
-            </div>
-          </div>
+          <ProfileSidebar
+            user={user}
+            activeTab={activeTab}
+            postCount={postCount}
+            likeCount={likeCount}
+            reviewCount={reviewCount}
+            onReviewsClick={() => setActiveTab("reviews")}
+            isIdentityVerified={isIdentityVerified}
+            onVerify={() => setIsVerificationOpen(true)}
+          />
         </div>
 
-
-        <div className="flex-1 md:pl-8">
-          {activeTab === "info" && <ProfileInfoSection user={user} />}
-          {activeTab === "payment" && <ProfilePaymentSection user={user} />}
-          {activeTab === "history" && <ProfileTransactionsSection />}
-          {activeTab === "reviews" && <ProfileReviewsSection reviews={reviews} avgRating={avgRating} reviewCount={reviewCount} />}
-          {activeTab === "meetings" && <ProfileMeetingsSection createdMeetups={createdMeetups} joinedMeetups={joinedMeetups} />}
-          {activeTab === "alerts" && <ProfileAlertsSection initialSettings={alertSettings} />}
-          {activeTab === "blocked" && <ProfileBlockedSection />}
-          {activeTab === "settings" && <ProfileSettingsSection initialIdentities={initialIdentities} />}
-        </div>
+        <div className="flex-1 md:pl-8">{tabContent[activeTab]}</div>
       </div>
 
       {isVerificationOpen && (
