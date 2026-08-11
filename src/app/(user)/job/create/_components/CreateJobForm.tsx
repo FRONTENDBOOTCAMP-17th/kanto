@@ -6,6 +6,10 @@ import { useTranslations } from "next-intl";
 import { useCreateJobForm } from "@/hooks/useCreateJobForm";
 import { CreateJobFormPageOne } from "./CreateJobFormPage1";
 import { CreateJobFormPageTwo } from "./CreateJobFormPage2";
+import { BasicInfoSection } from "./BasicInfoSection";
+import { WorkScheduleSection } from "./WorkScheduleSection";
+import { MainTaskSection } from "./MainTaskSection";
+import { PreferredSection } from "./PreferredSection";
 import Toast from "@/components/common/Toast";
 import type { JobInitialData } from "@/type/job/jobCreate";
 
@@ -31,36 +35,43 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
 
         <div className="p-8">
           {form.step === 1 && (
-            <CreateJobFormPageOne
-              title={form.title}
-              setTitle={form.setTitle}
-              employeeType={form.employeeType}
-              setEmployeeType={form.setEmployeeType}
-              salary={form.salary}
-              setSalary={form.setSalary}
-              salaryType={form.salaryType}
-              setSalaryType={form.setSalaryType}
-              workLocation={form.workLocation}
-              onWorkLocationSelect={form.handleWorkLocationSelect}
-              locationFallbackLabel={form.locationFallbackLabel}
-              deadline={form.deadline}
-              setDeadline={form.setDeadline}
-              workHoursStart={form.workHoursStart}
-              setWorkHoursStart={form.setWorkHoursStart}
-              workHoursEnd={form.workHoursEnd}
-              setWorkHoursEnd={form.setWorkHoursEnd}
-              workDays={form.workDays}
-              setWorkDays={form.setWorkDays}
-              isTimeNegotiable={form.isTimeNegotiable}
-              setIsTimeNegotiable={form.setIsTimeNegotiable}
-              mainTask={form.mainTask}
-              setMainTask={form.setMainTask}
-              preferred={form.preferred}
-              setPreferred={form.setPreferred}
-              preferredTags={form.preferredTags}
-              setPreferredTags={form.setPreferredTags}
-              handleNextStep={form.handleNextStep}
-            />
+            <CreateJobFormPageOne handleNextStep={form.handleNextStep}>
+              <BasicInfoSection
+                title={form.title}
+                setTitle={form.setTitle}
+                employeeType={form.employeeType}
+                setEmployeeType={form.setEmployeeType}
+                salary={form.salary}
+                setSalary={form.setSalary}
+                salaryType={form.salaryType}
+                setSalaryType={form.setSalaryType}
+                workLocation={form.workLocation}
+                onWorkLocationSelect={form.handleWorkLocationSelect}
+                locationFallbackLabel={form.locationFallbackLabel}
+                deadline={form.deadline}
+                setDeadline={form.setDeadline}
+              />
+              <WorkScheduleSection
+                workHoursStart={form.workHoursStart}
+                setWorkHoursStart={form.setWorkHoursStart}
+                workHoursEnd={form.workHoursEnd}
+                setWorkHoursEnd={form.setWorkHoursEnd}
+                workDays={form.workDays}
+                setWorkDays={form.setWorkDays}
+                isTimeNegotiable={form.isTimeNegotiable}
+                setIsTimeNegotiable={form.setIsTimeNegotiable}
+              />
+              <MainTaskSection
+                mainTask={form.mainTask}
+                setMainTask={form.setMainTask}
+              />
+              <PreferredSection
+                preferred={form.preferred}
+                setPreferred={form.setPreferred}
+                preferredTags={form.preferredTags}
+                setPreferredTags={form.setPreferredTags}
+              />
+            </CreateJobFormPageOne>
           )}
 
           {form.step === 2 && (
