@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { UserX, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
@@ -27,26 +28,25 @@ function Pagination({ page, total, onChange }: { page: number; total: number; on
 export function ProfileBlockedSection() {
   const t = useTranslations("Profile.blocked");
   const { user } = useAuthStore();
-  const [blocked, setBlocked] = useState<BlockedUser[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    if (!user) return;
-    getBlockedUsers(user.id)
-      .then(setBlocked)
-      .finally(() => setLoading(false));
-  }, [user]);
+  const {data: blocked = [], isLoading: loading } = useQuery({
+    queryKey: ["blockedUsers", user?.id],
+    queryFn: () => getBlockedUsers(user!.id),
+    enabled: !!user,
+  })
+
 
   const handleUnblock = async (blockedId: number) => {
-    await unblockUserStandaloneAction(blockedId);
-    setBlocked((prev) => {
-      const next = prev.filter((u) => u.id !== blockedId);
-      const maxPage = Math.max(1, Math.ceil(next.length / PAGE_SIZE));
-      if (page > maxPage) setPage(maxPage);
-      return next;
-    });
-  };
+  await unblockUserStandaloneAction(blockedId);
+  queryClient.setQueryData<BlockedUser[]>(["blockedUsers", user?.id], (prev = []) => {
+    const next = prev.filter((u) => u.id !== blockedId);
+    const maxPage = Math.max(1, Math.ceil(next.length / PAGE_SIZE));
+    if (page > maxPage) setPage(maxPage);
+    return next;
+  });
+};
 
   const totalPages = Math.max(1, Math.ceil(blocked.length / PAGE_SIZE));
   const paged = blocked.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
