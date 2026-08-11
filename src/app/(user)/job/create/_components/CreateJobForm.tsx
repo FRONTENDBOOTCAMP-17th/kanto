@@ -10,6 +10,9 @@ import { BasicInfoSection } from "./BasicInfoSection";
 import { WorkScheduleSection } from "./WorkScheduleSection";
 import { MainTaskSection } from "./MainTaskSection";
 import { PreferredSection } from "./PreferredSection";
+import { CompanyInfoSection } from "./CompanyInfoSection";
+import { ManagerInfoSection } from "./ManagerInfoSection";
+import { PhotosSection } from "./PhotosSection";
 import Toast from "@/components/common/Toast";
 import type { JobInitialData } from "@/type/job/jobCreate";
 
@@ -75,35 +78,38 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
           )}
 
           {form.step === 2 && (
-            <CreateJobFormPageTwo
-              companyLogoUrl={form.companyLogoUrl}
-              companyLogoFile={form.companyLogoFile}
-              setCompanyLogoFile={form.setCompanyLogoFile}
-              companyName={form.companyName}
-              setCompanyName={form.setCompanyName}
-              companyIntro={form.companyIntro}
-              setCompanyIntro={form.setCompanyIntro}
-              industry={form.industry}
-              setIndustry={form.setIndustry}
-              companyYear={form.companyYear}
-              setCompanyYear={form.setCompanyYear}
-              employeeCount={form.employeeCount}
-              setEmployeeCount={form.setEmployeeCount}
-              companyAddress={form.companyAddress}
-              companyLocation={form.companyLocation}
-              setCompanyLocation={form.setCompanyLocation}
-              companyWebsite={form.companyWebsite}
-              setCompanyWebsite={form.setCompanyWebsite}
-              managerName={form.managerName}
-              managerTitle={form.managerTitle}
-              setManagerTitle={form.setManagerTitle}
-              managerPhone={form.managerPhone}
-              setManagerPhone={form.setManagerPhone}
-              managerEmail={form.managerEmail}
-              setManagerEmail={form.setManagerEmail}
-              imageUpload={form.imageUpload}
-              handleSubmit={form.handleSubmit}
-            />
+            <CreateJobFormPageTwo handleSubmit={form.handleSubmit}>
+              <CompanyInfoSection
+                companyLogoUrl={form.companyLogoUrl}
+                companyLogoFile={form.companyLogoFile}
+                setCompanyLogoFile={form.setCompanyLogoFile}
+                companyName={form.companyName}
+                setCompanyName={form.setCompanyName}
+                companyIntro={form.companyIntro}
+                setCompanyIntro={form.setCompanyIntro}
+                industry={form.industry}
+                setIndustry={form.setIndustry}
+                companyYear={form.companyYear}
+                setCompanyYear={form.setCompanyYear}
+                employeeCount={form.employeeCount}
+                setEmployeeCount={form.setEmployeeCount}
+                companyAddress={form.companyAddress}
+                companyLocation={form.companyLocation}
+                setCompanyLocation={form.setCompanyLocation}
+                companyWebsite={form.companyWebsite}
+                setCompanyWebsite={form.setCompanyWebsite}
+              />
+              <ManagerInfoSection
+                managerName={form.managerName}
+                managerTitle={form.managerTitle}
+                setManagerTitle={form.setManagerTitle}
+                managerPhone={form.managerPhone}
+                setManagerPhone={form.setManagerPhone}
+                managerEmail={form.managerEmail}
+                setManagerEmail={form.setManagerEmail}
+              />
+              <PhotosSection imageUpload={form.imageUpload} />
+            </CreateJobFormPageTwo>
           )}
         </div>
       </div>
