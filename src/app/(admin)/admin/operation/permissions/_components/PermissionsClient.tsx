@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ChevronLeft, KeyRound, UserPlus } from "lucide-react";
+import { KeyRound, UserPlus } from "lucide-react";
 import type { AdminAccount, Team, AdminPermission } from "../actions";
 import { AdminListTab } from "./AdminListTab";
 import { TeamsTab } from "./TeamsTab";
 import { CreateAdminTab } from "./CreateAdminTab";
+import { OperationPageHeader } from "@/components/admin/OperationPageHeader";
 
 type Tab = "list" | "teams" | "create";
 
@@ -25,19 +25,11 @@ export function PermissionsClient({
 
   return (
     <div className="p-6 lg:p-8">
-      <div className="mb-7">
-        <Link href="/admin/operation" className="mb-2 flex items-center gap-1 text-[13px] text-slate-400 hover:text-slate-600 active:scale-100">
-          <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.5} />
-          운영 관리
-        </Link>
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-50">
-            <KeyRound className="h-5 w-5 text-teal-600" strokeWidth={2} />
-          </div>
-          <h1 className="text-[24px] font-bold text-slate-900">권한 관리</h1>
-        </div>
-        <p className="mt-1 text-[13px] text-slate-500">팀 단위로 권한을 설정하고 어드민 계정을 관리합니다. 슈퍼어드민 전용 페이지입니다.</p>
-      </div>
+      <OperationPageHeader
+        icon={KeyRound}
+        title="권한 관리"
+        description="팀 단위로 권한을 설정하고 어드민 계정을 관리합니다. 슈퍼어드민 전용 페이지입니다."
+      />
 
       <div className="mb-5 overflow-x-auto">
         <div className="flex w-fit gap-1 rounded-xl border border-[#ebeef0] bg-slate-50 p-1">
