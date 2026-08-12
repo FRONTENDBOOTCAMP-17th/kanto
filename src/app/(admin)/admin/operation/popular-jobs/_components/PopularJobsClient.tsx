@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { TrendingUp, ChevronLeft, Search, X } from "lucide-react";
+import { TrendingUp, Search, X } from "lucide-react";
+import { OperationPageHeader } from "@/components/admin/OperationPageHeader";
 import { usePopularJobs } from "@/hooks/admin/usePopularJobs";
 
 const RANK_OPTIONS = [1, 2, 3, 4, 5] as const;
@@ -29,24 +29,11 @@ export function PopularJobsClient() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <div className="mb-7">
-        <Link
-          href="/admin/operation"
-          className="mb-2 flex items-center gap-1 text-[13px] text-slate-400 hover:text-slate-600 active:scale-100"
-        >
-          <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.5} />
-          운영 관리
-        </Link>
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-teal-50">
-            <TrendingUp className="h-5 w-5 text-teal-600" strokeWidth={2} />
-          </div>
-          <h1 className="text-[22px] font-bold text-slate-900 sm:text-[24px]">인기 관리</h1>
-        </div>
-        <p className="mt-1 text-[13px] text-slate-500">
-          구인구직 게시글의 인기 순위(1~5위)를 직접 지정합니다. 미지정 시 인기글에 노출되지 않습니다.
-        </p>
-      </div>
+      <OperationPageHeader
+        icon={TrendingUp}
+        title="인기 관리"
+        description="구인구직 게시글의 인기 순위(1~5위)를 직접 지정합니다. 미지정 시 인기글에 노출되지 않습니다."
+      />
 
       <form onSubmit={handleSearch} className="mb-5 flex gap-2">
         <div className="relative min-w-0 flex-1 sm:max-w-sm">

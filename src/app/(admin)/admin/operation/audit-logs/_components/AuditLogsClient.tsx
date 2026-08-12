@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-import Link from "next/link";
 import {
   Calendar,
   ChevronDown,
@@ -21,6 +20,7 @@ import { ActionBadge } from "./ActionBadge";
 import { DetailDrawer } from "./DetailDrawer";
 import { useAuditFilters } from "./useAuditFilters";
 import { useClickOutside } from "@/hooks/useClickOutside";
+import { OperationPageHeader } from "@/components/admin/OperationPageHeader";
 
 const SANCTION_ACTIONS = ["sanction_user", "delete_post", "delete_comment"];
 const PERMISSION_ACTIONS = ["grant_permission", "revoke_permission", "promote_admin", "revoke_admin"];
@@ -58,24 +58,11 @@ export function AuditLogsClient({ initialLogs }: Props) {
 
       <div className="p-6 lg:p-8">
         
-        <div className="mb-7">
-          <Link
-            href="/admin/operation"
-            className="mb-2 flex cursor-pointer items-center gap-1 text-[13px] text-slate-400 hover:text-slate-600 active:scale-100"
-          >
-            <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.5} />
-            운영 관리
-          </Link>
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-50">
-              <ClipboardList className="h-5 w-5 text-teal-600" strokeWidth={2} />
-            </div>
-            <h1 className="text-[24px] font-bold text-slate-900">감사 로그</h1>
-          </div>
-          <p className="mt-1 text-[13px] text-slate-500">
-            어드민 및 슈퍼어드민의 모든 운영 행위를 기록합니다. 슈퍼어드민 전용 페이지입니다.
-          </p>
-        </div>
+        <OperationPageHeader
+          icon={ClipboardList}
+          title="감사 로그"
+          description="어드민 및 슈퍼어드민의 모든 운영 행위를 기록합니다. 슈퍼어드민 전용 페이지입니다."
+        />
 
         
         <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
