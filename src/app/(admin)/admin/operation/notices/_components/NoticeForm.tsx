@@ -12,6 +12,7 @@ interface NoticeFormProps {
   onEndsAtChange: (v: string) => void;
   onSubmit: () => void;
   onCancel: () => void;
+  submitError?: string | null;
 }
 
 export function NoticeForm({
@@ -24,6 +25,7 @@ export function NoticeForm({
   onEndsAtChange,
   onSubmit,
   onCancel,
+  submitError,
 }: NoticeFormProps) {
   const endsAtInvalid = !!startsAt && !!endsAt && endsAt <= startsAt;
 
@@ -71,6 +73,8 @@ export function NoticeForm({
         </div>
 
         <HeaderPreview noticeTitle={title} />
+
+        {submitError && <p className="text-[12px] text-red-500">{submitError}</p>}
 
         <div className="flex justify-end gap-2 pt-1">
           <button

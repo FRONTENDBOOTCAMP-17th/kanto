@@ -1,107 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Bell, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { NoticeTable } from "./_components/NoticeTable";
 import { NoticeForm } from "./_components/NoticeForm";
-
-export type Tab = "list" | "create";
-
-export type Notice = {
-  id: number;
-  title: string;
-  startsAt: string;
-  endsAt: string;
-};
-
-function toNotice(row: { id: number; title: string; starts_at: string; ends_at: string }): Notice {
-  return { id: row.id, title: row.title, startsAt: row.starts_at, endsAt: row.ends_at };
-}
+import { useNoticeList } from "@/hooks/admin/useNoticeList";
+import { useNoticeForm } from "@/hooks/admin/useNoticeForm";
 
 export default function NoticesPage() {
-  const [notices, setNotices] = useState<Notice[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<Tab>("list");
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [title, setTitle] = useState("");
-  const [startsAt, setStartsAt] = useState("");
-  const [endsAt, setEndsAt] = useState("");
-
-  useEffect(() => {
-    fetch("/api/admin/notices")
-      .then((res) => res.json())
-      .then((data) => setNotices(data.map(toNotice)))
-      .finally(() => setLoading(false));
-  }, []);
-
-  function openCreate() {
-    setEditingId(null);
-    setTitle("");
-    setStartsAt("");
-    setEndsAt("");
-    setTab("create");
-  }
-
-  function openEdit(n: Notice) {
-    setEditingId(n.id);
-    setTitle(n.title);
-    setStartsAt(n.startsAt);
-    setEndsAt(n.endsAt);
-    setTab("create");
-  }
-
-  async function handleSubmit() {
-    const endsAtInvalid = !!startsAt && !!endsAt && endsAt <= startsAt;
-    if (!title.trim() || !startsAt || !endsAt || endsAtInvalid) return;
-
-    const body = {
-      title: title.trim(),
-      starts_at: new Date(startsAt).toISOString(),
-      ends_at: new Date(endsAt).toISOString(),
-    };
-
-    if (editingId !== null) {
-      const res = await fetch(`/api/admin/notices/${editingId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      if (res.ok) {
-        const updated = toNotice(await res.json());
-        setNotices((prev) => prev.map((n) => (n.id === editingId ? updated : n)));
-      }
-    } else {
-      const res = await fetch("/api/admin/notices", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      if (res.ok) {
-        const created = toNotice(await res.json());
-        setNotices((prev) => [created, ...prev]);
-      }
-    }
-
-    setEditingId(null);
-    setTitle("");
-    setStartsAt("");
-    setEndsAt("");
-    setTab("list");
-  }
-
-  async function handleDelete(id: number) {
-    const res = await fetch(`/api/admin/notices/${id}`, { method: "DELETE" });
-    if (res.ok) setNotices((prev) => prev.filter((n) => n.id !== id));
-  }
-
-  function handleCancel() {
-    setEditingId(null);
-    setTitle("");
-    setStartsAt("");
-    setEndsAt("");
-    setTab("list");
-  }
+  const { notices, loading, handleDelete } = useNoticeList();
+  const {
+    tab,
+    setTab,
+    editingId,
+    title,
+    startsAt,
+    endsAt,
+    setTitle,
+    setStartsAt,
+    setEndsAt,
+    openCreate,
+    openEdit,
+    handleSubmit,
+    handleCancel,
+    submitError,
+  } = useNoticeForm();
 
   return (
     <div className="p-6 lg:p-8">
@@ -166,6 +89,7 @@ export default function NoticesPage() {
           onEndsAtChange={setEndsAt}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
+          submitError={submitError}
         />
       )}
     </div>
