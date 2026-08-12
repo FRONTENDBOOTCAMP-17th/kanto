@@ -10,7 +10,7 @@ import {
 
 const POPULAR_JOBS_QUERY_KEY = "admin-popular-jobs";
 
-export function usePopularJobs(isSuperAdmin: boolean) {
+export function usePopularJobs() {
   const queryClient = useQueryClient();
 
   const [search, setSearch] = useState("");
@@ -29,7 +29,6 @@ export function usePopularJobs(isSuperAdmin: boolean) {
   const { data: rows, isLoading: loading } = useQuery({
     queryKey: [POPULAR_JOBS_QUERY_KEY, query],
     queryFn: () => getPopularJobs(query),
-    enabled: isSuperAdmin,
   });
 
   const rankMutation = useMutation({
