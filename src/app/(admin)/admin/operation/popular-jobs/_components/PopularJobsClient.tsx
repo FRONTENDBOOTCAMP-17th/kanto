@@ -1,84 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import { TrendingUp, ChevronLeft, Search, X, ShieldAlert } from "lucide-react";
-
-type JobRow = {
-  id: number;
-  title: string;
-  created_at: string;
-  jobs: { id: number; company_name: string; popular_count: number | null }[];
-};
+import { TrendingUp, ChevronLeft, Search, X } from "lucide-react";
+import { SuperAdminGate } from "@/components/admin/SuperAdminGate";
+import { usePopularJobs } from "@/hooks/admin/usePopularJobs";
 
 const RANK_OPTIONS = [1, 2, 3, 4, 5] as const;
 
 export function PopularJobsClient({ isSuperAdmin }: { isSuperAdmin: boolean }) {
-  const [rows, setRows] = useState<JobRow[] | null>(null);
-  const [search, setSearch] = useState("");
-  const [query, setQuery] = useState("");
-  const [saving, setSaving] = useState<number | null>(null);
-  const [prevQuery, setPrevQuery] = useState(query);
-  const [prevIsSuperAdmin, setPrevIsSuperAdmin] = useState(isSuperAdmin);
-  if (prevQuery !== query || prevIsSuperAdmin !== isSuperAdmin) {
-    setPrevQuery(query);
-    setPrevIsSuperAdmin(isSuperAdmin);
-    if (isSuperAdmin) setRows(null);
-  }
-
-  useEffect(() => {
-    if (!isSuperAdmin) return;
-    let cancelled = false;
-    const params = query ? `?search=${encodeURIComponent(query)}` : "";
-    fetch(`/api/admin/popular-jobs${params}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!cancelled) setRows(Array.isArray(data) ? data : []);
-      });
-    return () => { cancelled = true; };
-  }, [query, isSuperAdmin]);
-
-  function handleSearch(e: React.FormEvent) {
-    e.preventDefault();
-    setQuery(search.trim());
-  }
-
-  function clearSearch() {
-    setSearch("");
-    setQuery("");
-  }
-
-  async function handleRankChange(row: JobRow, newCount: number | null) {
-    const jobId = row.jobs[0]?.id;
-    if (!jobId) return;
-    setSaving(row.id);
-
-    const res = await fetch("/api/admin/popular-jobs", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        job_id: jobId,
-        popular_count: newCount,
-        post_title: row.title,
-      }),
-    });
-
-    if (res.ok) {
-      setRows((prev) =>
-        (prev ?? []).map((r) =>
-          r.id === row.id
-            ? {
-                ...r,
-                jobs: r.jobs.map((j) =>
-                  j.id === jobId ? { ...j, popular_count: newCount } : j,
-                ),
-              }
-            : r,
-        ),
-      );
-    }
-    setSaving(null);
-  }
+  const {
+    rows,
+    loading,
+    search,
+    setSearch,
+    query,
+    handleSearch,
+    clearSearch,
+    handleRankChange,
+    savingRowId,
+  } = usePopularJobs(isSuperAdmin);
 
   const assignedCounts = new Set(
     (rows ?? []).flatMap((r) =>
@@ -90,25 +30,7 @@ export function PopularJobsClient({ isSuperAdmin }: { isSuperAdmin: boolean }) {
 
   return (
     <>
-      {!isSuperAdmin && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-          <div className="relative flex w-full max-w-sm flex-col items-center gap-4 rounded-2xl border border-[#ebeef0] bg-white p-8 text-center shadow-[0_8px_40px_rgba(0,0,0,0.14)]">
-            <button
-              onClick={() => window.history.back()}
-              className="absolute right-4 top-4 rounded-lg p-1.5 text-slate-300 hover:bg-slate-100 hover:text-slate-500"
-            >
-              <X className="h-4 w-4" strokeWidth={2.5} />
-            </button>
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-50">
-              <ShieldAlert className="h-7 w-7 text-amber-500" strokeWidth={1.8} />
-            </div>
-            <div>
-              <p className="text-[17px] font-bold text-slate-900">슈퍼어드민 전용입니다</p>
-              <p className="mt-1.5 text-[13.5px] text-slate-400">이 페이지는 슈퍼어드민만 접근할 수 있습니다.</p>
-            </div>
-          </div>
-        </div>
-      )}
+      {!isSuperAdmin && <SuperAdminGate />}
 
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="mb-7">
@@ -158,9 +80,9 @@ export function PopularJobsClient({ isSuperAdmin }: { isSuperAdmin: boolean }) {
           </button>
         </form>
 
-        {rows === null ? (
+        {loading ? (
           <div className="flex justify-center py-20 text-[14px] text-slate-400">불러오는 중...</div>
-        ) : rows.length === 0 ? (
+        ) : !rows || rows.length === 0 ? (
           <div className="flex justify-center py-20 text-[14px] text-slate-400">
             {query ? "검색 결과가 없습니다." : "활성 구인구직 게시글이 없습니다."}
           </div>
@@ -179,7 +101,7 @@ export function PopularJobsClient({ isSuperAdmin }: { isSuperAdmin: boolean }) {
                 {rows.map((row) => {
                   const job = row.jobs[0];
                   const current = job?.popular_count ?? null;
-                  const isSaving = saving === row.id;
+                  const isSaving = savingRowId === row.id;
 
                   return (
                     <tr
