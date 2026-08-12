@@ -4,12 +4,12 @@ import { Bell, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { NoticeTable } from "./_components/NoticeTable";
 import { NoticeForm } from "./_components/NoticeForm";
-import { useNotices } from "@/hooks/admin/useNotices";
+import { useNoticeList } from "@/hooks/admin/useNoticeList";
+import { useNoticeForm } from "@/hooks/admin/useNoticeForm";
 
 export default function NoticesPage() {
+  const { notices, loading, handleDelete } = useNoticeList();
   const {
-    notices,
-    loading,
     tab,
     setTab,
     editingId,
@@ -22,9 +22,9 @@ export default function NoticesPage() {
     openCreate,
     openEdit,
     handleSubmit,
-    handleDelete,
     handleCancel,
-  } = useNotices();
+    submitError,
+  } = useNoticeForm();
 
   return (
     <div className="p-6 lg:p-8">
@@ -89,6 +89,7 @@ export default function NoticesPage() {
           onEndsAtChange={setEndsAt}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
+          submitError={submitError}
         />
       )}
     </div>

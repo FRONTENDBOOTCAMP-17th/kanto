@@ -1,30 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  createNotice,
-  deleteNotice,
-  getNotices,
-  updateNotice,
-  type Notice,
-} from "@/services/admin/adminNoticesApi";
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createNotice, updateNotice, type Notice } from "@/services/admin/adminNoticesApi";
+import { NOTICES_QUERY_KEY } from "./useNoticeList";
 
 export type Tab = "list" | "create";
 
-export function useNotices() {
-  const [notices, setNotices] = useState<Notice[]>([]);
-  const [loading, setLoading] = useState(true);
+export function useNoticeForm() {
+  const queryClient = useQueryClient();
   const [tab, setTab] = useState<Tab>("list");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [title, setTitle] = useState("");
   const [startsAt, setStartsAt] = useState("");
   const [endsAt, setEndsAt] = useState("");
-
-  useEffect(() => {
-    getNotices()
-      .then(setNotices)
-      .finally(() => setLoading(false));
-  }, []);
 
   function resetForm() {
     setEditingId(null);
@@ -46,6 +35,16 @@ export function useNotices() {
     setTab("create");
   }
 
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: NOTICES_QUERY_KEY });
+
+  const createMutation = useMutation({ mutationFn: createNotice, onSuccess: invalidate });
+
+  const updateMutation = useMutation({
+    mutationFn: (vars: { id: number; body: { title: string; starts_at: string; ends_at: string } }) =>
+      updateNotice(vars.id, vars.body),
+    onSuccess: invalidate,
+  });
+
   async function handleSubmit() {
     const endsAtInvalid = !!startsAt && !!endsAt && endsAt <= startsAt;
     if (!title.trim() || !startsAt || !endsAt || endsAtInvalid) return;
@@ -56,25 +55,18 @@ export function useNotices() {
       ends_at: new Date(endsAt).toISOString(),
     };
 
-    if (editingId !== null) {
-      const updated = await updateNotice(editingId, body);
-      if (updated) {
-        setNotices((prev) => prev.map((n) => (n.id === editingId ? updated : n)));
+    try {
+      if (editingId !== null) {
+        await updateMutation.mutateAsync({ id: editingId, body });
+      } else {
+        await createMutation.mutateAsync(body);
       }
-    } else {
-      const created = await createNotice(body);
-      if (created) {
-        setNotices((prev) => [created, ...prev]);
-      }
+    } catch {
+      return;
     }
 
     resetForm();
     setTab("list");
-  }
-
-  async function handleDelete(id: number) {
-    const ok = await deleteNotice(id);
-    if (ok) setNotices((prev) => prev.filter((n) => n.id !== id));
   }
 
   function handleCancel() {
@@ -83,8 +75,6 @@ export function useNotices() {
   }
 
   return {
-    notices,
-    loading,
     tab,
     setTab,
     editingId,
@@ -97,7 +87,7 @@ export function useNotices() {
     openCreate,
     openEdit,
     handleSubmit,
-    handleDelete,
     handleCancel,
+    submitError: createMutation.error?.message ?? updateMutation.error?.message ?? null,
   };
 }
