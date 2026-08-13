@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { checkEmailDuplication } from "../_lib/checkEmailDuplication";
 import { useTranslations } from "next-intl";
 import { Lock, Mail, User } from "lucide-react";
 import { EyeIcon } from "./EyeIcon";
@@ -36,14 +37,20 @@ export function SignupForm({
     password: false,
     confirmPassword: false,
   });
+  const [emailDuplication, setEmailDuplication] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const t = useTranslations("Signup.form");
+  const tSignup = useTranslations("Signup");
 
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
+  const latestEmailRef = useRef(email);
+  useEffect(() => {
+    latestEmailRef.current = email;
+  }, [email]);
 
   const nameValid = /^[가-힣a-zA-Z]{2,}$/.test(name);
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -59,8 +66,20 @@ export function SignupForm({
   const handleSubmit = () => {
     setTouched({ name: true, email: true, password: true, confirmPassword: true });
     if (!nameValid || !emailValid || !passwordValid || !confirmPasswordValid) return;
+    if (emailDuplication) return;
     if (!requiredChecked) return;
     onSubmit({ name, email, password });
+  };
+
+  const handleEmailBlur = async () => {
+    if (!email) return;
+    setTouched((p) => ({ ...p, email: true }));
+    if (!emailValid) return;
+
+    const checkedEmail = email;
+    const exists = await checkEmailDuplication(checkedEmail);
+    if (latestEmailRef.current !== checkedEmail) return;
+    setEmailDuplication(exists);
   };
 
   return (
@@ -97,15 +116,17 @@ export function SignupForm({
             aria-label={t("email")}
             placeholder={t("emailPlaceholder")}
             value={email}
-            onChange={(e) => { setEmail(e.target.value); onClearError(); }}
-            onBlur={() => { if (email) setTouched((p) => ({ ...p, email: true })); }}
+            onChange={(e) => { setEmail(e.target.value); setEmailDuplication(false); onClearError(); }}
+            onBlur={handleEmailBlur}
             onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); passwordRef.current?.focus(); } }}
-            className={`${inputClass} ${touched.email && !emailValid ? "border-red-400 focus:border-red-400" : "border-gray-200"}`}
+            className={`${inputClass} ${touched.email && (!emailValid || emailDuplication) ? "border-red-400 focus:border-red-400" : "border-gray-200"}`}
           />
         </div>
-        {touched.email && !emailValid && (
+        {touched.email && (!emailValid ? (
           <p className={errorClass}>{t("emailError")}</p>
-        )}
+        ) : emailDuplication && (
+          <p className={errorClass}>{tSignup("emailExists")}</p>
+        ))}
       </div>
 
       <div className="space-y-1.5">
