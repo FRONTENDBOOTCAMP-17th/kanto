@@ -2,9 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { supabase } from "@/lib/supabase";
 import { SignupForm } from "./_components/SignupForm";
 import {
   AgreeSection,
@@ -12,6 +10,7 @@ import {
 } from "./_components/AgreeSection";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { AuthHero } from "../_components/AuthHero";
+import { useSignup } from "./_hooks/useSignup";
 
 const INITIAL_AGREEMENTS: SignupAgreements = {
   terms: false,
@@ -22,63 +21,12 @@ const INITIAL_AGREEMENTS: SignupAgreements = {
 };
 
 export default function SignupPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
   const [requiredChecked, setRequiredChecked] = useState(false);
-  const router = useRouter();
   const [agreements, setAgreements] =
     useState<SignupAgreements>(INITIAL_AGREEMENTS);
   const t = useTranslations("Signup");
-
-  const handleSignup = async ({
-    name,
-    email,
-    password,
-  }: {
-    name: string;
-    email: string;
-    password: string;
-  }) => {
-    setIsLoading(true);
-    setErrorMessage("");
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name,
-            terms_agreed: agreements.terms,
-            privacy_agreed: agreements.privacy,
-            age_confirmed: agreements.age,
-            marketing_consent: agreements.marketing,
-            push_consent: agreements.push,
-            agreements_updated_at: new Date().toISOString(),
-          },
-        },
-      });
-
-      if (error) {
-        if (error.code === "user_already_exists") {
-          setErrorMessage(t("emailExists"));
-        } else {
-          setErrorMessage(t("signupFailed"));
-        }
-        return;
-      }
-
-      if (data.user?.identities?.length === 0) {
-        setErrorMessage(t("emailExists"));
-        return;
-      }
-
-      setIsSuccess(true);
-      router.replace("/main");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { isLoading, errorMessage, isSuccess, handleSignup, clearError } =
+    useSignup(agreements);
 
   return (
     <div className="flex min-h-screen bg-white">
@@ -101,7 +49,7 @@ export default function SignupPage() {
               errorMessage={errorMessage}
               requiredChecked={requiredChecked}
               onSubmit={handleSignup}
-              onClearError={() => setErrorMessage("")}
+              onClearError={clearError}
             >
               <AgreeSection
                 onRequiredChange={setRequiredChecked}
