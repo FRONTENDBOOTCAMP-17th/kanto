@@ -5,13 +5,24 @@ import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import { useCreateJobForm } from "@/hooks/useCreateJobForm";
 import { FormStepBoundary } from "./FormStepBoundary";
-import { BasicInfoSection } from "./BasicInfoSection";
-import { WorkScheduleSection } from "./WorkScheduleSection";
-import { MainTaskSection } from "./MainTaskSection";
-import { PreferredSection } from "./PreferredSection";
-import { CompanyInfoSection } from "./CompanyInfoSection";
-import { ManagerInfoSection } from "./ManagerInfoSection";
-import { PhotosSection } from "./PhotosSection";
+import {
+  BasicInfoSection,
+  SalarySection,
+  LocationSection,
+  DeadlineSection,
+  WorkHoursSection,
+  WorkDaysSection,
+  MainTaskSection,
+  PreferredSection,
+} from "./job-info";
+import {
+  CompanyLogoSection,
+  CompanyBasicSection,
+  CompanyScaleSection,
+  CompanyLocationSection,
+  ManagerInfoSection,
+  PhotosSection,
+} from "./company-info";
 import Toast from "@/components/common/Toast";
 import type { JobInitialData } from "@/type/job/jobCreate";
 
@@ -47,25 +58,35 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
                 setTitle={form.setTitle}
                 employeeType={form.employeeType}
                 setEmployeeType={form.setEmployeeType}
+              />
+              <SalarySection
                 salary={form.salary}
                 setSalary={form.setSalary}
                 salaryType={form.salaryType}
                 setSalaryType={form.setSalaryType}
+              />
+              <LocationSection
                 workLocation={form.workLocation}
                 onWorkLocationSelect={form.handleWorkLocationSelect}
                 locationFallbackLabel={form.locationFallbackLabel}
+              />
+              <DeadlineSection
                 deadline={form.deadline}
                 setDeadline={form.setDeadline}
               />
-              <WorkScheduleSection
+              <WorkHoursSection
                 workHoursStart={form.workHoursStart}
                 setWorkHoursStart={form.setWorkHoursStart}
                 workHoursEnd={form.workHoursEnd}
                 setWorkHoursEnd={form.setWorkHoursEnd}
+                isTimeNegotiable={form.isTimeNegotiable}
+                setIsTimeNegotiable={form.setIsTimeNegotiable}
+                setWorkDays={form.setWorkDays}
+              />
+              <WorkDaysSection
                 workDays={form.workDays}
                 setWorkDays={form.setWorkDays}
                 isTimeNegotiable={form.isTimeNegotiable}
-                setIsTimeNegotiable={form.setIsTimeNegotiable}
               />
               <MainTaskSection
                 mainTask={form.mainTask}
@@ -82,26 +103,34 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
 
           {form.step === 2 && (
             <FormStepBoundary className="space-y-6" onSubmit={form.handleSubmit}>
-              <CompanyInfoSection
-                companyLogoUrl={form.companyLogoUrl}
-                companyLogoFile={form.companyLogoFile}
-                setCompanyLogoFile={form.setCompanyLogoFile}
-                companyName={form.companyName}
-                setCompanyName={form.setCompanyName}
-                companyIntro={form.companyIntro}
-                setCompanyIntro={form.setCompanyIntro}
-                industry={form.industry}
-                setIndustry={form.setIndustry}
-                companyYear={form.companyYear}
-                setCompanyYear={form.setCompanyYear}
-                employeeCount={form.employeeCount}
-                setEmployeeCount={form.setEmployeeCount}
-                companyAddress={form.companyAddress}
-                companyLocation={form.companyLocation}
-                setCompanyLocation={form.setCompanyLocation}
-                companyWebsite={form.companyWebsite}
-                setCompanyWebsite={form.setCompanyWebsite}
-              />
+              <div className="space-y-4">
+                <CompanyLogoSection
+                  companyLogoUrl={form.companyLogoUrl}
+                  companyLogoFile={form.companyLogoFile}
+                  setCompanyLogoFile={form.setCompanyLogoFile}
+                />
+                <CompanyBasicSection
+                  companyName={form.companyName}
+                  setCompanyName={form.setCompanyName}
+                  companyIntro={form.companyIntro}
+                  setCompanyIntro={form.setCompanyIntro}
+                  industry={form.industry}
+                  setIndustry={form.setIndustry}
+                />
+                <CompanyScaleSection
+                  companyYear={form.companyYear}
+                  setCompanyYear={form.setCompanyYear}
+                  employeeCount={form.employeeCount}
+                  setEmployeeCount={form.setEmployeeCount}
+                />
+                <CompanyLocationSection
+                  companyAddress={form.companyAddress}
+                  companyLocation={form.companyLocation}
+                  setCompanyLocation={form.setCompanyLocation}
+                  companyWebsite={form.companyWebsite}
+                  setCompanyWebsite={form.setCompanyWebsite}
+                />
+              </div>
               <ManagerInfoSection
                 managerName={form.managerName}
                 managerTitle={form.managerTitle}
