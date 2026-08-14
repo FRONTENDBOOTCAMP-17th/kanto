@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { KeyRound, UserPlus } from "lucide-react";
 import type { AdminAccount, Team, AdminPermission } from "../actions";
-import { AdminListTab } from "./AdminListTab";
-import { TeamsTab } from "./TeamsTab";
-import { CreateAdminTab } from "./CreateAdminTab";
+import { AdminListTab } from "./list/AdminListTab";
+import { TeamsTab } from "./teams/TeamsTab";
+import { CreateAdminTab } from "./create/CreateAdminTab";
 import { OperationPageHeader } from "@/components/admin/OperationPageHeader";
 
 type Tab = "list" | "teams" | "create";

@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { Search, X, User, Users } from "lucide-react";
-import type { AdminAccount, Team, UserResult } from "../actions";
-import { searchUsers, promoteToAdmin } from "../actions";
-import { PERMISSIONS } from "./constants";
+import type { AdminAccount, Team, UserResult } from "../../actions";
+import { PERMISSIONS } from "../constants";
+import { useUserSearch } from "../../_hooks/useUserSearch";
+import { useTeamSearch } from "../../_hooks/useTeamSearch";
+import { useCreateAdminForm } from "../../_hooks/useCreateAdminForm";
 
 function UserSearchModal({
   excludeIds,
@@ -16,27 +16,7 @@ function UserSearchModal({
   onSelect: (user: UserResult) => void;
   onClose: () => void;
 }) {
-  const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedQuery(query), 300);
-    return () => clearTimeout(timer);
-  }, [query]);
-
-  const { data: allResults = [], isFetching } = useQuery({
-    queryKey: ["users", "search", debouncedQuery],
-    queryFn: () => searchUsers(debouncedQuery),
-    enabled: debouncedQuery.trim().length > 0,
-    staleTime: 30_000,
-  });
-
-  const results = allResults.filter((u) => !excludeIds.has(u.id));
+  const { query, setQuery, results, isFetching, inputRef } = useUserSearch(excludeIds);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4 backdrop-blur-sm" onClick={onClose}>
@@ -108,14 +88,7 @@ function TeamSearchModal({
   onSelect: (team: Team) => void;
   onClose: () => void;
 }) {
-  const [query, setQuery] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
-
-  const filtered = teams.filter((t) => t.name.includes(query));
+  const { query, setQuery, filtered, inputRef } = useTeamSearch(teams);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4 backdrop-blur-sm" onClick={onClose}>
@@ -183,28 +156,13 @@ interface Props {
 }
 
 export function CreateAdminTab({ teams, adminIds, onAdminCreated, onCancel }: Props) {
-  const [selectedUser, setSelectedUser] = useState<UserResult | null>(null);
-  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
-  const [userModalOpen, setUserModalOpen] = useState(false);
-  const [teamModalOpen, setTeamModalOpen] = useState(false);
-
-  const createMutation = useMutation({
-    mutationFn: ({ userId, teamId }: { userId: number; teamId: number | null }) =>
-      promoteToAdmin(userId, teamId),
-    onSuccess: () => {
-      if (!selectedUser) return;
-      onAdminCreated({
-        id: selectedUser.id,
-        name: selectedUser.name,
-        email: selectedUser.email,
-        role: "admin",
-        teamId: selectedTeam?.id ?? null,
-        createdAt: new Date().toISOString().slice(0, 10),
-      });
-      setSelectedUser(null);
-      setSelectedTeam(null);
-    },
-  });
+  const {
+    selectedUser, setSelectedUser,
+    selectedTeam, setSelectedTeam,
+    userModalOpen, setUserModalOpen,
+    teamModalOpen, setTeamModalOpen,
+    isPending, submit,
+  } = useCreateAdminForm({ onAdminCreated });
 
   return (
     <>
@@ -301,11 +259,11 @@ export function CreateAdminTab({ teams, adminIds, onAdminCreated, onCancel }: Pr
               className="rounded-xl border border-[#ebeef0] px-4 py-2 text-[13.5px] font-medium text-slate-500 hover:bg-slate-50"
             >취소</button>
             <button
-              onClick={() => selectedUser && createMutation.mutate({ userId: selectedUser.id, teamId: selectedTeam?.id ?? null })}
-              disabled={!selectedUser || createMutation.isPending}
+              onClick={submit}
+              disabled={!selectedUser || isPending}
               className="rounded-xl bg-teal-500 px-5 py-2 text-[13.5px] font-semibold text-white hover:bg-teal-600 disabled:opacity-40"
             >
-              {createMutation.isPending ? "처리 중..." : "추가"}
+              {isPending ? "처리 중..." : "추가"}
             </button>
           </div>
         </div>

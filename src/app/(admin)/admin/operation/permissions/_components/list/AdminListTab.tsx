@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import React from "react";
 import { Crown, ShieldCheck, Trash2, X, ChevronRight } from "lucide-react";
-import type { AdminAccount, Team } from "../actions";
-import { revokeAdmin, setAdminRole } from "../actions";
+import type { AdminAccount, Team } from "../../actions";
+import { useAdminListTab } from "../../_hooks/useAdminListTab";
 
 interface GroupHeaderProps {
   label: string;
@@ -132,32 +131,13 @@ interface Props {
 }
 
 export function AdminListTab({ admins, teams, onAdminDeleted, onAdminPromoted }: Props) {
-  const [pendingDelAdminId, setPendingDelAdminId] = useState<number | null>(null);
-  const [pendingRoleChangeId, setPendingRoleChangeId] = useState<number | null>(null);
-  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
-
-  const deleteMutation = useMutation({
-    mutationFn: revokeAdmin,
-    onSuccess: (_, id) => { onAdminDeleted(id); setPendingDelAdminId(null); },
-  });
-
-  const promoteMutation = useMutation({
-    mutationFn: (id: number) => setAdminRole(id, "super_admin"),
-    onSuccess: (_, id) => { onAdminPromoted(id); setPendingRoleChangeId(null); },
-  });
-
-  const isPending = deleteMutation.isPending || promoteMutation.isPending;
-  const superAdmins = admins.filter((a) => a.role === "super_admin");
-  const unassigned = admins.filter((a) => a.role === "admin" && a.teamId === null);
-
-  function toggleGroup(key: string) {
-    setExpandedGroups((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  }
+  const {
+    pendingDelAdminId, setPendingDelAdminId,
+    pendingRoleChangeId, setPendingRoleChangeId,
+    expandedGroups, toggleGroup,
+    isPending, superAdmins, unassigned,
+    onDelete, onPromote,
+  } = useAdminListTab({ admins, onAdminDeleted, onAdminPromoted });
 
   return (
     <div className="overflow-x-auto rounded-2xl border border-[#ebeef0] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
@@ -187,8 +167,8 @@ export function AdminListTab({ admins, teams, onAdminDeleted, onAdminPromoted }:
                   pendingRoleChangeId={pendingRoleChangeId}
                   onSetPendingDel={setPendingDelAdminId}
                   onSetPendingRole={setPendingRoleChangeId}
-                  onDelete={(id) => deleteMutation.mutate(id)}
-                  onPromote={(id) => promoteMutation.mutate(id)}
+                  onDelete={onDelete}
+                  onPromote={onPromote}
                 />
               ))}
             </>
@@ -215,8 +195,8 @@ export function AdminListTab({ admins, teams, onAdminDeleted, onAdminPromoted }:
                       pendingRoleChangeId={pendingRoleChangeId}
                       onSetPendingDel={setPendingDelAdminId}
                       onSetPendingRole={setPendingRoleChangeId}
-                      onDelete={(id) => deleteMutation.mutate(id)}
-                      onPromote={(id) => promoteMutation.mutate(id)}
+                      onDelete={onDelete}
+                      onPromote={onPromote}
                     />
                   ))
                 ))}
@@ -237,8 +217,8 @@ export function AdminListTab({ admins, teams, onAdminDeleted, onAdminPromoted }:
                   pendingRoleChangeId={pendingRoleChangeId}
                   onSetPendingDel={setPendingDelAdminId}
                   onSetPendingRole={setPendingRoleChangeId}
-                  onDelete={(id) => deleteMutation.mutate(id)}
-                  onPromote={(id) => promoteMutation.mutate(id)}
+                  onDelete={onDelete}
+                  onPromote={onPromote}
                 />
               ))}
             </>
