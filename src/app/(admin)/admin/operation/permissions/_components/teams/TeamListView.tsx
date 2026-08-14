@@ -3,7 +3,7 @@
 import { ChevronRight, Users, Trash2, X, Plus, FolderOpen, ShieldCheck } from "lucide-react";
 import type { AdminAccount, Team } from "../../actions";
 import { PERMISSIONS } from "../constants";
-import { useTeamListView } from "../../_hooks/useTeamListView";
+import { useTeamListView } from "./useTeamListView";
 
 interface Props {
   teams: Team[];

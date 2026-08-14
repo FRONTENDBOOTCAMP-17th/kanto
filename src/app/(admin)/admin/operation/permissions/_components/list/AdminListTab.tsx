@@ -3,7 +3,7 @@
 import React from "react";
 import { Crown, ShieldCheck, Trash2, X, ChevronRight } from "lucide-react";
 import type { AdminAccount, Team } from "../../actions";
-import { useAdminListTab } from "../../_hooks/useAdminListTab";
+import { useAdminListTab } from "./useAdminListTab";
 
 interface GroupHeaderProps {
   label: string;

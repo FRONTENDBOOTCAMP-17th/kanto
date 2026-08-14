@@ -3,7 +3,7 @@
 import { ChevronLeft, ShieldCheck, Users, X, Check } from "lucide-react";
 import type { AdminAccount, Team, AdminPermission } from "../../actions";
 import { PERMISSIONS } from "../constants";
-import { useTeamDetailView } from "../../_hooks/useTeamDetailView";
+import { useTeamDetailView } from "./useTeamDetailView";
 
 interface Props {
   team: Team;

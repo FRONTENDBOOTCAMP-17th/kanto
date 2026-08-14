@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { Team } from "../actions";
+import type { Team } from "../../actions";
 
 export function useTeamSearch(teams: Team[]) {
   const [query, setQuery] = useState("");
