@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import type { AdminPermission, Team } from "../actions";
-import { setTeamPermissions, assignTeam } from "../actions";
+import type { AdminPermission, Team } from "../../actions";
+import { setTeamPermissions, assignTeam } from "../../actions";
 
 export function useTeamDetailView({
   team, onAdminRemovedFromTeam, onTeamPermissionsUpdated,

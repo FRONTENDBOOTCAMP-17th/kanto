@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { searchUsers } from "../actions";
+import { searchUsers } from "../../actions";
 
 export function useUserSearch(excludeIds: Set<number>) {
   const [query, setQuery] = useState("");

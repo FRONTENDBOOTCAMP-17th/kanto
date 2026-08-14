@@ -2,8 +2,8 @@
 
 import { useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import type { AdminAccount, Team } from "../actions";
-import { createTeam, deleteTeam, assignTeam } from "../actions";
+import type { AdminAccount, Team } from "../../actions";
+import { createTeam, deleteTeam, assignTeam } from "../../actions";
 
 export function useTeamListView({
   admins, onTeamCreated, onTeamDeleted, onAdminAssigned,

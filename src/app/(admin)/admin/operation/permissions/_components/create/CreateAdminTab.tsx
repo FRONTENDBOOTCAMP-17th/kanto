@@ -3,9 +3,9 @@
 import { Search, X, User, Users } from "lucide-react";
 import type { AdminAccount, Team, UserResult } from "../../actions";
 import { PERMISSIONS } from "../constants";
-import { useUserSearch } from "../../_hooks/useUserSearch";
-import { useTeamSearch } from "../../_hooks/useTeamSearch";
-import { useCreateAdminForm } from "../../_hooks/useCreateAdminForm";
+import { useUserSearch } from "./useUserSearch";
+import { useTeamSearch } from "./useTeamSearch";
+import { useCreateAdminForm } from "./useCreateAdminForm";
 
 function UserSearchModal({
   excludeIds,

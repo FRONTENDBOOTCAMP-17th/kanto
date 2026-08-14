@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import type { AdminAccount, Team, UserResult } from "../actions";
-import { promoteToAdmin } from "../actions";
+import type { AdminAccount, Team, UserResult } from "../../actions";
+import { promoteToAdmin } from "../../actions";
 
 export function useCreateAdminForm({
   onAdminCreated,

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import type { AdminAccount } from "../actions";
-import { revokeAdmin, setAdminRole } from "../actions";
+import type { AdminAccount } from "../../actions";
+import { revokeAdmin, setAdminRole } from "../../actions";
 
 export function useAdminListTab({
   admins, onAdminDeleted, onAdminPromoted,
