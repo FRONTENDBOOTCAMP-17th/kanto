@@ -69,7 +69,7 @@ export function useAlertSettings(initial: AlertSettings) {
 
   const addKeyword = async () => {
     const trimmed = keywordInput.trim();
-    if (!trimmed || !userId || keywords.includes(trimmed)) {
+    if (!trimmed || !userId || keywords.includes(trimmed) || keywords.length >= MAX_KEYWORDS) {
       setKeywordInput("");
       return;
     }
