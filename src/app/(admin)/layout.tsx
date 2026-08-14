@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { REPORTS_TABLE, REPORT_STATUS } from "@/constants/report";
+import { requireAdmin } from "@/services/user/user";
 import AdminSidebar from "./_components/AdminSidebar";
 
 export const metadata: Metadata = {
@@ -14,18 +14,11 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  const { data: userRow } = await supabase
-    .from("users")
-    .select("role")
-    .eq("auth_id", user.id)
-    .single();
-  if (!["admin", "super_admin"].includes(userRow?.role ?? "")) redirect("/");
+  try {
+    await requireAdmin();
+  } catch (e) {
+    redirect((e as Error).message === "UNAUTHORIZED" ? "/login" : "/");
+  }
 
   const admin = createAdminClient();
   const { count } = await admin
