@@ -9,19 +9,20 @@ import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { PendingNewChat } from "@/store/chatStore";
-import { useChatRoomData, type ChatRoomData } from "@/hooks/chat/useChatRoomData";
-import { createChatAndSendAction, getBlockStateAction, markChatReadAction, sendMessageAction } from "./actions";
-import { getChatBannerStateAction } from "./paymentActions";
+import { useChatRoomData, type ChatRoomData } from "./_hooks/useChatRoomData";
+import { createChatAndSendAction, markChatReadAction, sendMessageAction } from "./actions";
+import { getBlockStateAction } from "../features/block/blockActions";
+import { getChatBannerStateAction } from "../features/payment/paymentActions";
 import { useSpamPrevention } from "@/hooks/chat/useSpamPrevention";
 import { useSpamConfig } from "@/hooks/useSpamConfig";
-import { useChatRoomRealtime } from "@/hooks/chat/useChatRoomRealtime";
-import { useChatMessages } from "@/hooks/chat/useChatMessages";
+import { useChatRoomRealtime } from "./_hooks/useChatRoomRealtime";
+import { useChatMessages } from "./_hooks/useChatMessages";
 import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList";
 import ChatInput from "./ChatInput";
-import PaymentRequestModal from "./PaymentRequestModal";
-import { toggleReserveAction, sendReserveSystemMessageAction } from "./toggleReserveAction";
-import ReviewBanner from "./ReviewBanner";
+import PaymentRequestModal from "../features/payment/PaymentRequestModal";
+import { toggleReserveAction, sendReserveSystemMessageAction } from "../features/reserve/toggleReserveAction";
+import ReviewBanner from "../features/review/ReviewBanner";
 import Toast from "@/components/common/Toast";
 
 interface ChatRoomProps {

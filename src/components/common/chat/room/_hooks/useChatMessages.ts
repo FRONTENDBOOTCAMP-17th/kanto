@@ -1,4 +1,4 @@
-import { loadMoreMessagesAction } from "@/components/common/chat/chatPanel/room/actions";
+import { loadMoreMessagesAction } from "../actions";
 import { MessageWithSender } from "@/type/chat/message";
 import { SellerInfo } from "@/type/user";
 import { useEffect, useRef, useState } from "react";

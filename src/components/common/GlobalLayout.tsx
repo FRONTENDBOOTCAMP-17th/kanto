@@ -13,7 +13,7 @@ import type { User } from "@/type/user";
 import type { PublicNotice } from "@/services/admin/adminNotices";
 import { DeletionPendingBanner } from "@/components/common/DeletionPendingBanner";
 import { SuspendedModal } from "@/components/common/SuspendedModal";
-import FloatingChatWidget from "@/components/common/chat/FloatingChatWidget";
+import FloatingChatWidget from "@/components/common/chat/widget/FloatingChatWidget";
 import Chatbot from "@/components/common/aichatbot/Chatbot"
 
 interface Props {

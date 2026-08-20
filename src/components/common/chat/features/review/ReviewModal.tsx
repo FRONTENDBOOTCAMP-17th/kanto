@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { X, Star } from "lucide-react";
-import { createReviewAction } from "./paymentActions";
+import { createReviewAction } from "../payment/paymentActions";
 
 interface Props {
   transactionId: number;
