@@ -8,7 +8,7 @@ import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { PendingNewChat } from "@/store/chatStore";
+import { useChatStore, type PendingNewChat } from "@/store/chatStore";
 import { useChatRoomData, type ChatRoomData } from "./_hooks/useChatRoomData";
 import { createChatAndSendAction, markChatReadAction, sendMessageAction } from "./actions";
 import { getBlockStateAction } from "../features/block/blockActions";
@@ -29,18 +29,12 @@ interface ChatRoomProps {
   chatId: number | null;
   newChatMeta?: PendingNewChat;
   currentUserOverride?: SellerInfo;
-  onBack?: () => void;
-  onLeave?: () => void;
-  onChatCreated?: (chatId: number) => void;
 }
 
 export default function ChatRoom({
   chatId,
   newChatMeta,
   currentUserOverride,
-  onBack,
-  onLeave,
-  onChatCreated,
 }: ChatRoomProps) {
   const data = useChatRoomData(chatId, newChatMeta, currentUserOverride);
 
@@ -68,21 +62,15 @@ export default function ChatRoom({
     <ChatRoomBody
       key={data.chatId ?? `new-${data.postId}-${data.partner.id}`}
       data={data}
-      onBack={onBack}
-      onLeave={onLeave}
-      onChatCreated={onChatCreated}
     />
   );
 }
 
 interface ChatRoomBodyProps {
   data: ChatRoomData;
-  onBack?: () => void;
-  onLeave?: () => void;
-  onChatCreated?: (chatId: number) => void;
 }
 
-function ChatRoomBody({ data, onBack, onLeave, onChatCreated }: ChatRoomBodyProps) {
+function ChatRoomBody({ data }: ChatRoomBodyProps) {
   const {
     messages: initialMessages,
     currentUser,
@@ -218,7 +206,8 @@ function ChatRoomBody({ data, onBack, onLeave, onChatCreated }: ChatRoomBodyProp
           ),
         );
         setActiveChatId(newChatId);
-        onChatCreated?.(newChatId);
+        useChatStore.getState().setSelectedChatId(newChatId);
+        useChatStore.getState().setNewChatDraft(null);
       } else {
         const saved = await sendMessageAction({ chatId: activeChatId, postId, content });
         setMessages((prev) =>
@@ -267,6 +256,29 @@ function ChatRoomBody({ data, onBack, onLeave, onChatCreated }: ChatRoomBodyProp
     refreshBannerState();
   }, [refreshBannerState, systemMsgCount]);
 
+  const handleBack = () => {
+    if (activeChatId !== null) {
+      useChatStore.getState().setChatList((prev) =>
+        prev.map((c) => {
+          if (c.id !== activeChatId) return c;
+          return {
+            ...c,
+            user_id_1_unread: c.user_id_1 === currentUser.id ? 0 : c.user_id_1_unread,
+            user_id_2_unread: c.user_id_2 === currentUser.id ? 0 : c.user_id_2_unread,
+          };
+        }),
+      );
+    }
+    useChatStore.getState().setNewChatDraft(null);
+    useChatStore.getState().setView("list");
+  };
+
+  const handleLeaveNotify = () => {
+    useChatStore.getState().setChatList((prev) => prev.filter((c) => c.id !== activeChatId));
+    useChatStore.getState().setNewChatDraft(null);
+    useChatStore.getState().setView("list");
+  };
+
   const isCompleted =
     isSold || messages.some((m) => m.transaction?.status === "released");
 
@@ -277,8 +289,8 @@ function ChatRoomBody({ data, onBack, onLeave, onChatCreated }: ChatRoomBodyProp
         postTitle={postTitle}
         chatId={activeChatId ?? 0}
         currentUserId={currentUser.id}
-        onBack={onBack ?? (() => router.back())}
-        onLeave={onLeave}
+        onBack={handleBack}
+        onLeave={handleLeaveNotify}
         iBlocked={iBlocked}
         onBlockChange={refreshBlockState}
         isReserved={postType === "used_goods" && isSeller && !isCompleted ? isReserved : undefined}

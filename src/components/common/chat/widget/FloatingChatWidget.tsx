@@ -4,7 +4,7 @@ import { lockScroll, unlockScroll } from "@/utils/lockScroll";
 import { useCallback, useState, useEffect, useLayoutEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
-import { useChatStore, type PendingNewChat, type PendingGroupRoom } from "@/store/chatStore";
+import { useChatStore, type PendingNewChat } from "@/store/chatStore";
 import { useSuspended, useSuspendedModalStore } from "@/hooks/useSuspended";
 import { useChatListRealtime } from "./_hooks/useChatListRealtime";
 import { useGroupRoomsRealtime } from "@/hooks/go/useGroupRoomsRealtime";
@@ -13,7 +13,6 @@ import ChatBubbleButton from "./ChatBubbleButton";
 import ChatList from "../list/ChatList";
 import ChatRoom from "../room/ChatRoom";
 import GroupChatRoomBody from "@/components/go/groupChat/GroupChatRoomBody";
-import type { ChatWithUsers } from "@/type/chat/chat";
 import type { MyGroupRoom } from "@/type/groupChat";
 import type { User } from "@/type/user";
 
@@ -38,12 +37,16 @@ export default function FloatingChatWidget({
   const groupRoomsVersion = useChatStore((s) => s.groupRoomsVersion);
   const isOpen = useChatStore((s) => s.isOpen);
   const setWidgetOpen = useChatStore((s) => s.setWidgetOpen);
-  const [view, setView] = useState<"list" | "room" | "group-room">("list");
-  const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
-  const [pendingNewChatMeta, setPendingNewChatMeta] =
-    useState<PendingNewChat | null>(null);
-  const [selectedGroupRoom, setSelectedGroupRoom] = useState<PendingGroupRoom | null>(null);
-  const [chats, setChats] = useState<ChatWithUsers[]>([]);
+  const view = useChatStore((s) => s.view);
+  const setView = useChatStore((s) => s.setView);
+  const selectedChatId = useChatStore((s) => s.selectedChatId);
+  const setSelectedChatId = useChatStore((s) => s.setSelectedChatId);
+  const pendingNewChatMeta = useChatStore((s) => s.newChatDraft);
+  const setPendingNewChatMeta = useChatStore((s) => s.setNewChatDraft);
+  const selectedGroupRoom = useChatStore((s) => s.activeGroupRoom);
+  const setSelectedGroupRoom = useChatStore((s) => s.setActiveGroupRoom);
+  const chats = useChatStore((s) => s.chatList);
+  const setChats = useChatStore((s) => s.setChatList);
   const [groupRooms, setGroupRooms] = useState<MyGroupRoom[]>([]);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -73,7 +76,7 @@ export default function FloatingChatWidget({
     setSelectedChatId(null);
     setPendingNewChatMeta(null);
     setWidgetOpen(false);
-  }, [setWidgetOpen]);
+  }, [setView, setSelectedChatId, setPendingNewChatMeta, setWidgetOpen]);
 
   useEffect(() => {
     return useChatStore.subscribe((state, prev) => {
@@ -109,7 +112,7 @@ export default function FloatingChatWidget({
         useChatStore.getState().clearPendingGroupRoom();
       }
     });
-  }, []);
+  }, [setView, setSelectedChatId, setPendingNewChatMeta, setSelectedGroupRoom, setChats]);
 
   useEffect(() => {
     if (isOpen && window.innerWidth < 768) {
@@ -170,7 +173,7 @@ export default function FloatingChatWidget({
         setChats(json.chatList);
         setCurrentUserId(json.currentUserId);
       });
-  }, [isLoggedIn]);
+  }, [isLoggedIn, setChats]);
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -370,16 +373,6 @@ export default function FloatingChatWidget({
               chats={chats}
               groupRooms={groupRooms}
               currentUserId={currentUserId}
-              onChatSelect={(id) => {
-                setSelectedChatId(id);
-                setPendingNewChatMeta(null);
-                setView("room");
-              }}
-              onGroupSelect={(meetupPostId, title) => {
-                setSelectedGroupRoom({ meetupPostId, title });
-                setView("group-room");
-              }}
-              onClose={handleClose}
             />
           ) : view === "group-room" && selectedGroupRoom && currentUserForRoom ? (
             <GroupChatRoomBody
@@ -399,37 +392,6 @@ export default function FloatingChatWidget({
               chatId={selectedChatId}
               newChatMeta={pendingNewChatMeta ?? undefined}
               currentUserOverride={currentUserForRoom ?? undefined}
-              onBack={() => {
-                if (selectedChatId !== null) {
-                  setChats((prev) =>
-                    prev.map((c) => {
-                      if (c.id !== selectedChatId) return c;
-                      return {
-                        ...c,
-                        user_id_1_unread:
-                          c.user_id_1 === currentUserId
-                            ? 0
-                            : c.user_id_1_unread,
-                        user_id_2_unread:
-                          c.user_id_2 === currentUserId
-                            ? 0
-                            : c.user_id_2_unread,
-                      };
-                    }),
-                  );
-                }
-                setPendingNewChatMeta(null);
-                setView("list");
-              }}
-              onLeave={() => {
-                setChats((prev) => prev.filter((c) => c.id !== selectedChatId));
-                setPendingNewChatMeta(null);
-                setView("list");
-              }}
-              onChatCreated={(newId) => {
-                setSelectedChatId(newId);
-                setPendingNewChatMeta(null);
-              }}
             />
           ) : null}
         </div>

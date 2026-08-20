@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Search, X } from "lucide-react";
 import type { ChatWithUsers } from "@/type/chat/chat";
 import type { MyGroupRoom } from "@/type/groupChat";
+import { useChatStore } from "@/store/chatStore";
 import ChatListItem from "./ChatListItem";
 import GroupChatListItem from "./GroupChatListItem";
 
@@ -12,9 +13,6 @@ interface Props {
   chats: ChatWithUsers[];
   groupRooms: MyGroupRoom[];
   currentUserId: number;
-  onChatSelect: (id: number) => void;
-  onGroupSelect: (meetupPostId: number, title: string) => void;
-  onClose: () => void;
 }
 
 type ListEntry =
@@ -25,13 +23,31 @@ export default function ChatListClient({
   chats,
   groupRooms,
   currentUserId,
-  onChatSelect,
-  onGroupSelect,
-  onClose,
 }: Props) {
   const t = useTranslations("Chat");
   const tc = useTranslations("Common");
   const [search, setSearch] = useState("");
+
+  const handleChatSelect = (chatId: number) => {
+    const store = useChatStore.getState();
+    store.setSelectedChatId(chatId);
+    store.setNewChatDraft(null);
+    store.setView("room");
+  };
+
+  const handleGroupSelect = (meetupPostId: number, title: string) => {
+    const store = useChatStore.getState();
+    store.setActiveGroupRoom({ meetupPostId, title });
+    store.setView("group-room");
+  };
+
+  const handleClose = () => {
+    const store = useChatStore.getState();
+    store.setView("list");
+    store.setSelectedChatId(null);
+    store.setNewChatDraft(null);
+    store.setWidgetOpen(false);
+  };
 
   const filteredChats = chats.filter((chat) => {
     const other = chat.user_id_1 === currentUserId ? chat.user2 : chat.user1;
@@ -58,7 +74,7 @@ export default function ChatListClient({
         <h2 className="text-base md:text-sm font-semibold text-gray-900">{t("title")}</h2>
         <button
           type="button"
-          onClick={onClose}
+          onClick={handleClose}
           aria-label={tc("close")}
           className="md:hidden p-1 -mr-1 text-gray-500 hover:text-gray-800 transition-colors"
         >
@@ -92,14 +108,14 @@ export default function ChatListClient({
                 chat={entry.chat}
                 currentUserId={currentUserId}
                 isLast={index === entries.length - 1}
-                onClick={() => onChatSelect(entry.chat.id)}
+                onClick={() => handleChatSelect(entry.chat.id)}
               />
             ) : (
               <GroupChatListItem
                 key={`group-${entry.room.room_id}`}
                 room={entry.room}
                 isLast={index === entries.length - 1}
-                onClick={() => onGroupSelect(entry.room.meetup_post_id, entry.room.title)}
+                onClick={() => handleGroupSelect(entry.room.meetup_post_id, entry.room.title)}
               />
             ),
           )

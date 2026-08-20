@@ -20,6 +20,8 @@ export interface PendingGroupRoom {
   title: string;
 }
 
+export type ChatWidgetView = "list" | "room" | "group-room";
+
 interface ChatState {
   chatList: ChatWithUsers[];
   messages: MessageWithSender[];
@@ -29,8 +31,14 @@ interface ChatState {
   pendingGroupRoom: PendingGroupRoom | null;
   groupRoomsVersion: number;
   isOpen: boolean;
+  view: ChatWidgetView;
+  selectedChatId: number | null;
+  newChatDraft: PendingNewChat | null;
+  activeGroupRoom: PendingGroupRoom | null;
 
-  setChatList: (chats: ChatWithUsers[]) => void;
+  setChatList: (
+    update: ChatWithUsers[] | ((prev: ChatWithUsers[]) => ChatWithUsers[]),
+  ) => void;
   setMessages: (messages: MessageWithSender[]) => void;
   addMessage: (message: MessageWithSender) => void;
   setUnreadCount: (count: number) => void;
@@ -44,6 +52,10 @@ interface ChatState {
   refreshGroupRoomsList: () => void;
   setWidgetOpen: (open: boolean) => void;
   closeWidget: () => void;
+  setView: (view: ChatWidgetView) => void;
+  setSelectedChatId: (chatId: number | null) => void;
+  setNewChatDraft: (draft: PendingNewChat | null) => void;
+  setActiveGroupRoom: (room: PendingGroupRoom | null) => void;
 }
 
 export const useChatStore = create<ChatState>((set) => ({
@@ -55,8 +67,15 @@ export const useChatStore = create<ChatState>((set) => ({
   pendingGroupRoom: null,
   groupRoomsVersion: 0,
   isOpen: false,
+  view: "list",
+  selectedChatId: null,
+  newChatDraft: null,
+  activeGroupRoom: null,
 
-  setChatList: (chats) => set({ chatList: chats }),
+  setChatList: (update) =>
+    set((state) => ({
+      chatList: typeof update === "function" ? update(state.chatList) : update,
+    })),
   setMessages: (messages) => set({ messages }),
   addMessage: (message) =>
     set((state) => ({ messages: [...state.messages, message] })),
@@ -89,4 +108,8 @@ export const useChatStore = create<ChatState>((set) => ({
     set((state) => ({ groupRoomsVersion: state.groupRoomsVersion + 1 })),
   setWidgetOpen: (open) => set({ isOpen: open }),
   closeWidget: () => set({ isOpen: false }),
+  setView: (view) => set({ view }),
+  setSelectedChatId: (chatId) => set({ selectedChatId: chatId }),
+  setNewChatDraft: (draft) => set({ newChatDraft: draft }),
+  setActiveGroupRoom: (room) => set({ activeGroupRoom: room }),
 }));
