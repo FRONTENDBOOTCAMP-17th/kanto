@@ -11,6 +11,7 @@ interface Props {
   setMessages: React.Dispatch<React.SetStateAction<MessageWithSender[]>>;
 }
 
+/** Supabase realtime으로 새 메시지·거래 상태 변경을 구독하고, 상대방 온라인 상태를 추적한다. */
 export function useChatRoomRealtime({
   chatId,
   currentUser,
