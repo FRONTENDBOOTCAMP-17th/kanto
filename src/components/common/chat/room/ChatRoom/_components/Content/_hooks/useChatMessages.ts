@@ -1,4 +1,4 @@
-import { loadMoreMessagesAction } from "@/components/common/chat/chatPanel/room/actions";
+import { loadMoreMessagesAction } from "../../../../actions";
 import { MessageWithSender } from "@/type/chat/message";
 import { SellerInfo } from "@/type/user";
 import { useEffect, useRef, useState } from "react";
@@ -10,6 +10,7 @@ interface Props {
   partner: SellerInfo;
 }
 
+/** 메시지 목록 상태와 스크롤 위치를 관리하고, 이전 메시지 페이지네이션(loadMore)을 처리한다. */
 export function useChatMessages({
   initialMessages,
   currentUser,

@@ -5,7 +5,7 @@ import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
 import { formatDateDivider, formatMessageTime } from "@/utils/format";
 import type { Locale } from "@/i18n/config";
-import PaymentCard from "./PaymentCard";
+import PaymentCard from "../features/payment/PaymentCard";
 
 interface Props {
   messages: MessageWithSender[];

@@ -19,6 +19,7 @@ export interface ChatRoomData {
   isSold: boolean;
 }
 
+/** chatId로 기존 채팅방을 fetch하거나, newChatMeta로 아직 생성 안 된 채팅 초안 데이터를 만든다. 준비 전까지 null. */
 export function useChatRoomData(
   chatId: number | null,
   newChatMeta?: PendingNewChat,
