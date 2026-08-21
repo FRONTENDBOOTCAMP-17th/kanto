@@ -19,7 +19,7 @@ import { useChatWidgetPanelUX } from "./_hooks/useChatWidgetPanelUX";
 import ChatBubbleButton from "./ChatBubbleButton";
 import ChatList from "../list/ChatList";
 import ChatRoom from "../room/ChatRoom";
-import GroupChatRoomBody from "@/components/go/groupChat/GroupChatRoomBody";
+import GroupChatRoom from "@/components/go/groupChat/GroupChatRoom";
 import type { User } from "@/type/user";
 
 export default function FloatingChatWidget({
@@ -101,7 +101,7 @@ export default function FloatingChatWidget({
               currentUserId={currentUserId}
             />
           ) : view === "group-room" && selectedGroupRoom && currentUserForRoom ? (
-            <GroupChatRoomBody
+            <GroupChatRoom
               key={selectedGroupRoom.meetupPostId}
               meetupPostId={selectedGroupRoom.meetupPostId}
               meetupTitle={selectedGroupRoom.title}
