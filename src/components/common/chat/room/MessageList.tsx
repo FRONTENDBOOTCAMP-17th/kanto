@@ -6,6 +6,7 @@ import type { Transaction } from "@/type/transaction";
 import { formatDateDivider, formatMessageTime } from "@/utils/format";
 import type { Locale } from "@/i18n/config";
 import PaymentCard from "../features/payment/PaymentCard";
+import { useExpiryStatus } from "../features/payment/_hooks/useExpiryStatus";
 
 interface Props {
   messages: MessageWithSender[];
@@ -17,6 +18,27 @@ interface Props {
   scrollContainerRef: RefObject<HTMLDivElement | null>;
   onTransactionChange: (transaction: Transaction) => void;
   partnerOnline: boolean;
+}
+
+function PaymentAttachmentStatus({ transaction }: { transaction: Transaction }) {
+  const t = useTranslations("Chat");
+  const { isTimedOut } = useExpiryStatus(transaction);
+
+  if (isTimedOut || transaction.status === "expired") {
+    return (
+      <span className="rounded-full bg-gray-200/70 px-3 py-1 text-center text-xs md:text-[11px] text-gray-500 break-keep">
+        {t("payment.expiredNotice")}
+      </span>
+    );
+  }
+  if (transaction.status === "pending") {
+    return (
+      <span className="rounded-full bg-gray-200/70 px-3 py-1 text-center text-xs md:text-[11px] text-gray-500 break-keep">
+        {t("payment.pendingNotice")}
+      </span>
+    );
+  }
+  return null;
 }
 
 function UnreadMark({ partnerOnline }: { partnerOnline: boolean }) {
@@ -106,27 +128,7 @@ export default function MessageList({
                       currentUser={currentUser}
                       onTransactionChange={onTransactionChange}
                     />
-                    {(() => {
-                      const tx = msg.transaction;
-                      const timedOut =
-                        tx.status === "pending" &&
-                        Date.now() - new Date(tx.created_at).getTime() > 24 * 60 * 60 * 1000;
-                      if (timedOut || tx.status === "expired") {
-                        return (
-                          <span className="rounded-full bg-gray-200/70 px-3 py-1 text-center text-xs md:text-[11px] text-gray-500 break-keep">
-                            {t("payment.expiredNotice")}
-                          </span>
-                        );
-                      }
-                      if (tx.status === "pending") {
-                        return (
-                          <span className="rounded-full bg-gray-200/70 px-3 py-1 text-center text-xs md:text-[11px] text-gray-500 break-keep">
-                            {t("payment.pendingNotice")}
-                          </span>
-                        );
-                      }
-                      return null;
-                    })()}
+                    <PaymentAttachmentStatus transaction={msg.transaction} />
                   </div>
                 ) : (
                   <div
