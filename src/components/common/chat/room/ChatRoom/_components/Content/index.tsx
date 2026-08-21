@@ -9,7 +9,7 @@ import { useChatStore } from "@/store/chatStore";
 import type { ChatRoomData } from "../../_hooks/useChatRoomData";
 import { useBlockState } from "./_hooks/useBlockState";
 import { useChatBannerState } from "./_hooks/useChatBannerState";
-import { useAutoDismissError } from "./_hooks/useAutoDismissError";
+import { useAutoDismissError } from "@/hooks/useAutoDismissError";
 import { useReserveToggle } from "./_hooks/useReserveToggle";
 import { useSendMessage } from "./_hooks/useSendMessage";
 import { markChatReadAction } from "../../../actions";
