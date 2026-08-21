@@ -8,16 +8,13 @@ import type { MyGroupRoom } from "@/type/groupChat";
 import { useChatStore } from "@/store/chatStore";
 import ChatListItem from "./ChatListItem";
 import GroupChatListItem from "./GroupChatListItem";
+import { buildListEntries } from "./_utils/buildListEntries";
 
 interface Props {
   chats: ChatWithUsers[];
   groupRooms: MyGroupRoom[];
   currentUserId: number;
 }
-
-type ListEntry =
-  | { kind: "direct"; time: string; chat: ChatWithUsers }
-  | { kind: "group"; time: string; room: MyGroupRoom };
 
 export default function ChatListClient({
   chats,
@@ -55,18 +52,7 @@ export default function ChatListClient({
   });
   const filteredGroupRooms = groupRooms.filter((room) => room.title.includes(search));
 
-  const entries: ListEntry[] = [
-    ...filteredChats.map((chat) => ({
-      kind: "direct" as const,
-      time: chat.last_message_at ?? chat.created_at ?? "",
-      chat,
-    })),
-    ...filteredGroupRooms.map((room) => ({
-      kind: "group" as const,
-      time: room.last_message_at ?? "",
-      room,
-    })),
-  ].sort((a, b) => (b.time > a.time ? 1 : b.time < a.time ? -1 : 0));
+  const entries = buildListEntries(filteredChats, filteredGroupRooms);
 
   return (
     <div className="flex flex-col h-full">

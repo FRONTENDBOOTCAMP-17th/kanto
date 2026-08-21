@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldCheck, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
+import { useExpiryStatus } from "./_hooks/useExpiryStatus";
+import { useAsyncAction } from "./_hooks/useAsyncAction";
 import {
   startCheckoutAction,
   confirmReceiptAction,
@@ -23,37 +24,15 @@ export default function PaymentCard({
   currentUser,
   onTransactionChange,
 }: Props) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const t = useTranslations("Chat.payment");
   const router = useRouter();
 
-  const [now, setNow] = useState(() => Date.now());
-
-  useEffect(() => {
-    if (transaction.status !== "pending") return;
-    const id = setInterval(() => setNow(Date.now()), 60_000);
-    return () => clearInterval(id);
-  }, [transaction.status]);
+  const { isTimedOut } = useExpiryStatus(transaction);
+  const { isLoading, setIsLoading, error, run } = useAsyncAction();
 
   const isBuyer = currentUser.id === transaction.buyer_id;
   const isSeller = currentUser.id === transaction.seller_id;
   const amount = `₱${transaction.amount.toLocaleString()}`;
-
-  const isTimedOut =
-    transaction.status === "pending" &&
-    now - new Date(transaction.created_at).getTime() > 24 * 60 * 60 * 1000;
-
-  const run = async (fn: () => Promise<unknown>) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      await fn();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "처리에 실패했습니다.");
-      setIsLoading(false);
-    }
-  };
 
   const handleCheckout = () =>
     run(async () => {
