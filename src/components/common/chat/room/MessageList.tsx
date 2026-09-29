@@ -1,12 +1,9 @@
-﻿import { Profiler, useEffect, useState, type RefObject } from "react";
-import { useTranslations, useLocale } from "next-intl";
+﻿import type { RefObject } from "react";
+import { useTranslations } from "next-intl";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
 import type { Transaction } from "@/type/transaction";
-import { formatDateDivider, formatMessageTime } from "@/utils/format";
-import type { Locale } from "@/i18n/config";
-import PaymentCard from "../features/payment/PaymentCard";
-import { useExpiryStatus } from "../features/payment/_hooks/useExpiryStatus";
+import MessageItem from "./MessageItem";
 
 interface Props {
   messages: MessageWithSender[];
@@ -18,38 +15,6 @@ interface Props {
   scrollContainerRef: RefObject<HTMLDivElement | null>;
   onTransactionChange: (transaction: Transaction) => void;
   partnerOnline: boolean;
-}
-
-function PaymentAttachmentStatus({ transaction }: { transaction: Transaction }) {
-  const t = useTranslations("Chat");
-  const { isTimedOut } = useExpiryStatus(transaction);
-
-  if (isTimedOut || transaction.status === "expired") {
-    return (
-      <span className="rounded-full bg-gray-200/70 px-3 py-1 text-center text-xs md:text-[11px] text-gray-500 break-keep">
-        {t("payment.expiredNotice")}
-      </span>
-    );
-  }
-  if (transaction.status === "pending") {
-    return (
-      <span className="rounded-full bg-gray-200/70 px-3 py-1 text-center text-xs md:text-[11px] text-gray-500 break-keep">
-        {t("payment.pendingNotice")}
-      </span>
-    );
-  }
-  return null;
-}
-
-function UnreadMark({ partnerOnline }: { partnerOnline: boolean }) {
-  const [visible, setVisible] = useState(!partnerOnline);
-  useEffect(() => {
-    const delay = partnerOnline ? 1000 : 0;
-    const t = setTimeout(() => setVisible(true), delay);
-    return () => clearTimeout(t);
-  }, [partnerOnline]);
-  if (!visible) return null;
-  return <span className="text-xs md:text-[10px] text-teal-500 font-medium">1</span>;
 }
 
 export default function MessageList({
@@ -64,7 +29,6 @@ export default function MessageList({
   partnerOnline,
 }: Props) {
   const t = useTranslations("Chat");
-  const locale = useLocale() as Locale;
   const minuteKey = (dateStr: string) => {
     const date = new Date(dateStr);
     date.setSeconds(0, 0);
@@ -90,7 +54,6 @@ export default function MessageList({
       )}
 
       {messages.map((msg, index) => {
-        const isMine = msg.sender_id === currentUser.id;
         const msgDate = new Date(msg.created_at).toDateString();
         const prevDate = index > 0 ? new Date(messages[index - 1].created_at).toDateString() : null;
         const showDivider = msgDate !== prevDate;
@@ -102,63 +65,16 @@ export default function MessageList({
           minuteKey(next.created_at) !== minuteKey(msg.created_at);
 
         return (
-          // [측정용 임시 코드] 말풍선마다 렌더를 기록 (Fragment 자리)
-          <Profiler
-            key={msg.id}
-            id={`msg-${msg.id}`}
-            onRender={(id, phase, actualDuration) => {
-              const w = window as unknown as { __itemRenders?: unknown[] };
-              (w.__itemRenders ??= []).push({ id, phase, actualDuration, content: msg.content });
-            }}
-          >
-            {showDivider && (
-              <div className="flex items-center gap-2 my-1">
-                <div className="flex-1 h-px bg-gray-200" />
-                <time dateTime={msg.created_at} className="text-xs md:text-[10px] text-gray-400">
-                  {formatDateDivider(msg.created_at, locale)}
-                </time>
-                <div className="flex-1 h-px bg-gray-200" />
-              </div>
-            )}
-            {msg.type === "system" ? (
-              <div className="flex justify-center my-1">
-                <span className="rounded-full bg-gray-200/70 px-3 py-1 text-center text-xs md:text-[11px] text-gray-500 break-keep">
-                  {msg.content}
-                </span>
-              </div>
-            ) : (
-            <div className={`flex flex-col gap-0.5 ${isMine ? "items-end" : "items-start"}`}>
-              <div className={`flex items-end gap-1 ${isMine ? "flex-row-reverse" : ""}`}>
-                {msg.type === "payment" && msg.transaction ? (
-                  <div className="flex flex-col items-center gap-1.5">
-                    <PaymentCard
-                      transaction={msg.transaction}
-                      currentUser={currentUser}
-                      onTransactionChange={onTransactionChange}
-                    />
-                    <PaymentAttachmentStatus transaction={msg.transaction} />
-                  </div>
-                ) : (
-                  <div
-                    className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm md:text-xs leading-relaxed break-keep ${
-                      isMine
-                        ? "bg-teal-500 text-white rounded-tr-sm"
-                        : "bg-white text-gray-800 rounded-tl-sm shadow-sm"
-                    }`}
-                  >
-                    {msg.content}
-                  </div>
-                )}
-                <div className={`flex flex-col shrink-0 ${isMine ? "items-end" : "items-start"} ${showMeta ? "" : "invisible"}`}>
-                  {isMine && !msg.is_read && <UnreadMark partnerOnline={partnerOnline} />}
-                  <time dateTime={msg.created_at} className="text-xs md:text-[10px] text-gray-400">
-                    {formatMessageTime(msg.created_at, locale)}
-                  </time>
-                </div>
-              </div>
-            </div>
-            )}
-          </Profiler>
+          // 전송 직후 임시 id → 실제 id로 바뀌어도 재마운트되지 않도록 tempId를 우선 key로 사용
+          <MessageItem
+            key={msg.tempId ?? msg.id}
+            msg={msg}
+            currentUser={currentUser}
+            showDivider={showDivider}
+            showMeta={showMeta}
+            partnerOnline={partnerOnline}
+            onTransactionChange={onTransactionChange}
+          />
         );
       })}
       <div ref={messagesEndRef} />

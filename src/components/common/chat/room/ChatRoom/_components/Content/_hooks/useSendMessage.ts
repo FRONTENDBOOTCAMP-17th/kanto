@@ -54,7 +54,7 @@ export function useSendMessage({
         setMessages((prev) =>
           prev.map((m) =>
             m.tempId === tempId
-              ? { ...m, id: saved.id, chat_id: newChatId, tempId: undefined }
+              ? { ...m, id: saved.id, chat_id: newChatId }
               : m,
           ),
         );
@@ -63,7 +63,7 @@ export function useSendMessage({
         const saved = await sendMessageAction({ chatId: activeChatId, postId, content });
         setMessages((prev) =>
           prev.map((m) =>
-            m.tempId === tempId ? { ...m, id: saved.id, tempId: undefined } : m,
+            m.tempId === tempId ? { ...m, id: saved.id } : m,
           ),
         );
       }
