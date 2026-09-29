@@ -67,7 +67,7 @@ export default function MessagingSection({
     setMessages,
   });
 
-  const { input, setInput, handleSend } = useSendMessage({
+  const { handleSend } = useSendMessage({
     activeChatId,
     postId,
     partner,
@@ -101,8 +101,6 @@ export default function MessagingSection({
       />
       {children}
       <ChatInput
-        input={input}
-        onChange={setInput}
         onSend={handleSend}
         isCooldown={isCooldown}
         cooldownSeconds={cooldownSeconds}
