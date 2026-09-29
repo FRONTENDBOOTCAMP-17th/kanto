@@ -1,31 +1,37 @@
 "use client";
 
+import { useState } from "react";
 import { Send } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface Props {
-  input: string;
-  onChange: (value: string) => void;
-  onSend: () => void;
+  onSend: (content: string) => void;
   isCooldown: boolean;
   cooldownSeconds: number;
   blocked?: boolean;
 }
 
 export default function ChatInput({
-  input,
-  onChange,
   onSend,
   isCooldown,
   cooldownSeconds,
   blocked = false,
 }: Props) {
   const t = useTranslations("Chat");
+  const [input, setInput] = useState("");
+
+  const handleSend = () => {
+    const content = input.trim();
+    if (!content) return;
+    onSend(content);
+    setInput("");
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.nativeEvent.isComposing) return;
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      onSend();
+      handleSend();
     }
   };
 
@@ -36,7 +42,7 @@ export default function ChatInput({
         aria-label={t("messageInputLabel")}
         value={blocked ? "" : input}
         disabled={isCooldown || blocked}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={
           blocked
@@ -48,7 +54,7 @@ export default function ChatInput({
         className="flex-1 min-w-0 text-base md:text-sm bg-gray-50 rounded-full px-4 py-2.5 md:py-2 outline-none border border-gray-200 focus:border-teal-400 focus:bg-white transition-colors disabled:opacity-50"
       />
       <button
-        onClick={onSend}
+        onClick={handleSend}
         disabled={!input.trim() || isCooldown || blocked}
         aria-label={t("messageSend")}
         className="w-10 h-10 md:w-8 md:h-8 rounded-full bg-teal-500 flex items-center justify-center shrink-0 disabled:opacity-30 hover:bg-teal-600 transition-colors"

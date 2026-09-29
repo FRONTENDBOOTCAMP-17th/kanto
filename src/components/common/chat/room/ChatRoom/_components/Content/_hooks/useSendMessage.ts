@@ -1,4 +1,4 @@
-import { useState, type Dispatch, type SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { createChatAndSendAction, sendMessageAction } from "../../../../actions";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
@@ -14,7 +14,7 @@ interface Params {
   onError: (message: string) => void;
 }
 
-/** 입력값을 관리하고, 전송 시 낙관적 업데이트 후 신규/기존 채팅방에 메시지를 보낸다. */
+/** 전송 시 낙관적 업데이트 후 신규/기존 채팅방에 메시지를 보낸다. */
 export function useSendMessage({
   activeChatId,
   postId,
@@ -25,18 +25,8 @@ export function useSendMessage({
   onChatCreated,
   onError,
 }: Params) {
-  const [input, setInput] = useState("");
-
-  const handleSend = async () => {
-    if (!input.trim()) return;
-
-    if (recordSend()) {
-      setInput("");
-      return;
-    }
-
-    const content = input.trim();
-    setInput("");
+  const handleSend = async (content: string) => {
+    if (recordSend()) return;
 
     const tempId = Date.now();
     const optimistic: MessageWithSender = {
@@ -83,5 +73,5 @@ export function useSendMessage({
     }
   };
 
-  return { input, setInput, handleSend };
+  return { handleSend };
 }
