@@ -1,6 +1,5 @@
 "use client";
 
-import { Profiler } from "react";
 import type {
   Dispatch,
   ReactNode,
@@ -89,15 +88,6 @@ export default function MessagingSection({
 
   return (
     <>
-      {/* [측정용 임시 코드] */}
-      <Profiler
-        id="MessageList"
-        onRender={(id, phase, actualDuration) => {
-          const w = window as unknown as { __chatRenders?: unknown[] };
-          (w.__chatRenders ??= []).push({ phase, actualDuration, messages: messages.length });
-          console.log("[Profiler]", id, phase, actualDuration.toFixed(2) + "ms");
-        }}
-      >
       <MessageList
         messages={messages}
         currentUser={currentUser}
@@ -109,7 +99,6 @@ export default function MessagingSection({
         onTransactionChange={handleTransactionChange}
         partnerOnline={partnerOnline}
       />
-      </Profiler>
       {children}
       <ChatInput
         onSend={handleSend}
