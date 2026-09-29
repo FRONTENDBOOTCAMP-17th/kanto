@@ -1,5 +1,6 @@
 "use client";
 
+import { Profiler, useCallback } from "react";
 import type {
   Dispatch,
   ReactNode,
@@ -78,16 +79,41 @@ export default function MessagingSection({
     onError,
   });
 
-  const handleTransactionChange = (transaction: Transaction) => {
-    setMessages((prev) =>
-      prev.map((m) =>
-        m.transaction_id === transaction.id ? { ...m, transaction } : m,
-      ),
-    );
-  };
+  const handleTransactionChange = useCallback(
+    (transaction: Transaction) => {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.transaction_id === transaction.id ? { ...m, transaction } : m,
+        ),
+      );
+    },
+    [setMessages],
+  );
 
   return (
     <>
+      {/* [측정용 임시 코드] MessageList 전체 렌더 시간 기록 */}
+      <Profiler
+        id="MessageList"
+        onRender={(id, phase, actualDuration) => {
+          type Row = { phase: string; actualDuration: number; content?: string; messages?: number };
+          const w = window as unknown as { __chatRenders?: Row[]; __itemRenders?: Row[]; __summaryTimer?: number };
+          (w.__chatRenders ??= []).push({ phase, actualDuration, messages: messages.length });
+          // 마지막 렌더 후 1.5초간 추가 렌더가 없으면 요약을 콘솔에 출력하고 기록을 비운다
+          clearTimeout(w.__summaryTimer);
+          w.__summaryTimer = window.setTimeout(() => {
+            const list = w.__chatRenders ?? [];
+            const items = w.__itemRenders ?? [];
+            const ms = list.reduce((s, x) => s + x.actualDuration, 0);
+            console.log(
+              `[측정] 메시지 ${messages.length}개 | MessageList 렌더 ${list.length}회 (${ms.toFixed(1)}ms) | 렌더된 말풍선 ${items.length}개 | mount ${items.filter((x) => x.phase === "mount").length}개`,
+            );
+            console.table(items.map((x) => ({ phase: x.phase, content: x.content, ms: +x.actualDuration.toFixed(2) })));
+            w.__chatRenders = [];
+            w.__itemRenders = [];
+          }, 1500);
+        }}
+      >
       <MessageList
         messages={messages}
         currentUser={currentUser}
@@ -99,6 +125,7 @@ export default function MessagingSection({
         onTransactionChange={handleTransactionChange}
         partnerOnline={partnerOnline}
       />
+      </Profiler>
       {children}
       <ChatInput
         onSend={handleSend}
