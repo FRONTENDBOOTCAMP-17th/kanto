@@ -1,4 +1,4 @@
-﻿import { Fragment, useEffect, useState, type RefObject } from "react";
+﻿import { Profiler, useEffect, useState, type RefObject } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import type { MessageWithSender } from "@/type/chat/message";
 import type { SellerInfo } from "@/type/user";
@@ -102,7 +102,15 @@ export default function MessageList({
           minuteKey(next.created_at) !== minuteKey(msg.created_at);
 
         return (
-          <Fragment key={msg.id}>
+          // [측정용 임시 코드] 말풍선마다 렌더를 기록 (Fragment 자리)
+          <Profiler
+            key={msg.id}
+            id={`msg-${msg.id}`}
+            onRender={(id, phase, actualDuration) => {
+              const w = window as unknown as { __itemRenders?: unknown[] };
+              (w.__itemRenders ??= []).push({ id, phase, actualDuration, content: msg.content });
+            }}
+          >
             {showDivider && (
               <div className="flex items-center gap-2 my-1">
                 <div className="flex-1 h-px bg-gray-200" />
@@ -150,7 +158,7 @@ export default function MessageList({
               </div>
             </div>
             )}
-          </Fragment>
+          </Profiler>
         );
       })}
       <div ref={messagesEndRef} />
