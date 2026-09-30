@@ -3,17 +3,11 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Megaphone, X, ChevronLeft, ChevronRight } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { useActiveNotices, type Notice } from "@/hooks/useActiveNotices";
 
 const STORAGE_KEY = "notice_hidden_until";
-
-interface Notice {
-  id: number;
-  title: string;
-  starts_at: string;
-  ends_at: string;
-}
 
 function getHiddenIds(): number[] {
   try {
@@ -40,9 +34,8 @@ function saveHideToday(id: number) {
 }
 
 export function GoNoticeIcon({ initialNotices }: { initialNotices: Notice[] }) {
-  const locale = useLocale();
   const tb = useTranslations("Notice.Banner");
-  const [notices, setNotices] = useState<Notice[]>(initialNotices);
+  const notices = useActiveNotices(initialNotices);
   const [dismissedIds, setDismissedIds] = useState<number[]>([]);
   const [open, setOpen] = useState(false);
   const [idx, setIdx] = useState(0);
@@ -50,15 +43,9 @@ export function GoNoticeIcon({ initialNotices }: { initialNotices: Notice[] }) {
   const [hiddenIds, setHiddenIds] = useState<number[]>([]);
 
   useEffect(() => {
-    fetch("/api/admin/notices")
-      .then((r) => r.json())
-      .then((data: Notice[]) => {
-        const now = new Date();
-        setNotices(data.filter((n) => new Date(n.starts_at) <= now && now <= new Date(n.ends_at)));
-      })
-      .catch(() => {})
-      .finally(() => setHiddenIds(getHiddenIds()));
-  }, [locale]);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 브라우저에서만 읽을 수 있어 hydration 이후 1회 동기화
+    setHiddenIds(getHiddenIds());
+  }, []);
 
   const active = notices.filter((n) => !dismissedIds.includes(n.id) && !hiddenIds.includes(n.id));
   if (active.length === 0) return null;

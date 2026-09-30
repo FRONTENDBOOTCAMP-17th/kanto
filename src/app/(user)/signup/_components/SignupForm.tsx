@@ -1,9 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { checkEmailDuplication } from "../_lib/checkEmailDuplication";
 import { useTranslations } from "next-intl";
 import { Lock, Mail, User } from "lucide-react";
 import { EyeIcon } from "./EyeIcon";
+import { FormField } from "./FormField";
 
 type FormValues = { name: string; email: string; password: string };
 
@@ -36,93 +38,92 @@ export function SignupForm({
     password: false,
     confirmPassword: false,
   });
+  const [emailDuplication, setEmailDuplication] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const t = useTranslations("Signup.form");
+  const tSignup = useTranslations("Signup");
 
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
+  const latestEmailRef = useRef(email);
+  useEffect(() => {
+    latestEmailRef.current = email;
+  }, [email]);
 
   const nameValid = /^[가-힣a-zA-Z]{2,}$/.test(name);
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const passwordValid = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/.test(password);
   const confirmPasswordValid = confirmPassword === password && confirmPassword !== "";
-  const inputClass =
-    "w-full border-b bg-transparent py-3 pr-2 pl-8 text-base text-gray-950 placeholder:text-gray-400 outline-none transition-colors focus:border-teal-400 sm:text-sm";
-  const passwordInputClass = `${inputClass} pr-11`;
-  const iconClass =
-    "pointer-events-none absolute top-1/2 left-0 h-5 w-5 -translate-y-1/2 text-gray-400";
-  const errorClass = "text-xs font-medium text-red-500";
 
   const handleSubmit = () => {
     setTouched({ name: true, email: true, password: true, confirmPassword: true });
     if (!nameValid || !emailValid || !passwordValid || !confirmPasswordValid) return;
+    if (emailDuplication) return;
     if (!requiredChecked) return;
     onSubmit({ name, email, password });
   };
 
+  const handleEmailBlur = async () => {
+    if (!email) return;
+    setTouched((p) => ({ ...p, email: true }));
+    if (!emailValid) return;
+
+    const checkedEmail = email;
+    const exists = await checkEmailDuplication(checkedEmail);
+    if (latestEmailRef.current !== checkedEmail) return;
+    setEmailDuplication(exists);
+  };
+
   return (
     <div className="space-y-4">
-      <div className="space-y-1.5">
-        <div className="relative">
-          <User className={iconClass} strokeWidth={1.8} aria-hidden />
-          <input
-            id="name"
-            ref={nameRef}
-            autoFocus
-            type="text"
-            aria-label={t("name")}
-            placeholder={t("namePlaceholder")}
-            value={name}
-            onChange={(e) => { setName(e.target.value); onClearError(); }}
-            onBlur={() => { if (name) setTouched((p) => ({ ...p, name: true })); }}
-            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); emailRef.current?.focus(); } }}
-            className={`${inputClass} ${touched.name && !nameValid ? "border-red-400 focus:border-red-400" : "border-gray-200"}`}
-          />
-        </div>
-        {touched.name && !nameValid && (
-          <p className={errorClass}>{t("nameError")}</p>
-        )}
-      </div>
+      <FormField
+        id="name"
+        ref={nameRef}
+        autoFocus
+        type="text"
+        icon={User}
+        ariaLabel={t("name")}
+        placeholder={t("namePlaceholder")}
+        value={name}
+        onChange={(e) => { setName(e.target.value); onClearError(); }}
+        onBlur={() => { if (name) setTouched((p) => ({ ...p, name: true })); }}
+        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); emailRef.current?.focus(); } }}
+        errorMessage={touched.name && !nameValid && t("nameError")}
+      />
 
-      <div className="space-y-1.5">
-        <div className="relative">
-          <Mail className={iconClass} strokeWidth={1.8} aria-hidden />
-          <input
-            id="email"
-            ref={emailRef}
-            type="email"
-            aria-label={t("email")}
-            placeholder={t("emailPlaceholder")}
-            value={email}
-            onChange={(e) => { setEmail(e.target.value); onClearError(); }}
-            onBlur={() => { if (email) setTouched((p) => ({ ...p, email: true })); }}
-            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); passwordRef.current?.focus(); } }}
-            className={`${inputClass} ${touched.email && !emailValid ? "border-red-400 focus:border-red-400" : "border-gray-200"}`}
-          />
-        </div>
-        {touched.email && !emailValid && (
-          <p className={errorClass}>{t("emailError")}</p>
-        )}
-      </div>
+      <FormField
+        id="email"
+        ref={emailRef}
+        type="email"
+        icon={Mail}
+        ariaLabel={t("email")}
+        placeholder={t("emailPlaceholder")}
+        value={email}
+        onChange={(e) => { setEmail(e.target.value); setEmailDuplication(false); onClearError(); }}
+        onBlur={handleEmailBlur}
+        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); passwordRef.current?.focus(); } }}
+        errorMessage={
+          touched.email &&
+          (!emailValid ? t("emailError") : emailDuplication && tSignup("emailExists"))
+        }
+      />
 
-      <div className="space-y-1.5">
-        <div className="relative">
-          <Lock className={iconClass} strokeWidth={1.8} aria-hidden />
-          <input
-            id="password"
-            ref={passwordRef}
-            type={showPassword ? "text" : "password"}
-            aria-label={t("password")}
-            placeholder={t("passwordPlaceholder")}
-            value={password}
-            onChange={(e) => { setPassword(e.target.value); onClearError(); }}
-            onBlur={() => { if (password) setTouched((p) => ({ ...p, password: true })); }}
-            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); confirmPasswordRef.current?.focus(); } }}
-            className={`${passwordInputClass} ${touched.password && !passwordValid ? "border-red-400 focus:border-red-400" : "border-gray-200"}`}
-          />
+      <FormField
+        id="password"
+        ref={passwordRef}
+        type={showPassword ? "text" : "password"}
+        icon={Lock}
+        ariaLabel={t("password")}
+        placeholder={t("passwordPlaceholder")}
+        value={password}
+        onChange={(e) => { setPassword(e.target.value); onClearError(); }}
+        onBlur={() => { if (password) setTouched((p) => ({ ...p, password: true })); }}
+        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); confirmPasswordRef.current?.focus(); } }}
+        errorMessage={touched.password && !passwordValid && t("passwordError")}
+        toggleButton={
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
@@ -132,27 +133,23 @@ export function SignupForm({
           >
             <EyeIcon visible={showPassword} />
           </button>
-        </div>
-        {touched.password && !passwordValid && (
-          <p className={errorClass}>{t("passwordError")}</p>
-        )}
-      </div>
+        }
+      />
 
-      <div className="space-y-1.5">
-        <div className="relative">
-          <Lock className={iconClass} strokeWidth={1.8} aria-hidden />
-          <input
-            id="confirmPassword"
-            ref={confirmPasswordRef}
-            type={showConfirmPassword ? "text" : "password"}
-            aria-label={t("confirmPassword")}
-            placeholder={t("confirmPlaceholder")}
-            value={confirmPassword}
-            onChange={(e) => { setConfirmPassword(e.target.value); onClearError(); }}
-            onBlur={() => { if (confirmPassword) setTouched((p) => ({ ...p, confirmPassword: true })); }}
-            onKeyDown={(e) => { if (e.key === "Enter") handleSubmit(); }}
-            className={`${passwordInputClass} ${touched.confirmPassword && !confirmPasswordValid ? "border-red-400 focus:border-red-400" : "border-gray-200"}`}
-          />
+      <FormField
+        id="confirmPassword"
+        ref={confirmPasswordRef}
+        type={showConfirmPassword ? "text" : "password"}
+        icon={Lock}
+        ariaLabel={t("confirmPassword")}
+        placeholder={t("confirmPlaceholder")}
+        value={confirmPassword}
+        onChange={(e) => { setConfirmPassword(e.target.value); onClearError(); }}
+        onBlur={() => { if (confirmPassword) setTouched((p) => ({ ...p, confirmPassword: true })); }}
+        onKeyDown={(e) => { if (e.key === "Enter") handleSubmit(); }}
+        errorMessage={touched.confirmPassword && !confirmPasswordValid && t("confirmError")}
+        successMessage={confirmPasswordValid && t("confirmSuccess")}
+        toggleButton={
           <button
             type="button"
             onClick={() => setShowConfirmPassword((v) => !v)}
@@ -162,14 +159,8 @@ export function SignupForm({
           >
             <EyeIcon visible={showConfirmPassword} />
           </button>
-        </div>
-        {touched.confirmPassword && !confirmPasswordValid && (
-          <p className={errorClass}>{t("confirmError")}</p>
-        )}
-        {confirmPasswordValid && (
-          <p className="text-xs font-medium text-teal-600">{t("confirmSuccess")}</p>
-        )}
-      </div>
+        }
+      />
 
       {children}
 

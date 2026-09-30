@@ -10,7 +10,7 @@ import type { Locale } from "@/i18n/config";
 import { ImageWithFallback } from "@/components/common/ImageWithFallback";
 import VerifyAuthor from "@/components/common/VerifyAuthor";
 import findChat from "@/services/chat/postChat";
-import { checkBlockedAction } from "@/components/common/chat/chatPanel/room/actions";
+import { checkBlockedAction } from "@/components/common/chat/features/block/blockActions";
 import Toast from "@/components/common/Toast";
 import { useAuthStore } from "@/store/authStore";
 import { useChatStore } from "@/store/chatStore";

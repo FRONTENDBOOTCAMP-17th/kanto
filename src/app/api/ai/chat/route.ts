@@ -1,4 +1,3 @@
-import { Redis } from "@upstash/redis";
 import { NextRequest } from "next/server";
 import {
   GoogleGenerativeAI,
@@ -7,6 +6,8 @@ import {
 import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
+import { createClient } from "@supabase/supabase-js";
+import { Database } from "@/type/supabase";
 
 interface KBSection {
   title: string;
@@ -53,10 +54,6 @@ const raw = fs.readFileSync(
 const { preamble, sections } = parseKB(raw);
 const alwaysSections = sections.filter((s) => ALWAYS_INCLUDE.has(s.title));
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? "");
 
 function getGroq() {
@@ -139,13 +136,33 @@ export async function POST(req: NextRequest) {
     req.headers.get("x-real-ip") ??
     "unknown";
 
-  const key = `ai_chat:${ip}`;
-  const count = (await redis.get<number>(key)) ?? 0;
-  if (count >= RATE_LIMIT) {
+  const supabase = createClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SECRET_KEY!,
+  );
+
+  const windowStart = new Date(Date.now() - RATE_WINDOW_SEC * 1000).toISOString();
+
+  // lazy delete: 이 IP의 윈도우 밖 요청 기록 정리
+  await supabase
+    .from("rate_limit_events")
+    .delete()
+    .eq("scope", "ai_chat")
+    .eq("identifier", ip)
+    .lt("created_at", windowStart);
+
+  const { count } = await supabase
+    .from("rate_limit_events")
+    .select("id", { count: "exact", head: true })
+    .eq("scope", "ai_chat")
+    .eq("identifier", ip)
+    .gte("created_at", windowStart);
+
+  if ((count ?? 0) >= RATE_LIMIT) {
     return Response.json({ error: "rate_limit" }, { status: 429 });
   }
-  await redis.incr(key);
-  await redis.expire(key, RATE_WINDOW_SEC);
+
+  await supabase.from("rate_limit_events").insert({ scope: "ai_chat", identifier: ip });
 
   const { messages } = await req.json();
   const trimmed: { role: string; content: string }[] =

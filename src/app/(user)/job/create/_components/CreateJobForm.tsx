@@ -4,8 +4,25 @@ import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import { useCreateJobForm } from "@/hooks/useCreateJobForm";
-import { CreateJobFormPageOne } from "./CreateJobFormPage1";
-import { CreateJobFormPageTwo } from "./CreateJobFormPage2";
+import { FormStepBoundary } from "./FormStepBoundary";
+import {
+  BasicInfoSection,
+  SalarySection,
+  LocationSection,
+  DeadlineSection,
+  WorkHoursSection,
+  WorkDaysSection,
+  MainTaskSection,
+  PreferredSection,
+} from "./job-info";
+import {
+  CompanyLogoSection,
+  CompanyBasicSection,
+  CompanyScaleSection,
+  CompanyLocationSection,
+  ManagerInfoSection,
+  PhotosSection,
+} from "./company-info";
 import Toast from "@/components/common/Toast";
 import type { JobInitialData } from "@/type/job/jobCreate";
 
@@ -31,68 +48,100 @@ export function CreateJobForm({ userId, userName, initialData }: { userId: numbe
 
         <div className="p-8">
           {form.step === 1 && (
-            <CreateJobFormPageOne
-              title={form.title}
-              setTitle={form.setTitle}
-              employeeType={form.employeeType}
-              setEmployeeType={form.setEmployeeType}
-              salary={form.salary}
-              setSalary={form.setSalary}
-              salaryType={form.salaryType}
-              setSalaryType={form.setSalaryType}
-              workLocation={form.workLocation}
-              onWorkLocationSelect={form.handleWorkLocationSelect}
-              locationFallbackLabel={form.locationFallbackLabel}
-              deadline={form.deadline}
-              setDeadline={form.setDeadline}
-              workHoursStart={form.workHoursStart}
-              setWorkHoursStart={form.setWorkHoursStart}
-              workHoursEnd={form.workHoursEnd}
-              setWorkHoursEnd={form.setWorkHoursEnd}
-              workDays={form.workDays}
-              setWorkDays={form.setWorkDays}
-              isTimeNegotiable={form.isTimeNegotiable}
-              setIsTimeNegotiable={form.setIsTimeNegotiable}
-              mainTask={form.mainTask}
-              setMainTask={form.setMainTask}
-              preferred={form.preferred}
-              setPreferred={form.setPreferred}
-              preferredTags={form.preferredTags}
-              setPreferredTags={form.setPreferredTags}
-              handleNextStep={form.handleNextStep}
-            />
+            <FormStepBoundary
+              className="space-y-4"
+              heading={t("form.jobInfo")}
+              onSubmit={form.handleNextStep}
+            >
+              <BasicInfoSection
+                title={form.title}
+                setTitle={form.setTitle}
+                employeeType={form.employeeType}
+                setEmployeeType={form.setEmployeeType}
+              />
+              <SalarySection
+                salary={form.salary}
+                setSalary={form.setSalary}
+                salaryType={form.salaryType}
+                setSalaryType={form.setSalaryType}
+              />
+              <LocationSection
+                workLocation={form.workLocation}
+                onWorkLocationSelect={form.handleWorkLocationSelect}
+                locationFallbackLabel={form.locationFallbackLabel}
+              />
+              <DeadlineSection
+                deadline={form.deadline}
+                setDeadline={form.setDeadline}
+              />
+              <WorkHoursSection
+                workHoursStart={form.workHoursStart}
+                setWorkHoursStart={form.setWorkHoursStart}
+                workHoursEnd={form.workHoursEnd}
+                setWorkHoursEnd={form.setWorkHoursEnd}
+                isTimeNegotiable={form.isTimeNegotiable}
+                setIsTimeNegotiable={form.setIsTimeNegotiable}
+                setWorkDays={form.setWorkDays}
+              />
+              <WorkDaysSection
+                workDays={form.workDays}
+                setWorkDays={form.setWorkDays}
+                isTimeNegotiable={form.isTimeNegotiable}
+              />
+              <MainTaskSection
+                mainTask={form.mainTask}
+                setMainTask={form.setMainTask}
+              />
+              <PreferredSection
+                preferred={form.preferred}
+                setPreferred={form.setPreferred}
+                preferredTags={form.preferredTags}
+                setPreferredTags={form.setPreferredTags}
+              />
+            </FormStepBoundary>
           )}
 
           {form.step === 2 && (
-            <CreateJobFormPageTwo
-              companyLogoUrl={form.companyLogoUrl}
-              companyLogoFile={form.companyLogoFile}
-              setCompanyLogoFile={form.setCompanyLogoFile}
-              companyName={form.companyName}
-              setCompanyName={form.setCompanyName}
-              companyIntro={form.companyIntro}
-              setCompanyIntro={form.setCompanyIntro}
-              industry={form.industry}
-              setIndustry={form.setIndustry}
-              companyYear={form.companyYear}
-              setCompanyYear={form.setCompanyYear}
-              employeeCount={form.employeeCount}
-              setEmployeeCount={form.setEmployeeCount}
-              companyAddress={form.companyAddress}
-              companyLocation={form.companyLocation}
-              setCompanyLocation={form.setCompanyLocation}
-              companyWebsite={form.companyWebsite}
-              setCompanyWebsite={form.setCompanyWebsite}
-              managerName={form.managerName}
-              managerTitle={form.managerTitle}
-              setManagerTitle={form.setManagerTitle}
-              managerPhone={form.managerPhone}
-              setManagerPhone={form.setManagerPhone}
-              managerEmail={form.managerEmail}
-              setManagerEmail={form.setManagerEmail}
-              imageUpload={form.imageUpload}
-              handleSubmit={form.handleSubmit}
-            />
+            <FormStepBoundary className="space-y-6" onSubmit={form.handleSubmit}>
+              <div className="space-y-4">
+                <CompanyLogoSection
+                  companyLogoUrl={form.companyLogoUrl}
+                  companyLogoFile={form.companyLogoFile}
+                  setCompanyLogoFile={form.setCompanyLogoFile}
+                />
+                <CompanyBasicSection
+                  companyName={form.companyName}
+                  setCompanyName={form.setCompanyName}
+                  companyIntro={form.companyIntro}
+                  setCompanyIntro={form.setCompanyIntro}
+                  industry={form.industry}
+                  setIndustry={form.setIndustry}
+                />
+                <CompanyScaleSection
+                  companyYear={form.companyYear}
+                  setCompanyYear={form.setCompanyYear}
+                  employeeCount={form.employeeCount}
+                  setEmployeeCount={form.setEmployeeCount}
+                />
+                <CompanyLocationSection
+                  companyAddress={form.companyAddress}
+                  companyLocation={form.companyLocation}
+                  setCompanyLocation={form.setCompanyLocation}
+                  companyWebsite={form.companyWebsite}
+                  setCompanyWebsite={form.setCompanyWebsite}
+                />
+              </div>
+              <ManagerInfoSection
+                managerName={form.managerName}
+                managerTitle={form.managerTitle}
+                setManagerTitle={form.setManagerTitle}
+                managerPhone={form.managerPhone}
+                setManagerPhone={form.setManagerPhone}
+                managerEmail={form.managerEmail}
+                setManagerEmail={form.setManagerEmail}
+              />
+              <PhotosSection imageUpload={form.imageUpload} />
+            </FormStepBoundary>
           )}
         </div>
       </div>

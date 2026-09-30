@@ -1,28 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { createClient } from "@/utils/supabase/server";
-import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { getNotices, createNotice } from "@/services/admin/adminNotices";
 import { insertAuditLog } from "@/services/admin/auditLog";
 import { translateNoticeTitle } from "@/lib/translate";
-
-async function getAdminUser() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-  if (error || !user) return null;
-
-  const { data } = await supabaseAdmin
-    .from("users")
-    .select("id, role")
-    .eq("auth_id", user.id)
-    .single();
-
-  if (!data || (data.role !== "admin" && data.role !== "super_admin")) return null;
-  return data as { id: number; role: string };
-}
+import { requireAdminOrApiError } from "../_lib/requireAdmin";
 
 export async function GET() {
   try {
@@ -42,8 +23,8 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const admin = await getAdminUser();
-  if (!admin) return NextResponse.json({ error: "권한이 없습니다." }, { status: 403 });
+  const admin = await requireAdminOrApiError();
+  if (admin instanceof NextResponse) return admin;
 
   const body = await req.json();
   const { title, starts_at, ends_at } = body;

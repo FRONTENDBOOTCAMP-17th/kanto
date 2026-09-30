@@ -146,7 +146,6 @@ export function ContentCard({
                     fill
                     sizes="(max-width: 768px) 100vw, 25vw"
                     priority={priority && currentIndex === 0}
-                    loading={priority && currentIndex === 0 ? undefined : "eager"}
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                     draggable={false}
                   />

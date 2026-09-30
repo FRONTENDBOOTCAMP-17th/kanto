@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { User, Phone, Mail, MessageCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import findChat from "@/services/chat/postChat";
-import { checkBlockedAction } from "@/components/common/chat/chatPanel/room/actions";
+import { checkBlockedAction } from "@/components/common/chat/features/block/blockActions";
 import Toast from "@/components/common/Toast";
 import { useChatStore } from "@/store/chatStore";
 import { useSuspended } from "@/hooks/useSuspended";

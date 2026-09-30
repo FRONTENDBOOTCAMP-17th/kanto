@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       admin_teams: {
@@ -1117,6 +1092,27 @@ export type Database = {
           },
         ]
       }
+      rate_limit_events: {
+        Row: {
+          created_at: string
+          id: number
+          identifier: string | null
+          scope: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          identifier?: string | null
+          scope?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          identifier?: string | null
+          scope?: string | null
+        }
+        Relationships: []
+      }
       rentals: {
         Row: {
           amenities: Json | null
@@ -2160,9 +2156,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       product_condition: ["미개봉", "가벼운 사용감", "사용감 있음", "기타"],

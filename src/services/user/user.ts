@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import type { User } from "@/type/user";
 
@@ -57,4 +58,12 @@ export async function requireSuperAdmin(): Promise<User> {
   if (!user) throw new Error("UNAUTHORIZED");
   if (user.role !== "super_admin") throw new Error("FORBIDDEN");
   return user;
+}
+
+export async function requireSuperAdminOrRedirect(): Promise<User> {
+  try {
+    return await requireSuperAdmin();
+  } catch {
+    redirect("/admin");
+  }
 }

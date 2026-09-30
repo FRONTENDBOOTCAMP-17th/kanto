@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { Receipt, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/store/authStore";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getMyTransactions, type TransactionWithPost } from "@/app/(user)/profile/_lib/actions";
+import { getMyTransactions } from "@/app/(user)/profile/_lib/actions";
 
 const PAGE_SIZE = 8;
 const HIDDEN_STATUSES = new Set(["cancelled", "expired", "pending"]);
@@ -28,15 +29,13 @@ function Pagination({ page, total, onChange }: { page: number; total: number; on
 export function ProfileTransactionsSection() {
   const t = useTranslations("Profile.history");
   const { user } = useAuthStore();
-  const [transactions, setTransactions] = useState<TransactionWithPost[]>([]);
-  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    getMyTransactions()
-      .then(setTransactions)
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: transactions = [], isLoading: loading} = useQuery({
+    queryKey: ["transactions", user?.id],
+    queryFn: getMyTransactions,
+    enabled: !!user,
+  })
 
   const statusLabel: Record<string, { text: string; className: string }> = {
     paid:     { text: t("statusPaid"),     className: "bg-blue-50 text-blue-600" },

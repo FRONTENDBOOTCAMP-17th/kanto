@@ -1,6 +1,5 @@
 import {
   BarChart2,
-  ChevronLeft,
   Users,
   TrendingUp,
   AlertTriangle,
@@ -12,6 +11,7 @@ import Link from "next/link";
 import { getMonitoringStats, getSentryIssues, getSentryPerformance } from "@/services/admin/adminMonitoring";
 import { MonitoringTabContent } from "./_components/MonitoringTabContent";
 import { KpiCard } from "./_components/KpiCard";
+import { OperationPageHeader } from "@/components/admin/OperationPageHeader";
 
 export default async function MonitoringPage() {
   const [stats, sentry, performance] = await Promise.all([getMonitoringStats(), getSentryIssues(), getSentryPerformance()]);
@@ -29,24 +29,11 @@ export default async function MonitoringPage() {
   return (
     <div className="p-6 lg:p-8">
       
-      <div className="mb-7">
-        <Link
-          href="/admin/operation"
-          className="mb-2 flex items-center gap-1 text-[13px] text-slate-400 hover:text-slate-600"
-        >
-          <ChevronLeft className="h-3.5 w-3.5" strokeWidth={2.5} />
-          운영 관리
-        </Link>
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-50">
-            <BarChart2 className="h-5 w-5 text-teal-600" strokeWidth={2} />
-          </div>
-          <h1 className="text-[24px] font-bold text-slate-900">통계 & 모니터링</h1>
-        </div>
-        <p className="mt-1 text-[13px] text-slate-500">
-          가입자 추이, 게시물 현황, 신고 통계를 확인합니다.
-        </p>
-      </div>
+      <OperationPageHeader
+        icon={BarChart2}
+        title="통계 & 모니터링"
+        description="가입자 추이, 게시물 현황, 신고 통계를 확인합니다."
+      />
 
       
       <div className="mb-6 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">

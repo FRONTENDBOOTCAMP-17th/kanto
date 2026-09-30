@@ -1,5 +1,5 @@
 import { Bell, Pencil, Trash2 } from "lucide-react";
-import type { Notice } from "../page";
+import type { Notice } from "@/services/admin/adminNoticesApi";
 
 function statusLabel(startsAt: string, endsAt: string) {
   const now = new Date();
