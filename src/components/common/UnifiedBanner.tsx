@@ -13,15 +13,9 @@ import { usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { useGoUiStore } from "@/store/goUiStore";
 import { useTranslations, useLocale } from "next-intl";
+import { useActiveNotices, type Notice } from "@/hooks/useActiveNotices";
 
 const STORAGE_KEY = "notice_hidden_until";
-
-export interface Notice {
-  id: number;
-  title: string;
-  starts_at: string;
-  ends_at: string;
-}
 
 type BannerItem =
   | { type: "notice"; notice: Notice }
@@ -67,7 +61,7 @@ export function UnifiedBanner({ initialNotices }: { initialNotices: Notice[] }) 
   const goDetailOpen = useGoUiStore((s) => s.detailOpen);
   const goListOpen = useGoUiStore((s) => s.listOpen);
 
-  const [notices, setNotices] = useState<Notice[]>(initialNotices);
+  const notices = useActiveNotices(initialNotices);
   const [dismissedIds, setDismissedIds] = useState<number[]>([]);
   const [hideTodayChecked, setHideTodayChecked] = useState(false);
 
@@ -91,18 +85,9 @@ export function UnifiedBanner({ initialNotices }: { initialNotices: Notice[] }) 
   }
 
   useEffect(() => {
-    fetch("/api/admin/notices")
-      .then((res) => res.json())
-      .then((data: Notice[]) => {
-        const now = new Date();
-        const active = data.filter(
-          (n) => new Date(n.starts_at) <= now && now <= new Date(n.ends_at),
-        );
-        setNotices(active);
-      })
-      .catch(() => {})
-      .finally(() => setHiddenIds(getHiddenIds()));
-  }, [locale]);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- localStorage는 브라우저에서만 읽을 수 있어 hydration 이후 1회 동기화
+    setHiddenIds(getHiddenIds());
+  }, []);
 
   const items = useMemo<BannerItem[]>(() => {
     const result: BannerItem[] = [];
