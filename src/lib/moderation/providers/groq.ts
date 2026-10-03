@@ -19,7 +19,7 @@ function getGroq() {
 
 async function callGroq(imageBase64: string, mime: string): Promise<CategoryScores> {
   const result = await getGroq().chat.completions.create({
-    model: "meta-llama/llama-4-scout-17b-16e-instruct",
+    model: "qwen/qwen3.8-27b",
     response_format: { type: "json_object" },
     messages: [
       {
@@ -45,7 +45,7 @@ async function callGroq(imageBase64: string, mime: string): Promise<CategoryScor
 }
 
 export const groqProvider: ModerationProvider = {
-  name: "llama-4-scout",
+  name: "qwen3.8-27b",
   async moderate(imageBase64, mime) {
     let lastErr: unknown;
     for (let attempt = 0; attempt < 3; attempt++) {
