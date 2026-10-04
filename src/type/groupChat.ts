@@ -1,6 +1,7 @@
 import type { Tables } from "@/type/supabase";
 import type { SellerInfo } from "@/type/user";
 import type { MeetupTopicKey } from "@/constants/meetupTopics";
+import type { MessageSendStatus } from "@/type/chat/message";
 
 export type GroupChatRoom = Tables<"meetup_chat_rooms">;
 export type GroupMessage = Tables<"meetup_chat_messages">;
@@ -8,6 +9,7 @@ export type GroupMessage = Tables<"meetup_chat_messages">;
 export interface GroupMessageWithSender extends GroupMessage {
   sender: SellerInfo;
   tempId?: number;
+  status?: MessageSendStatus;
 }
 
 export interface MyGroupRoom {
