@@ -68,11 +68,12 @@ export default function MessagingSection({
     setMessages,
   });
 
-  const { handleSend } = useSendMessage({
+  const { handleSend, retryMessage, deleteMessage } = useSendMessage({
     activeChatId,
     postId,
     partner,
     currentUser,
+    messages,
     setMessages,
     recordSend,
     onChatCreated,
@@ -124,6 +125,8 @@ export default function MessagingSection({
         scrollContainerRef={scrollContainerRef}
         onTransactionChange={handleTransactionChange}
         partnerOnline={partnerOnline}
+        onRetry={retryMessage}
+        onDelete={deleteMessage}
       />
       </Profiler>
       {children}

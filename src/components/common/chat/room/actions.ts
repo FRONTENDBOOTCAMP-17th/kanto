@@ -76,6 +76,48 @@ export async function sendMessageAction(params: {
   return result;
 }
 
+/**
+ * 전송 응답이 없을 때, 내 메시지가 이미 서버에 저장됐는지 확인한다(읽기 전용).
+ * excludeIds는 화면에 이미 있는 같은 내용의 내 메시지 id로, 과거 메시지를 오인하지 않기 위해 제외한다.
+ */
+export async function findSavedMessageAction(params: {
+  chatId: number;
+  content: string;
+  since: string;
+  excludeIds: number[];
+}): Promise<{ id: number } | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data: userData } = await supabase
+    .from("users")
+    .select("id")
+    .eq("auth_id", user.id)
+    .single();
+  if (!userData) return null;
+
+  let query = supabase
+    .from("messages")
+    .select("id")
+    .eq("chat_id", params.chatId)
+    .eq("sender_id", userData.id)
+    .eq("type", "text")
+    .eq("content", params.content)
+    .gte("created_at", params.since);
+  if (params.excludeIds.length > 0) {
+    query = query.not("id", "in", `(${params.excludeIds.join(",")})`);
+  }
+
+  const { data } = await query
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  return data;
+}
+
 export async function loadMoreMessagesAction(chatId: number, before: string) {
   const supabase = await createClient();
   return getMessageList(chatId, supabase, before);

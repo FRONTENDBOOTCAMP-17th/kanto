@@ -23,7 +23,36 @@ function toBlob(canvas: HTMLCanvasElement, type: string, quality: number): Promi
 
 export async function optimizeImage(file: File, maxDimension = DEFAULT_MAX_DIMENSION): Promise<File> {
   if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return file;
+  if (!Number.isFinite(maxDimension) || maxDimension < 1) return file;
 
+  if (typeof Worker === "function") {
+    try {
+      const { default: imageCompression } = await import("browser-image-compression");
+      const blob = await imageCompression(file, {
+        maxSizeMB: Number.POSITIVE_INFINITY,
+        maxWidthOrHeight: maxDimension,
+        initialQuality: QUALITY,
+        fileType: "image/webp",
+        alwaysKeepResolution: true,
+        useWebWorker: true,
+        libURL: new URL("/vendor/browser-image-compression.js", window.location.origin).href,
+      });
+      if (blob.size > 0 && (blob.type === "image/webp" || blob.type === "image/jpeg")) {
+        const ext = blob.type === "image/webp" ? "webp" : "jpg";
+        return new File([blob], file.name.replace(/\.[^.]+$/, "") + "." + ext, {
+          type: blob.type,
+          lastModified: file.lastModified,
+        });
+      }
+    } catch (error) {
+      console.warn("[이미지 최적화] 기본 Canvas 처리로 전환", error);
+    }
+  }
+
+  return optimizeOnMainThread(file, maxDimension);
+}
+
+async function optimizeOnMainThread(file: File, maxDimension: number): Promise<File> {
   try {
     const img = await loadImage(file);
     const scale = Math.min(1, maxDimension / Math.max(img.naturalWidth, img.naturalHeight));
