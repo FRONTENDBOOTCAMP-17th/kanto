@@ -157,6 +157,39 @@ export async function postGroupMessage(roomId: number, content: string): Promise
   return data as unknown as GroupMessageWithSender;
 }
 
+/**
+ * 전송 응답이 없을 때, 내 메시지가 이미 서버에 저장됐는지 확인한다(읽기 전용).
+ * excludeIds는 화면에 이미 있는 같은 내용의 내 메시지 id로, 과거 메시지를 오인하지 않기 위해 제외한다.
+ */
+export async function findSavedGroupMessage(
+  roomId: number,
+  content: string,
+  since: string,
+  excludeIds: number[],
+): Promise<{ id: number; created_at: string } | null> {
+  const supabase = await createClient();
+  const sessionUser = await getSessionUser();
+  if (!sessionUser) return null;
+
+  let query = supabase
+    .from("meetup_chat_messages")
+    .select("id, created_at")
+    .eq("room_id", roomId)
+    .eq("sender_id", sessionUser.id)
+    .eq("type", "text")
+    .eq("content", content)
+    .gte("created_at", since);
+  if (excludeIds.length > 0) {
+    query = query.not("id", "in", `(${excludeIds.join(",")})`);
+  }
+
+  const { data } = await query
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  return data;
+}
+
 export async function postSystemMessage(roomId: number, content: string): Promise<void> {
   try {
     const admin = createAdminClient();

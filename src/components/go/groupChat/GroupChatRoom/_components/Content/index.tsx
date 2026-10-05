@@ -87,9 +87,10 @@ export default function Content({
     setShowJumpToLatest,
   });
 
-  const { input, setInput, handleSend } = useGroupSendMessage({
+  const { input, setInput, handleSend, retryMessage, deleteMessage } = useGroupSendMessage({
     roomId,
     currentUser,
+    messages,
     setMessages,
     recordSend,
     onSent: notifyMessageSent,
@@ -107,6 +108,8 @@ export default function Content({
         onNearBottomChange={handleNearBottomChange}
         messagesEndRef={messagesEndRef}
         scrollContainerRef={scrollContainerRef}
+        onRetry={retryMessage}
+        onDelete={deleteMessage}
       />
       {showJumpToLatest && (
         <button

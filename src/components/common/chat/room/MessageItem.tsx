@@ -6,6 +6,7 @@ import type { Transaction } from "@/type/transaction";
 import { formatDateDivider, formatMessageTime } from "@/utils/format";
 import type { Locale } from "@/i18n/config";
 import PaymentCard from "../features/payment/PaymentCard";
+import FailedMessageActions from "./FailedMessageActions";
 import { useExpiryStatus } from "../features/payment/_hooks/useExpiryStatus";
 
 interface Props {
@@ -15,6 +16,8 @@ interface Props {
   showMeta: boolean;
   partnerOnline: boolean;
   onTransactionChange: (transaction: Transaction) => void;
+  onRetry: (tempId: number) => void;
+  onDelete: (tempId: number) => void;
 }
 
 function PaymentAttachmentStatus({ transaction }: { transaction: Transaction }) {
@@ -57,9 +60,15 @@ function MessageItem({
   showMeta,
   partnerOnline,
   onTransactionChange,
+  onRetry,
+  onDelete,
 }: Props) {
+  const t = useTranslations("Chat");
   const locale = useLocale() as Locale;
   const isMine = msg.sender_id === currentUser.id;
+  const tempId = msg.tempId;
+  const isSending = isMine && msg.status === "sending";
+  const isFailed = isMine && msg.status === "failed" && tempId !== undefined;
 
   return (
     // [측정용 임시 코드] memo가 렌더를 건너뛰면 기록되지 않도록 컴포넌트 안쪽에서 측정 (Fragment 자리)
@@ -103,7 +112,7 @@ function MessageItem({
                 isMine
                   ? "bg-teal-500 text-white rounded-tr-sm"
                   : "bg-white text-gray-800 rounded-tl-sm shadow-sm"
-              }`}
+              } ${isSending || isFailed ? "opacity-60" : ""}`}
             >
               {msg.content}
             </div>
@@ -115,6 +124,22 @@ function MessageItem({
             </time>
           </div>
         </div>
+        {isSending && (
+          <span className="flex items-center gap-1 text-xs md:text-[10px] text-gray-400">
+            <span className="size-3 animate-spin rounded-full border-2 border-gray-300 border-t-teal-500" />
+            {t("messageSending")}
+          </span>
+        )}
+        {isFailed && (
+          <FailedMessageActions
+            failedLabel={t("messageFailed")}
+            retryLabel={t("messageRetry")}
+            deleteLabel={t("messageDelete")}
+            onRetry={() => onRetry(tempId)}
+            onDelete={() => onDelete(tempId)}
+            textClassName="text-xs md:text-[10px]"
+          />
+        )}
       </div>
       )}
     </Profiler>

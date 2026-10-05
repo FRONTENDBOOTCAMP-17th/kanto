@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { formatMessageTime } from "@/utils/format";
 import type { Locale } from "@/i18n/config";
 import type { GroupMessageWithSender } from "@/type/groupChat";
+import FailedMessageActions from "@/components/common/chat/room/FailedMessageActions";
 import type { SellerInfo } from "@/type/user";
 
 interface Props {
@@ -16,10 +17,12 @@ interface Props {
   onNearBottomChange: (nearBottom: boolean) => void;
   messagesEndRef: RefObject<HTMLDivElement | null>;
   scrollContainerRef: RefObject<HTMLDivElement | null>;
+  onRetry: (tempId: number) => void;
+  onDelete: (tempId: number) => void;
 }
 
 export default function GroupMessageList({
-  messages,
+  messages: allMessages,
   currentUser,
   hasMore,
   isLoadingMore,
@@ -27,9 +30,16 @@ export default function GroupMessageList({
   onNearBottomChange,
   messagesEndRef,
   scrollContainerRef,
+  onRetry,
+  onDelete,
 }: Props) {
   const t = useTranslations("Go.chat");
   const locale = useLocale() as Locale;
+  // 전송 실패한 메시지는 항상 맨 아래에 고정해 사용자가 놓치지 않도록 한다.
+  const messages = [
+    ...allMessages.filter((m) => m.status !== "failed"),
+    ...allMessages.filter((m) => m.status === "failed"),
+  ];
 
   const minuteKey = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -84,6 +94,10 @@ export default function GroupMessageList({
           );
         }
 
+        const tempId = msg.tempId;
+        const isSending = isMine && msg.status === "sending";
+        const isFailed = isMine && msg.status === "failed" && tempId !== undefined;
+
         return (
           <div
             key={msg.id}
@@ -103,7 +117,7 @@ export default function GroupMessageList({
                   isMine
                     ? "bg-teal-500 text-white rounded-tr-sm"
                     : "bg-white text-gray-800 rounded-tl-sm shadow-sm"
-                }`}
+                } ${isSending || isFailed ? "opacity-60" : ""}`}
               >
                 {msg.content}
               </div>
@@ -114,6 +128,21 @@ export default function GroupMessageList({
                 {formatMessageTime(msg.created_at, locale)}
               </time>
             </div>
+            {isSending && (
+              <span className="flex items-center gap-1 text-xs text-gray-400">
+                <span className="size-3 animate-spin rounded-full border-2 border-gray-300 border-t-teal-500" />
+                {t("messageSending")}
+              </span>
+            )}
+            {isFailed && (
+              <FailedMessageActions
+                failedLabel={t("messageFailed")}
+                retryLabel={t("messageRetry")}
+                deleteLabel={t("messageDelete")}
+                onRetry={() => onRetry(tempId)}
+                onDelete={() => onDelete(tempId)}
+              />
+            )}
           </div>
         );
       })}

@@ -15,10 +15,12 @@ interface Props {
   scrollContainerRef: RefObject<HTMLDivElement | null>;
   onTransactionChange: (transaction: Transaction) => void;
   partnerOnline: boolean;
+  onRetry: (tempId: number) => void;
+  onDelete: (tempId: number) => void;
 }
 
 export default function MessageList({
-  messages,
+  messages: allMessages,
   currentUser,
   hasMore,
   isLoadingMore,
@@ -27,8 +29,15 @@ export default function MessageList({
   scrollContainerRef,
   onTransactionChange,
   partnerOnline,
+  onRetry,
+  onDelete,
 }: Props) {
   const t = useTranslations("Chat");
+  // 전송 실패한 메시지는 항상 맨 아래에 고정해 사용자가 놓치지 않도록 한다.
+  const messages = [
+    ...allMessages.filter((m) => m.status !== "failed"),
+    ...allMessages.filter((m) => m.status === "failed"),
+  ];
   const minuteKey = (dateStr: string) => {
     const date = new Date(dateStr);
     date.setSeconds(0, 0);
@@ -74,6 +83,8 @@ export default function MessageList({
             showMeta={showMeta}
             partnerOnline={partnerOnline}
             onTransactionChange={onTransactionChange}
+            onRetry={onRetry}
+            onDelete={onDelete}
           />
         );
       })}
