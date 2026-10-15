@@ -9,14 +9,9 @@ interface Props {
   deleteLabel: string;
   onRetry: () => void;
   onDelete: () => void;
-  /** "전송 실패" 글자 크기 */
-  textClassName?: string;
 }
 
-/**
- * 전송 실패 표시와 재전송·삭제.
- * 데스크탑은 `[↻][🗑] 전송 실패`, 모바일은 `전송 실패 [!]`이며 `!`를 탭하면 선택 메뉴가 열린다.
- */
+/** 데스크탑(md 이상): 시간 자리에 `전송 실패 [↻][✕]`를 표시한다. */
 export default function FailedMessageActions({
   failedLabel,
   retryLabel,
@@ -24,6 +19,39 @@ export default function FailedMessageActions({
   onRetry,
   onDelete,
   textClassName = "text-xs",
+}: Props & { textClassName?: string }) {
+  return (
+    <div className="hidden items-center gap-1 md:flex">
+      <span className={`text-red-500 ${textClassName}`}>{failedLabel}</span>
+      <button
+        type="button"
+        onClick={onRetry}
+        aria-label={retryLabel}
+        title={retryLabel}
+        className="cursor-pointer rounded-full p-1 text-gray-500 hover:bg-gray-100"
+      >
+        <RotateCw className="size-3" />
+      </button>
+      <button
+        type="button"
+        onClick={onDelete}
+        aria-label={deleteLabel}
+        title={deleteLabel}
+        className="-ml-1 cursor-pointer rounded-full p-1 text-gray-500 hover:bg-gray-100"
+      >
+        <X className="size-3" />
+      </button>
+    </div>
+  );
+}
+
+/** 모바일: 시간 자리에 `전송 실패 [!]`를 한 줄로 표시하고, 탭하면 재전송·삭제 메뉴가 열린다. */
+export function FailedMessageBadge({
+  failedLabel,
+  retryLabel,
+  deleteLabel,
+  onRetry,
+  onDelete,
 }: Props) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -38,41 +66,20 @@ export default function FailedMessageActions({
   }, [open]);
 
   return (
-    <div ref={rootRef} className="relative flex items-center gap-1">
-      <div className="order-1 hidden items-center gap-1 md:flex">
-        <button
-          type="button"
-          onClick={onRetry}
-          aria-label={retryLabel}
-          title={retryLabel}
-          className="cursor-pointer rounded-full p-1 text-gray-500 hover:bg-gray-100"
-        >
-          <RotateCw className="size-4" />
-        </button>
-        <button
-          type="button"
-          onClick={onDelete}
-          aria-label={deleteLabel}
-          title={deleteLabel}
-          className="cursor-pointer rounded-full p-1 text-gray-500 hover:bg-gray-100"
-        >
-          <X className="size-4" />
-        </button>
-      </div>
-
-      <span className={`order-2 text-red-500 ${textClassName}`}>{failedLabel}</span>
-
+    <div ref={rootRef} className="relative md:hidden">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-label={failedLabel}
         aria-expanded={open}
-        className="order-3 -my-2.5 flex size-10 cursor-pointer items-center justify-center md:hidden"
+        className="flex min-h-10 cursor-pointer items-end px-1"
       >
-        <CircleAlert className="size-5 text-red-500" />
+        <span className="flex items-center gap-1">
+          <span className="text-[11px] leading-none text-red-500">{failedLabel}</span>
+          <CircleAlert className="size-4 text-red-500" />
+        </span>
       </button>
       {open && (
-        <div className="absolute bottom-full right-0 z-10 mb-1 w-28 overflow-hidden rounded-xl border border-gray-200 bg-white text-sm shadow-lg md:hidden">
+        <div className="absolute bottom-full left-0 z-10 mb-1 w-28 overflow-hidden rounded-xl border border-gray-200 bg-white text-sm shadow-lg">
           <button
             type="button"
             onClick={() => {

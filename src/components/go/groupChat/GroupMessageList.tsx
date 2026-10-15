@@ -5,7 +5,9 @@ import { useLocale, useTranslations } from "next-intl";
 import { formatMessageTime } from "@/utils/format";
 import type { Locale } from "@/i18n/config";
 import type { GroupMessageWithSender } from "@/type/groupChat";
-import FailedMessageActions from "@/components/common/chat/room/FailedMessageActions";
+import FailedMessageActions, {
+  FailedMessageBadge,
+} from "@/components/common/chat/room/FailedMessageActions";
 import type { SellerInfo } from "@/type/user";
 
 interface Props {
@@ -121,28 +123,40 @@ export default function GroupMessageList({
               >
                 {msg.content}
               </div>
+              {isFailed && (
+                <>
+                  <FailedMessageBadge
+                    failedLabel={t("messageFailed")}
+                    retryLabel={t("messageRetry")}
+                    deleteLabel={t("messageDelete")}
+                    onRetry={() => onRetry(tempId)}
+                    onDelete={() => onDelete(tempId)}
+                  />
+                  <FailedMessageActions
+                    failedLabel={t("messageFailed")}
+                    retryLabel={t("messageRetry")}
+                    deleteLabel={t("messageDelete")}
+                    onRetry={() => onRetry(tempId)}
+                    onDelete={() => onDelete(tempId)}
+                    textClassName="text-[11px]"
+                  />
+                </>
+              )}
+              {isSending && (
+                <span className="flex min-h-10 items-end px-1 md:min-h-0 md:px-0">
+                  <span className="flex items-center gap-1 text-[11px] leading-none text-gray-400">
+                    {t("messageSending")}
+                    <span className="size-4 animate-spin motion-reduce:animate-none rounded-full border-2 border-gray-300 border-t-teal-500" />
+                  </span>
+                </span>
+              )}
               <time
                 dateTime={msg.created_at}
-                className={`shrink-0 text-xs text-gray-400 ${showTime ? "" : "invisible"}`}
+                className={`shrink-0 text-xs text-gray-400 ${showTime || isFailed || isSending ? "" : "invisible"} ${isFailed || isSending ? "hidden" : ""}`}
               >
                 {formatMessageTime(msg.created_at, locale)}
               </time>
             </div>
-            {isSending && (
-              <span className="flex items-center gap-1 text-xs text-gray-400">
-                <span className="size-3 animate-spin rounded-full border-2 border-gray-300 border-t-teal-500" />
-                {t("messageSending")}
-              </span>
-            )}
-            {isFailed && (
-              <FailedMessageActions
-                failedLabel={t("messageFailed")}
-                retryLabel={t("messageRetry")}
-                deleteLabel={t("messageDelete")}
-                onRetry={() => onRetry(tempId)}
-                onDelete={() => onDelete(tempId)}
-              />
-            )}
           </div>
         );
       })}

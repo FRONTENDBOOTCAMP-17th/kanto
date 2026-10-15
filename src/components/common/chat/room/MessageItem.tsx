@@ -6,7 +6,7 @@ import type { Transaction } from "@/type/transaction";
 import { formatDateDivider, formatMessageTime } from "@/utils/format";
 import type { Locale } from "@/i18n/config";
 import PaymentCard from "../features/payment/PaymentCard";
-import FailedMessageActions from "./FailedMessageActions";
+import FailedMessageActions, { FailedMessageBadge } from "./FailedMessageActions";
 import { useExpiryStatus } from "../features/payment/_hooks/useExpiryStatus";
 
 interface Props {
@@ -117,29 +117,45 @@ function MessageItem({
               {msg.content}
             </div>
           )}
-          <div className={`flex flex-col shrink-0 ${isMine ? "items-end" : "items-start"} ${showMeta ? "" : "invisible"}`}>
-            {isMine && !msg.is_read && <UnreadMark partnerOnline={partnerOnline} />}
-            <time dateTime={msg.created_at} className="text-xs md:text-[10px] text-gray-400">
+          <div className={`flex flex-col shrink-0 ${isMine ? "items-end" : "items-start"} ${showMeta || isFailed || isSending ? "" : "invisible"}`}>
+            {isMine && !msg.is_read && !isSending && !isFailed && (
+              <UnreadMark partnerOnline={partnerOnline} />
+            )}
+            {isFailed && (
+              <>
+                <FailedMessageBadge
+                  failedLabel={t("messageFailed")}
+                  retryLabel={t("messageRetry")}
+                  deleteLabel={t("messageDelete")}
+                  onRetry={() => onRetry(tempId)}
+                  onDelete={() => onDelete(tempId)}
+                />
+                <FailedMessageActions
+                  failedLabel={t("messageFailed")}
+                  retryLabel={t("messageRetry")}
+                  deleteLabel={t("messageDelete")}
+                  onRetry={() => onRetry(tempId)}
+                  onDelete={() => onDelete(tempId)}
+                  textClassName="text-[10px]"
+                />
+              </>
+            )}
+            {isSending && (
+              <span className="flex min-h-10 items-end px-1 md:min-h-0 md:px-0">
+                <span className="flex items-center gap-1 text-[11px] leading-none text-gray-400 md:text-[10px]">
+                  {t("messageSending")}
+                  <span className="size-4 animate-spin motion-reduce:animate-none rounded-full border-2 border-gray-300 border-t-teal-500" />
+                </span>
+              </span>
+            )}
+            <time
+              dateTime={msg.created_at}
+              className={`text-xs md:text-[10px] text-gray-400 ${isFailed || isSending ? "hidden" : ""}`}
+            >
               {formatMessageTime(msg.created_at, locale)}
             </time>
           </div>
         </div>
-        {isSending && (
-          <span className="flex items-center gap-1 text-xs md:text-[10px] text-gray-400">
-            <span className="size-3 animate-spin rounded-full border-2 border-gray-300 border-t-teal-500" />
-            {t("messageSending")}
-          </span>
-        )}
-        {isFailed && (
-          <FailedMessageActions
-            failedLabel={t("messageFailed")}
-            retryLabel={t("messageRetry")}
-            deleteLabel={t("messageDelete")}
-            onRetry={() => onRetry(tempId)}
-            onDelete={() => onDelete(tempId)}
-            textClassName="text-xs md:text-[10px]"
-          />
-        )}
       </div>
       )}
     </Profiler>
