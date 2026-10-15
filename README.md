@@ -1,3 +1,6 @@
+> 크롤러·스크래퍼 봇 트래픽 문제로 배포 주소를 **[https://kanto-pi.vercel.app](https://kanto-pi.vercel.app)** 로 이전했습니다.
+> 11/12까지 점검 예정입니다.
+
 # Kanto
 
 > 필리핀 생활 필수 플랫폼 — 중고거래·구인구직·부동산을 한 곳에서
@@ -6,10 +9,10 @@
 
 | 항목          | URL                                                                                       |
 | ------------- | ----------------------------------------------------------------------------------------- |
-| 라이브 데모   | [https://kanto-iota.vercel.app](https://kanto-iota.vercel.app)                            |
+| 라이브 데모   | [https://kanto-pi.vercel.app](https://kanto-pi.vercel.app)                            |
 | 프로젝트 노션 | [Notion 기획 문서](https://app.notion.com/p/1-it-s-real-36e73873401a8099b037f045e2d2c9eb) |
 
-> 테스트 계정 — ID: `asdf1234@naver.com` / PW: `asdf1234`
+> 테스트 계정 — ID: `test1234@naver.com` / PW: `test1234`
 
 ---
 
