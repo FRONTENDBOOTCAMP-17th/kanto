@@ -37,42 +37,14 @@ Kanto는 필리핀어로 "우리 동네"라는 뜻입니다. 여러 채널에 �
 
 ## 주요 기능
 
-<table>
-  <tr>
-    <td align="center" width="50%"><img src="public/readme/gif/main.gif" width="400" alt="메인 피드" /></td>
-    <td align="center" width="50%"><img src="public/readme/gif/usedgoods.gif" width="400" alt="중고거래" /></td>
-  </tr>
-  <tr>
-    <td><b>메인 피드</b><br>검색, 히어로 배너, 카테고리별 인기 목록</td>
-    <td><b>중고거래</b><br>상품 등록·카테고리 필터, AI 이미지 검수, 관련 매물 추천</td>
-  </tr>
-  <tr>
-    <td align="center"><img src="public/readme/gif/job.gif" width="400" alt="구인구직" /></td>
-    <td align="center"><img src="public/readme/gif/rental.gif" width="400" alt="부동산" /></td>
-  </tr>
-  <tr>
-    <td><b>구인구직</b><br>2단계 공고 등록, 고용 형태·지역 필터, 마감일 D-N 배지</td>
-    <td><b>부동산</b><br>방 타입·편의시설 태그, Google Maps 위치 검색, 이미지 캐러셀</td>
-  </tr>
-  <tr>
-    <td align="center"><img src="public/readme/gif/go.gif" width="400" alt="칸토고" /></td>
-    <td align="center"><img src="public/readme/gif/chat-payment.gif" width="400" alt="채팅과 안전결제" /></td>
-  </tr>
-  <tr>
-    <td><b>칸토고 (번개모임)</b><br>지도에 모임 핀을 꽂고 참여, 실시간 그룹 채팅</td>
-    <td><b>채팅 · 안전결제</b><br>판매자와 1:1 실시간 채팅, 채팅 안에서 Xendit 에스크로 결제</td>
-  </tr>
-  <tr>
-    <td align="center"><img src="public/readme/gif/i18n.gif" width="400" alt="다국어 전환" /></td>
-    <td align="center"><img src="public/readme/gif/admin.gif" width="400" alt="관리자 대시보드" /></td>
-  </tr>
-  <tr>
-    <td><b>다국어 지원</b><br>한국어 · 영어 · 필리핀어 전환</td>
-    <td><b>관리자 대시보드</b><br>KPI 통계, 사용자·게시글·신고·결제 관리</td>
-  </tr>
-</table>
-
-이 밖에 거래 후기, 알림, 신고·제재 기능이 있습니다.
+| 기능 | 설명 |
+| --- | --- |
+| 메인 피드 | 통합 검색, 히어로 배너, 카테고리별 인기 목록 |
+| 중고거래 · 구인구직 · 부동산 | 카테고리·지역 필터, AI 이미지 검수, 마감일 D-N 배지, Google Maps 위치 검색 |
+| 칸토고 (번개모임) | 지도에 모임 핀을 꽂고 참여, 실시간 그룹 채팅 |
+| 채팅 · 안전결제 | 1:1 실시간 채팅, 채팅 안에서 Xendit 에스크로 결제 |
+| 다국어 | 한국어 · 영어 · 필리핀어 전환 |
+| 관리자 | KPI 대시보드, 사용자·게시글·신고·결제 관리 |
 
 ---
 
