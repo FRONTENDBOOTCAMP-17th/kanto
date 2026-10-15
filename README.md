@@ -5,6 +5,8 @@
 
 > 필리핀 생활 필수 플랫폼 — 중고거래·구인구직·부동산을 한 곳에서
 
+https://github.com/user-attachments/assets/bd780fbb-d23b-4103-87f6-92fc144d4d6b
+
 ## 🔗 링크
 
 | 항목          | URL                                                                                       |
