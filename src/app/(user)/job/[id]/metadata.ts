@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { createClient } from "@/utils/supabase/server";
+import { getJobDetail } from "@/services/job/jobDetail";
 import { resolvePostId, encryptPostId } from "@/utils/postIdCipher";
 
 export async function generateMetadata({
@@ -11,17 +11,14 @@ export async function generateMetadata({
   const postId = resolvePostId(id);
   if (postId === null) return { title: "게시글을 찾을 수 없습니다", robots: { index: false } };
 
-  const supabase = await createClient();
+  let data;
+  try {
+    data = await getJobDetail(postId);
+  } catch {
+    return { title: "게시글을 찾을 수 없습니다", robots: { index: false } };
+  }
 
-  const { data } = await supabase
-    .from("jobs")
-    .select("main_task, images, posts!inner(title)")
-    .eq("post_id", postId)
-    .single();
-
-  if (!data) return { title: "게시글을 찾을 수 없습니다", robots: { index: false } };
-
-  const title = (data.posts as { title: string }).title;
+  const title = data.posts.title;
   const ogImage = (data.images as string[] | null)?.[0] ?? "/kantoLogo.png";
 
   return {
