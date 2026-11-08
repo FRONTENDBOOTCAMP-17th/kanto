@@ -2,12 +2,11 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { Link, useRouter, usePathname } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/authStore";
-import { useAuthInit, MANUAL_SIGNOUT_KEY } from "@/hooks/useAuthInit";
+import { MANUAL_SIGNOUT_KEY } from "@/hooks/useAuthInit";
 import {
   Menu,
   User,
@@ -28,10 +27,8 @@ import { ConfirmModal } from "@/components/common/ConfirmModal";
 import Toast from "@/components/common/Toast";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { UnifiedBanner, noticeShownInHeader } from "@/components/common/UnifiedBanner";
-import type { PublicNotice } from "@/services/admin/adminNotices";
 import { NotificationBell } from "./header/NotificationBell";
 import type { NotificationBellHandle } from "./header/NotificationBell";
-import type { User as AppUser } from "@/type/user";
 import { useTranslations } from "next-intl";
 import { useSuspended } from "@/hooks/useSuspended";
 import { useScrollContainer } from "@/contexts/ScrollContext";
@@ -47,18 +44,13 @@ const NAV_ITEMS = [
   { key: "go", icon: MapPin, href: ROUTES.go },
 ] as const;
 
-export function Header({
-  initialUser,
-  initialNotices,
-}: {
-  initialUser: AppUser | null;
-  initialNotices: PublicNotice[];
-}) {
+export function Header({ kickedOut }: { kickedOut: boolean }) {
   const t = useTranslations("Header");
   const router = useRouter();
-  const user = useAuthStore((s) => s.user) ?? initialUser;
+  const user = useAuthStore((s) => s.user);
+  // 세션 확인 전에는 로그인 버튼을 보여주지 않아 로그인 사용자에게 잘못된 상태가 깜빡이지 않게 한다
+  const authReady = useAuthStore((s) => s.authReady);
   const clearUser = useAuthStore((s) => s.clearUser);
-  const { kickedOut } = useAuthInit();
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -168,10 +160,10 @@ export function Header({
           <div className="flex items-center shrink-0">
             
             {pathname.startsWith("/go") ? (
-              <GoNoticeIcon initialNotices={initialNotices} />
+              <GoNoticeIcon />
             ) : noticeShownInHeader(pathname) ? (
               <div className="md:hidden">
-                <GoNoticeIcon initialNotices={initialNotices} />
+                <GoNoticeIcon />
               </div>
             ) : null}
             <LanguageSwitcher />
@@ -259,13 +251,15 @@ export function Header({
                   </div>
                 )}
               </div>
-            ) : (
+            ) : authReady ? (
               <Button
                 className="hidden md:flex bg-teal-500 hover:bg-teal-600 text-white"
                 onClick={() => router.push(ROUTES.login)}
               >
                 {t("login")}
               </Button>
+            ) : (
+              <div className="hidden md:block w-12 h-12" aria-hidden="true" />
             )}
 
             
@@ -385,7 +379,7 @@ export function Header({
           </div>
         )}
       </div>
-      <UnifiedBanner initialNotices={initialNotices} />
+      <UnifiedBanner />
       <LoginRequiredModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <ConfirmModal
         isOpen={isLogoutModalOpen}

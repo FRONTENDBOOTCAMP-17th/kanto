@@ -1,4 +1,6 @@
+import { cache } from "react";
 import { createClient } from "@/utils/supabase/server";
+import { createPublicClient, type PublicSupabaseClient } from "@/utils/supabase/public";
 import type { UsedGoodsWithPost, ProductCondition } from "@/type/usedGoods";
 import type { TradeLocation } from "@/type/location";
 import { encryptPostId } from "@/utils/postIdCipher";
@@ -161,8 +163,8 @@ export async function getUsedGoodsDetail(
   return data as unknown as UsedGoodsWithPost;
 }
 
-export async function getUsedGoodsItem(postId: number) {
-  const supabase = await createClient();
+export async function getUsedGoodsItem(postId: number, client?: PublicSupabaseClient) {
+  const supabase = client ?? (await createClient());
 
   const { data } = await supabase
     .from("used_goods")
@@ -173,6 +175,11 @@ export async function getUsedGoodsItem(postId: number) {
 
   return data;
 }
+
+// 상세 페이지(ISR)·generateMetadata 공용: 쿠키 없이 조회하고 같은 렌더 안에서는 한 번만 조회한다.
+export const getPublicUsedGoodsItem = cache((postId: number) =>
+  getUsedGoodsItem(postId, createPublicClient()),
+);
 
 export async function getUsedGoodsBarangays(): Promise<Record<string, string[]>> {
   const supabase = await createClient();

@@ -1,11 +1,15 @@
 import { cache } from "react";
 import { createClient } from "@/utils/supabase/server";
+import { createPublicClient, type PublicSupabaseClient } from "@/utils/supabase/public";
 import type { JobDetail } from "@/type/job/jobsDetail";
 
 const JOB_DETAIL_SELECT = `*, posts(*, users:public_profiles!posts_user_id_fkey(id, name, avatar_url, auth_id, created_at))` as const;
 
-export const getJobDetail = cache(async (postId: number): Promise<JobDetail> => {
-  const supabase = await createClient();
+export async function getJobDetail(
+  postId: number,
+  client?: PublicSupabaseClient,
+): Promise<JobDetail> {
+  const supabase = client ?? (await createClient());
 
   const { data, error } = await supabase
     .from("jobs")
@@ -21,4 +25,9 @@ export const getJobDetail = cache(async (postId: number): Promise<JobDetail> => 
   }
 
   return data as unknown as JobDetail;
-});
+}
+
+// 상세 페이지(ISR)·generateMetadata 공용: 쿠키 없이 조회하고 같은 렌더 안에서는 한 번만 조회한다.
+export const getPublicJobDetail = cache((postId: number) =>
+  getJobDetail(postId, createPublicClient()),
+);

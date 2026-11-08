@@ -20,17 +20,11 @@ import ChatBubbleButton from "./ChatBubbleButton";
 import ChatList from "../list/ChatList";
 import ChatRoom from "../room/ChatRoom";
 import GroupChatRoom from "@/components/go/groupChat/GroupChatRoom";
-import type { User } from "@/type/user";
 
-export default function FloatingChatWidget({
-  initialUser,
-}: {
-  initialUser: User | null;
-}) {
+export default function FloatingChatWidget() {
   const t = useTranslations("Chat");
 
-  const storeUser = useAuthStore((s) => s.user);
-  const authUser = storeUser ?? initialUser;
+  const authUser = useAuthStore((s) => s.user);
   const isLoggedIn = !!authUser;
   const { isSuspended, openModal } = useSuspended();
 

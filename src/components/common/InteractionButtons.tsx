@@ -7,15 +7,13 @@ import { Button } from "@/components/ui/button";
 import { toggleLike } from "@/services/likeToggle";
 import { useAuthStore } from "@/store/authStore";
 import { useSuspended } from "@/hooks/useSuspended";
+import { useViewerPostStatus } from "@/hooks/useViewerPostStatus";
 import Toast from "@/components/common/Toast";
 import ReportModal, { POST_REPORT_CATEGORIES } from "@/components/common/ReportModal";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
 
 interface InteractionButtonsProps {
   postId: number;
-  userId: number | undefined;
-  initialLiked: boolean;
-  initialReported: boolean;
   onLikeChange?: (liked: boolean) => void;
   size?: "sm" | "lg";
   className?: string;
@@ -23,9 +21,6 @@ interface InteractionButtonsProps {
 
 export default function InteractionButtons({
   postId,
-  userId,
-  initialLiked,
-  initialReported,
   onLikeChange,
   size = "lg",
   className = "",
@@ -34,8 +29,14 @@ export default function InteractionButtons({
   const tr = useTranslations("Report");
   const { user: storeUser } = useAuthStore();
   const { isSuspended, openModal } = useSuspended();
-  const [isLiked, setIsLiked] = useState(initialLiked);
-  const [isReported, setIsReported] = useState(initialReported);
+  // 상세 페이지가 정적(ISR)이라 좋아요·신고 여부는 클라이언트에서 조회하고, 사용자 조작은 override로 덮는다
+  const viewer = useViewerPostStatus(postId);
+  const userId = viewer.userId;
+  const initialReported = viewer.reported;
+  const [likedOverride, setIsLiked] = useState<boolean | null>(null);
+  const [reportedOverride, setIsReported] = useState<boolean | null>(null);
+  const isLiked = likedOverride ?? viewer.liked;
+  const isReported = reportedOverride ?? viewer.reported;
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
@@ -58,6 +59,7 @@ export default function InteractionButtons({
   };
 
   const handleLike = async () => {
+    if (!viewer.authReady) return;
     if (!userId) {
       setShowLoginModal(true);
       return;
@@ -110,6 +112,7 @@ export default function InteractionButtons({
           size={size === "sm" ? "icon-sm" : "icon-lg"}
           aria-label={t("report")}
           onClick={() => {
+            if (!viewer.authReady) return;
             if (!userId) { setShowLoginModal(true); return; }
             if (isSuspended) { openModal(); return; }
             if (isReported) {

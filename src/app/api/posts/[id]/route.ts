@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { revalidatePostPages } from "@/services/revalidatePost";
 
 export async function DELETE(
   _req: Request,
@@ -53,5 +54,6 @@ export async function DELETE(
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  revalidatePostPages(post.post_type);
   return NextResponse.json({ success: true });
 }

@@ -1,4 +1,6 @@
+import { cache } from "react";
 import { createClient } from "@/utils/supabase/server";
+import { createPublicClient, type PublicSupabaseClient } from "@/utils/supabase/public";
 import type { RentalWithPost } from "@/type/rental/rentalList";
 import type { RentalWithPost as RentalDetail } from "@/type/rental/rentalDetail";
 import type { Pagination, PagedResult } from "@/services/usedGoods/usedGoods";
@@ -14,8 +16,11 @@ const RENTAL_LIST_SELECT = `
   users:public_profiles!posts_user_id_fkey(id, name, avatar_url, created_at)
 ` as const;
 
-export async function getRentalDetail(postId: number): Promise<RentalDetail> {
-  const supabase = await createClient();
+export async function getRentalDetail(
+  postId: number,
+  client?: PublicSupabaseClient,
+): Promise<RentalDetail> {
+  const supabase = client ?? (await createClient());
 
   const { data, error } = await supabase
     .from("rentals")
@@ -32,6 +37,11 @@ export async function getRentalDetail(postId: number): Promise<RentalDetail> {
 
   return data as unknown as RentalDetail;
 }
+
+// 상세 페이지(ISR)·generateMetadata 공용: 쿠키 없이 조회하고 같은 렌더 안에서는 한 번만 조회한다.
+export const getPublicRentalDetail = cache((postId: number) =>
+  getRentalDetail(postId, createPublicClient()),
+);
 
 interface RentalListFilter {
   search?: string;

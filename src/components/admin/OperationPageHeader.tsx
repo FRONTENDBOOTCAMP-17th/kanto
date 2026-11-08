@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ChevronLeft, type LucideIcon } from "lucide-react";
 
 export function OperationPageHeader({

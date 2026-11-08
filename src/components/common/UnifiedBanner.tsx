@@ -9,7 +9,7 @@ import {
   ChevronRight,
   X,
 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { useGoUiStore } from "@/store/goUiStore";
 import { useTranslations, useLocale } from "next-intl";
@@ -51,7 +51,7 @@ function saveHideToday(noticeId: number) {
   } catch {}
 }
 
-export function UnifiedBanner({ initialNotices }: { initialNotices: Notice[] }) {
+export function UnifiedBanner() {
   const pathname = usePathname();
   const { user } = useAuthStore();
   const t = useTranslations("Common");
@@ -61,7 +61,7 @@ export function UnifiedBanner({ initialNotices }: { initialNotices: Notice[] }) 
   const goDetailOpen = useGoUiStore((s) => s.detailOpen);
   const goListOpen = useGoUiStore((s) => s.listOpen);
 
-  const notices = useActiveNotices(initialNotices);
+  const notices = useActiveNotices();
   const [dismissedIds, setDismissedIds] = useState<number[]>([]);
   const [hideTodayChecked, setHideTodayChecked] = useState(false);
 

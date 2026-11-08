@@ -19,7 +19,7 @@ const USER_COLUMNS =
   "id, name, email, phone, region, auth_id, avatar_url, provider, role, post_count, kts_score, kts_grade, bank_code, bank_account_number, bank_account_name, created_at, updated_at, deleted_at, suspended_until";
 
 export function useAuthInit() {
-  const { setUser, clearUser } = useAuthStore();
+  const { setUser, clearUser, setAuthReady } = useAuthStore();
   const userId = useAuthStore((s) => s.user?.id);
   const [kickedOut, setKickedOut] = useState(false);
   const [activeSession, setActiveSession] = useState<{
@@ -32,6 +32,7 @@ export function useAuthInit() {
       async (event, session) => {
         if (event === "SIGNED_OUT") {
           clearUser();
+          setAuthReady();
           setActiveSession(null);
           if (localStorage.getItem(MANUAL_SIGNOUT_KEY)) {
             localStorage.removeItem(MANUAL_SIGNOUT_KEY);
@@ -41,7 +42,10 @@ export function useAuthInit() {
           }
           return;
         }
-        if (!session) return;
+        if (!session) {
+          setAuthReady();
+          return;
+        }
 
         const sessionId = getSessionId(session.access_token);
         if (sessionId) {
@@ -58,10 +62,11 @@ export function useAuthInit() {
           .eq("auth_id", session.user.id)
           .single();
         if (userData) setUser(userData as User);
+        setAuthReady();
       },
     );
     return () => authListener.subscription.unsubscribe();
-  }, [setUser, clearUser]);
+  }, [setUser, clearUser, setAuthReady]);
 
   useEffect(() => {
     if (!activeSession) return;

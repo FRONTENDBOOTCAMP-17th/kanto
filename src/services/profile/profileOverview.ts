@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { getReviewsForUser } from "@/services/review/review";
 import type { AlertSettings } from "@/hooks/profile/useAlertSettings";
-import type { MeetupSummary } from "@/app/(user)/profile/_components/sections/ProfileMeetingsSection";
+import type { MeetupSummary } from "@/app/[locale]/(user)/profile/_components/sections/ProfileMeetingsSection";
 import { encryptPostId } from "@/utils/postIdCipher";
 import { redirect } from "next/navigation";
 import type { UserIdentity } from "@supabase/supabase-js";

@@ -2,7 +2,7 @@
 import { useAuthStore } from "@/store/authStore";
 import { useSuspended } from "@/hooks/useSuspended";
 import { ChevronUp, Plus } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useScrollContainer } from "@/contexts/ScrollContext";
