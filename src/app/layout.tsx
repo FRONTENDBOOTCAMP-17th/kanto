@@ -8,6 +8,8 @@ import { WebVitalsReporter } from "@/components/common/WebVitalsReporter";
 import { getSessionUser } from "@/services/user/user";
 import { getActivePublicNotices } from "@/services/admin/adminNotices";
 import { BCP47_LOCALE, type Locale } from "@/i18n/config";
+import { GLOBAL_CLIENT_NAMESPACES } from "@/i18n/clientNamespaces";
+import { pickMessages } from "@/i18n/pickMessages";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -110,7 +112,7 @@ export default async function RootLayout({
           }}
         />
         <WebVitalsReporter />
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider messages={pickMessages(messages, GLOBAL_CLIENT_NAMESPACES)}>
           <Providers>
             <GlobalLayout initialUser={initialUser} initialNotices={initialNotices}>
               {children}

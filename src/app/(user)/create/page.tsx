@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { CreatePageClient } from "./_components/CreatePageClient";
+import { ScopedIntlProvider } from "@/i18n/ScopedIntlProvider";
 
 export default async function CreatePage() {
   const supabase = await createClient();
@@ -12,5 +13,9 @@ export default async function CreatePage() {
 
   const initialIsVerified = user.user_metadata?.identity_verified === true;
 
-  return <CreatePageClient initialIsVerified={initialIsVerified} />;
+  return (
+    <ScopedIntlProvider segment="create">
+      <CreatePageClient initialIsVerified={initialIsVerified} />
+    </ScopedIntlProvider>
+  );
 }
