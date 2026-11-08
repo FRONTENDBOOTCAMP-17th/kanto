@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import type { PublicSupabaseClient } from "@/utils/supabase/public";
 import type { JobWithPost } from "@/type/job/jobList";
 import type { Pagination, PagedResult } from "@/services/usedGoods/usedGoods";
 import { encryptPostId } from "@/utils/postIdCipher";
@@ -58,6 +59,8 @@ function applyScalarFilters<Q extends JobFilterQuery<Q>>(
 export async function getJobList(
   filter?: JobListFilter,
   pagination?: Pagination,
+  // 정적 페이지에서 쿠키 없이 조회할 때 createPublicClient()를 넘긴다 (기본 정렬 경로만 해당)
+  client?: PublicSupabaseClient,
 ): Promise<PagedResult<JobWithPost>> {
   if (filter?.sort === "popular") {
     return getJobListByPopular(filter, pagination);
@@ -66,7 +69,7 @@ export async function getJobList(
     return getJobListByDeadline(filter, pagination);
   }
 
-  const supabase = await createClient();
+  const supabase = client ?? (await createClient());
 
   let query = supabase
     .from("posts")

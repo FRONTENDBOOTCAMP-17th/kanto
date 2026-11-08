@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Megaphone, X } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 
 const STORAGE_KEY = "notice_hidden_until";

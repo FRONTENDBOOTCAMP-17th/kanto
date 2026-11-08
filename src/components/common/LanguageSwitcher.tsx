@@ -2,16 +2,16 @@
 
 import { useState, useRef, useEffect, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { Globe, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { locales, type Locale } from "@/i18n/config";
-import { setLocaleCookie } from "@/i18n/cookie";
 
 export function LanguageSwitcher() {
   const t = useTranslations("LanguageSwitcher");
   const activeLocale = useLocale() as Locale;
   const router = useRouter();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const ref = useRef<HTMLDivElement>(null);
@@ -28,9 +28,11 @@ export function LanguageSwitcher() {
   const handleSelect = (locale: Locale) => {
     setIsOpen(false);
     if (locale === activeLocale) return;
-    setLocaleCookie(locale);
+    // 같은 경로의 다른 로케일 URL로 이동한다 (/main ↔ /en/main). NEXT_LOCALE 쿠키는 next-intl이 갱신한다.
+    // (useSearchParams는 정적 렌더링을 막으므로 클릭 시점에 location.search를 읽는다)
+    const query = window.location.search;
     startTransition(() => {
-      router.refresh();
+      router.replace(`${pathname}${query}`, { locale, scroll: false });
     });
   };
 

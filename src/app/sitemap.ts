@@ -3,26 +3,30 @@ import { createAdminClient } from "@/utils/supabase/admin";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL!.replace(/\/$/, "");
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const supabase = createAdminClient();
+// 크롤러가 sitemap을 반복 요청해도 함수 실행·DB 조회가 일어나지 않도록 하루 단위 ISR로 캐시한다.
+export const revalidate = 86400;
 
-  const [usedGoods, rentals, jobs] = await Promise.all([
-    supabase
-      .from("posts")
-      .select("id, updated_at, created_at")
-      .eq("post_type", "used_goods")
-      .eq("status", "active"),
-    supabase
-      .from("posts")
-      .select("id, updated_at, created_at")
-      .eq("post_type", "rental")
-      .eq("status", "active"),
-    supabase
-      .from("posts")
-      .select("id, updated_at, created_at")
-      .eq("post_type", "jobs")
-      .eq("status", "active"),
-  ]);
+type SitemapRow = { id: number; updated_at: string | null; created_at: string };
+
+async function getActivePosts() {
+  try {
+    const supabase = createAdminClient();
+    const query = (postType: "used_goods" | "rental" | "jobs") =>
+      supabase
+        .from("posts")
+        .select("id, updated_at, created_at")
+        .eq("post_type", postType)
+        .eq("status", "active");
+    return await Promise.all([query("used_goods"), query("rental"), query("jobs")]);
+  } catch {
+    // 빌드 환경 등 DB에 접근할 수 없으면 정적 경로만 내보내고, ISR 재생성 때 다시 채운다.
+    const empty = { data: [] as SitemapRow[] };
+    return [empty, empty, empty] as const;
+  }
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [usedGoods, rentals, jobs] = await getActivePosts();
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${BASE_URL}/main`, lastModified: new Date(), priority: 1 },

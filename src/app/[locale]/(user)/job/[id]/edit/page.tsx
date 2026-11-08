@@ -1,0 +1,58 @@
+import { notFound } from "next/navigation";
+import { getJobDetail } from "@/services/job/jobDetail";
+import { CreateJobForm } from "@/app/[locale]/(user)/job/create/_components/CreateJobForm";
+import { resolvePostId } from "@/utils/postIdCipher";
+
+// 로그인 사용자 쿠키를 읽는 화면이므로 항상 동적 렌더링한다.
+// (명시하지 않으면 try/catch로 감싼 cookies() 호출이 빌드 시 정적 렌더링으로 잘못 굳을 수 있다)
+export const dynamic = "force-dynamic";
+
+export default async function EditJobPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const postId = resolvePostId(id);
+  if (postId === null) notFound();
+  const job = await getJobDetail(postId);
+
+  return (
+    <div className="page-wrapper">
+      <CreateJobForm
+        userId={job.posts.users?.id ?? 0}
+        userName={job.posts.users?.name ?? ""}
+        initialData={{
+          post_id: job.post_id,
+          title: job.posts.title,
+          employee_type: job.employee_type,
+          salary: job.salary,
+          salary_type: job.salary_type,
+          location_type: job.location_type,
+          location_custom: job.location_custom,
+          deadline: job.deadline,
+          work_hours: job.work_hours,
+          work_days: job.work_days,
+          is_time_negotiable: job.is_time_negotiable,
+          main_task: job.main_task,
+          preferred: job.preferred,
+          preferred_tags: job.preferred_tags,
+          company_name: job.company_name,
+          company_intro: job.company_intro,
+          industry: job.industry,
+          company_year: job.company_year,
+          employee_count: job.employee_count,
+          company_address: job.company_address,
+          company_lat: job.company_lat,
+          company_lng: job.company_lng,
+          company_website: job.company_website,
+          manager_title: job.manager_title,
+          manager_phone: job.manager_phone,
+          manager_email: job.manager_email,
+          images: job.images as string[] | null,
+          company_logo: job.company_logo,
+        }}
+      />
+    </div>
+  );
+}

@@ -1,7 +1,7 @@
 import { createAdminClient } from "@/utils/supabase/admin";
 import { REPORTS_TABLE, REPORT_STATUS } from "@/constants/report";
-import { POST_TYPE_LABEL } from "@/app/(admin)/admin/_lib/constants";
-import { fillDailyGaps } from "@/app/(admin)/admin/_lib/utils";
+import { POST_TYPE_LABEL } from "@/app/[locale]/(admin)/admin/_lib/constants";
+import { fillDailyGaps } from "@/app/[locale]/(admin)/admin/_lib/utils";
 
 export interface MonitoringStats {
   totalUsers: number;

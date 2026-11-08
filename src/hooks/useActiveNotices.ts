@@ -12,8 +12,8 @@ export interface Notice {
 
 export const ACTIVE_NOTICES_QUERY_KEY = ["notices", "active"] as const;
 
-async function fetchNotices(): Promise<Notice[]> {
-  const res = await fetch("/api/admin/notices");
+async function fetchNotices(locale: string): Promise<Notice[]> {
+  const res = await fetch(`/api/notices/${locale}`);
   if (!res.ok) throw new Error("공지를 불러오지 못했습니다.");
   return res.json();
 }
@@ -23,12 +23,11 @@ function selectActive(notices: Notice[]): Notice[] {
   return notices.filter((n) => new Date(n.starts_at) <= now && now <= new Date(n.ends_at));
 }
 
-export function useActiveNotices(initialNotices: Notice[]): Notice[] {
+export function useActiveNotices(): Notice[] {
   const locale = useLocale();
   const { data = [] } = useQuery({
     queryKey: [...ACTIVE_NOTICES_QUERY_KEY, locale],
-    queryFn: fetchNotices,
-    initialData: initialNotices,
+    queryFn: () => fetchNotices(locale),
     staleTime: 5 * 60 * 1000,
     select: selectActive,
   });
