@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useMemo, useState, type TouchEvent } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { MapPin, ImageIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -21,7 +21,8 @@ export interface ContentCardProps {
   likeCount: number;
   postId: number;
   initialIsLiked: boolean;
-  currentUserId: number | null;
+  // undefined: 로그인 사용자를 서버에서 모르는 정적 페이지 → LikeButton이 클라이언트에서 판별
+  currentUserId: number | null | undefined;
   badge?: React.ReactNode;
   soldOverlay?: boolean;
   soldLabelKey?: "soldOut" | "dealClosed";
@@ -234,7 +235,7 @@ export function ContentCard({
             )}
             <div className="flex items-center justify-between text-xs text-gray-500 mt-auto pt-1">
               <div className="flex items-center gap-1">
-                <time dateTime={createdAt}>{formatTimeAgo(createdAt, locale)}</time>
+                <time dateTime={createdAt} suppressHydrationWarning>{formatTimeAgo(createdAt, locale)}</time>
               </div>
               <div className="flex items-center gap-1">
                 <span>{t("likes")} {count}</span>

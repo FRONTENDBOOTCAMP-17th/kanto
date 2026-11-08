@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { toggleReserveAction, sendReserveSystemMessageAction } from "../../../../../features/reserve/toggleReserveAction";
 
 interface Params {

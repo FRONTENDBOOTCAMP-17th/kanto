@@ -1,0 +1,8 @@
+import { getAdminPosts } from "@/services/admin/adminPosts";
+import AdminPostsClient from "@/app/[locale]/(admin)/admin/posts/_components/AdminPostsClient";
+
+export default async function AdminPostsPage() {
+  const posts = await getAdminPosts();
+
+  return <AdminPostsClient posts={posts} />;
+}

@@ -12,7 +12,7 @@ export interface AdminPost {
   handled_at: string | null;
 }
 
-export { POST_TYPE_LABEL } from "@/app/(admin)/admin/_lib/constants";
+export { POST_TYPE_LABEL } from "@/app/[locale]/(admin)/admin/_lib/constants";
 
 const POST_TYPE_PATH: Record<string, string> = {
   used_goods: "usedgoods",

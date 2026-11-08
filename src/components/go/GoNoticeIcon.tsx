@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { Megaphone, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { useActiveNotices, type Notice } from "@/hooks/useActiveNotices";
+import { useActiveNotices } from "@/hooks/useActiveNotices";
 
 const STORAGE_KEY = "notice_hidden_until";
 
@@ -33,9 +33,9 @@ function saveHideToday(id: number) {
   } catch {}
 }
 
-export function GoNoticeIcon({ initialNotices }: { initialNotices: Notice[] }) {
+export function GoNoticeIcon() {
   const tb = useTranslations("Notice.Banner");
-  const notices = useActiveNotices(initialNotices);
+  const notices = useActiveNotices();
   const [dismissedIds, setDismissedIds] = useState<number[]>([]);
   const [open, setOpen] = useState(false);
   const [idx, setIdx] = useState(0);

@@ -1,0 +1,131 @@
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import { notFound } from "next/navigation";
+import { NextIntlClientProvider, hasLocale } from "next-intl";
+import { getMessages, setRequestLocale } from "next-intl/server";
+import { GlobalLayout } from "@/components/common/GlobalLayout";
+import { Providers } from "@/components/common/Providers";
+import { WebVitalsReporter } from "@/components/common/WebVitalsReporter";
+import { BCP47_LOCALE } from "@/i18n/config";
+import { routing } from "@/i18n/routing";
+import { GLOBAL_CLIENT_NAMESPACES } from "@/i18n/clientNamespaces";
+import { pickMessages } from "@/i18n/pickMessages";
+import "../globals.css";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL!.replace(/\/$/, "");
+
+export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: "칸토 - 필리핀 정보 플랫폼",
+    template: "%s | 칸토",
+  },
+  description:
+    "필리핀 정보 - 채팅, 중고거래, 부동산, 구인구직, 모임 등 생활에 필요한 모든 정보를 보다 편리하게 제공하는 플랫폼을 이용해보세요.",
+  keywords: ["칸토", "필리핀 한인", "중고거래", "렌탈", "구인구직"],
+  authors: [{ name: "칸토" }],
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    url: BASE_URL,
+    siteName: "칸토",
+    title: "칸토 - 필리핀 정보 플랫폼",
+    description:
+      "필리핀 정보 - 채팅, 중고거래, 부동산, 구인구직, 모임 등 생활에 필요한 모든 정보를 보다 편리하게 제공하는 플랫폼을 이용해보세요.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "칸토 - 필리핀 정보 플랫폼",
+    description:
+      "필리핀 정보 - 채팅, 중고거래, 부동산, 구인구직, 모임 등 생활에 필요한 모든 정보를 보다 편리하게 제공하는 플랫폼을 이용해보세요.",
+  },
+  alternates: {
+    canonical: BASE_URL,
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Kanto",
+    statusBarStyle: "default",
+  },
+  icons: {
+    apple: "/apple-touch-icon.png",
+  },
+};
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+// 로그인 사용자·공지는 요청마다 서버에서 읽지 않고 클라이언트에서 가져온다
+// (useAuthInit / useActiveNotices). 레이아웃이 요청 데이터를 읽지 않아야 하위 페이지를 정적으로 캐시할 수 있다.
+export default async function RootLayout({
+  children,
+  params,
+}: Readonly<{
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}>) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
+  setRequestLocale(locale);
+  const messages = await getMessages();
+
+  return (
+    <html
+      lang={BCP47_LOCALE[locale]}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <body className="h-full overflow-hidden flex flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "칸토",
+              url: BASE_URL,
+              logo: `${BASE_URL}/kantoLogo.png`,
+              sameAs: [],
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "칸토",
+              url: BASE_URL,
+            }),
+          }}
+        />
+
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(innerWidth<768){var c=new URLSearchParams(location.search).get('chat');if(c||sessionStorage.getItem('chatWidget:newChatDraft'))document.documentElement.setAttribute('data-chat-boot','')}}catch(e){}`,
+          }}
+        />
+        <WebVitalsReporter />
+        <NextIntlClientProvider messages={pickMessages(messages, GLOBAL_CLIENT_NAMESPACES)}>
+          <Providers>
+            <GlobalLayout>
+              {children}
+            </GlobalLayout>
+          </Providers>
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
+}

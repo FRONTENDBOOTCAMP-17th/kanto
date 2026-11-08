@@ -1,6 +1,6 @@
 import { createAdminClient } from "@/utils/supabase/admin";
 import { REPORT_STATUS } from "@/constants/report";
-import { SANCTION_LABEL } from "@/app/(admin)/admin/reports/_lib/constants";
+import { SANCTION_LABEL } from "@/app/[locale]/(admin)/admin/reports/_lib/constants";
 
 export interface SanctionRecord {
   id: number;

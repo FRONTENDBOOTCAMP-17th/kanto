@@ -1,4 +1,6 @@
+import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { routing } from "@/i18n/routing";
 
 export interface Notice {
   id: number;
@@ -32,12 +34,13 @@ export interface PublicNotice {
   ends_at: string;
 }
 
-export async function getActivePublicNotices(locale: string): Promise<PublicNotice[]> {
+// 아직 끝나지 않은(진행 중 + 예정) 공지. 응답이 캐시되므로 시작 시각 필터는 클라이언트(useActiveNotices)에서 한다.
+export async function getUpcomingPublicNotices(locale: string): Promise<PublicNotice[]> {
   try {
     const data = await getNotices();
     const now = new Date();
     return data
-      .filter((n) => new Date(n.starts_at) <= now && now <= new Date(n.ends_at))
+      .filter((n) => now <= new Date(n.ends_at))
       .map(({ id, title, title_en, title_fil, starts_at, ends_at }) => ({
         id,
         starts_at,
@@ -94,4 +97,9 @@ export async function deleteNotice(id: number): Promise<void> {
     .eq("id", id) as unknown as { error: { message: string } | null };
 
   if (error) throw new Error(error.message);
+}
+
+// 공개 공지 API(/api/notices/[locale]) 캐시 무효화. 공지 생성·수정·삭제 후 호출한다.
+export function revalidatePublicNotices() {
+  for (const locale of routing.locales) revalidatePath(`/api/notices/${locale}`);
 }

@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { SquarePen, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LoginRequiredModal } from "@/components/common/LoginRequiredModal";
-import { IdentityVerificationModal } from "@/app/(user)/profile/_components/IdentityVerificationModal";
+import { IdentityVerificationModal } from "@/app/[locale]/(user)/profile/_components/IdentityVerificationModal";
 import { useSuspended } from "@/hooks/useSuspended";
 
 interface CategoryWriteButtonProps {

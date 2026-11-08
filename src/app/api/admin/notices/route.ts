@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { getNotices, createNotice } from "@/services/admin/adminNotices";
+import { getNotices, createNotice, revalidatePublicNotices } from "@/services/admin/adminNotices";
 import { insertAuditLog } from "@/services/admin/auditLog";
 import { translateNoticeTitle } from "@/lib/translate";
 import { requireAdminOrApiError } from "../_lib/requireAdmin";
@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
     const { title_en, title_fil } = await translateNoticeTitle(title);
     const data = await createNotice({ title, title_en, title_fil, starts_at, ends_at }, admin.id);
     await insertAuditLog(admin, "write_notice", { targetType: "notice", targetId: data.id, detail: { title, starts_at, ends_at } });
+    revalidatePublicNotices();
     return NextResponse.json(data, { status: 201 });
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });

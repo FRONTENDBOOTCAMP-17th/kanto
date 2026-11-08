@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { supabase } from "@/lib/supabase";
 import { useImageUpload } from "@/hooks/useImageUpload";
 import { cityToTradeLocation, type TradeLocation } from "@/type/location";
 import type { EmployeeType, SalaryType, JobInitialData } from "@/type/job/jobCreate";
 import type { PickedLocation } from "@/type/go";
-import { submitJobPost } from "@/app/(user)/job/create/_lib/submitJobPost";
+import { submitJobPost } from "@/app/[locale]/(user)/job/create/_lib/submitJobPost";
 
 export function useCreateJobForm(userId: number, userName: string, initialData?: JobInitialData) {
   const router = useRouter();
