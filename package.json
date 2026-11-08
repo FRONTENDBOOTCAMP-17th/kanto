@@ -10,6 +10,7 @@
     "analyze": "ANALYZE=true next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest run",
     "gen:types": "supabase gen types typescript --project-id dhvvrtyzurouttlswpbq > src/type/supabase.ts",
     "seed": "npx tsx scripts/seed.ts",
     "seed:bulk": "npx tsx scripts/seed-bulk.ts"
