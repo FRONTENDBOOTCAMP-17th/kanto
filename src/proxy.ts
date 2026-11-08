@@ -1,8 +1,17 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { User } from "@supabase/supabase-js";
+import { isBlockedCrawler } from "@/constants/crawlers";
 
 export async function proxy(request: NextRequest) {
+  // robots.txt를 무시하고 SSR 페이지를 긁어가는 AI 크롤러는 렌더링 전에 차단한다.
+  if (
+    request.nextUrl.pathname !== "/robots.txt" &&
+    isBlockedCrawler(request.headers.get("user-agent"))
+  ) {
+    return new NextResponse(null, { status: 403 });
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
