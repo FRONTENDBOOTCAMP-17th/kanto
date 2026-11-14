@@ -1,4 +1,4 @@
-import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
+import { createCipheriv, createDecipheriv, createHmac } from "crypto";
 
 const ALGORITHM = "aes-256-gcm";
 const IV_LENGTH = 12;
@@ -14,7 +14,9 @@ function getKey(): Buffer {
 
 export function encryptId(id: number, domain: string): string {
   const key = getKey();
-  const iv = randomBytes(IV_LENGTH);
+  // 같은 id는 항상 같은 토큰이 되도록 IV를 (domain, id)에서 결정적으로 만든다.
+  // 랜덤 IV면 렌더링마다 상세 URL이 바뀌어, 크롤러가 따라갈 때마다 ISR 캐시가 새로 쓰였다.
+  const iv = createHmac("sha256", key).update(`${domain}:${id}`).digest().subarray(0, IV_LENGTH);
   const cipher = createCipheriv(ALGORITHM, key, iv);
   cipher.setAAD(Buffer.from(domain, "utf8"));
   const encrypted = Buffer.concat([cipher.update(String(id), "utf8"), cipher.final()]);

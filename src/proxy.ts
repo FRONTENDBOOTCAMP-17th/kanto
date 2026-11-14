@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { isBlockedCrawler } from "@/constants/crawlers";
 import { routing } from "@/i18n/routing";
+import { encryptPostId, resolvePostId } from "@/utils/postIdCipher";
 
 const PROTECTED_PATHS = ["/job/create", "/usedgoods/create", "/create", "/myposts", "/favorites"];
 const BLOCKED_PATHS = ["/create", "/job/create", "/usedgoods/create", "/rental/create"];
@@ -35,6 +36,16 @@ export async function proxy(request: NextRequest) {
   }
 
   const { prefix, path } = splitLocalePrefix(request.nextUrl.pathname);
+
+  // 예전 랜덤 토큰·숫자 id로 들어온 상세 URL은 정식 토큰 URL로 보낸다.
+  // 그대로 렌더링하면 URL마다 ISR 캐시가 따로 쓰인다.
+  const canonicalPath = canonicalizePostPath(path);
+  if (canonicalPath) {
+    const url = request.nextUrl.clone();
+    url.pathname = `${prefix}${canonicalPath}`;
+    return NextResponse.redirect(url, 308);
+  }
+
   // API·OAuth 콜백은 로케일 라우팅 대상이 아니다 (src/app/api, src/app/auth)
   const isRouteHandler = path.startsWith("/api/") || path.startsWith("/auth/");
 
@@ -105,6 +116,20 @@ export const config = {
     "/((?!_next/static|_next/image|_vercel|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|api/posts/cleanup|api/payment/xendit/webhook|.*opengraph-image|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|txt|xml|js|css|map|woff2?|json|webmanifest)$).*)",
   ],
 };
+
+// "/job/<토큰>/edit" -> 정식 토큰이 아니면 "/job/<정식 토큰>/edit", 이미 정식이거나 해당 없으면 null
+function canonicalizePostPath(path: string) {
+  const match = path.match(/^\/(job|usedgoods|rental)\/([^/]+)(\/.*)?$/);
+  if (!match) return null;
+  const [, section, idOrToken, rest = ""] = match;
+  if (idOrToken === "create") return null;
+
+  const postId = resolvePostId(idOrToken);
+  if (postId === null) return null;
+
+  const token = encryptPostId(postId);
+  return token === idOrToken ? null : `/${section}/${token}${rest}`;
+}
 
 function redirectByAuth(authId: string | null, path: string) {
   if (!authId && (PROTECTED_PATHS.includes(path) || path.endsWith("/edit"))) {
